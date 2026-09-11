@@ -1,0 +1,219 @@
+/*
+ * ScanVault design tokens.
+ *
+ * Visual direction: a warm parchment shell (--bg) holding an inset content
+ * panel (--surface). One sans stack, 13px body, tabular numerals on numeric
+ * table columns.
+ *
+ * The complete light palette is defined on bare :root. Dark overrides are
+ * declared twice on purpose:
+ *   1. @media (prefers-color-scheme: dark) + :root:not([data-theme='light'])
+ *      so the OS preference wins when the user has made no explicit choice.
+ *   2. :root[data-theme='dark'] so an explicit in-app choice wins in both
+ *      directions, including forcing dark on a light OS.
+ *
+ * Every foreground/background pair used by the primitives is asserted at
+ * WCAG AA (4.5:1) by src/styles/token-contrast.test.ts, which parses THIS
+ * file. Changing a hex here without running `pnpm --filter @scanvault/ui test`
+ * can ship an inaccessible palette.
+ *
+ * Accent rules (non-obvious, enforced by the test):
+ *   --accent      GUSI orange #EE7625. FILLS ONLY. As text on parchment or on
+ *                 white it lands near 2.9:1 and fails AA.
+ *   --accent-ink  Teal. The text-level accent: links, active tab labels,
+ *                 selected-state labels.
+ *   --scan-ground The near-black media backdrop, and the only near-black that
+ *                 stays dark in BOTH themes, so it is also the label colour
+ *                 placed on top of an --accent fill.
+ */
+
+:root {
+  /* shell + panels */
+  --bg: #efe7da;
+  --surface: #fdfaf4;
+  --surface-2: #f6f0e5;
+
+  /* text */
+  --ink: #22201c;
+  --ink-dim: #5e574c;
+
+  /* hairlines */
+  --line: #ddd2be;
+
+  /* accent */
+  --accent: #ee7625;
+  --accent-ink: #2f6b73;
+  --accent-soft: #fce9d8;
+
+  /* status */
+  --ok: #2e6b41;
+  --ok-soft: #dcede1;
+  --warn: #8a5300;
+  --warn-soft: #faebcd;
+  --crit: #b3261e;
+  --crit-soft: #f9dedb;
+
+  /* geometry + media */
+  --radius: 8px;
+  --scan-ground: #14120f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #17150f;
+    --surface: #211e17;
+    --surface-2: #2b271d;
+
+    --ink: #f2eadc;
+    --ink-dim: #b3a996;
+
+    --line: #3d3729;
+
+    --accent: #ee7625;
+    --accent-ink: #6ec3cd;
+    --accent-soft: #382718;
+
+    --ok: #79d09a;
+    --ok-soft: #1b2d22;
+    --warn: #e8b45e;
+    --warn-soft: #33260f;
+    --crit: #f0928a;
+    --crit-soft: #351d1b;
+
+    --radius: 8px;
+    --scan-ground: #0b0a08;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #17150f;
+  --surface: #211e17;
+  --surface-2: #2b271d;
+
+  --ink: #f2eadc;
+  --ink-dim: #b3a996;
+
+  --line: #3d3729;
+
+  --accent: #ee7625;
+  --accent-ink: #6ec3cd;
+  --accent-soft: #382718;
+
+  --ok: #79d09a;
+  --ok-soft: #1b2d22;
+  --warn: #e8b45e;
+  --warn-soft: #33260f;
+  --crit: #f0928a;
+  --crit-soft: #351d1b;
+
+  --radius: 8px;
+  --scan-ground: #0b0a08;
+}
+
+/*
+ * Tailwind v4 theme bridge. Maps each raw token onto a Tailwind namespace so
+ * utilities exist for them: bg-surface, text-ink-dim, border-line, bg-accent,
+ * text-accent-ink, bg-ok-soft, rounded-token, font-sans, text-body.
+ *
+ * `inline` keeps the var() reference in the generated rule instead of
+ * resolving the hex at build time, so a runtime theme flip still works.
+ */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-dim: var(--ink-dim);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-crit: var(--crit);
+  --color-crit-soft: var(--crit-soft);
+  --color-scan-ground: var(--scan-ground);
+
+  --radius-token: var(--radius);
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+
+  --text-body: 0.8125rem;
+  --text-body--line-height: 1.5;
+}
+
+/* Base shell. Applies once the app imports this file. */
+html {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/*
+ * Numeric column helper. Applied automatically by <Td numeric> / <Th numeric>
+ * so figures line up across rows; also usable directly on any element.
+ */
+.sv-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+@keyframes sv-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.sv-skeleton {
+  animation: sv-skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-skeleton {
+    animation: none;
+  }
+}
+
+/*
+ * Indeterminate <Progress>. Only for work whose real progress is unknowable —
+ * a determinate bar must be used whenever a byte count exists.
+ */
+@keyframes sv-progress-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+.sv-progress-indeterminate {
+  animation: sv-progress-slide 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-progress-indeterminate {
+    animation: none;
+    width: 100% !important;
+    opacity: 0.5;
+  }
+}

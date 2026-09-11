@@ -1,0 +1,31 @@
+{
+  "name": "@scanvault/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run --exclude \"**/live-api-shape-check.test.ts\"",
+    "test:live": "SCANVAULT_LIVE_API=1 vitest run src/live-api-shape-check.test.ts"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.66.0",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@scanvault/config": "workspace:*",
+    "@tanstack/react-query": "^5.66.0",
+    "@types/react": "^18.3.18",
+    "eslint": "^9.18.0",
+    "react": "^18.3.1",
+    "typescript": "~5.7.3",
+    "vitest": "^3.0.5"
+  }
+}

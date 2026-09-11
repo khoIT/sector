@@ -1,0 +1,175 @@
+import type { AuthUser, Scan, ScanListView } from '@scanvault/api-client';
+import { hasPermission } from '@scanvault/api-client';
+
+import { scanDetailPathFor } from '@/features/scan-detail/scan-detail-links';
+
+import { isReviewQueue, isReviewedList } from '../scan-list-views';
+import type { ListColumn } from '../table/column-model';
+import { formatDate } from '@/lib/format';
+import {
+  DateCell,
+  FilesCell,
+  GroupsCell,
+  ReviewedByCell,
+  StatusCell,
+  TitleCell,
+  UserCell,
+  WaitingCell,
+} from './list-cells';
+import { AssessAction, OpenScanAction } from './row-actions';
+
+export type ScanColumnContext = {
+  view: ScanListView;
+  user: AuthUser | null;
+  /** The list URL to come back to, carried into every row link. */
+  returnUrl: string;
+  /** Frozen "now" for the whole render, so every Waiting cell agrees. */
+  now: number;
+};
+
+/**
+ * Column sets for the five /api/scan/* views.
+ *
+ * They are one parameterised factory rather than five files: the legacy
+ * dashboard shipped pending-scans and expert-scans as byte-identical column
+ * files, and reviewed-scans and expert-reviewed-scans as another identical
+ * pair, which is how their labels drifted apart ("Date Submitted" on one,
+ * "Date Created" on its twin) without anyone noticing.
+ */
+export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>> {
+  const { view, user, returnUrl, now } = context;
+  const queue = isReviewQueue(view);
+  const reviewed = isReviewedList(view);
+  const canReview = hasPermission(user, 'create:scan:review');
+
+  const columns: Array<ListColumn<Scan>> = [
+    {
+      id: 'details',
+      header: 'Details',
+      sortField: 'title',
+      alwaysVisible: true,
+      cell: (scan) => (
+        <TitleCell
+          title={scan.title}
+          to={scanDetailPathFor(view, scan.id, returnUrl)}
+          scanIdentifier={scan.scanIdentifier}
+          fileCount={scan.fileCount}
+          fileTotal={scan.fileTotal}
+          tags={scan.tags}
+        />
+      ),
+    },
+  ];
+
+  // The learner's name only means something on a list of OTHER people's scans.
+  if (view !== 'my') {
+    columns.push({
+      id: 'learner',
+      header: 'Learner',
+      sortField: 'firstName',
+      cell: (scan) => <UserCell user={scan.user} />,
+    });
+  }
+
+  columns.push({
+    id: 'scanType',
+    header: 'Scan type',
+    sortField: 'scanType',
+    cell: (scan) => <span className="whitespace-nowrap text-ink">{scan.scanType.name}</span>,
+  });
+
+  // Every row on a queue is `submitted` and every row on a reviewed list is
+  // `reviewed`, so a status column there would be one repeated word.
+  if (view === 'my') {
+    columns.push({
+      id: 'status',
+      header: 'Status',
+      sortField: 'status',
+      cell: (scan) => <StatusCell status={scan.status} />,
+    });
+  }
+
+  columns.push({
+    id: 'files',
+    header: 'Files',
+    numeric: true,
+    cell: (scan) => <FilesCell fileCount={scan.fileCount} fileTotal={scan.fileTotal} />,
+  });
+
+  if (view !== 'my') {
+    columns.push({
+      id: 'groups',
+      header: 'Groups',
+      cell: (scan) => <GroupsCell groups={scan.groups} />,
+    });
+  }
+
+  if (queue) {
+    columns.push({
+      id: 'waiting',
+      header: 'Waiting',
+      // Longest waiting first is OLDEST first, so a descending click on this
+      // column has to send `createdAt:asc`.
+      sortField: 'createdAt',
+      invertSort: true,
+      numeric: true,
+      cell: (scan) => <WaitingCell submittedAt={scan.createdAt} now={now} />,
+    });
+  }
+
+  columns.push({
+    id: 'createdAt',
+    header: 'Submitted',
+    sortField: 'createdAt',
+    numeric: true,
+    // On a queue the Waiting column already carries this, with the exact
+    // timestamp on hover. Available, just not on by default.
+    defaultHidden: queue,
+    cell: (scan) => <DateCell iso={scan.createdAt} format={formatDate} />,
+  });
+
+  if (reviewed) {
+    columns.push(
+      {
+        id: 'reviewedAt',
+        header: 'Reviewed',
+        sortField: 'reviewedAt',
+        numeric: true,
+        cell: (scan) => <DateCell iso={scan.reviewedAt} format={formatDate} />,
+      },
+      {
+        id: 'reviewedBy',
+        header: 'Reviewed by',
+        cell: (scan) => <ReviewedByCell user={scan.review?.user} />,
+      },
+    );
+  }
+
+  columns.push({
+    id: 'actions',
+    header: 'Actions',
+    alwaysVisible: true,
+    className: 'text-right',
+    cell: (scan) => {
+      const to = scanDetailPathFor(view, scan.id, returnUrl);
+
+      if (queue) {
+        return (
+          <AssessAction
+            to={to}
+            canReview={canReview}
+            isOwnScan={Boolean(user) && scan.user.id === user?.id}
+          />
+        );
+      }
+
+      return (
+        <div className="flex justify-end">
+          <OpenScanAction to={to} label={reviewed ? 'Open review' : 'Open'} />
+        </div>
+      );
+    },
+  });
+
+  return columns;
+}
