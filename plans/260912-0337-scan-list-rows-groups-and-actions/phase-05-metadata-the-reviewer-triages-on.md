@@ -1,0 +1,116 @@
+---
+phase: 5
+title: "Metadata the reviewer triages on"
+status: pending
+priority: P2
+dependencies: [1]
+---
+
+# Phase 5: Metadata the reviewer triages on
+
+## Overview
+
+Carry the row-metadata design into the two surfaces it was drawn for: four additions to the
+group queue, and one column on My Scans that stops saying "Reviewed" to a learner who wants to
+know whether they passed.
+
+**Gated.** The design is drafted and awaiting review. Nothing here starts until it is accepted.
+
+## Requirements
+
+- Functional: every field added is non-empty on enough rows to justify its space; nothing that
+  is empty on 98% of rows is added; no row gains a column.
+- Non-functional: row height grows by at most one line; the contrast gate stays green; all
+  four additions read from data already on the list response — no new request.
+
+## Architecture
+
+### What goes in, and how often it says anything
+
+Share of the 12,393 queue scans where the field is non-empty:
+
+| Field | Coverage | Where | Why it earns the space |
+|---|---|---|---|
+| Learner asked a question | **41%** (5,113) | Details, accent chip | A scan with a note is someone waiting on an answer. Nothing distinguishes it until the scan is open |
+| Findings the learner declared | **44%** (5,415; 659 with a gap) | Details, plain count + warn chip on the 5% with a gap | Confirming or contradicting the learner's own call *is* the review |
+| Clips versus stills | **35%** contain video (4,379; 2.8 files avg) | Details, second line | Eight clips is a fifteen-minute review, two stills is ninety seconds. The row renders both as the same `n/n` |
+| Rubric version | ~100%, v1–v6 | Scan type, dim, **only when behind current** | A 338-day-old queue item was submitted under an older protocol than the reviewer is about to judge it by |
+
+Rejected on the same test, recorded so they are not re-proposed: AI quality score (1.2%),
+external patient identifier (1.7%), and two fields under 0.2%. A column empty 98% of the time
+teaches people to stop reading that part of the row.
+
+### My Scans: Status becomes Outcome
+
+**3,294 of 15,579 reviews came back `not_achieved` — 21%.** Every one renders today as the
+word "Reviewed". A learner with forty reviewed scans opens forty pages to find the ones they
+failed, and the answer is already on the row in `review.competencyMeasure`.
+
+The column keeps its position and its width and changes what it answers:
+
+- reviewed → `Achieved` / `Not achieved`, with the review date dim beneath
+- submitted → keeps the status pill, gains the group it is queued in
+- failed → keeps the pill, gains `processingError`, which is on the wire for all 2,220 failed
+  scans and has never been shown to the person whose upload failed
+
+`competencyMeasure` is the field with the boolean drift fixed on 12 Sep — read it through
+`storedCompetencyMeasureSchema`, which already tolerates the legacy values, and treat anything
+non-conforming as "no outcome recorded" rather than as a failure.
+
+### One conflict with the drafted design, resolved
+
+The design put clips-versus-stills on a **second line under the Files column ratio**, and paid
+for it by dropping the duplicated `n/n files` from the Details cell. Phase 1 resolves the same
+duplication the other way — the column goes, the sub-line stays — because that is the
+direction asked for.
+
+So the media line moves into the Details cell beneath the count:
+`6/6 files · 4 clips · 2 stills`. The Details cell then runs three lines on its busiest rows:
+title, count + media, chips.
+
+**Check this at build time, not now.** If three lines reads crowded against a queue of real
+rows, the fallback is not to restore the Files column but to add a narrow **Media** column
+carrying `4 clips · 2 stills` alone — a different fact from the count, with its own header,
+rather than the duplicate that was removed.
+
+## Related Code Files
+
+- Modify: `apps/web/src/features/scan-list/rows/list-cells.tsx` — `TitleCell` chips and media
+  line; a new `OutcomeCell`
+- Modify: `apps/web/src/features/scan-list/rows/scan-columns.tsx` — the `status` column on
+  `my` becomes `outcome`; scan-type cell gains the rubric line
+- Create: `apps/web/src/features/scan-list/rows/scan-media-summary.ts` — counts clips and
+  stills from `scan.files` via `mediaKindFor`
+- Create: `apps/web/src/features/scan-list/rows/rubric-version.ts` — parses the version prefix
+  off finding keys and compares against the scan type's current version
+- Create: tests for both helpers and for `OutcomeCell`
+
+## Implementation Steps
+
+1. `scan-media-summary.ts` — reuse `mediaKindFor` from `@scanvault/api-client` rather than
+   re-deriving from `filetype`; 18.7% of file rows store a bare extension there and the naive
+   check was the cause of the "cannot preview" defect fixed on 12 Sep.
+2. `rubric-version.ts` — finding keys carry the version (`v2_fast_…`, `v5_aaa_…`). Render the
+   line **only** when the scan's version is behind the scan type's current one; on the ~100%
+   that match, print nothing.
+3. `TitleCell`: media line under the count; `Asked` chip when the scan has notes; findings
+   count; warn chip when a required item is `Not Examined` / `Not assessed`.
+4. `OutcomeCell` for `view === 'my'`, with the three branches above.
+5. Tests: media summary over mixed filetypes including bare extensions; rubric behind/at
+   current; outcome for each of achieved / not achieved / null / submitted / failed.
+
+## Tests / Validation
+
+- `pnpm --filter @scanvault/web test`, `-w typecheck`, `lint`
+- `pnpm --filter @scanvault/ui test` — contrast gate, since the Asked chip uses an accent fill
+- Against staging: a queue page of real rows, checked for the three-line question above
+
+## Risk Assessment
+
+- **Row height.** The single largest risk and the reason the design was drawn before any code.
+  Measure on a full page, not on one row.
+- **`Asked` needs to know a scan has notes.** Confirm the list response carries a note count or
+  a notes array before building the chip; if it does not, the chip is cut rather than bought
+  with a per-row request.
+- **Rubric parsing is string work on user-influenced keys.** Unknown shape → render nothing.
+- Rollback: each addition is independent; any one can be dropped without the others.
