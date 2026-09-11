@@ -27,6 +27,11 @@ title, and turn the tag list beside it into something worth reading.
 The column is the duplicate, but it holds the *signal* — so the warn tone moves into the
 sub-line count and the column goes.
 
+The count is not a filter and was never meant to be one: `scan-columns.tsx` gives the
+`files` column no `sortField`, and `filter-spec.ts` has no file-count predicate. So the
+column contributes nothing a header can do — no sort, no filter, no fact the sub-line does
+not already carry — which is what makes deleting it free rather than a trade.
+
 The tag list is a live contradiction today. `TitleCell` renders every tag on the scan, giving
 `incomplete` a warn badge. Measured on 31,495 scans:
 

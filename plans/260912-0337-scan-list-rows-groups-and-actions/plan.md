@@ -47,6 +47,9 @@ Measured against the local `gusi_dev` database (31,495 scans), read-only:
 | How many scans are in more than one group? | 10,572 of 31,495 (33.6%). Max **705** | `+N` has to open something. Phase 2 |
 | Does the list route cap the groups it returns? | No. `batchGetGroupsByScanIds` returns every row's full set | The dialog needs no new fetch — and a 705-group row ships ~30 KB of names |
 | Who can call `DELETE /api/scan/:id/delete`? | It requires `delete:scan` — **which all five roles hold** — and the controller does **no ownership check** | The permission bit gates nobody. Phase 4 gates on the owner client-side |
+| Is there any other metadata worth the space? | **One: review turnaround.** 4,168 of 15,563 reviewed scans (27%) took over 30 days; 12% came back same-day. The row shows both dates and leaves the subtraction to the reader | Added to Phase 5 |
+| Does the list row carry what Phase 5 needs? | Yes — `notes`, `processingError`, `reviewedAt` and `review.competencyMeasure` are all on the list schema | Phase 5 costs no new request |
+| Is `fileZip` a server-built archive that would make client-side zipping unnecessary? | **No.** Non-empty on 5,946 of 31,495, and the values are legacy migration paths | Phase 3's client-side zip stands |
 
 ## Phases
 
@@ -65,6 +68,9 @@ Measured against the local `gusi_dev` database (31,495 scans), read-only:
 - Phase 5 edits `list-cells.tsx` and `scan-columns.tsx`, the same files as Phase 1. Sequence
   them; do not run both at once.
 - Phase 5 is **gated on the row-metadata design being accepted**. Everything else is ready.
+- Sequenced after [App shell: account, profile and language](../260912-0353-app-shell-account-and-language/plan.md)
+  only for the shared `DropdownMenu` primitive: whichever of the two runs first builds it and
+  the other reuses it. Otherwise the plans are independent.
 - No server change in any phase. The one server defect found (delete has no ownership check)
   is recorded in Phase 4 for the API backlog, not fixed here.
 

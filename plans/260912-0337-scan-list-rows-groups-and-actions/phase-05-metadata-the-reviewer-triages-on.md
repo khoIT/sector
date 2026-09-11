@@ -40,6 +40,36 @@ Rejected on the same test, recorded so they are not re-proposed: AI quality scor
 external patient identifier (1.7%), and two fields under 0.2%. A column empty 98% of the time
 teaches people to stop reading that part of the row.
 
+### Added after the design: how long the review took
+
+Measured across all 15,563 reviewed scans, not the queue subset:
+
+| Submitted → reviewed | Scans |
+|---|---|
+| under a day | 1,913 (12%) |
+| 1–3 days | 1,869 |
+| 3–7 days | 2,697 |
+| 7–30 days | 4,916 |
+| 30–90 days | 2,336 |
+| over 90 days | 1,832 |
+
+**4,168 reviewed scans — 27% — took more than a month.** The reviewed lists show the review
+date and the submission date in two separate columns and leave the subtraction to the reader.
+Print the elapsed time next to the outcome, using the `formatWaiting` helper the queue already
+uses, so the two surfaces express duration the same way.
+
+This is worth having for the learner ("mine came back in two days"), for the reviewer, and for
+whoever has to answer how the service is performing — and it is arithmetic on two fields that
+are already on the row.
+
+Also measured and **rejected**, so they are not proposed again:
+
+- `fileZip` (18.9%) — looked like a server-built archive that would make Phase 3's client-side
+  zip unnecessary. It is not: the values are legacy migration paths (`adminGUSI-29/DVT-16MAY-…`)
+  present on 5,946 old scans only. Client-side zipping stands.
+- `refId` (21.3%) — a legacy numeric import id, superseded by `scanIdentifier` and the title
+- `logs` (14.3%) — the legacy Logs dialog; a recovery tool, not row metadata
+
 ### My Scans: Status becomes Outcome
 
 **3,294 of 15,579 reviews came back `not_achieved` — 21%.** Every one renders today as the
@@ -95,7 +125,8 @@ rather than the duplicate that was removed.
    that match, print nothing.
 3. `TitleCell`: media line under the count; `Asked` chip when the scan has notes; findings
    count; warn chip when a required item is `Not Examined` / `Not assessed`.
-4. `OutcomeCell` for `view === 'my'`, with the three branches above.
+4. `OutcomeCell` for `view === 'my'`, with the three branches above, plus the elapsed
+   submitted → reviewed time on reviewed rows via `formatWaiting`.
 5. Tests: media summary over mixed filetypes including bare extensions; rubric behind/at
    current; outcome for each of achieved / not achieved / null / submitted / failed.
 
@@ -109,8 +140,9 @@ rather than the duplicate that was removed.
 
 - **Row height.** The single largest risk and the reason the design was drawn before any code.
   Measure on a full page, not on one row.
-- **`Asked` needs to know a scan has notes.** Confirm the list response carries a note count or
-  a notes array before building the chip; if it does not, the chip is cut rather than bought
-  with a per-row request.
+- ~~**`Asked` needs to know a scan has notes.**~~ **Resolved.** `notes` is on the list row
+  schema (`schemas/scan.ts:282`, `embeddedScanNoteSchema`), as are `processingError:273`,
+  `reviewedAt:286` and `review.competencyMeasure:206`. Every field this phase adds is already
+  on the wire; none of them costs a request.
 - **Rubric parsing is string work on user-influenced keys.** Unknown shape → render nothing.
 - Rollback: each addition is independent; any one can be dropped without the others.

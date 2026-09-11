@@ -5,7 +5,7 @@ status: pending
 priority: P1
 branch: "main"
 tags: [scan-vault, create-scan, upload, ux]
-blockedBy: []
+blockedBy: [260912-0353-app-shell-account-and-language]
 blocks: []
 created: "2026-09-11T20:24:25.688Z"
 createdBy: "ck:plan"
