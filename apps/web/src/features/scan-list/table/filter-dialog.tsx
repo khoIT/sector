@@ -1,6 +1,6 @@
 import {
+  useGroupFilterOptions,
   useScanTypeFilterOptions,
-  useScanUserGroups,
   useScanUsers,
   userDisplayName,
 } from '@scanvault/api-client';
@@ -19,6 +19,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { CheckboxFilterList, RadioFilterList, type FilterOption } from './filter-controls';
+import { useDebouncedValue } from './use-debounced-value';
 import {
   SHARE_STATUS_FILTER_OPTIONS,
   STATUS_FILTER_OPTIONS,
@@ -58,7 +59,17 @@ export function FilterDialog({ spec, filters, onApply }: FilterDialogProps) {
   // Only fetch a dropdown's source once the panel is open; a reviewer who never
   // filters should not pay for 1,334 users on every page view.
   const scanTypes = useScanTypeFilterOptions(open && wantsScanTypes);
-  const groups = useScanUserGroups(open && wantsGroups);
+  // NOT useScanUserGroups: that answers with the caller's own memberships,
+  // which is empty for the administrators who see every scan and a superset of
+  // the led groups for a scoped leader — picking a group they belong to but do
+  // not lead silently returned nothing. /api/groups/filter-options answers with
+  // what the caller may actually filter by, and searches server-side.
+  const [groupSearch, setGroupSearch] = useState('');
+  const debouncedGroupSearch = useDebouncedValue(groupSearch, 250);
+  const groups = useGroupFilterOptions(
+    { keyword: debouncedGroupSearch, limit: 50 },
+    open && wantsGroups,
+  );
   const users = useScanUsers(spec.userType, open && wantsUsers);
 
   const scanTypeOptions = useMemo<FilterOption[]>(
@@ -72,7 +83,7 @@ export function FilterDialog({ spec, filters, onApply }: FilterDialogProps) {
 
   const groupOptions = useMemo<FilterOption[]>(
     () =>
-      (groups.data ?? []).map((group) => ({
+      (groups.data?.items ?? []).map((group) => ({
         value: group.id,
         label: group.name,
       })),
@@ -170,7 +181,14 @@ export function FilterDialog({ spec, filters, onApply }: FilterDialogProps) {
                   setFilter(setFilter(current, 'groupIds', value), 'userIds', undefined),
                 );
               }}
-              emptyHint="You are not a member of any group."
+              searchable
+              searchPlaceholder="Search groups by name"
+              onSearchChange={setGroupSearch}
+              emptyHint={
+                debouncedGroupSearch.trim()
+                  ? `No group matches “${debouncedGroupSearch.trim()}”.`
+                  : 'There are no groups you can filter by.'
+              }
               loading={groups.isPending}
             />
           ) : null}

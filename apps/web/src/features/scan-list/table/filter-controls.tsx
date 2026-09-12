@@ -14,6 +14,9 @@ export type CheckboxFilterListProps = {
   /** Adds a search box. Set it for lists that can run to hundreds of entries. */
   searchable?: boolean;
   searchPlaceholder?: string;
+  /** Called as the user types, for a section whose source is searched SERVER
+   *  side. The client-side narrowing still applies to what is loaded. */
+  onSearchChange?: (search: string) => void;
   emptyHint?: string;
   loading?: boolean;
 };
@@ -33,6 +36,7 @@ export function CheckboxFilterList({
   onChange,
   searchable = false,
   searchPlaceholder = 'Search',
+  onSearchChange,
   emptyHint,
   loading = false,
 }: CheckboxFilterListProps) {
@@ -65,7 +69,10 @@ export function CheckboxFilterList({
       {searchable ? (
         <Input
           value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          onChange={(event) => {
+            setSearch(event.target.value);
+            onSearchChange?.(event.target.value);
+          }}
           placeholder={searchPlaceholder}
           aria-label={`Search ${legend}`}
         />

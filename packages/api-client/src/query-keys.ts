@@ -85,6 +85,13 @@ export const scanTypeKeys = {
   formsByIds: (formIds: string[]) => ['get-scan-form-by-ids', formIds] as const,
 } as const;
 
+export const groupKeys = {
+  /** Keyed by keyword AND page: the server does the matching, so each keyword
+   *  is a different result set rather than a client-side view of one. */
+  filterOptions: (keyword: string, page: number) =>
+    ['get-group-filter-options', keyword, page] as const,
+} as const;
+
 export const authKeys = {
   session: () => ['auth-session'] as const,
 } as const;

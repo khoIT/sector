@@ -85,6 +85,7 @@ export {
   authKeys,
   mutationKeys,
   noteKeys,
+  groupKeys,
   reviewKeys,
   SCAN_LIST_VIEWS,
   scanKeys,
@@ -408,6 +409,17 @@ export {
   updateScanFileStatus,
 } from './endpoints/scan-write';
 export { createUserLogs } from './endpoints/user-logs';
+export {
+  getGroupFilterOptions,
+  type GroupFilterOptionsQuery,
+} from './endpoints/group-filter-options';
+export {
+  groupFilterOptionSchema,
+  groupFilterOptionsPageSchema,
+  type GroupFilterOption,
+  type GroupFilterOptionsPage,
+} from './schemas/group-filter';
+export { useGroupFilterOptions } from './react/use-group-filter-options';
 export {
   USER_LOG_SEVERITIES,
   createUserLogsResponseSchema,
