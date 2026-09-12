@@ -50,12 +50,18 @@ export function Topbar({ title, navOpen, onToggleNav }: TopbarProps) {
         {title}
       </h1>
 
-      {/* The theme control moved into the account menu: it is a set-once
-          preference and the identity it now sits beside is the thing the
-          header was missing. */}
+      {/* The theme control lives in the account menu: it is a set-once
+          preference and the identity it sits beside is the thing the header
+          was missing.
+
+          The account menu itself is only here below lg, where the sidebar —
+          and so the rail copy of this menu — is display-none. Above lg it
+          would be the same identity on screen twice. */}
       <div className="ml-auto flex shrink-0 items-center gap-1">
         <LanguageSwitcher />
-        <AccountMenu />
+        <div className="lg:hidden">
+          <AccountMenu />
+        </div>
       </div>
     </header>
   );

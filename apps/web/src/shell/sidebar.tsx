@@ -1,6 +1,7 @@
 import { cn } from '@scanvault/ui';
 import { Link } from 'react-router-dom';
 
+import { AccountMenu } from './account-menu';
 import { NavList } from './nav-list';
 import type { NavBadges } from './nav-config';
 
@@ -32,6 +33,14 @@ export function BrandMark({ className }: { className?: string }) {
  * The desktop rail. It carries no background of its own: the parchment --bg
  * runs unbroken from here into the topbar, and only the content panel is
  * inset, so the chrome reads as one continuous frame rather than three boxes.
+ *
+ * The account control sits on the bottom edge. It needs no `mt-auto`: the nav
+ * above it is already `flex-1`, so it eats the slack and this lands last.
+ *
+ * The rail is `lg:block`, so below that this control is not on screen at all —
+ * which is why the topbar keeps its own copy for narrow widths. The two are
+ * mounted breakpoint-exclusively and are never both visible; identity on
+ * screen twice is the exact fault this shell had before.
  */
 export function Sidebar({ badges }: { badges: NavBadges }) {
   return (
@@ -42,6 +51,10 @@ export function Sidebar({ badges }: { badges: NavBadges }) {
         <nav aria-label="Primary" className="min-h-0 flex-1 overflow-y-auto">
           <NavList badges={badges} />
         </nav>
+
+        <div className="shrink-0 border-t border-line pt-3">
+          <AccountMenu placement="rail" />
+        </div>
       </div>
     </aside>
   );

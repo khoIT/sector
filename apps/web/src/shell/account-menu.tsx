@@ -9,7 +9,17 @@ import {
   useTheme,
   type ThemePreference,
 } from '@scanvault/ui';
-import { Check, ChevronDown, LogOut, Monitor, Moon, Sun, User, type LucideIcon } from 'lucide-react';
+import {
+  Check,
+  ChevronDown,
+  ChevronUp,
+  LogOut,
+  Monitor,
+  Moon,
+  Sun,
+  User,
+  type LucideIcon,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -20,6 +30,18 @@ import { LogoutDialog } from './logout-dialog';
 import { accountDisplayName, initialsFor, realPhotoUrl, roleLabel } from './user-initials';
 
 type ThemeOption = { value: ThemePreference; labelKey: string; Icon: LucideIcon };
+
+/**
+ * Where this menu is mounted, which decides its shape and which way it opens.
+ *
+ *   rail    a full-width row pinned to the bottom of the desktop sidebar
+ *   topbar  a compact chip at the end of the header, for widths with no rail
+ *
+ * One component, two placements, rather than two components: the identity
+ * block, the theme items, sign-out and the build line are the same menu, and a
+ * second copy of them is a second copy to keep in step.
+ */
+export type AccountMenuPlacement = 'rail' | 'topbar';
 
 const THEME_OPTIONS: readonly ThemeOption[] = [
   { value: 'light', labelKey: 'account.themeLight', Icon: Sun },
@@ -41,7 +63,7 @@ const THEME_OPTIONS: readonly ThemeOption[] = [
  * every field this needs, populated at login and on `GET /api/me`. That also
  * removes the skeleton the legacy header flashes on each page load.
  */
-export function AccountMenu() {
+export function AccountMenu({ placement = 'topbar' }: { placement?: AccountMenuPlacement }) {
   const auth = useAuth();
   const { t } = useTranslation();
   const { theme, resolvedTheme, setTheme } = useTheme();
@@ -53,15 +75,21 @@ export function AccountMenu() {
   const name = accountDisplayName(user);
   const role = roleLabel(user.role?.name);
 
+  const rail = placement === 'rail';
+  // The rail's own width already constrains the row, so the menu opens upward
+  // from a control sitting on the bottom edge. The topbar chip opens down.
+  const Chevron = rail ? ChevronUp : ChevronDown;
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger
           className={cn(
-            'flex shrink-0 items-center gap-2 rounded-token border border-transparent px-1 py-1',
+            'flex items-center gap-2 rounded-token border border-transparent',
             'outline-none transition-colors hover:border-line hover:bg-surface-2',
             'focus-visible:ring-2 focus-visible:ring-accent-ink',
             'data-[state=open]:border-line data-[state=open]:bg-surface-2',
+            rail ? 'w-full px-2 py-2 text-left' : 'shrink-0 px-1 py-1',
           )}
           aria-label={
             role
@@ -71,19 +99,49 @@ export function AccountMenu() {
         >
           <Avatar user={user} />
 
-          {/* Below md the avatar carries the whole control; the name and role
-              are in the aria-label above and in the menu itself. */}
-          <span className="hidden min-w-0 flex-col items-start leading-tight md:flex">
-            <span className="max-w-[10rem] truncate text-[13px] font-medium text-ink">{name}</span>
+          {/* In the rail there is room for the name at every width. In the
+              topbar, below md, the avatar carries the whole control and the
+              name and role are in the aria-label above and in the menu. */}
+          <span
+            className={cn(
+              'min-w-0 flex-col items-start leading-tight',
+              rail ? 'flex flex-1' : 'hidden md:flex',
+            )}
+          >
+            <span
+              className={cn(
+                'truncate text-[13px] font-medium text-ink',
+                rail ? 'w-full' : 'max-w-[10rem]',
+              )}
+            >
+              {name}
+            </span>
             {role ? (
-              <span className="max-w-[10rem] truncate text-[11px] text-ink-dim">{role}</span>
+              <span
+                className={cn(
+                  'truncate text-[11px] text-ink-dim',
+                  rail ? 'w-full' : 'max-w-[10rem]',
+                )}
+              >
+                {role}
+              </span>
             ) : null}
           </span>
 
-          <ChevronDown className="hidden h-3.5 w-3.5 shrink-0 text-ink-dim md:block" aria-hidden />
+          <Chevron
+            className={cn(
+              'h-3.5 w-3.5 shrink-0 text-ink-dim',
+              rail ? 'block' : 'hidden md:block',
+            )}
+            aria-hidden
+          />
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end" className="w-64">
+        <DropdownMenuContent
+          side={rail ? 'top' : 'bottom'}
+          align={rail ? 'start' : 'end'}
+          className="w-64"
+        >
           <div className="flex items-center gap-2.5 px-2 py-2">
             <Avatar user={user} />
             <div className="min-w-0">
