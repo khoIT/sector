@@ -5,6 +5,7 @@ import { RequireAuth } from '@/auth/require-auth';
 import { featureRoutes } from '@/routes/feature-routes';
 import { AppShell } from '@/shell/app-shell';
 
+import { LegacyRedirect } from './legacy-redirect';
 import { NotFoundPage } from './not-found-page';
 import { RouteErrorPage } from './route-error-page';
 import { scanVaultRoutes } from './scan-vault-routes';
@@ -53,6 +54,9 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
           { index: true, element: <VaultIndexRedirect /> },
           ...scanVaultRoutes,
           ...featureRoutes,
+          // The API writes legacy dashboard paths into every scan
+          // notification, so those URLs have to resolve here.
+          { path: 'dashboard/*', element: <LegacyRedirect /> },
           { path: '*', element: <NotFoundPage /> },
         ],
       },

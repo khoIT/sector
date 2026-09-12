@@ -3,6 +3,7 @@ import { lazy } from 'react';
 import { Navigate, type RouteObject } from 'react-router-dom';
 
 import { RequirePermission } from '@/auth/require-auth';
+import { FirstPermittedRedirect } from './first-permitted-redirect';
 import {
   SCAN_VAULT_PATH,
   SCAN_VAULT_PERMISSION,
@@ -85,8 +86,13 @@ export const scanVaultRoutes: RouteObject[] = [
   ...TAB_VIEWS.map(routeFor),
 
   // The sidebar links straight to a leaf, but the parent URLs are the obvious
-  // thing to type, so send them to the tab's first surface instead of a 404.
-  { path: 'scans/group', element: <Navigate to={SCAN_VAULT_PATH.pending} replace /> },
-  { path: 'scans/expert', element: <Navigate to={SCAN_VAULT_PATH.expert} replace /> },
+  // thing to type, so send them to the first surface underneath that this role
+  // may open — the unreviewed queue is not it for a role that may read only
+  // the reviewed list, and sending them there was a 403 on a typed URL.
+  { path: 'scans/group', element: <FirstPermittedRedirect views={['pending', 'reviewed']} /> },
+  {
+    path: 'scans/expert',
+    element: <FirstPermittedRedirect views={['expert', 'expert-reviewed']} />,
+  },
   { path: 'scans', element: <Navigate to={SCAN_VAULT_PATH.my} replace /> },
 ];

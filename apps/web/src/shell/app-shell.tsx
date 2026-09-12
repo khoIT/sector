@@ -48,6 +48,13 @@ export function AppShell() {
 
   const title = t(shellTitleKeyFor(location.pathname));
 
+  // The tab, the history entry and the bookmark all read from this. A constant
+  // left a reviewer with six identical "ScanVault" entries and no way to tell
+  // which was the queue they wanted back.
+  useEffect(() => {
+    document.title = `${title} · ScanVault`;
+  }, [title]);
+
   return (
     // nuqs needs router context, so the adapter lives inside a route element
     // rather than around <RouterProvider>. Every URL-state hook in the tabs
