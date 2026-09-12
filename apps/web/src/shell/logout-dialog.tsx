@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@scanvault/ui';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/auth/auth-context';
@@ -30,6 +31,7 @@ export type LogoutDialogProps = {
  */
 export function LogoutDialog({ open, onOpenChange }: LogoutDialogProps) {
   const auth = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   function confirm() {
@@ -45,19 +47,18 @@ export function LogoutDialog({ open, onOpenChange }: LogoutDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Sign out?</DialogTitle>
+          <DialogTitle>{t('logout.title')}</DialogTitle>
           <DialogDescription>
-            You are signed in as <span className="text-ink">{accountDisplayName(auth.user)}</span>.
-            Anything still uploading will stop.
+            {t('logout.body', { name: accountDisplayName(auth.user) })}
           </DialogDescription>
         </DialogHeader>
 
         <DialogFooter>
           <Button variant="secondary" size="sm" onClick={() => onOpenChange(false)}>
-            Stay signed in
+            {t('logout.stay')}
           </Button>
           <Button variant="danger" size="sm" onClick={confirm}>
-            Sign out
+            {t('logout.confirm')}
           </Button>
         </DialogFooter>
       </DialogContent>

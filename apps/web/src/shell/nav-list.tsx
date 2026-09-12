@@ -1,4 +1,5 @@
 import { Badge, cn } from '@scanvault/ui';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/auth/auth-context';
@@ -24,6 +25,7 @@ function NavItemLink({
   active: boolean;
   onNavigate?: () => void;
 }) {
+  const { t } = useTranslation();
   const Icon = item.icon;
   const badge = item.badge;
 
@@ -53,7 +55,12 @@ function NavItemLink({
         )}
       />
       <Icon className={cn('h-4 w-4 shrink-0', active && 'text-accent-ink')} aria-hidden />
-      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+      {/* Translated labels run longer than the English they were sized for —
+          "Escaneos de expertos" against "Expert Scans" — so the full text has
+          to be reachable on hover once the rail truncates it. */}
+      <span className="min-w-0 flex-1 truncate" title={t(item.labelKey)}>
+        {t(item.labelKey)}
+      </span>
 
       {typeof badge === 'number' && badge > 0 ? (
         <Badge tone="accent" className="sv-num shrink-0">
@@ -78,6 +85,7 @@ export type NavListProps = {
  * the same landmark label.
  */
 export function NavList({ badges, onNavigate, className }: NavListProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { pathname } = useLocation();
   const groups = visibleNavGroups(user, badges);
@@ -88,7 +96,7 @@ export function NavList({ badges, onNavigate, className }: NavListProps) {
         <div key={group.id}>
           {group.showLabel ? (
             <p className="px-2.5 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-ink-dim">
-              {group.label}
+              {t(group.labelKey)}
             </p>
           ) : null}
 

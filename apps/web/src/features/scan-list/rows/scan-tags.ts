@@ -17,16 +17,16 @@
  * Anything with no label here is dropped too. A raw database token shown to a
  * user is a leak, not a feature, and a new tag should be added deliberately.
  */
-const SCAN_TAG_LABEL: Readonly<Record<string, string>> = {
-  expert_scan_review: 'Expert review',
-  resubmitted: 'Resubmitted',
-  dicom: 'DICOM',
+const SCAN_TAG_KEY: Readonly<Record<string, string>> = {
+  expert_scan_review: 'row.expertReview',
+  resubmitted: 'row.resubmitted',
+  dicom: 'row.dicom',
 };
 
 /** Stored, deliberately never rendered. See the note above. */
 const SUPPRESSED_TAGS: ReadonlySet<string> = new Set(['complete', 'incomplete']);
 
-export type DisplayTag = { id: string; label: string };
+export type DisplayTag = { id: string; labelKey: string };
 
 /**
  * The tags worth a chip, in the order the server sent them, de-duplicated.
@@ -41,11 +41,11 @@ export function displayTags(tags: readonly string[] | null | undefined): Display
     const id = raw.trim().toLowerCase();
     if (!id || seen.has(id) || SUPPRESSED_TAGS.has(id)) continue;
 
-    const label = SCAN_TAG_LABEL[id];
-    if (!label) continue;
+    const labelKey = SCAN_TAG_KEY[id];
+    if (!labelKey) continue;
 
     seen.add(id);
-    result.push({ id, label });
+    result.push({ id, labelKey });
   }
 
   return result;
@@ -54,11 +54,4 @@ export function displayTags(tags: readonly string[] | null | undefined): Display
 /** True when fewer files arrived than the scan declared. */
 export function isMissingFiles(fileCount: number, fileTotal: number): boolean {
   return fileTotal > 0 && fileCount < fileTotal;
-}
-
-/** Hover text for a short file count, naming how many are missing. */
-export function missingFilesTitle(fileCount: number, fileTotal: number): string | undefined {
-  if (!isMissingFiles(fileCount, fileTotal)) return undefined;
-  const missing = fileTotal - fileCount;
-  return `${missing} of ${fileTotal} file${fileTotal === 1 ? '' : 's'} never finished uploading`;
 }

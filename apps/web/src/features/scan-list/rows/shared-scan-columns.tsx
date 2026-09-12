@@ -15,6 +15,8 @@ import { ScanRowMenu } from './scan-row-menu';
 
 export type SharedScanColumnContext = {
   returnUrl: string;
+  /** Translator from the calling component, so this stays a pure factory. */
+  t: (key: string, options?: Record<string, unknown>) => string;
   /** Needed by the row menu for the note permissions. */
   user: AuthUser | null;
 };
@@ -31,11 +33,12 @@ export type SharedScanColumnContext = {
 export function sharedScanColumns({
   returnUrl,
   user,
+  t,
 }: SharedScanColumnContext): Array<ListColumn<SharedScanListItem>> {
   return [
     {
       id: 'details',
-      header: 'Details',
+      header: t('columns.details'),
       alwaysVisible: true,
       cell: (share) => (
         <TitleCell
@@ -55,17 +58,17 @@ export function sharedScanColumns({
     },
     {
       id: 'scanType',
-      header: 'Scan type',
+      header: t('columns.scanType'),
       cell: (share) => <ScanTypeCell scanType={share.scan.scanType} />,
     },
     {
       id: 'sharedBy',
-      header: 'Shared by',
+      header: t('columns.sharedBy'),
       cell: (share) => <UserCell user={share.sharedBy} />,
     },
     {
       id: 'shareStatus',
-      header: 'Share',
+      header: t('columns.share'),
       cell: (share) => (
         <StatusPill
           tone={share.status === 'opened' ? 'ok' : 'accent'}
@@ -75,19 +78,19 @@ export function sharedScanColumns({
     },
     {
       id: 'scanStatus',
-      header: 'Scan status',
+      header: t('columns.scanStatus'),
       cell: (share) => <StatusCell status={share.scan.status} />,
     },
     {
       id: 'createdAt',
-      header: 'Shared',
+      header: t('columns.shared'),
       sortField: 'createdAt',
       numeric: true,
       cell: (share) => <DateCell iso={share.createdAt} format={formatDate} />,
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: t('columns.actions'),
       alwaysVisible: true,
       className: 'text-right',
       cell: (share) => (

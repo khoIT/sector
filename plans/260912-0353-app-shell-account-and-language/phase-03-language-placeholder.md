@@ -1,7 +1,7 @@
 ---
 phase: 3
-title: "Language placeholder"
-status: pending
+title: Language placeholder
+status: completed
 priority: P2
 dependencies: []
 ---
@@ -39,6 +39,34 @@ listed and selectable but marked. A user who picks Français gets English text a
 note saying that language is not translated yet — which is the truth, and better than either
 hiding the control or showing raw keys.
 
+### Corrected at build time: it did not ship as a placeholder
+
+**The legacy locale files are not empty, and they are not copies.** Each of the six non-English
+files carries 2,775 keys against English's 2,824, and only 60 of them are byte-identical to the
+English — they are real translations. The sections Scan Vault needs are fully covered in every
+locale: `common` 108 keys, `scans` 549, `navigation` 25, `account` 113, `pagination` 9,
+`datatable` 22, with zero missing.
+
+So the six languages ship **working**, not marked. `scripts/import-legacy-translations.mjs`
+matches Scan Vault's English strings against that corpus **by text rather than by key** — the
+two apps' key trees have nothing in common — and lifts what it finds, carrying Scan Vault's own
+interpolation names across. 51 of 124 strings match; the rest fall back to English.
+
+That remainder is not a gap waiting on a translator so much as Scan Vault's own vocabulary:
+Outcome, Waiting, Asked, `n not examined`, the rubric line, the media split. None of it has
+ever been translated because none of it has ever existed. A "not translated yet" marker on six
+of seven languages would have described a distinction that does not hold — every language
+including English-adjacent ones falls back on exactly the same 73 strings — so the switcher
+carries no marker.
+
+**Product names are excluded.** The corpus has a match for "Scan Vault" and translates it word
+by word; Spanish came back as *Escanea Bóveda*, which reads as "it scans vault" and names
+nothing. `DO_NOT_TRANSLATE` in the import script holds those keys.
+
+**Translated labels are longer than the English they were sized for.** *Escaneos de expertos*
+against *Expert Scans* truncates in the 240px rail, caught in the browser rather than in
+review, so nav entries gained a hover title.
+
 ### The control
 
 Matches legacy: a flag icon plus the language name above `md`, the flag alone below it. Legacy
@@ -68,6 +96,7 @@ seven eager JSON imports is a bundle cost legacy pays and this app need not.
 ## Implementation Steps
 
 1. Add `i18next` and `react-i18next`; initialise with `en` only and a lazy loader for the rest.
+   **Done** — the six locale bundles build as separate 1.5 kB chunks.
 2. `config.ts`: the seven display names and the flag map, copied from legacy so the three
    non-obvious mappings survive.
 3. `language-store.ts`: read `localStorage.language` on boot, write on change, set
@@ -89,10 +118,11 @@ seven eager JSON imports is a bundle cost legacy pays and this app need not.
 - **A half-converted app is worse than an unconverted one** if the boundary is unclear. The
   boundary here is explicit: shell and scan list now, create-scan after its redesign, and the
   seeded `en.json` is the record of what has been converted.
-- **Shipping six selectable languages that do not translate anything** could read as broken.
-  The dim marker is the mitigation; if that still reads badly, list only English and keep the
-  control, which is a one-line change to the locale list.
-- **`fil` has no flag in most icon sets** — legacy maps it to `ph`. Confirm the chosen icon
-  source has it before committing to that source.
+- ~~**Shipping six selectable languages that do not translate anything.**~~ **Does not arise.**
+  All six carry real translations for the shared vocabulary — see the correction above.
+- ~~**`fil` has no flag in most icon sets.**~~ **Does not arise.** No icon set is used: the flag
+  is two regional-indicator codepoints derived from the country code, so `ph` renders like any
+  other. Where a platform has no flag glyph (Windows Chrome) it draws the two letters, which
+  still says which country.
 - Rollback: revert; strings return to literals since the keys and the fallbacks both resolve to
   English text.

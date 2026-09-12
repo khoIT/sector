@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@scanvault/ui';
+import { useTranslation } from 'react-i18next';
 
 export type DeleteScanDialogProps = {
   scanId: string;
@@ -30,6 +31,7 @@ export function DeleteScanDialog({
   open,
   onOpenChange,
 }: DeleteScanDialogProps) {
+  const { t } = useTranslation();
   const deleteScan = useDeleteScanMutation();
 
   async function confirm() {
@@ -53,18 +55,15 @@ export function DeleteScanDialog({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete this scan?</DialogTitle>
-          <DialogDescription>
-            <span className="text-ink">{scanTitle}</span> will be removed from your lists,
-            along with its review and its files. You cannot undo this yourself.
-          </DialogDescription>
+          <DialogTitle>{t('deleteDialog.title')}</DialogTitle>
+          <DialogDescription>{t('deleteDialog.body', { title: scanTitle })}</DialogDescription>
         </DialogHeader>
 
         {deleteScan.isError ? (
           <p className="rounded-token border border-crit/25 bg-crit-soft px-3 py-2 text-body text-crit">
             {isApiError(deleteScan.error)
               ? deleteScan.error.message
-              : 'The scan could not be deleted.'}
+              : t('deleteDialog.error')}
           </p>
         ) : null}
 
@@ -75,7 +74,7 @@ export function DeleteScanDialog({
             disabled={deleteScan.isPending}
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            {t('actions.cancel')}
           </Button>
           <Button
             variant="danger"
@@ -83,7 +82,7 @@ export function DeleteScanDialog({
             disabled={deleteScan.isPending}
             onClick={() => void confirm()}
           >
-            {deleteScan.isPending ? 'Deleting…' : 'Delete scan'}
+            {deleteScan.isPending ? t('deleteDialog.pending') : t('deleteDialog.confirm')}
           </Button>
         </DialogFooter>
       </DialogContent>

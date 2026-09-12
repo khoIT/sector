@@ -3,7 +3,9 @@ import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
 import { Suspense, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
-import { shellTitleFor } from './nav-config';
+import { useTranslation } from 'react-i18next';
+
+import { shellTitleKeyFor } from './nav-config';
 import { NavList } from './nav-list';
 import { Sidebar } from './sidebar';
 import { MOBILE_NAV_ID, SHELL_HEADING_ID, Topbar } from './topbar';
@@ -35,6 +37,7 @@ function RouteFallback() {
 export function AppShell() {
   const location = useLocation();
   const badges = useNavBadges();
+  const { t } = useTranslation();
   const [navOpen, setNavOpen] = useState(false);
 
   // A navigation from the mobile panel must close it; NavList's onNavigate
@@ -43,7 +46,7 @@ export function AppShell() {
     setNavOpen(false);
   }, [location.pathname]);
 
-  const title = shellTitleFor(location.pathname);
+  const title = t(shellTitleKeyFor(location.pathname));
 
   return (
     // nuqs needs router context, so the adapter lives inside a route element

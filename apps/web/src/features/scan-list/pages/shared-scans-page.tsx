@@ -2,6 +2,7 @@ import { useSharedScanList } from '@scanvault/api-client';
 import { EmptyState } from '@scanvault/ui';
 import { Share2 } from 'lucide-react';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/auth/auth-context';
 
@@ -30,16 +31,20 @@ const DEFAULT_SORT: SortState[] = [{ id: 'createdAt', desc: true }];
  */
 export function SharedScansPage() {
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const defaultHidden = useMemo(
-    () => defaultHiddenColumns(sharedScanColumns({ returnUrl: '', user: null })),
-    [],
+    () => defaultHiddenColumns(sharedScanColumns({ returnUrl: '', user: null, t })),
+    [t],
   );
 
   const surface = useListSurface('shared', DEFAULT_SORT, defaultHidden);
   const { url, debouncedKeyword, hiddenColumns, returnUrl } = surface;
 
-  const columns = useMemo(() => sharedScanColumns({ returnUrl, user }), [returnUrl, user]);
+  const columns = useMemo(
+    () => sharedScanColumns({ returnUrl, user, t }),
+    [returnUrl, user, t],
+  );
   const shown = useMemo(() => visibleColumns(columns, hiddenColumns), [columns, hiddenColumns]);
 
   const query = useSharedScanList({

@@ -18,6 +18,7 @@ import {
 } from '@scanvault/ui';
 import { Download, MessageSquare, MoreVertical, Play, Share2, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { ScanNotesDialog } from '@/features/scan-detail/components/scan-notes-dialog';
@@ -49,12 +50,12 @@ type Dialogs = 'share' | 'notes' | 'delete' | null;
 
 type DownloadReport = { tone: 'warn' | 'crit'; message: string; failed: string[] };
 
-const ACTION_LABEL: Record<RowActionId, string> = {
-  open: 'Open scan',
-  share: 'Share',
-  download: 'Download',
-  comment: 'Comment',
-  delete: 'Delete scan',
+const ACTION_KEY: Record<RowActionId, string> = {
+  open: 'actions.openScan',
+  share: 'actions.share',
+  download: 'actions.download',
+  comment: 'actions.comment',
+  delete: 'actions.deleteScan',
 };
 
 const ACTION_ICON = {
@@ -84,6 +85,7 @@ export function ScanRowMenu({
   user,
   to,
 }: ScanRowMenuProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [dialog, setDialog] = useState<Dialogs>(null);
   const [downloading, setDownloading] = useState(false);
@@ -126,7 +128,7 @@ export function ScanRowMenu({
         message:
           error instanceof ScanDownloadError
             ? error.message
-            : 'The download failed. Please try again.',
+            : t('actions.downloadFailed'),
         failed: error instanceof ScanDownloadError ? error.failed : [],
       });
     } finally {
@@ -151,12 +153,12 @@ export function ScanRowMenu({
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
             <MoreVertical className="h-4 w-4" aria-hidden />
-            <span className="sr-only">Actions for {scanTitle}</span>
+            <span className="sr-only">{t('actions.rowMenuFor', { title: scanTitle })}</span>
           </Button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuLabel>{t('columns.actions')}</DropdownMenuLabel>
 
           {ordinary.map((action) => {
             const Icon = ACTION_ICON[action];
@@ -168,10 +170,10 @@ export function ScanRowMenu({
                 onSelect={() => run(action)}
               >
                 <Icon className="h-4 w-4 shrink-0 opacity-70" aria-hidden />
-                {action === 'download' && downloading ? 'Downloading…' : ACTION_LABEL[action]}
+                {action === 'download' && downloading ? t('actions.downloading') : t(ACTION_KEY[action])}
                 {/* A disabled item cannot receive hover, so its reason has to
                     be on screen rather than in a title attribute. */}
-                {disabled ? <DropdownMenuHint>no files</DropdownMenuHint> : null}
+                {disabled ? <DropdownMenuHint>{t('actions.noFiles')}</DropdownMenuHint> : null}
               </DropdownMenuItem>
             );
           })}
@@ -184,7 +186,7 @@ export function ScanRowMenu({
                 return (
                   <DropdownMenuItem key={action} tone="crit" onSelect={() => run(action)}>
                     <Icon className="h-4 w-4 shrink-0" aria-hidden />
-                    {ACTION_LABEL[action]}
+                    {t(ACTION_KEY[action])}
                   </DropdownMenuItem>
                 );
               })}

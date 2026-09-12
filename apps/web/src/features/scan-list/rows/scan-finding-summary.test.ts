@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  formatFindingCount,
-  gapFindingTitle,
-  isGapFinding,
-  summariseFindings,
-} from './scan-finding-summary';
+import { isGapFinding, summariseFindings } from './scan-finding-summary';
 
 function finding(value: string, id = value) {
   return { id, key: 'v2_aaa_long_lvl1', value };
@@ -73,24 +68,5 @@ describe('summariseFindings', () => {
   it('handles an absent list', () => {
     expect(summariseFindings(null)).toEqual({ count: 0, gaps: 0 });
     expect(summariseFindings([])).toEqual({ count: 0, gaps: 0 });
-  });
-});
-
-describe('formatFindingCount', () => {
-  it('is singular at one and silent at none', () => {
-    expect(formatFindingCount({ count: 1, gaps: 0 })).toBe('1 finding');
-    expect(formatFindingCount({ count: 6, gaps: 0 })).toBe('6 findings');
-    expect(formatFindingCount({ count: 0, gaps: 0 })).toBeNull();
-  });
-});
-
-describe('gapFindingTitle', () => {
-  it('names how many items went unexamined', () => {
-    expect(gapFindingTitle({ count: 5, gaps: 1 })).toBe('1 item recorded as not examined');
-    expect(gapFindingTitle({ count: 5, gaps: 3 })).toBe('3 items recorded as not examined');
-  });
-
-  it('says nothing when there is no gap', () => {
-    expect(gapFindingTitle({ count: 5, gaps: 0 })).toBeUndefined();
   });
 });

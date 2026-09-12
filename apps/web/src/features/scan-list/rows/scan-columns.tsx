@@ -22,6 +22,8 @@ import { ScanRowMenu } from './scan-row-menu';
 
 export type ScanColumnContext = {
   view: ScanListView;
+  /** Translator from the calling component, so this stays a pure factory. */
+  t: (key: string, options?: Record<string, unknown>) => string;
   user: AuthUser | null;
   /** The list URL to come back to, carried into every row link. */
   returnUrl: string;
@@ -39,7 +41,7 @@ export type ScanColumnContext = {
  * "Date Created" on its twin) without anyone noticing.
  */
 export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>> {
-  const { view, user, returnUrl, now } = context;
+  const { view, user, returnUrl, now, t } = context;
   const queue = isReviewQueue(view);
   const reviewed = isReviewedList(view);
   const canReview = hasPermission(user, 'create:scan:review');
@@ -47,7 +49,7 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
   const columns: Array<ListColumn<Scan>> = [
     {
       id: 'details',
-      header: 'Details',
+      header: t('columns.details'),
       sortField: 'title',
       alwaysVisible: true,
       cell: (scan) => (
@@ -70,7 +72,7 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
   if (view !== 'my') {
     columns.push({
       id: 'learner',
-      header: 'Learner',
+      header: t('columns.learner'),
       sortField: 'firstName',
       cell: (scan) => <UserCell user={scan.user} />,
     });
@@ -78,7 +80,7 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
 
   columns.push({
     id: 'scanType',
-    header: 'Scan type',
+    header: t('columns.scanType'),
     sortField: 'scanType',
     cell: (scan) => <ScanTypeCell scanType={scan.scanType} />,
   });
@@ -92,7 +94,7 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
   if (view === 'my') {
     columns.push({
       id: 'outcome',
-      header: 'Outcome',
+      header: t('columns.outcome'),
       sortField: 'status',
       cell: (scan) => <OutcomeCell outcome={scanOutcome(scan)} status={scan.status} />,
     });
@@ -101,7 +103,7 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
   if (view !== 'my') {
     columns.push({
       id: 'groups',
-      header: 'Groups',
+      header: t('columns.groups'),
       cell: (scan) => <GroupsCell groups={scan.groups} scanTitle={scan.title} />,
     });
   }
@@ -109,7 +111,7 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
   if (queue) {
     columns.push({
       id: 'waiting',
-      header: 'Waiting',
+      header: t('columns.waiting'),
       // Longest waiting first is OLDEST first, so a descending click on this
       // column has to send `createdAt:asc`.
       sortField: 'createdAt',
@@ -121,7 +123,7 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
 
   columns.push({
     id: 'createdAt',
-    header: 'Submitted',
+    header: t('columns.submitted'),
     sortField: 'createdAt',
     numeric: true,
     // On a queue the Waiting column already carries this, with the exact
@@ -134,14 +136,14 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
     columns.push(
       {
         id: 'reviewedAt',
-        header: 'Reviewed',
+        header: t('columns.reviewed'),
         sortField: 'reviewedAt',
         numeric: true,
         cell: (scan) => <DateCell iso={scan.reviewedAt} format={formatDate} />,
       },
       {
         id: 'reviewedBy',
-        header: 'Reviewed by',
+        header: t('columns.reviewedBy'),
         cell: (scan) => <ReviewedByCell user={scan.review?.user} />,
       },
     );
@@ -151,7 +153,7 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
   // queue exists — and everything else sits behind the menu beside it.
   columns.push({
     id: 'actions',
-    header: 'Actions',
+    header: t('columns.actions'),
     alwaysVisible: true,
     className: 'text-right',
     cell: (scan) => {
@@ -166,7 +168,7 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
               isOwnScan={Boolean(user) && scan.user.id === user?.id}
             />
           ) : (
-            <OpenScanAction to={to} label={reviewed ? 'Open review' : 'Open'} />
+            <OpenScanAction to={to} label={reviewed ? t('actions.openReview') : t('actions.open')} />
           )}
 
           <ScanRowMenu

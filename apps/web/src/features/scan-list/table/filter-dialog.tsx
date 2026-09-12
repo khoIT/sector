@@ -16,6 +16,7 @@ import {
 } from '@scanvault/ui';
 import { SlidersHorizontal } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { CheckboxFilterList, RadioFilterList, type FilterOption } from './filter-controls';
 import {
@@ -40,6 +41,7 @@ export type FilterDialogProps = {
  * request per decision.
  */
 export function FilterDialog({ spec, filters, onApply }: FilterDialogProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<FilterState[]>(filters);
 
@@ -97,7 +99,7 @@ export function FilterDialog({ spec, filters, onApply }: FilterDialogProps) {
       <DialogTrigger asChild>
         <Button variant="secondary" size="sm">
           <SlidersHorizontal className="h-4 w-4" aria-hidden />
-          Filters
+          {t('toolbar.filters')}
           {activeCount > 0 ? (
             <span className="sv-num rounded-full bg-accent px-1.5 text-[11px] text-scan-ground">
               {activeCount}
@@ -108,8 +110,8 @@ export function FilterDialog({ spec, filters, onApply }: FilterDialogProps) {
 
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Filters</DialogTitle>
-          <DialogDescription>Narrow this list. Filters run on the server.</DialogDescription>
+          <DialogTitle>{t('toolbar.filters')}</DialogTitle>
+          <DialogDescription>{t('toolbar.filtersDescription')}</DialogDescription>
         </DialogHeader>
 
         <div className="flex max-h-[60vh] flex-col gap-4 overflow-y-auto py-1">

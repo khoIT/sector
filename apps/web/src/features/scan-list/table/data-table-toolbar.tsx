@@ -1,6 +1,7 @@
 import { Button, Input } from '@scanvault/ui';
 import { Search, X } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { ListColumn } from './column-model';
 import { ColumnVisibilityDialog } from './column-visibility-dialog';
@@ -43,6 +44,9 @@ export function DataTableToolbar<TRow>({
   totalItems,
   children,
 }: DataTableToolbarProps<TRow>) {
+  const { t } = useTranslation();
+  const searchPlaceholder = t(spec.searchPlaceholderKey);
+
   return (
     <div className="flex flex-wrap items-center gap-2 pb-3">
       <div className="relative min-w-[14rem] flex-1">
@@ -53,15 +57,15 @@ export function DataTableToolbar<TRow>({
         <Input
           value={keyword}
           onChange={(event) => onKeywordChange(event.target.value)}
-          placeholder={spec.searchPlaceholder}
-          aria-label={spec.searchPlaceholder}
+          placeholder={searchPlaceholder}
+          aria-label={searchPlaceholder}
           className="pl-8 pr-8"
         />
         {keyword ? (
           <button
             type="button"
             onClick={() => onKeywordChange('')}
-            aria-label="Clear search"
+            aria-label={t('toolbar.clearSearch')}
             className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-ink-dim outline-none hover:text-ink focus-visible:ring-2 focus-visible:ring-accent-ink"
           >
             <X className="h-3.5 w-3.5" aria-hidden />
@@ -71,8 +75,7 @@ export function DataTableToolbar<TRow>({
 
       {typeof totalItems === 'number' ? (
         <span className="hidden text-body text-ink-dim sm:inline">
-          <span className="sv-num">{totalItems.toLocaleString()}</span>{' '}
-          {totalItems === 1 ? 'scan' : 'scans'}
+          {t('toolbar.scanCount', { count: totalItems, formattedCount: totalItems.toLocaleString() })}
         </span>
       ) : null}
 

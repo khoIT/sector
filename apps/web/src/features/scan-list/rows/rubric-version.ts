@@ -31,10 +31,3 @@ export function rubricVersionLabel(scanType: Pick<ScanTypeRef, 'version'>): stri
   if (typeof version !== 'number' || !Number.isFinite(version) || version <= 0) return null;
   return `v${version}`;
 }
-
-/** Hover text spelling out what the short label means. */
-export function rubricVersionTitle(scanType: Pick<ScanTypeRef, 'version' | 'name'>): string | undefined {
-  const label = rubricVersionLabel(scanType);
-  if (!label) return undefined;
-  return `Submitted under ${scanType.name} rubric ${label}`;
-}

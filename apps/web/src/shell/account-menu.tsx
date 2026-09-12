@@ -11,6 +11,7 @@ import {
 } from '@scanvault/ui';
 import { Check, ChevronDown, LogOut, Monitor, Moon, Sun, User, type LucideIcon } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import { useAuth } from '@/auth/auth-context';
@@ -18,12 +19,12 @@ import { useAuth } from '@/auth/auth-context';
 import { LogoutDialog } from './logout-dialog';
 import { accountDisplayName, initialsFor, realPhotoUrl, roleLabel } from './user-initials';
 
-type ThemeOption = { value: ThemePreference; label: string; Icon: LucideIcon };
+type ThemeOption = { value: ThemePreference; labelKey: string; Icon: LucideIcon };
 
 const THEME_OPTIONS: readonly ThemeOption[] = [
-  { value: 'light', label: 'Light', Icon: Sun },
-  { value: 'dark', label: 'Dark', Icon: Moon },
-  { value: 'system', label: 'System', Icon: Monitor },
+  { value: 'light', labelKey: 'account.themeLight', Icon: Sun },
+  { value: 'dark', labelKey: 'account.themeDark', Icon: Moon },
+  { value: 'system', labelKey: 'account.themeSystem', Icon: Monitor },
 ];
 
 /**
@@ -42,6 +43,7 @@ const THEME_OPTIONS: readonly ThemeOption[] = [
  */
 export function AccountMenu() {
   const auth = useAuth();
+  const { t } = useTranslation();
   const { theme, resolvedTheme, setTheme } = useTheme();
   const [logoutOpen, setLogoutOpen] = useState(false);
 
@@ -61,7 +63,11 @@ export function AccountMenu() {
             'focus-visible:ring-2 focus-visible:ring-accent-ink',
             'data-[state=open]:border-line data-[state=open]:bg-surface-2',
           )}
-          aria-label={`Account: ${name}${role ? `, ${role}` : ''}`}
+          aria-label={
+            role
+              ? t('account.menuLabelWithRole', { name, role })
+              : t('account.menuLabel', { name })
+          }
         >
           <Avatar user={user} />
 
@@ -94,14 +100,14 @@ export function AccountMenu() {
           <DropdownMenuItem asChild>
             <Link to="/profile">
               <User className="h-4 w-4 shrink-0" aria-hidden />
-              Profile
+              {t('account.profile')}
             </Link>
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuLabel>Appearance</DropdownMenuLabel>
-          {THEME_OPTIONS.map(({ value, label, Icon }) => {
+          <DropdownMenuLabel>{t('account.appearance')}</DropdownMenuLabel>
+          {THEME_OPTIONS.map(({ value, labelKey, Icon }) => {
             const active = theme === value;
             return (
               <DropdownMenuItem
@@ -115,7 +121,7 @@ export function AccountMenu() {
                 }}
               >
                 <Icon className="h-4 w-4 shrink-0" aria-hidden />
-                {value === 'system' ? `System (${resolvedTheme})` : label}
+                {value === 'system' ? t(labelKey, { resolved: resolvedTheme }) : t(labelKey)}
                 {active ? (
                   <Check className="ml-auto h-3.5 w-3.5 shrink-0 text-accent-ink" aria-hidden />
                 ) : null}
@@ -137,12 +143,12 @@ export function AccountMenu() {
             }}
           >
             <LogOut className="h-4 w-4 shrink-0" aria-hidden />
-            Sign out
+            {t('account.signOut')}
           </DropdownMenuItem>
 
           {/* Not a menu item: it is here so a bug report can name a build. */}
           <p className="px-2 pb-1 pt-1.5 text-[11px] text-ink-dim">
-            Build <span className="sv-num">{__APP_COMMIT__}</span>
+            {t('account.build')} <span className="sv-num">{__APP_COMMIT__}</span>
           </p>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -26,7 +26,12 @@ export type NavItemId = 'my-scans' | 'shared-scans' | 'group-scans' | 'expert-sc
 
 export type NavItem = {
   id: NavItemId;
-  label: string;
+  /**
+   * Translation key. The English text lives in `i18n/locales/en.json` with the
+   * rest of the strings rather than here, so a translator has one file to work
+   * from and this table stays a description of structure.
+   */
+  labelKey: string;
   icon: LucideIcon;
   /**
    * The surfaces this entry covers, in order. Visibility is "any of these",
@@ -50,7 +55,7 @@ export type ResolvedNavItem = NavItem & {
 
 export type NavGroup<TItem extends NavItem = NavItem> = {
   id: string;
-  label: string;
+  labelKey: string;
   /** The legacy GroupMenu carried `isVisible` for label-less groups. */
   showLabel: boolean;
   items: TItem[];
@@ -59,23 +64,29 @@ export type NavGroup<TItem extends NavItem = NavItem> = {
 export const NAV_GROUPS: readonly NavGroup[] = [
   {
     id: 'scan-vault',
-    label: 'Scan Vault',
+    labelKey: 'nav.section',
     showLabel: true,
     items: [
-      { id: 'my-scans', label: 'My Scans', icon: BookOpen, views: ['my'], matchPrefix: '/scans/my' },
+      {
+        id: 'my-scans',
+        labelKey: 'nav.myScans',
+        icon: BookOpen,
+        views: ['my'],
+        matchPrefix: '/scans/my',
+      },
       {
         // Ungated on purpose, as in the legacy tab bar: a share is granted per
         // scan and the server scopes the list to the caller, so there is no
         // role permission to check.
         id: 'shared-scans',
-        label: 'Shared Scans',
+        labelKey: 'nav.sharedScans',
         icon: Share2,
         views: ['shared'],
         matchPrefix: '/scans/shared',
       },
       {
         id: 'group-scans',
-        label: 'Group Scans',
+        labelKey: 'nav.groupScans',
         icon: Users2,
         views: ['pending', 'reviewed'],
         matchPrefix: '/scans/group',
@@ -83,7 +94,7 @@ export const NAV_GROUPS: readonly NavGroup[] = [
       },
       {
         id: 'expert-scans',
-        label: 'Expert Scans',
+        labelKey: 'nav.expertScans',
         icon: FolderClock,
         views: ['expert', 'expert-reviewed'],
         matchPrefix: '/scans/expert',
@@ -144,6 +155,6 @@ export function activeNavItem(pathname: string): NavItem | undefined {
  * Reviewed"). Putting the full title in both produced the same sentence twice,
  * one above the other.
  */
-export function shellTitleFor(pathname: string): string {
-  return activeNavItem(pathname)?.label ?? 'Scan Vault';
+export function shellTitleKeyFor(pathname: string): string {
+  return activeNavItem(pathname)?.labelKey ?? 'nav.section';
 }

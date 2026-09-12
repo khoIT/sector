@@ -49,19 +49,17 @@ export function summariseMedia(files: readonly MediaFile[] | null | undefined): 
   return { clips, stills };
 }
 
-function term(count: number, singular: string, plural: string): string | null {
-  if (count <= 0) return null;
-  return `${count} ${count === 1 ? singular : plural}`;
-}
-
 /**
- * `4 clips · 2 stills`, or null when there is nothing to say.
+ * The kinds present, in render order, each with its count.
  *
- * A kind with no files is omitted rather than printed as `0 clips`, so a
- * stills-only scan reads as short as it is.
+ * Returns data rather than a formatted string: the plural of "clip" is a
+ * translation concern and belongs to i18next's plural rules, not to a helper
+ * that only knows English. A kind with no files is omitted rather than
+ * rendered as `0 clips`.
  */
-export function formatMediaSummary(summary: MediaSummary): string | null {
-  const parts = [term(summary.clips, 'clip', 'clips'), term(summary.stills, 'still', 'stills')];
-  const present = parts.filter((part): part is string => part !== null);
-  return present.length > 0 ? present.join(' · ') : null;
+export function mediaParts(summary: MediaSummary): Array<{ key: string; count: number }> {
+  const parts: Array<{ key: string; count: number }> = [];
+  if (summary.clips > 0) parts.push({ key: 'row.clip', count: summary.clips });
+  if (summary.stills > 0) parts.push({ key: 'row.still', count: summary.stills });
+  return parts;
 }

@@ -1,4 +1,5 @@
 import type { ScanGroupRef } from '@scanvault/api-client';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -41,6 +42,7 @@ export function ScanGroupsDialog({
   open,
   onOpenChange,
 }: ScanGroupsDialogProps) {
+  const { t } = useTranslation();
   const [keyword, setKeyword] = useState('');
   const filterId = useId();
 
@@ -59,23 +61,24 @@ export function ScanGroupsDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Groups <span className="sv-num font-normal text-ink-dim">({groups.length})</span>
+            {t('groupsDialog.title')}{' '}
+            <span className="sv-num font-normal text-ink-dim">({groups.length})</span>
           </DialogTitle>
           <DialogDescription>
-            Everyone in these groups can see <span className="text-ink">{scanTitle}</span>.
+            {t('groupsDialog.description', { title: scanTitle })}
           </DialogDescription>
         </DialogHeader>
 
         {withFilter ? (
           <div className="mb-2">
             <label htmlFor={filterId} className="sr-only">
-              Filter groups
+              {t('groupsDialog.filter')}
             </label>
             <Input
               id={filterId}
               value={keyword}
               onChange={(event) => setKeyword(event.target.value)}
-              placeholder="Filter groups"
+              placeholder={t('groupsDialog.filter')}
               autoComplete="off"
             />
           </div>
@@ -83,7 +86,7 @@ export function ScanGroupsDialog({
 
         {shown.length === 0 ? (
           <p className="py-6 text-center text-body text-ink-dim">
-            No group matches “{keyword.trim()}”.
+            {t('groupsDialog.noMatch', { keyword: keyword.trim() })}
           </p>
         ) : (
           <ul className="max-h-[50dvh] divide-y divide-line overflow-y-auto rounded-token border border-line">

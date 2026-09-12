@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "myScans": "Mes Scans",
+    "sharedScans": "Scans partagés",
+    "groupScans": "Scans de groupe",
+    "expertScans": "Scans d'experts"
+  },
+  "tabs": {
+    "reviewed": "Révisé"
+  },
+  "columns": {
+    "details": "Détails",
+    "learner": "Apprenant",
+    "status": "État",
+    "groups": "Groupes",
+    "submitted": "Soumis",
+    "reviewed": "Révisé",
+    "reviewedBy": "Révisé par",
+    "actions": "Actions",
+    "share": "PARTAGEZ",
+    "sharedBy": "Partagé par"
+  },
+  "actions": {
+    "openScan": "Ouvrir le scan",
+    "share": "PARTAGEZ",
+    "download": "Télécharger",
+    "comment": "Commenter",
+    "deleteScan": "Supprimer le scan",
+    "createScanStudy": "Créer un scan",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "view": "Afficher"
+  },
+  "status": {
+    "pending": "En attente",
+    "processing": "Traitement",
+    "submitted": "Soumis",
+    "reviewed": "Révisé",
+    "failed": "Échoué",
+    "unopened": "Non ouvert",
+    "opened": "Ouvert"
+  },
+  "outcome": {
+    "achieved": "Atteint",
+    "notAchieved": "Non atteint"
+  },
+  "toolbar": {
+    "filters": "Filtres",
+    "columns": "Colonnes"
+  },
+  "pagination": {
+    "rows": "lignes",
+    "page": "Page",
+    "of": "de",
+    "first": "Aller à la première page",
+    "previous": "Retourner à la page précédente",
+    "next": "Aller à la page suivante",
+    "last": "Aller à la dernière page",
+    "rowsPerPage": "Lignes par page"
+  },
+  "account": {
+    "profile": "Profil",
+    "themeLight": "Lumière",
+    "themeDark": "Sombre",
+    "fallbackName": "Compte"
+  },
+  "groupsDialog": {
+    "title": "Groupes"
+  },
+  "deleteDialog": {
+    "confirm": "Supprimer le scan"
+  },
+  "language": {
+    "label": "Langue"
+  },
+  "empty": {
+    "loading": "Chargement"
+  }
+}

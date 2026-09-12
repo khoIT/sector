@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "myScans": "Aking mga Scan",
+    "sharedScans": "Ibinahaging Pag-scan",
+    "groupScans": "Mga Pag-scan ng Grupo",
+    "expertScans": "Mga Expert Scan"
+  },
+  "tabs": {
+    "reviewed": "Sinuri"
+  },
+  "columns": {
+    "details": "Mga Detalye",
+    "learner": "Mag-aaral",
+    "status": "Katayuan",
+    "groups": "Mga Grupo",
+    "submitted": "Isinumite",
+    "reviewed": "Sinuri",
+    "reviewedBy": "Sinuri Ni",
+    "actions": "Mga pagkilos",
+    "share": "Ibahagi",
+    "sharedBy": "Ibinahagi Ni"
+  },
+  "actions": {
+    "openScan": "Buksan ang Scan",
+    "share": "Ibahagi",
+    "download": "I-download",
+    "comment": "Komento",
+    "deleteScan": "Tanggalin ang Scan",
+    "createScanStudy": "Lumikha ng Scan",
+    "cancel": "Kanselahin",
+    "save": "I-save",
+    "view": "Tingnan"
+  },
+  "status": {
+    "pending": "Nagbabantay",
+    "processing": "Pagproseso",
+    "submitted": "Isinumite",
+    "reviewed": "Sinuri",
+    "failed": "Nabigo",
+    "unopened": "Hindi binuksan",
+    "opened": "Binuksan"
+  },
+  "outcome": {
+    "achieved": "Nakamit",
+    "notAchieved": "Hindi Nakamit"
+  },
+  "toolbar": {
+    "filters": "Mga Filter",
+    "columns": "Mga Haligi"
+  },
+  "pagination": {
+    "rows": "hilera",
+    "page": "Pahina",
+    "of": "ng",
+    "first": "Pumunta sa unang pahina",
+    "previous": "Pumunta sa nakaraang pahina",
+    "next": "Pumunta sa susunod na pahina",
+    "last": "Pumunta sa huling pahina",
+    "rowsPerPage": "Mga hilera bawat pahina"
+  },
+  "account": {
+    "profile": "[FIL] Profile",
+    "themeLight": "Liwanag",
+    "themeDark": "Madilim",
+    "fallbackName": "[FIL] Account"
+  },
+  "groupsDialog": {
+    "title": "Mga Grupo"
+  },
+  "deleteDialog": {
+    "confirm": "Tanggalin ang Scan"
+  },
+  "language": {
+    "label": "Wika"
+  },
+  "empty": {
+    "loading": "Pag-load"
+  }
+}

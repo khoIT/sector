@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "myScans": "Le Mie Scansioni",
+    "sharedScans": "Scansioni condivise",
+    "groupScans": "Scansioni di gruppo",
+    "expertScans": "Scansioni da parte di esperti"
+  },
+  "tabs": {
+    "reviewed": "Recensito"
+  },
+  "columns": {
+    "details": "Dettagli",
+    "learner": "Allievo",
+    "status": "Stato",
+    "groups": "Gruppi",
+    "submitted": "Inviato",
+    "reviewed": "Recensito",
+    "reviewedBy": "Recensito da",
+    "actions": "Azioni",
+    "share": "Condividi",
+    "sharedBy": "Condiviso da"
+  },
+  "actions": {
+    "openScan": "Apri scansione",
+    "share": "Condividi",
+    "download": "Scarica",
+    "comment": "Commento",
+    "deleteScan": "Elimina scansione",
+    "createScanStudy": "Crea scansione",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "view": "Visualizza"
+  },
+  "status": {
+    "pending": "In sospeso",
+    "processing": "Elaborazione",
+    "submitted": "Inviato",
+    "reviewed": "Recensito",
+    "failed": "Fallito",
+    "unopened": "Non aperto",
+    "opened": "Aperta"
+  },
+  "outcome": {
+    "achieved": "Raggiunto",
+    "notAchieved": "Non raggiunto"
+  },
+  "toolbar": {
+    "filters": "Filtri",
+    "columns": "Colonne"
+  },
+  "pagination": {
+    "rows": "righe",
+    "page": "Pagina",
+    "of": "di",
+    "first": "Vai alla prima pagina",
+    "previous": "Vai alla pagina precedente",
+    "next": "Vai alla pagina successiva",
+    "last": "Vai all'ultima pagina",
+    "rowsPerPage": "Righe per pagina"
+  },
+  "account": {
+    "profile": "Profilo",
+    "themeLight": "Leggero",
+    "themeDark": "Scuro",
+    "fallbackName": "Account"
+  },
+  "groupsDialog": {
+    "title": "Gruppi"
+  },
+  "deleteDialog": {
+    "confirm": "Elimina scansione"
+  },
+  "language": {
+    "label": "Lingua"
+  },
+  "empty": {
+    "loading": "Caricamento"
+  }
+}

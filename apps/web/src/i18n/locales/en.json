@@ -1,0 +1,156 @@
+{
+  "nav": {
+    "section": "Scan Vault",
+    "myScans": "My Scans",
+    "sharedScans": "Shared Scans",
+    "groupScans": "Group Scans",
+    "expertScans": "Expert Scans",
+    "openNavigation": "Open navigation",
+    "closeNavigation": "Close navigation",
+    "primary": "Primary",
+    "skipToContent": "Skip to content"
+  },
+  "tabs": {
+    "unreviewed": "Unreviewed",
+    "reviewed": "Reviewed"
+  },
+  "columns": {
+    "details": "Details",
+    "learner": "Learner",
+    "scanType": "Scan type",
+    "status": "Status",
+    "outcome": "Outcome",
+    "groups": "Groups",
+    "waiting": "Waiting",
+    "submitted": "Submitted",
+    "reviewed": "Reviewed",
+    "reviewedBy": "Reviewed by",
+    "actions": "Actions",
+    "share": "Share",
+    "scanStatus": "Scan status",
+    "sharedBy": "Shared by",
+    "shared": "Shared"
+  },
+  "actions": {
+    "assess": "Assess",
+    "open": "Open",
+    "openScan": "Open scan",
+    "openReview": "Open review",
+    "share": "Share",
+    "download": "Download",
+    "comment": "Comment",
+    "deleteScan": "Delete scan",
+    "createScanStudy": "Create Scan Study",
+    "cancel": "Cancel",
+    "save": "Save",
+    "noFiles": "no files",
+    "rowMenu": "More actions",
+    "view": "View",
+    "downloading": "Downloading…",
+    "rowMenuFor": "Actions for {{title}}",
+    "downloadFailed": "The download failed. Please try again."
+  },
+  "status": {
+    "pending": "Pending",
+    "processing": "Processing",
+    "submitted": "Submitted",
+    "reviewed": "Reviewed",
+    "failed": "Failed",
+    "unopened": "Unopened",
+    "opened": "Opened",
+    "failedUpload": "Upload failed",
+    "partiallyUploaded": "Partly uploaded"
+  },
+  "outcome": {
+    "achieved": "Achieved",
+    "notAchieved": "Not achieved",
+    "noOutcome": "No outcome",
+    "noOutcomeTitle": "Reviewed, but no competency outcome was recorded"
+  },
+  "row": {
+    "files": "{{count}}/{{total}} files",
+    "clip_one": "{{count}} clip",
+    "clip_other": "{{count}} clips",
+    "still_one": "{{count}} still",
+    "still_other": "{{count}} stills",
+    "finding_one": "{{count}} finding",
+    "finding_other": "{{count}} findings",
+    "identifier": "ID {{value}}",
+    "asked": "Asked",
+    "notExamined": "{{count}} not examined",
+    "notExaminedTitle_one": "{{count}} item recorded as not examined",
+    "notExaminedTitle_other": "{{count}} items recorded as not examined",
+    "missingFiles_one": "{{count}} of {{total}} file never finished uploading",
+    "missingFiles_other": "{{count}} of {{total}} files never finished uploading",
+    "expertReview": "Expert review",
+    "resubmitted": "Resubmitted",
+    "dicom": "DICOM",
+    "showAllGroups": "Show all {{count}} groups for {{title}}",
+    "rubricTitle": "Submitted under {{name}} rubric {{version}}",
+    "none": "—"
+  },
+  "toolbar": {
+    "searchScans": "Search by title, identifier or learner",
+    "searchMyScans": "Search your scans by title or identifier",
+    "filters": "Filters",
+    "columns": "Columns",
+    "columnsHidden": "({{count}} hidden)",
+    "scanCount_one": "{{formattedCount}} scan",
+    "scanCount_other": "{{formattedCount}} scans",
+    "clearSearch": "Clear search",
+    "searchSharedScans": "Search shared scans by title or identifier",
+    "filtersDescription": "Narrow this list. Filters run on the server."
+  },
+  "pagination": {
+    "rows": "Rows",
+    "page": "Page",
+    "of": "of",
+    "range": "{{from}}–{{to}} of {{total}}",
+    "first": "Go to first page",
+    "previous": "Go to previous page",
+    "next": "Go to next page",
+    "last": "Go to last page",
+    "rowsPerPage": "Rows per page",
+    "pageNumber": "Page number, 1 to {{total}}"
+  },
+  "account": {
+    "menuLabel": "Account: {{name}}",
+    "menuLabelWithRole": "Account: {{name}}, {{role}}",
+    "profile": "Profile",
+    "appearance": "Appearance",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System ({{resolved}})",
+    "signOut": "Sign out",
+    "build": "Build",
+    "fallbackName": "Account"
+  },
+  "logout": {
+    "title": "Sign out?",
+    "body": "You are signed in as {{name}}. Anything still uploading will stop.",
+    "stay": "Stay signed in",
+    "confirm": "Sign out"
+  },
+  "groupsDialog": {
+    "title": "Groups",
+    "description": "Everyone in these groups can see {{title}}.",
+    "filter": "Filter groups",
+    "noMatch": "No group matches “{{keyword}}”."
+  },
+  "deleteDialog": {
+    "title": "Delete this scan?",
+    "body": "{{title}} will be removed from your lists, along with its review and its files. You cannot undo this yourself.",
+    "confirm": "Delete scan",
+    "pending": "Deleting…",
+    "error": "The scan could not be deleted."
+  },
+  "language": {
+    "label": "Language",
+    "change": "Change language"
+  },
+  "empty": {
+    "noScans": "No scans",
+    "noScansDescription": "Nothing here yet.",
+    "loading": "Loading"
+  }
+}

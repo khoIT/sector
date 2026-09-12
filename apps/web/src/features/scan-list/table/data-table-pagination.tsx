@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Select, SelectContent, SelectItem, SelectTrigger, cn } from '@scanvault/ui';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
@@ -34,6 +35,7 @@ export function DataTablePagination({
   onLimitChange,
   busy = false,
 }: DataTablePaginationProps) {
+  const { t } = useTranslation();
   const firstRow = totalItems === 0 ? 0 : (page - 1) * limit + 1;
   const lastRow = Math.min(page * limit, totalItems);
   const lastPage = Math.max(1, totalPages);
@@ -68,9 +70,9 @@ export function DataTablePagination({
 
       <div className="flex items-center gap-2">
         <label className="flex items-center gap-1.5 text-body text-ink-dim">
-          <span className="hidden sm:inline">Rows</span>
+          <span className="hidden sm:inline">{t('pagination.rows')}</span>
           <Select value={String(limit)} onValueChange={(value) => onLimitChange(Number(value))}>
-            <SelectTrigger className="h-7 w-[4.5rem]" aria-label="Rows per page" />
+            <SelectTrigger className="h-7 w-[4.5rem]" aria-label={t('pagination.rowsPerPage')} />
             <SelectContent>
               {PAGE_SIZE_OPTIONS.map((option) => (
                 <SelectItem key={option} value={String(option)}>
@@ -82,11 +84,11 @@ export function DataTablePagination({
         </label>
 
         <label className="flex items-center gap-1.5 text-body text-ink-dim">
-          <span>Page</span>
+          <span>{t('pagination.page')}</span>
           <input
             type="text"
             inputMode="numeric"
-            aria-label={`Page number, 1 to ${lastPage}`}
+            aria-label={t('pagination.pageNumber', { total: lastPage })}
             value={draft}
             disabled={busy}
             onChange={(event) => setDraft(event.target.value.replace(/[^0-9]/g, ''))}
@@ -107,7 +109,7 @@ export function DataTablePagination({
             )}
           />
           <span>
-            of <span className="sv-num">{lastPage.toLocaleString()}</span>
+            {t('pagination.of')} <span className="sv-num">{lastPage.toLocaleString()}</span>
           </span>
         </label>
 
@@ -115,7 +117,7 @@ export function DataTablePagination({
           <Button
             variant="secondary"
             size="icon"
-            aria-label="First page"
+            aria-label={t('pagination.first')}
             disabled={atStart}
             onClick={() => onPageChange(1)}
           >
@@ -125,7 +127,7 @@ export function DataTablePagination({
           <Button
             variant="secondary"
             size="icon"
-            aria-label="Previous page"
+            aria-label={t('pagination.previous')}
             disabled={atStart}
             onClick={() => onPageChange(page - 1)}
           >
@@ -135,7 +137,7 @@ export function DataTablePagination({
           <Button
             variant="secondary"
             size="icon"
-            aria-label="Next page"
+            aria-label={t('pagination.next')}
             disabled={atEnd}
             onClick={() => onPageChange(page + 1)}
           >
@@ -145,7 +147,7 @@ export function DataTablePagination({
           <Button
             variant="secondary"
             size="icon"
-            aria-label="Last page"
+            aria-label={t('pagination.last')}
             disabled={atEnd}
             onClick={() => onPageChange(lastPage)}
           >

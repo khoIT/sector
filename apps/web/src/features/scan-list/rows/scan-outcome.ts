@@ -25,13 +25,13 @@ export type ScanOutcome =
   | { kind: 'status' };
 
 /**
- * Pill text. Short enough to hold the column's existing width — the long form
- * of the third one lives in its hover title, not in the cell.
+ * Pill text keys. The third one is short enough to hold the column's existing
+ * width; its long form lives in a hover title, not in the cell.
  */
-export const OUTCOME_LABEL: Readonly<Record<'achieved' | 'not-achieved' | 'no-outcome', string>> = {
-  achieved: 'Achieved',
-  'not-achieved': 'Not achieved',
-  'no-outcome': 'No outcome',
+export const OUTCOME_KEY: Readonly<Record<'achieved' | 'not-achieved' | 'no-outcome', string>> = {
+  achieved: 'outcome.achieved',
+  'not-achieved': 'outcome.notAchieved',
+  'no-outcome': 'outcome.noOutcome',
 };
 
 type OutcomeInput = Pick<Scan, 'status' | 'review' | 'reviewedAt' | 'createdAt' | 'processingError'>;

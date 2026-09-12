@@ -4,7 +4,7 @@ description: >-
   The header chrome Scan Vault is missing — an account menu with a real identity
   block, the profile page behind it, and a language control — built before the
   create-scan redesign so the working create-scan flow stays untouched.
-status: pending
+status: completed
 priority: P1
 branch: main
 tags:
@@ -44,7 +44,7 @@ rather than moving a target.
 |---|---|
 | Mode toggle (light/dark, two states) | **Already better.** `theme-switcher.tsx` is a three-way light/dark/**system** control; `system` removes `data-theme` so the OS preference keeps driving the palette |
 | Account menu — avatar, name, role, Profile, Referrals, Certificates, Logout | **Partly there, in the wrong place.** `UserSummary` in the sidebar carried an avatar, name, role and an unconfirmed one-click sign-out. Consolidated into a topbar menu in Phase 1 — see that phase's deviations |
-| Language switcher — 7 locales | **Missing.** No i18n seam at all |
+| Language switcher — 7 locales | **Shipped, and working.** The legacy locale files are real translations, not stubs, so the six non-English languages carry the shared vocabulary rather than shipping as placeholders — see Phase 3 |
 | Notification bell | Out of scope: push notifications are a feature-flagged LMS surface, not scan vault |
 | Feedback button | Out of scope: same |
 | Referrals, Certificates | Out of scope: course-side surfaces with no Scan Vault meaning |
@@ -65,7 +65,7 @@ Measured against local `gusi_dev`, read-only:
 |-------|------|--------|
 | 1 | [The account menu](./phase-01-the-account-menu.md) | Completed |
 | 2 | [Profile and password](./phase-02-profile-and-password.md) | Completed |
-| 3 | [Language placeholder](./phase-03-language-placeholder.md) | Pending |
+| 3 | [Language placeholder](./phase-03-language-placeholder.md) | Completed |
 
 ## Dependencies
 
@@ -82,9 +82,9 @@ Measured against local `gusi_dev`, read-only:
 - [x] The header always says which account is signed in and what role it holds
 - [x] Logout is reachable in two clicks from every page and confirms before acting
 - [x] A user can change their own name and password without leaving Scan Vault
-- [ ] The language control lists the locales the legacy app ships and persists a choice
-- [ ] Every string the new surfaces add goes through the translation seam, not a literal
-- [ ] `pnpm -w typecheck`, `lint`, `test`, `build` green; contrast gate green
+- [x] The language control lists the locales the legacy app ships and persists a choice
+- [x] Every string the new surfaces add goes through the translation seam, not a literal
+- [x] `pnpm -w typecheck`, `lint`, `test`, `build` green; contrast gate green
 
 ## Resolved question
 

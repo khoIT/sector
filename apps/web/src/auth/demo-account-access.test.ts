@@ -59,9 +59,9 @@ const REVIEWER_SOLO = userWithPermissions('reviewer-solo', REVIEWER_PERMISSIONS)
 describe('demo account tab visibility', () => {
   it('gives a learner exactly two surfaces: their own scans and shares', () => {
     expect(visibleScanViews(LEARNER)).toEqual(['my', 'shared']);
-    expect(visibleScanTabs(LEARNER).map((tab) => tab.label)).toEqual([
-      'My Scans',
-      'Shared Scans',
+    expect(visibleScanTabs(LEARNER).map((tab) => tab.labelKey)).toEqual([
+      'nav.myScans',
+      'nav.sharedScans',
     ]);
   });
 
@@ -69,7 +69,10 @@ describe('demo account tab visibility', () => {
     expect(visibleScanViews(LEADER)).toEqual(['my', 'shared', 'pending', 'reviewed']);
 
     const group = visibleScanTabs(LEADER).find((tab) => tab.id === 'group');
-    expect(group?.subTabs.map((sub) => sub.label)).toEqual(['Unreviewed', 'Reviewed']);
+    expect(group?.subTabs.map((sub) => sub.labelKey)).toEqual([
+      'tabs.unreviewed',
+      'tabs.reviewed',
+    ]);
     // No expert permission, so the tab must not exist at all.
     expect(visibleScanTabs(LEADER).some((tab) => tab.id === 'expert')).toBe(false);
   });

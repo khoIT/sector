@@ -1,7 +1,10 @@
 import { Button } from '@scanvault/ui';
 import { Menu, X } from 'lucide-react';
 
+import { useTranslation } from 'react-i18next';
+
 import { AccountMenu } from './account-menu';
+import { LanguageSwitcher } from './language-switcher';
 
 export const SHELL_HEADING_ID = 'shell-page-title';
 export const MOBILE_NAV_ID = 'shell-mobile-nav';
@@ -22,6 +25,8 @@ export type TopbarProps = {
  * at. Feature pages start their own headings at <h2>.
  */
 export function Topbar({ title, navOpen, onToggleNav }: TopbarProps) {
+  const { t } = useTranslation();
+
   return (
     <header className="flex items-center gap-2 px-3 py-3 lg:px-5">
       <Button
@@ -33,7 +38,9 @@ export function Topbar({ title, navOpen, onToggleNav }: TopbarProps) {
         aria-controls={MOBILE_NAV_ID}
       >
         {navOpen ? <X className="h-4 w-4" aria-hidden /> : <Menu className="h-4 w-4" aria-hidden />}
-        <span className="sr-only">{navOpen ? 'Close navigation' : 'Open navigation'}</span>
+        <span className="sr-only">
+          {navOpen ? t('nav.closeNavigation') : t('nav.openNavigation')}
+        </span>
       </Button>
 
       <h1
@@ -46,7 +53,8 @@ export function Topbar({ title, navOpen, onToggleNav }: TopbarProps) {
       {/* The theme control moved into the account menu: it is a set-once
           preference and the identity it now sits beside is the thing the
           header was missing. */}
-      <div className="ml-auto flex shrink-0 items-center gap-2">
+      <div className="ml-auto flex shrink-0 items-center gap-1">
+        <LanguageSwitcher />
         <AccountMenu />
       </div>
     </header>

@@ -19,7 +19,8 @@ export type FilterSpec = {
   sections: FilterSection[];
   /** Which bucket the learner dropdown reads: /api/scan/users?type=… */
   userType: 'pending' | 'reviewed';
-  searchPlaceholder: string;
+  /** Translation key for the search field's placeholder. */
+  searchPlaceholderKey: string;
 };
 
 export function filterSpecFor(view: ScanVaultView): FilterSpec {
@@ -27,7 +28,7 @@ export function filterSpecFor(view: ScanVaultView): FilterSpec {
     return {
       sections: ['shareStatus'],
       userType: 'reviewed',
-      searchPlaceholder: 'Search shared scans by title or identifier',
+      searchPlaceholderKey: 'toolbar.searchSharedScans',
     };
   }
 
@@ -35,7 +36,7 @@ export function filterSpecFor(view: ScanVaultView): FilterSpec {
     return {
       sections: ['scanType', 'status', 'tags'],
       userType: 'pending',
-      searchPlaceholder: 'Search your scans by title or identifier',
+      searchPlaceholderKey: 'toolbar.searchMyScans',
     };
   }
 
@@ -46,7 +47,7 @@ export function filterSpecFor(view: ScanVaultView): FilterSpec {
   return {
     sections: ['scanType', 'tags', 'groups', 'users'],
     userType: isReviewedList(view) ? 'reviewed' : 'pending',
-    searchPlaceholder: 'Search by title, identifier or learner',
+    searchPlaceholderKey: 'toolbar.searchScans',
   };
 }
 

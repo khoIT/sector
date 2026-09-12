@@ -11,22 +11,19 @@ import {
 } from '@scanvault/api-client';
 import { Badge, StatusPill, cn } from '@scanvault/ui';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import { formatDate, formatDateTime } from '@/lib/format';
 
 import { formatWaiting, waitingTone } from '../table/waiting-time';
 import { groupDisplayName } from './group-list';
-import { rubricVersionLabel, rubricVersionTitle } from './rubric-version';
-import {
-  formatFindingCount,
-  gapFindingTitle,
-  summariseFindings,
-} from './scan-finding-summary';
+import { rubricVersionLabel } from './rubric-version';
+import { summariseFindings } from './scan-finding-summary';
 import { ScanGroupsDialog } from './scan-groups-dialog';
-import { formatMediaSummary, summariseMedia } from './scan-media-summary';
-import { OUTCOME_LABEL, type ScanOutcome } from './scan-outcome';
-import { displayTags, isMissingFiles, missingFilesTitle } from './scan-tags';
+import { mediaParts, summariseMedia } from './scan-media-summary';
+import { OUTCOME_KEY, type ScanOutcome } from './scan-outcome';
+import { displayTags, isMissingFiles } from './scan-tags';
 
 /** A dim separator between two facts that belong to the same group. */
 function Dot() {
@@ -70,9 +67,13 @@ export function TitleCell({
   /** The learner left a question on the scan. 41% of a queue does. */
   hasNotes?: boolean;
 }) {
-  const media = formatMediaSummary(summariseMedia(files));
+  const { t } = useTranslation();
+  const parts = mediaParts(summariseMedia(files));
   const findingSummary = summariseFindings(findings);
-  const findingCount = formatFindingCount(findingSummary);
+
+  if (findingSummary.count > 0) {
+    parts.push({ key: 'row.finding', count: findingSummary.count });
+  }
 
   return (
     <div className="flex min-w-[12rem] flex-col gap-0.5">
@@ -87,43 +88,45 @@ export function TitleCell({
         <span className="sv-num inline-flex items-center gap-1 whitespace-nowrap">
           <span
             className={cn(isMissingFiles(fileCount, fileTotal) && 'text-warn')}
-            title={missingFilesTitle(fileCount, fileTotal)}
+            title={
+              isMissingFiles(fileCount, fileTotal)
+                ? t('row.missingFiles', { count: fileTotal - fileCount, total: fileTotal })
+                : undefined
+            }
           >
-            {fileCount}/{fileTotal} files
+            {t('row.files', { count: fileCount, total: fileTotal })}
           </span>
 
           {/* Eight clips is a fifteen-minute review and two stills is ninety
               seconds; the ratio alone prices them the same. */}
-          {media ? (
-            <>
+          {parts.map((part) => (
+            <span key={part.key} className="inline-flex items-center gap-1">
               <Dot />
-              <span>{media}</span>
-            </>
-          ) : null}
-
-          {findingCount ? (
-            <>
-              <Dot />
-              <span>{findingCount}</span>
-            </>
-          ) : null}
+              <span>{t(part.key, { count: part.count })}</span>
+            </span>
+          ))}
         </span>
 
-        {scanIdentifier ? <span className="truncate">ID {scanIdentifier}</span> : null}
+        {scanIdentifier ? (
+          <span className="truncate">{t('row.identifier', { value: scanIdentifier })}</span>
+        ) : null}
 
         {/* Someone is waiting on an answer, and nothing said so until the scan
             was opened. */}
-        {hasNotes ? <Badge tone="accent">Asked</Badge> : null}
+        {hasNotes ? <Badge tone="accent">{t('row.asked')}</Badge> : null}
 
         {findingSummary.gaps > 0 ? (
-          <Badge tone="warn" title={gapFindingTitle(findingSummary)}>
-            {findingSummary.gaps} not examined
+          <Badge
+            tone="warn"
+            title={t('row.notExaminedTitle', { count: findingSummary.gaps })}
+          >
+            {t('row.notExamined', { count: findingSummary.gaps })}
           </Badge>
         ) : null}
 
         {displayTags(tags).map((tag) => (
           <Badge key={tag.id} tone="neutral">
-            {tag.label}
+            {t(tag.labelKey)}
           </Badge>
         ))}
       </div>
@@ -139,13 +142,17 @@ export function TitleCell({
  * about to be asked. Dim and inline: it qualifies the name, it does not warn.
  */
 export function ScanTypeCell({ scanType }: { scanType: ScanTypeRef }) {
+  const { t } = useTranslation();
   const version = rubricVersionLabel(scanType);
 
   return (
     <span className="inline-flex items-baseline gap-1 whitespace-nowrap text-ink">
       {scanType.name}
       {version ? (
-        <span className="sv-num text-[11px] text-ink-dim" title={rubricVersionTitle(scanType)}>
+        <span
+          className="sv-num text-[11px] text-ink-dim"
+          title={t('row.rubricTitle', { name: scanType.name, version })}
+        >
           {version}
         </span>
       ) : null}
@@ -162,8 +169,34 @@ export function UserCell({ user }: { user: UserBasic }) {
   );
 }
 
+/**
+ * Status keys, not the api-client's English labels.
+ *
+ * `SCAN_STATUS_LABEL` stays where it is — it is the right home for the English
+ * text in a package with no view layer — but a translated app cannot render it
+ * directly. The mapping is exhaustive over ScanStatus, so a new status fails
+ * the typecheck here rather than reaching a user as a raw token.
+ */
+const STATUS_KEY: Readonly<Record<ScanStatus, string>> = {
+  pending: 'status.pending',
+  processing: 'status.processing',
+  submitted: 'status.submitted',
+  reviewed: 'status.reviewed',
+  failed: 'status.failed',
+  failed_upload: 'status.failedUpload',
+  partially_uploaded: 'status.partiallyUploaded',
+};
+
 export function StatusCell({ status }: { status: ScanStatus }) {
-  return <StatusPill tone={scanStatusTone(status)} label={SCAN_STATUS_LABEL[status]} />;
+  const { t } = useTranslation();
+  const key = STATUS_KEY[status];
+
+  return (
+    <StatusPill
+      tone={scanStatusTone(status)}
+      label={key ? t(key) : SCAN_STATUS_LABEL[status]}
+    />
+  );
 }
 
 const OUTCOME_TONE = {
@@ -182,6 +215,8 @@ const OUTCOME_TONE = {
  * which the reviewed lists otherwise leave as a subtraction between two columns.
  */
 export function OutcomeCell({ outcome, status }: { outcome: ScanOutcome; status: ScanStatus }) {
+  const { t } = useTranslation();
+
   if (outcome.kind === 'status') return <StatusCell status={status} />;
 
   if (outcome.kind === 'failed') {
@@ -205,12 +240,8 @@ export function OutcomeCell({ outcome, status }: { outcome: ScanOutcome; status:
     <div className="flex min-w-[8rem] flex-col items-start gap-0.5">
       <StatusPill
         tone={OUTCOME_TONE[outcome.kind]}
-        label={OUTCOME_LABEL[outcome.kind]}
-        title={
-          outcome.kind === 'no-outcome'
-            ? 'Reviewed, but no competency outcome was recorded'
-            : undefined
-        }
+        label={t(OUTCOME_KEY[outcome.kind])}
+        title={outcome.kind === 'no-outcome' ? t('outcome.noOutcomeTitle') : undefined}
       />
 
       {outcome.reviewedAt ? (
@@ -244,9 +275,10 @@ export function OutcomeCell({ outcome, status }: { outcome: ScanOutcome; status:
  * expansion of the count, it is a way of appearing to offer one.
  */
 export function GroupsCell({ groups, scanTitle }: { groups: ScanGroupRef[]; scanTitle: string }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
-  if (groups.length === 0) return <span className="text-ink-dim">—</span>;
+  if (groups.length === 0) return <span className="text-ink-dim">{t('row.none')}</span>;
 
   const [first, ...rest] = groups;
 
@@ -265,7 +297,7 @@ export function GroupsCell({ groups, scanTitle }: { groups: ScanGroupRef[]; scan
           <button
             type="button"
             onClick={() => setOpen(true)}
-            aria-label={`Show all ${groups.length} groups for ${scanTitle}`}
+            aria-label={t('row.showAllGroups', { count: groups.length, title: scanTitle })}
             className={cn(
               'shrink-0 rounded-full border border-line bg-surface-2 px-2 py-0.5',
               'sv-num text-[11px] font-medium leading-4 text-ink-dim outline-none transition-colors',
@@ -342,6 +374,7 @@ export function WaitingCell({ submittedAt, now }: { submittedAt: string; now: nu
 }
 
 export function ReviewedByCell({ user }: { user: UserBasic | null | undefined }) {
-  if (!user) return <span className="text-ink-dim">—</span>;
+  const { t } = useTranslation();
+  if (!user) return <span className="text-ink-dim">{t('row.none')}</span>;
   return <span className="text-ink">{userDisplayName(user)}</span>;
 }

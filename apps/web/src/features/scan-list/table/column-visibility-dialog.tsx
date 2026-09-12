@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from '@scanvault/ui';
 import { Columns3 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import type { ListColumn } from './column-model';
 
@@ -37,6 +38,7 @@ export function ColumnVisibilityDialog<TRow>({
   onChange,
   onReset,
 }: ColumnVisibilityDialogProps<TRow>) {
+  const { t } = useTranslation();
   const hiddenCount = columns.filter(
     (column) => !column.alwaysVisible && hidden.has(column.id),
   ).length;
@@ -53,16 +55,16 @@ export function ColumnVisibilityDialog<TRow>({
       <DialogTrigger asChild>
         <Button variant="secondary" size="sm">
           <Columns3 className="h-4 w-4" aria-hidden />
-          Columns
+          {t('toolbar.columns')}
           {hiddenCount > 0 ? (
-            <span className="sv-num text-ink-dim">({hiddenCount} hidden)</span>
+            <span className="sv-num text-ink-dim">{t('toolbar.columnsHidden', { count: hiddenCount })}</span>
           ) : null}
         </Button>
       </DialogTrigger>
 
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>Columns</DialogTitle>
+          <DialogTitle>{t('toolbar.columns')}</DialogTitle>
           <DialogDescription>Choose what this table shows.</DialogDescription>
         </DialogHeader>
 

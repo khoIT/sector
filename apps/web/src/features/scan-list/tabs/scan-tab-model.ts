@@ -17,13 +17,15 @@ import { SCAN_VAULT_PATH, SCAN_VAULT_PERMISSION, type ScanVaultView } from '../s
 
 export type ScanSubTab = {
   view: ScanVaultView;
-  label: string;
+  /** Translation key; the English lives in i18n/locales/en.json. */
+  labelKey: string;
   path: string;
 };
 
 export type ScanTab = {
   id: string;
-  label: string;
+  /** Translation key; the English lives in i18n/locales/en.json. */
+  labelKey: string;
   /** The surface a bare click on the parent lands on (the first visible child). */
   view: ScanVaultView;
   path: string;
@@ -32,35 +34,36 @@ export type ScanTab = {
 
 type TabSpec = {
   id: string;
-  label: string;
-  children: Array<{ view: ScanVaultView; label: string }>;
+  /** Translation key; the English lives in i18n/locales/en.json. */
+  labelKey: string;
+  children: Array<{ view: ScanVaultView; labelKey: string }>;
 };
 
 const TAB_SPECS: TabSpec[] = [
   {
     id: 'my',
-    label: 'My Scans',
-    children: [{ view: 'my', label: 'My Scans' }],
+    labelKey: 'nav.myScans',
+    children: [{ view: 'my', labelKey: 'nav.myScans' }],
   },
   {
     id: 'shared',
-    label: 'Shared Scans',
-    children: [{ view: 'shared', label: 'Shared Scans' }],
+    labelKey: 'nav.sharedScans',
+    children: [{ view: 'shared', labelKey: 'nav.sharedScans' }],
   },
   {
     id: 'group',
-    label: 'Group Scans',
+    labelKey: 'nav.groupScans',
     children: [
-      { view: 'pending', label: 'Unreviewed' },
-      { view: 'reviewed', label: 'Reviewed' },
+      { view: 'pending', labelKey: 'tabs.unreviewed' },
+      { view: 'reviewed', labelKey: 'tabs.reviewed' },
     ],
   },
   {
     id: 'expert',
-    label: 'Expert Scans',
+    labelKey: 'nav.expertScans',
     children: [
-      { view: 'expert', label: 'Unreviewed' },
-      { view: 'expert-reviewed', label: 'Reviewed' },
+      { view: 'expert', labelKey: 'tabs.unreviewed' },
+      { view: 'expert-reviewed', labelKey: 'tabs.reviewed' },
     ],
   },
 ];
@@ -87,14 +90,14 @@ export function visibleScanTabs(user: AuthUser | null): ScanTab[] {
       spec.children.length > 1
         ? allowed.map((child) => ({
             view: child.view,
-            label: child.label,
+            labelKey: child.labelKey,
             path: SCAN_VAULT_PATH[child.view],
           }))
         : [];
 
     tabs.push({
       id: spec.id,
-      label: spec.label,
+      labelKey: spec.labelKey,
       view: landing.view,
       path: SCAN_VAULT_PATH[landing.view],
       subTabs,

@@ -1,21 +1,23 @@
 import { describe, expect, it } from 'vitest';
 
-import { displayTags, isMissingFiles, missingFilesTitle } from './scan-tags';
+import { displayTags, isMissingFiles } from './scan-tags';
 
 describe('displayTags', () => {
   it('labels the tags worth showing', () => {
     expect(displayTags(['expert_scan_review'])).toEqual([
-      { id: 'expert_scan_review', label: 'Expert review' },
+      { id: 'expert_scan_review', labelKey: 'row.expertReview' },
     ]);
-    expect(displayTags(['dicom'])).toEqual([{ id: 'dicom', label: 'DICOM' }]);
-    expect(displayTags(['resubmitted'])).toEqual([{ id: 'resubmitted', label: 'Resubmitted' }]);
+    expect(displayTags(['dicom'])).toEqual([{ id: 'dicom', labelKey: 'row.dicom' }]);
+    expect(displayTags(['resubmitted'])).toEqual([
+      { id: 'resubmitted', labelKey: 'row.resubmitted' },
+    ]);
   });
 
   it('never renders the completeness tags, which contradict the file count', () => {
     expect(displayTags(['complete'])).toEqual([]);
     expect(displayTags(['incomplete'])).toEqual([]);
     expect(displayTags(['incomplete', 'expert_scan_review', 'complete'])).toEqual([
-      { id: 'expert_scan_review', label: 'Expert review' },
+      { id: 'expert_scan_review', labelKey: 'row.expertReview' },
     ]);
   });
 
@@ -32,7 +34,7 @@ describe('displayTags', () => {
 
   it('normalises case and surrounding whitespace', () => {
     expect(displayTags([' Expert_Scan_Review '])).toEqual([
-      { id: 'expert_scan_review', label: 'Expert review' },
+      { id: 'expert_scan_review', labelKey: 'row.expertReview' },
     ]);
   });
 
@@ -55,19 +57,5 @@ describe('isMissingFiles', () => {
 
   it('is false when more files arrived than were declared', () => {
     expect(isMissingFiles(4, 3)).toBe(false);
-  });
-});
-
-describe('missingFilesTitle', () => {
-  it('names how many are missing', () => {
-    expect(missingFilesTitle(1, 3)).toBe('2 of 3 files never finished uploading');
-  });
-
-  it('is singular for a one-file scan', () => {
-    expect(missingFilesTitle(0, 1)).toBe('1 of 1 file never finished uploading');
-  });
-
-  it('is absent when nothing is missing, so no tooltip is attached', () => {
-    expect(missingFilesTitle(3, 3)).toBeUndefined();
   });
 });

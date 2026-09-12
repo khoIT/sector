@@ -83,14 +83,3 @@ export function summariseFindings(
   return { count: findings?.length ?? 0, gaps };
 }
 
-/** `3 findings`, or null when the learner declared none. */
-export function formatFindingCount(summary: FindingSummary): string | null {
-  if (summary.count <= 0) return null;
-  return `${summary.count} finding${summary.count === 1 ? '' : 's'}`;
-}
-
-/** Hover text naming how many items went unexamined. */
-export function gapFindingTitle(summary: FindingSummary): string | undefined {
-  if (summary.gaps <= 0) return undefined;
-  return `${summary.gaps} item${summary.gaps === 1 ? '' : 's'} recorded as not examined`;
-}

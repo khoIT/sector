@@ -1,6 +1,7 @@
 import { cn } from '@scanvault/ui';
 import { BookOpen, FolderClock, Share2, Users2 } from 'lucide-react';
 import type { ComponentType } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import type { ScanVaultView } from '../scan-list-views';
@@ -29,6 +30,7 @@ export type ScanTabBarProps = {
  * phone without horizontal scrolling.
  */
 export function ScanTabBar({ tabs, activeView }: ScanTabBarProps) {
+  const { t } = useTranslation();
   const activeTabId = tabIdForView(activeView);
   const activeTab = tabs.find((tab) => tab.id === activeTabId);
 
@@ -54,8 +56,8 @@ export function ScanTabBar({ tabs, activeView }: ScanTabBarProps) {
               )}
             >
               <Icon className="h-4 w-4 shrink-0" aria-hidden />
-              <span className="hidden lg:inline">{tab.label}</span>
-              <span className="sr-only lg:hidden">{tab.label}</span>
+              <span className="hidden lg:inline">{t(tab.labelKey)}</span>
+              <span className="sr-only lg:hidden">{t(tab.labelKey)}</span>
             </Link>
           );
         })}
@@ -65,7 +67,7 @@ export function ScanTabBar({ tabs, activeView }: ScanTabBarProps) {
 
       {activeTab && activeTab.subTabs.length > 0 ? (
         <nav
-          aria-label={`${activeTab.label} views`}
+          aria-label={`${t(activeTab.labelKey)} views`}
           className="flex flex-wrap items-center gap-4 border-b border-line px-1 pt-2"
         >
           {activeTab.subTabs.map((subTab) => {
@@ -83,7 +85,7 @@ export function ScanTabBar({ tabs, activeView }: ScanTabBarProps) {
                     : 'border-transparent text-ink-dim hover:text-ink',
                 )}
               >
-                {subTab.label}
+                {t(subTab.labelKey)}
               </Link>
             );
           })}

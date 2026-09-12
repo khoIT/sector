@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "myScans": "Minhas Digitalizações",
+    "sharedScans": "Escaneamentos compartilhados",
+    "groupScans": "Escaneamentos em grupo",
+    "expertScans": "Escaneamentos especializados"
+  },
+  "tabs": {
+    "reviewed": "Revisado"
+  },
+  "columns": {
+    "details": "Detalhes",
+    "learner": "Aluno",
+    "status": "Status",
+    "groups": "Grupos",
+    "submitted": "Enviado",
+    "reviewed": "Revisado",
+    "reviewedBy": "Avaliado por",
+    "actions": "Ações",
+    "share": "Compartilhar",
+    "sharedBy": "Compartilhado por"
+  },
+  "actions": {
+    "openScan": "Abrir digitalização",
+    "share": "Compartilhar",
+    "download": "Baixar",
+    "comment": "Comentário",
+    "deleteScan": "Excluir digitalização",
+    "createScanStudy": "Criar digitalização",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "view": "Visualizar"
+  },
+  "status": {
+    "pending": "Pendente",
+    "processing": "Processando",
+    "submitted": "Enviado",
+    "reviewed": "Revisado",
+    "failed": "Falhou",
+    "unopened": "Fechadas",
+    "opened": "Aberto"
+  },
+  "outcome": {
+    "achieved": "Alcançado",
+    "notAchieved": "Não alcançado"
+  },
+  "toolbar": {
+    "filters": "Filtros",
+    "columns": "Colunas"
+  },
+  "pagination": {
+    "rows": "filas",
+    "page": "Página",
+    "of": "do",
+    "first": "Ir para a primeira página",
+    "previous": "Ir para a página anterior",
+    "next": "Vá para a próxima página",
+    "last": "Ir para a última página",
+    "rowsPerPage": "Linhas por página"
+  },
+  "account": {
+    "profile": "Perfil",
+    "themeLight": "Luz",
+    "themeDark": "Sombrio",
+    "fallbackName": "Conta"
+  },
+  "groupsDialog": {
+    "title": "Grupos"
+  },
+  "deleteDialog": {
+    "confirm": "Excluir digitalização"
+  },
+  "language": {
+    "label": "Idioma"
+  },
+  "empty": {
+    "loading": "Carregando"
+  }
+}

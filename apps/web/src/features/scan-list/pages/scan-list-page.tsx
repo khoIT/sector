@@ -1,5 +1,6 @@
 import { useScanList, type ScanListView } from '@scanvault/api-client';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/auth/auth-context';
 
@@ -40,13 +41,14 @@ const WAITING_TICK_MS = 60_000;
 
 export function ScanListPage({ view }: { view: ScanListView }) {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const queue = isReviewQueue(view);
 
   // Columns carry their own default-visibility flags, so the starting hidden
   // set is read back off a throwaway column set rather than duplicated here.
   const defaultHidden = useMemo(
-    () => defaultHiddenColumns(scanColumns({ view, user: null, returnUrl: '', now: 0 })),
-    [view],
+    () => defaultHiddenColumns(scanColumns({ view, t, user: null, returnUrl: '', now: 0 })),
+    [view, t],
   );
 
   const surface = useListSurface(view, DEFAULT_SORT[view], defaultHidden);
@@ -56,8 +58,8 @@ export function ScanListPage({ view }: { view: ScanListView }) {
   const now = useNow(WAITING_TICK_MS, queue);
 
   const columns = useMemo(
-    () => scanColumns({ view, user, returnUrl, now }),
-    [view, user, returnUrl, now],
+    () => scanColumns({ view, t, user, returnUrl, now }),
+    [view, t, user, returnUrl, now],
   );
 
   const shown = useMemo(() => visibleColumns(columns, hiddenColumns), [columns, hiddenColumns]);

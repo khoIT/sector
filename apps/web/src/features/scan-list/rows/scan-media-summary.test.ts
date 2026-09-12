@@ -1,7 +1,7 @@
 import type { MediaFile } from '@scanvault/api-client';
 import { describe, expect, it } from 'vitest';
 
-import { formatMediaSummary, summariseMedia } from './scan-media-summary';
+import { mediaParts, summariseMedia } from './scan-media-summary';
 
 function file(partial: Partial<MediaFile> & { id: string }): MediaFile {
   return {
@@ -77,21 +77,20 @@ describe('summariseMedia', () => {
   });
 });
 
-describe('formatMediaSummary', () => {
-  it('joins the kinds that are present', () => {
-    expect(formatMediaSummary({ clips: 4, stills: 2 })).toBe('4 clips · 2 stills');
+describe('mediaParts', () => {
+  it('names each kind that is present, with its count', () => {
+    expect(mediaParts({ clips: 4, stills: 2 })).toEqual([
+      { key: 'row.clip', count: 4 },
+      { key: 'row.still', count: 2 },
+    ]);
   });
 
-  it('omits a kind with no files rather than printing a zero', () => {
-    expect(formatMediaSummary({ clips: 0, stills: 3 })).toBe('3 stills');
-    expect(formatMediaSummary({ clips: 2, stills: 0 })).toBe('2 clips');
+  it('omits a kind with no files rather than reporting a zero', () => {
+    expect(mediaParts({ clips: 0, stills: 3 })).toEqual([{ key: 'row.still', count: 3 }]);
+    expect(mediaParts({ clips: 2, stills: 0 })).toEqual([{ key: 'row.clip', count: 2 }]);
   });
 
-  it('is singular at one', () => {
-    expect(formatMediaSummary({ clips: 1, stills: 1 })).toBe('1 clip · 1 still');
-  });
-
-  it('says nothing when there is no media to describe', () => {
-    expect(formatMediaSummary({ clips: 0, stills: 0 })).toBeNull();
+  it('has nothing to say when there is no media', () => {
+    expect(mediaParts({ clips: 0, stills: 0 })).toEqual([]);
   });
 });
