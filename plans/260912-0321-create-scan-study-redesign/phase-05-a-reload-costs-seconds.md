@@ -1,8 +1,8 @@
 ---
 phase: 5
-title: "A reload costs seconds"
-status: pending
-effort: "M"
+title: A reload costs seconds
+status: completed
+effort: M
 ---
 
 # Phase 5: A reload costs seconds
@@ -90,11 +90,27 @@ that ordering ever changes, this becomes a question for Liesl before it becomes 
 
 ## Success Criteria
 
-- [ ] A mid-upload reload resumes rather than asking for the file again
-- [ ] Resume restarts at the first part with no stored ETag, not at part 1
-- [ ] Blobs are dropped as each file completes; peak storage is the in-flight set
-- [ ] Two drafts in two tabs stay independent
-- [ ] IndexedDB unavailable degrades to today's behaviour with the notice intact
+- [x] A mid-upload reload resumes rather than asking for the file again — verified against a real 13 MB clip: the row comes back "Uploading … 2%" instead of "Needs re-selecting", and the transfer completes
+- [x] Resume restarts at the first part with no stored ETag, not at part 1 — the stored `MultipartSession` is handed straight to `uploadScanObject`, which already skips every part it holds an ETag for
+- [x] Blobs are dropped as each file completes; peak storage is the in-flight set
+- [x] Two drafts in two tabs stay independent — keyed by `draftId`, unit-tested
+- [x] IndexedDB unavailable degrades to today's behaviour with the notice intact — tested with the global removed and with `open` throwing
+
+### Two defects the browser found that unit tests could not
+
+**A StrictMode latch cancelled the only attempt.** The rehydration effect guarded itself with a
+"already ran" ref set before the `await`. React 18 mounts an effect twice in development — run,
+clean up, run again — so the first pass set the latch and started the read, the cleanup set its
+cancel flag, and the second pass returned early on the latch. The single in-flight read was then
+discarded and every restored file sat on "needs re-selecting" with its bytes sitting in
+IndexedDB three feet away. The store's own tests all passed throughout. The ref is gone; the
+cancel flag alone is correct, and the read is idempotent.
+
+**A database can exist without the object store.** `onupgradeneeded` fires only on a version
+CHANGE, so anything that opens this database at the current version without creating the store
+leaves every call here throwing into its own catch — working by the letter, doing nothing,
+forever. Found by a probe script that did exactly that. `openDatabase` now checks for the store
+after opening and reopens one version higher to force the upgrade.
 
 ## Risk Assessment
 

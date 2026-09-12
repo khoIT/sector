@@ -21,6 +21,10 @@ import {
   type ReactNode,
 } from 'react';
 
+import {
+  clearDraftFiles,
+  currentDraftId,
+} from '@/features/create-scan/model/draft-blob-store-cleanup';
 import { sessionStore, setUnauthorizedHandler } from '@/lib/api';
 
 export type AuthStatus =
@@ -81,6 +85,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession(null);
     setStatus('anonymous');
     queryClient.clear();
+
+    // The create-scan draft keeps unfinished upload bytes in IndexedDB, which
+    // outlive the session unless something goes and gets them. Leaving one
+    // learner's ultrasound clips in the browser for whoever signs in next on a
+    // shared teaching-room machine is not acceptable.
+    const draftId = currentDraftId();
+    if (draftId) void clearDraftFiles(draftId);
   }, [queryClient]);
 
   const applySession = useCallback((next: AuthSession) => {

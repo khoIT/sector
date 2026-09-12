@@ -179,3 +179,23 @@ export function restoreFiles(persisted: PersistedDraft): DraftFile[] {
     blob: null,
   }));
 }
+
+/**
+ * The draft id currently on disk, without parsing the rest.
+ *
+ * Sign-out needs it to clear that draft's bytes out of IndexedDB: leaving one
+ * user's unfinished ultrasound clips in the browser for the next person to
+ * sign in on a shared teaching-room machine is not acceptable, and the blobs
+ * outlive the manifest unless something goes and gets them.
+ */
+export function currentDraftId(): string | null {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    const id = (parsed as { draftId?: unknown }).draftId;
+    return typeof id === 'string' && isDraftId(id) ? id : null;
+  } catch {
+    return null;
+  }
+}

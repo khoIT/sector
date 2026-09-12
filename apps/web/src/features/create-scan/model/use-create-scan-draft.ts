@@ -8,6 +8,13 @@ import {
 } from '@scanvault/api-client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import {
+  clearDraftFiles,
+  dropDraftFile,
+  putDraftFile,
+  putDraftSession,
+  readDraftFiles,
+} from './draft-blob-store';
 import { mintDraftId } from './draft-id';
 import { clearDraft, readDraft, restoreFiles, writeDraft } from './draft-storage';
 import type {
@@ -122,13 +129,68 @@ export function useCreateScanDraft() {
     writeDraft(state);
   }, [state]);
 
+  /**
+   * Bring back the bytes of anything that had not finished, and the point its
+   * transfer had reached.
+   *
+   * `restoreFiles` marks an unfinished file `detached` from the manifest alone,
+   * because the manifest is all it can see. IndexedDB usually has more: the
+   * blob, and the multipart session listing the parts S3 already accepted. A
+   * file with both goes back to `queued` and the pump picks it up and resumes
+   * mid-object rather than restarting at part one.
+   *
+   * Anything genuinely missing stays `detached` and is named, which is the
+   * honest answer — the bytes are not in this browser.
+   */
+  useEffect(() => {
+    if (!restoredDraft) return;
+
+    // No "already ran" ref here, deliberately. StrictMode mounts an effect
+    // twice — run, clean up, run again — and a latch set before the await
+    // combines with the cleanup's cancel flag to abort the only attempt ever
+    // made, leaving every restored file stuck on "needs re-selecting". The
+    // read is idempotent and cheap, so the second mount simply redoes it.
+    let cancelled = false;
+    void readDraftFiles(restoredDraft.draftId).then((records) => {
+      if (cancelled || records.length === 0) return;
+
+      const byFileId = new Map(records.map((record) => [record.fileId, record]));
+
+      setState((previous) => ({
+        ...previous,
+        files: previous.files.map((file) => {
+          const record = byFileId.get(file.id);
+          if (!record || file.status !== 'detached') return file;
+
+          if (record.session) sessionsRef.current.set(file.id, record.session);
+
+          return {
+            ...file,
+            status: 'queued' as const,
+            progress: 0,
+            error: null,
+            // The stored Blob is not a File, and the pump only needs the bytes
+            // and the type; the name comes off the manifest.
+            blob: new File([record.blob], file.name, { type: file.type }),
+          };
+        }),
+      }));
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [restoredDraft]);
+
   // ─── transfer engine ───────────────────────────────────────────────────────
 
   const controllersRef = useRef(new Map<string, AbortController>());
   // Multipart sessions for files still in flight, so a retry resumes from the
-  // parts S3 already accepted instead of re-sending the whole object. Held in
-  // a ref rather than draft state: it is meaningless without the Blob, which
-  // does not survive a reload.
+  // parts S3 already accepted instead of re-sending the whole object.
+  //
+  // Mirrored into IndexedDB alongside the blob. The ref was correct while the
+  // bytes died on reload — a resume point is meaningless without the bytes —
+  // but the blobs are durable now, so the session follows them.
   const sessionsRef = useRef(new Map<string, MultipartSession>());
   const filesRef = useRef<DraftFile[]>(state.files);
   filesRef.current = state.files;
@@ -174,11 +236,19 @@ export function useCreateScanDraft() {
             signal: controller.signal,
             onProgress: ({ percent }) => patchFile(file.id, { progress: percent }),
             session: sessionsRef.current.get(file.id) ?? null,
-            onSession: (session) => sessionsRef.current.set(file.id, session),
+            onSession: (session) => {
+              sessionsRef.current.set(file.id, session);
+              // Fires after every accepted part, which is exactly the cadence a
+              // resume point needs. Writes only the session, never the blob.
+              void putDraftSession(draftIdRef.current, file.id, session);
+            },
           },
         );
 
         sessionsRef.current.delete(file.id);
+        // The S3 key replaces the bytes, so the local copy goes immediately:
+        // the quota peak is the in-flight set, not the whole study.
+        void dropDraftFile(draftIdRef.current, file.id);
         patchFile(file.id, {
           status: 'stored',
           progress: 100,
@@ -302,6 +372,9 @@ export function useCreateScanDraft() {
         };
 
         setState((previous) => ({ ...previous, files: [...previous.files, accepted] }));
+        // Durable from the moment it is accepted, so a reload two seconds later
+        // still has the bytes. Dropped again as soon as the upload completes.
+        void putDraftFile(draftIdRef.current, accepted.id, file);
       }
 
       setValidationFailures(failures);
@@ -382,11 +455,13 @@ export function useCreateScanDraft() {
     setState((previous) => ({ ...previous, step: 'submitted', submitOutcome: outcome }));
     // The scan now exists server-side, so the draft has nothing left to resume.
     clearDraft();
+    void clearDraftFiles(draftIdRef.current);
   }, []);
 
   const reset = useCallback(() => {
     cancelAll();
     clearDraft();
+    void clearDraftFiles(draftIdRef.current);
     setValidationFailures([]);
     setState(emptyDraft(mintDraftId()));
   }, [cancelAll]);

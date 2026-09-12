@@ -78,8 +78,9 @@ export function CreateScanPage() {
             </Button>
           }
         >
-          A saved draft was found in this browser. Files that finished uploading are still in
-          storage and are listed as such; anything that had not finished needs choosing again.
+          A saved draft was found in this browser. Files that finished uploading are already in
+          storage, and anything that was still transferring picks up where it stopped. Only a
+          file this browser no longer holds has to be chosen again — those are listed as such.
         </InlineNotice>
       ) : null}
 

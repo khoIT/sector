@@ -3,7 +3,7 @@ title: 'Create Scan Study, redrawn'
 description: >-
   Turn the four-step create-scan wizard into one working surface plus a submit
   surface, and stop the two ways it currently loses a learner's work.
-status: pending
+status: completed
 priority: P1
 branch: main
 tags:
@@ -63,7 +63,7 @@ surfaces**: one you work on, one you submit from.
 | 2 | [One study not four steps](./phase-02-one-study-not-four-steps.md) | Completed |
 | 3 | [Interpret with the images on screen](./phase-03-interpret-with-the-images-on-screen.md) | Completed |
 | 4 | [Review that reviews](./phase-04-review-that-reviews.md) | Completed |
-| 5 | [A reload costs seconds](./phase-05-a-reload-costs-seconds.md) | Pending |
+| 5 | [A reload costs seconds](./phase-05-a-reload-costs-seconds.md) | Completed |
 
 **Phase 1 ships alone and first.** It is a defect, it is small, and Phase 2 makes the scan-type
 picker reachable from every screen — which turns a rare mistake into a one-click one. Fixing
