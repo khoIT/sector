@@ -59,7 +59,11 @@ export function ScanContextPanel({
   scanLogs = [],
   logs = [],
 }: ScanContextPanelProps) {
-  const groups = scan.groups ?? [];
+  // Undefined and empty mean opposite things here: the detail route does not
+  // send `groups` at all, while the list route sends [] for a study that
+  // really went to nobody. Collapsing the two told every learner their study
+  // had been routed nowhere.
+  const groups = scan.groups;
 
   return (
     <Card>
@@ -119,19 +123,21 @@ export function ScanContextPanel({
           </dl>
         </Section>
 
-        <Section title={groups.length === 1 ? 'Group' : 'Groups'}>
-          {groups.length === 0 ? (
-            <p className="text-body text-ink-dim">Not attached to a group.</p>
-          ) : (
-            <ul className="flex flex-wrap gap-1.5">
-              {groups.map((group) => (
-                <li key={group.id || group.name}>
-                  <Badge>{group.name}</Badge>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Section>
+        {groups ? (
+          <Section title={groups.length === 1 ? 'Group' : 'Groups'}>
+            {groups.length === 0 ? (
+              <p className="text-body text-ink-dim">Not attached to a group.</p>
+            ) : (
+              <ul className="flex flex-wrap gap-1.5">
+                {groups.map((group) => (
+                  <li key={group.id || group.name}>
+                    <Badge>{group.name}</Badge>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Section>
+        ) : null}
 
         {scan.tags.length > 0 ? (
           <Section title="Tags">

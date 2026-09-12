@@ -256,11 +256,11 @@ export type ScanTypeRef = z.infer<typeof scanTypeRefSchema>;
 /**
  * One schema for both the list item and the detail payload.
  *
- * The two responses were compared field-by-field against the live API and are
- * structurally identical; the only variances are the group-ref key (`_id` vs
- * `id`, normalised in scanGroupRefSchema), the notes[].user union, and the
- * detail route's pendingFiles fallback (a MediaFile with null urls). Splitting
- * them would duplicate 30 fields to encode nothing.
+ * The two responses were compared field-by-field against the live API. They
+ * differ in four places: the group-ref key (`_id` vs `id`, normalised in
+ * scanGroupRefSchema), the notes[].user union, the detail route's pendingFiles
+ * fallback (a MediaFile with null urls), and `groups`, which ONLY the list
+ * route sends. Splitting them would duplicate 30 fields to encode that.
  */
 export const scanSchema = z.object({
   id: z.string(),
@@ -285,7 +285,13 @@ export const scanSchema = z.object({
   review: scanReviewSchema.nullish(),
   reviewedAt: z.string().nullish(),
 
-  groups: z.array(scanGroupRefSchema).default([]),
+  /**
+   * ABSENT on the detail route, present on the list route - verified against
+   * the live API, not assumed. So this cannot carry `.default([])`: that
+   * turns a field the response never sent into the positive claim that the
+   * study went to nobody, on the one decision submit cannot undo.
+   */
+  groups: z.array(scanGroupRefSchema).optional(),
   tags: z.array(z.string()).default([]),
 
   scanIdentifier: z.string().nullish(),

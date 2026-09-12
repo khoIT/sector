@@ -104,7 +104,7 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
     columns.push({
       id: 'groups',
       header: t('columns.groups'),
-      cell: (scan) => <GroupsCell groups={scan.groups} scanTitle={scan.title} />,
+      cell: (scan) => <GroupsCell groups={scan.groups ?? []} scanTitle={scan.title} />,
     });
   }
 

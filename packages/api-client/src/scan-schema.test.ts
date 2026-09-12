@@ -61,3 +61,33 @@ describe('scanSchema refId', () => {
     expect(scanSchema.parse({ ...scan, refId: null }).refId).toBeNull();
   });
 });
+
+describe('scanSchema groups', () => {
+  const scan = {
+    id: 's1',
+    title: 'AAA-JAN21-00018',
+    user: { id: 'u1', userName: 'learner', email: 'learner@example.test' },
+    scanType: { id: 't1', key: 'aaa', name: 'AAA' },
+    status: 'submitted',
+    fileTotal: 1,
+    fileCount: 1,
+    createdAt: '2026-01-21T10:00:00.000Z',
+    updatedAt: '2026-01-21T10:00:00.000Z',
+  };
+
+  // GET /api/scan/:id/get omits the field entirely; GET /api/scan/list sends it.
+  // A default of [] here would let the detail page state that a study routed to
+  // a group went to nobody, on the one choice submit cannot undo.
+  it('leaves an omitted field undefined rather than inventing an empty list', () => {
+    expect(scanSchema.parse(scan).groups).toBeUndefined();
+  });
+
+  it('keeps a genuinely empty list, which means the study went to nobody', () => {
+    expect(scanSchema.parse({ ...scan, groups: [] }).groups).toEqual([]);
+  });
+
+  it('normalises the list route\'s _id key', () => {
+    const parsed = scanSchema.parse({ ...scan, groups: [{ _id: 'g1', name: 'Class of 2029' }] });
+    expect(parsed.groups).toEqual([{ id: 'g1', name: 'Class of 2029' }]);
+  });
+});
