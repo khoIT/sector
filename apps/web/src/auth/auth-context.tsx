@@ -42,6 +42,17 @@ export type AuthContextValue = {
   token: string | null;
   signIn: (payload: LoginPayload) => Promise<AuthUser>;
   signOut: () => void;
+  /**
+   * Merge fields into the signed-in user after they change their own account.
+   *
+   * The session is what the header, the row gates and every permission check
+   * read, so a saved name that only lives in a form's state is a name the rest
+   * of the app does not know about until the next reload. Merged rather than
+   * replaced: the account routes answer a slightly different user shape than
+   * login does, and the fields they omit — `stripeCustomerId`, and the role's
+   * permission list when it is not populated — must survive the write.
+   */
+  updateUser: (partial: Partial<AuthUser>) => void;
   /** True when the role holds EVERY permission listed. */
   can: (permission: string | string[]) => boolean;
   /** True when the role holds AT LEAST ONE of the permissions listed. */
@@ -139,6 +150,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [loginMutation, applySession],
   );
 
+  const updateUser = useCallback((partial: Partial<AuthUser>) => {
+    setSession((current) => {
+      if (!current) return current;
+      const next = { ...current, user: { ...current.user, ...partial } };
+      // Persisted as well as held in state: the stored session is what a
+      // reload reads before /api/me answers, so a name saved and then
+      // refreshed would otherwise flash back to the old one.
+      sessionStore.write(next);
+      return next;
+    });
+  }, []);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       status,
@@ -148,10 +171,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token: session?.token ?? null,
       signIn,
       signOut: clearSession,
+      updateUser,
       can: (permission) => hasPermission(session?.user, permission),
       canAny: (permissions) => hasAnyPermission(session?.user, permissions),
     }),
-    [status, session, signIn, clearSession],
+    [status, session, signIn, clearSession, updateUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

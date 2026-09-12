@@ -1,9 +1,10 @@
 ---
 phase: 2
-title: "Profile and password"
-status: pending
+title: Profile and password
+status: completed
 priority: P2
-dependencies: [1]
+dependencies:
+  - 1
 ---
 
 # Phase 2: Profile and password
@@ -58,13 +59,32 @@ The photo route posts `FormData`. Check `packages/api-client/src/client.ts` befo
 the client sets a JSON content type by default, and multipart needs the browser to set the
 boundary itself, so this may need a documented escape hatch rather than a new client.
 
+**Checked — the client already handles it.** `client.ts:127-131` tests `body instanceof FormData`
+and skips the JSON content type for it, with the boundary comment already in place. No escape
+hatch and no new client; the photo upload shipped in this phase rather than being cut from it.
+The upload field name is `file` (`account.route.ts:19`).
+
+### Three contracts confirmed against the running API
+
+- **The read shape is not `authUserSchema`.** `GET`/`PUT /api/account/profile` return
+  `lastLoginAt` and `profile` that login does not, and omit `stripeCustomerId` that it does.
+  Modelled as its own `accountUserSchema`, merged into the session deliberately.
+- **`profile` is `unknown` on purpose.** `userprofiles` holds zero documents, so there is no
+  observed payload to model; the server's input schema is not evidence of an output shape.
+- **The password change does not end the session.** `updatePassword` in `account.controller.ts`
+  hashes, saves, and returns — no token rotation, no session table. So the user stays signed in
+  and the form says so, rather than being bounced to the login page for a change that did not
+  log them out.
+
 ## Related Code Files
 
 - Create: `packages/api-client/src/endpoints/account.ts`, `schemas/account.ts`,
   `react/use-account.ts`
 - Create: `apps/web/src/features/account/account-page.tsx`, `profile-form.tsx`,
   `password-form.tsx`, `photo-upload.tsx`
-- Modify: `apps/web/src/app/routes.tsx` (or wherever routes are declared) — add `/account`
+- Modify: `apps/web/src/routes/feature-routes.tsx` — mounts `accountRoutes`. The path is
+  **`/profile`**, not `/account`: it is what the menu item is called and what legacy calls it,
+  and a link labelled Profile that lands on /account reads as a different destination
 - Modify: `apps/web/src/auth/auth-context.tsx` — a way to merge a partial user update
 
 ## Implementation Steps
@@ -88,12 +108,13 @@ boundary itself, so this may need a documented escape hatch rather than a new cl
 
 ## Risk Assessment
 
-- **Multipart through a JSON client.** The most likely place this phase stalls. If the client
-  cannot express it cleanly, the photo upload is cut from this phase rather than bent into it —
-  no user has a photo today, so nothing regresses.
-- **A password change may invalidate the session.** Test it; if the server rotates the token,
-  either refresh it or send the user to the login page with a message, never leave them on a
-  page whose next request 401s.
+- ~~**Multipart through a JSON client.**~~ **Not an issue.** The client already branches on
+  `FormData` and lets the browser set the boundary.
+- ~~**A password change may invalidate the session.**~~ **Checked — it does not.** The handler
+  hashes and saves and nothing else.
+- **Remove photo restores the server's placeholder, not an empty field.** `removeProfilePhoto`
+  writes `DEFAULT_USER_PHOTO` back. The client stores `null` locally so the app reads it as
+  "no photo" and shows initials, rather than the silhouette that placeholder resolves to.
 - **Email and username are read-only here.** Both are identity keys used elsewhere; changing
   them is not a scan vault concern.
 - Rollback: revert; the Profile link can point nowhere for one release or be hidden.

@@ -12,3 +12,6 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+/** Short commit the bundle was built from; `unknown` outside a git checkout. */
+declare const __APP_COMMIT__: string;

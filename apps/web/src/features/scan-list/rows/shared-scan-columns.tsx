@@ -9,7 +9,7 @@ import { sharedScanDetailPathFor } from '@/features/scan-detail/scan-detail-link
 
 import type { ListColumn } from '../table/column-model';
 import { formatDate } from '@/lib/format';
-import { DateCell, StatusCell, TitleCell, UserCell } from './list-cells';
+import { DateCell, ScanTypeCell, StatusCell, TitleCell, UserCell } from './list-cells';
 import { OpenScanAction } from './row-actions';
 import { ScanRowMenu } from './scan-row-menu';
 
@@ -47,15 +47,16 @@ export function sharedScanColumns({
           fileCount={share.scan.fileCount}
           fileTotal={share.scan.fileTotal}
           tags={share.scan.tags}
+          files={share.scan.files}
+          // No findings or notes: the shared-scans mapper populates neither,
+          // and the summary schema models only what this route really sends.
         />
       ),
     },
     {
       id: 'scanType',
       header: 'Scan type',
-      cell: (share) => (
-        <span className="whitespace-nowrap text-ink">{share.scan.scanType.name}</span>
-      ),
+      cell: (share) => <ScanTypeCell scanType={share.scan.scanType} />,
     },
     {
       id: 'sharedBy',

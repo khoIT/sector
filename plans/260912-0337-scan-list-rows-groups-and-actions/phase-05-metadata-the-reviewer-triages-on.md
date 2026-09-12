@@ -1,9 +1,10 @@
 ---
 phase: 5
-title: "Metadata the reviewer triages on"
-status: pending
+title: Metadata the reviewer triages on
+status: completed
 priority: P2
-dependencies: [1]
+dependencies:
+  - 1
 ---
 
 # Phase 5: Metadata the reviewer triages on
@@ -34,7 +35,7 @@ Share of the 12,393 queue scans where the field is non-empty:
 | Learner asked a question | **41%** (5,113) | Details, accent chip | A scan with a note is someone waiting on an answer. Nothing distinguishes it until the scan is open |
 | Findings the learner declared | **44%** (5,415; 659 with a gap) | Details, plain count + warn chip on the 5% with a gap | Confirming or contradicting the learner's own call *is* the review |
 | Clips versus stills | **35%** contain video (4,379; 2.8 files avg) | Details, second line | Eight clips is a fifteen-minute review, two stills is ninety seconds. The row renders both as the same `n/n` |
-| Rubric version | ~100%, v1–v6 | Scan type, dim, **only when behind current** | A 338-day-old queue item was submitted under an older protocol than the reviewer is about to judge it by |
+| Rubric version | ~100%, v1–v6 | Scan type, dim, **on every row** — see the correction below | A 338-day-old queue item was submitted under an older protocol than the reviewer is about to judge it by |
 
 Rejected on the same test, recorded so they are not re-proposed: AI quality score (1.2%),
 external patient identifier (1.7%), and two fields under 0.2%. A column empty 98% of the time
@@ -80,12 +81,73 @@ The column keeps its position and its width and changes what it answers:
 
 - reviewed → `Achieved` / `Not achieved`, with the review date dim beneath
 - submitted → keeps the status pill, gains the group it is queued in
-- failed → keeps the pill, gains `processingError`, which is on the wire for all 2,220 failed
-  scans and has never been shown to the person whose upload failed
+- failed → keeps the pill, gains `processingError` when the ingest worker recorded one; it has
+  never been shown to the person whose upload failed. Null on all 2,220 historical failures —
+  see correction 3 below
 
 `competencyMeasure` is the field with the boolean drift fixed on 12 Sep — read it through
 `storedCompetencyMeasureSchema`, which already tolerates the legacy values, and treat anything
 non-conforming as "no outcome recorded" rather than as a failure.
+
+### Three corrections made at build time, from measurement
+
+The design was drafted from counts that turned out to be wrong in three places.
+Each was re-measured against local `gusi_dev` before any code was written.
+
+**1. The rubric version is not a rare exception — it is 41% of the queue.**
+
+The design asked for the version to print only on a scan behind the current rubric,
+on the understanding that would be rare. Comparing each scan's `scanType.version`
+against its organisation's `scanTypeVersion` — both already on the list response:
+
+| | behind current | at current |
+|---|---|---|
+| queued (12,393) | **5,127 — 41%** | 7,266 |
+| reviewed (15,566) | **9,544 — 61%** | 6,022 |
+
+The queue mixes six generations at once: v1 2,314, v2 1,513, v3 1,300, v4 2,682,
+v5 630, v6 3,954. A warning that fires on two rows in five is not a warning, it is
+a second permanent line people learn to skip — the same failure the "empty on 98%
+of rows" test was written to prevent, from the other direction.
+
+The framing was also wrong. A v2 scan is reviewed against the v2 rubric, because
+its findings are keyed to it; being on an older version is not an error state, it
+is which protocol applies. **Shipped as a plain dim `v5` beside the type name on
+every row, no tone, no extra line.**
+
+**2. The gap test cannot be a prefix match on "not".**
+
+The design named `Not Examined` / `Not assessed` as the gap values. The stored
+vocabulary contains two families that both begin with "not" and mean opposite
+things:
+
+- gaps — `Not Examined` 4,640, `Not assessed` 772, `Not Assessed` 126,
+  `Not Measured` 80, `NotMeasured` 33, `not measured ` 18, `not done` 16, `N/A` 15,
+  plus a tail where a measurement was typed through the middle of the word
+  (`Not Exa270.6mined`, `Not Examined31.78cm35w5d`)
+- **real findings** — `Not Widened` 136, `Not Distended` 106, `Not thick` 1
+
+A prefix match flags those 243 real findings as "the learner skipped this", which
+accuses someone of omitting an examination they performed and recorded as normal.
+Shipped as an allow-list over a letters-only normalisation, with the three real
+findings denied explicitly; anything unrecognised reads as a finding, never a gap.
+Re-measured under that rule: **731 queued scans carry a gap, 6%** — which does
+work as an exception marker.
+
+**3. `processingError` is null on every historical failure.**
+
+The design said it was "on the wire for all 2,220 failed scans". It is not: the
+field does not exist on a single scan document in `gusi_dev`. It is written by
+`process-deidentification.ts:305`, which shipped upstream in
+`fix/idempotent-deid-ingest`, so it populates for failures **from that day
+forward** and is null for all 2,220 that predate it. Shipped as render-when-
+present: a pre-existing failure keeps the bare pill rather than gaining an empty
+line.
+
+Also re-measured and confirmed unchanged: notes on 41% of the queue (5,113),
+`not_achieved` on 3,294 of 15,579 reviews, and the two reviews storing a boolean
+`true` that `storedCompetencyMeasureSchema` already tolerates. Findings coverage
+came out at 35% of the queue rather than 44%, still well clear of the bar.
 
 ### One conflict with the drafted design, resolved
 
@@ -102,6 +164,15 @@ title, count + media, chips.
 rows, the fallback is not to restore the Files column but to add a narrow **Media** column
 carrying `4 clips · 2 stills` alone — a different fact from the count, with its own header,
 rather than the duplicate that was removed.
+
+**Built as two lines, not three.** The Details cell keeps its single wrapping meta row and the
+new facts join it rather than stacking under it: counts first as one group
+(`6/6 files · 4 clips · 2 stills · 3 findings`), then the identifier, then the chips. At table
+width that is one line; below it the row already wraps, and the table is scrolling anyway. The
+Media-column fallback was not needed and is not built.
+
+The one row that does grow is Outcome on My Scans, which gains a dim date + turnaround line
+under its pill — the one line the phase budgeted for.
 
 ## Related Code Files
 

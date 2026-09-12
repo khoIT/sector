@@ -2,8 +2,11 @@ import {
   SCAN_STATUS_LABEL,
   scanStatusTone,
   userDisplayName,
+  type MediaFile,
+  type ScanFinding,
   type ScanGroupRef,
   type ScanStatus,
+  type ScanTypeRef,
   type UserBasic,
 } from '@scanvault/api-client';
 import { Badge, StatusPill, cn } from '@scanvault/ui';
@@ -14,8 +17,21 @@ import { formatDate, formatDateTime } from '@/lib/format';
 
 import { formatWaiting, waitingTone } from '../table/waiting-time';
 import { groupDisplayName } from './group-list';
+import { rubricVersionLabel, rubricVersionTitle } from './rubric-version';
+import {
+  formatFindingCount,
+  gapFindingTitle,
+  summariseFindings,
+} from './scan-finding-summary';
 import { ScanGroupsDialog } from './scan-groups-dialog';
+import { formatMediaSummary, summariseMedia } from './scan-media-summary';
+import { OUTCOME_LABEL, type ScanOutcome } from './scan-outcome';
 import { displayTags, isMissingFiles, missingFilesTitle } from './scan-tags';
+
+/** A dim separator between two facts that belong to the same group. */
+function Dot() {
+  return <span aria-hidden>·</span>;
+}
 
 /**
  * Title + the details that stop a reviewer having to open the scan to identify it.
@@ -25,6 +41,12 @@ import { displayTags, isMissingFiles, missingFilesTitle } from './scan-tags';
  * column could neither sort nor filter, so it carried no fact this line does
  * not. What it did carry was the warning tone on a short count, which moved
  * here with it.
+ *
+ * Everything below the title sits on ONE wrapping row rather than stacking into
+ * separate lines: counts first as a single group, then the identifier, then the
+ * chips. A queue row is already the tallest thing on the page and the budget for
+ * this cell was one line, so the facts wrap into a second only on narrow
+ * viewports, where the table is scrolling anyway.
  */
 export function TitleCell({
   title,
@@ -33,6 +55,9 @@ export function TitleCell({
   fileCount,
   fileTotal,
   tags,
+  files,
+  findings,
+  hasNotes = false,
 }: {
   title: string;
   to: string;
@@ -40,7 +65,15 @@ export function TitleCell({
   fileCount: number;
   fileTotal: number;
   tags?: string[];
+  files?: readonly MediaFile[] | null;
+  findings?: readonly ScanFinding[] | null;
+  /** The learner left a question on the scan. 41% of a queue does. */
+  hasNotes?: boolean;
 }) {
+  const media = formatMediaSummary(summariseMedia(files));
+  const findingSummary = summariseFindings(findings);
+  const findingCount = formatFindingCount(findingSummary);
+
   return (
     <div className="flex min-w-[12rem] flex-col gap-0.5">
       <Link
@@ -51,13 +84,43 @@ export function TitleCell({
       </Link>
 
       <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-ink-dim">
-        <span
-          className={cn('sv-num', isMissingFiles(fileCount, fileTotal) && 'text-warn')}
-          title={missingFilesTitle(fileCount, fileTotal)}
-        >
-          {fileCount}/{fileTotal} files
+        <span className="sv-num inline-flex items-center gap-1 whitespace-nowrap">
+          <span
+            className={cn(isMissingFiles(fileCount, fileTotal) && 'text-warn')}
+            title={missingFilesTitle(fileCount, fileTotal)}
+          >
+            {fileCount}/{fileTotal} files
+          </span>
+
+          {/* Eight clips is a fifteen-minute review and two stills is ninety
+              seconds; the ratio alone prices them the same. */}
+          {media ? (
+            <>
+              <Dot />
+              <span>{media}</span>
+            </>
+          ) : null}
+
+          {findingCount ? (
+            <>
+              <Dot />
+              <span>{findingCount}</span>
+            </>
+          ) : null}
         </span>
+
         {scanIdentifier ? <span className="truncate">ID {scanIdentifier}</span> : null}
+
+        {/* Someone is waiting on an answer, and nothing said so until the scan
+            was opened. */}
+        {hasNotes ? <Badge tone="accent">Asked</Badge> : null}
+
+        {findingSummary.gaps > 0 ? (
+          <Badge tone="warn" title={gapFindingTitle(findingSummary)}>
+            {findingSummary.gaps} not examined
+          </Badge>
+        ) : null}
+
         {displayTags(tags).map((tag) => (
           <Badge key={tag.id} tone="neutral">
             {tag.label}
@@ -65,6 +128,28 @@ export function TitleCell({
         ))}
       </div>
     </div>
+  );
+}
+
+/**
+ * The scan type, and which generation of its rubric this scan answers.
+ *
+ * Six versions are live in the queue at once and they all print the same name,
+ * so the version is the half that says which set of questions the reviewer is
+ * about to be asked. Dim and inline: it qualifies the name, it does not warn.
+ */
+export function ScanTypeCell({ scanType }: { scanType: ScanTypeRef }) {
+  const version = rubricVersionLabel(scanType);
+
+  return (
+    <span className="inline-flex items-baseline gap-1 whitespace-nowrap text-ink">
+      {scanType.name}
+      {version ? (
+        <span className="sv-num text-[11px] text-ink-dim" title={rubricVersionTitle(scanType)}>
+          {version}
+        </span>
+      ) : null}
+    </span>
   );
 }
 
@@ -79,6 +164,75 @@ export function UserCell({ user }: { user: UserBasic }) {
 
 export function StatusCell({ status }: { status: ScanStatus }) {
   return <StatusPill tone={scanStatusTone(status)} label={SCAN_STATUS_LABEL[status]} />;
+}
+
+const OUTCOME_TONE = {
+  achieved: 'ok',
+  'not-achieved': 'crit',
+  'no-outcome': 'neutral',
+} as const;
+
+/**
+ * What a learner's own scan came back as, in the column that used to say
+ * "Reviewed".
+ *
+ * 3,294 of 15,579 reviews did not achieve competency and every one of them read
+ * as the same word as the ones that did. The pill now answers the question the
+ * learner has, and the line under it answers the next one — how long it took —
+ * which the reviewed lists otherwise leave as a subtraction between two columns.
+ */
+export function OutcomeCell({ outcome, status }: { outcome: ScanOutcome; status: ScanStatus }) {
+  if (outcome.kind === 'status') return <StatusCell status={status} />;
+
+  if (outcome.kind === 'failed') {
+    return (
+      <div className="flex min-w-[8rem] flex-col items-start gap-0.5">
+        <StatusCell status={status} />
+        {/* Written by the ingest worker since the day that shipped. The person
+            whose upload failed has never been told why. */}
+        {outcome.error ? (
+          <span className="max-w-[16rem] text-[11px] leading-4 text-ink-dim" title={outcome.error}>
+            {outcome.error}
+          </span>
+        ) : null}
+      </div>
+    );
+  }
+
+  const turnaround = outcome.turnaroundMs === null ? null : formatWaiting(outcome.turnaroundMs);
+
+  return (
+    <div className="flex min-w-[8rem] flex-col items-start gap-0.5">
+      <StatusPill
+        tone={OUTCOME_TONE[outcome.kind]}
+        label={OUTCOME_LABEL[outcome.kind]}
+        title={
+          outcome.kind === 'no-outcome'
+            ? 'Reviewed, but no competency outcome was recorded'
+            : undefined
+        }
+      />
+
+      {outcome.reviewedAt ? (
+        <span
+          className="sv-num whitespace-nowrap text-[11px] text-ink-dim"
+          title={
+            turnaround
+              ? `Reviewed ${formatDateTime(outcome.reviewedAt)}, ${turnaround} after submission`
+              : `Reviewed ${formatDateTime(outcome.reviewedAt)}`
+          }
+        >
+          {formatDate(outcome.reviewedAt)}
+          {turnaround ? (
+            <>
+              {' '}
+              <Dot /> {turnaround}
+            </>
+          ) : null}
+        </span>
+      ) : null}
+    </div>
+  );
 }
 
 /**

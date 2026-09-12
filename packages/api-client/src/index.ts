@@ -209,6 +209,25 @@ export {
   scanListPath,
 } from './endpoints/scan';
 
+export {
+  accountPhotoResultSchema,
+  accountUserSchema,
+  updatePasswordPayloadSchema,
+  updateProfilePayloadSchema,
+  type AccountPhotoResult,
+  type AccountUser,
+  type UpdatePasswordPayload,
+  type UpdateProfilePayload,
+} from './schemas/account';
+
+export {
+  getAccount,
+  removeAccountPhoto,
+  updateAccountPassword,
+  updateAccountProfile,
+  uploadAccountPhoto,
+} from './endpoints/account';
+
 export { deleteScan } from './endpoints/scan-delete';
 export { addScanNote, getScanNotes } from './endpoints/scan-note';
 export {
@@ -286,6 +305,12 @@ export {
   type AddScanNoteVariables,
 } from './react/use-scan-notes';
 export { useDeleteScanMutation } from './react/use-scan-delete';
+export {
+  useRemoveAccountPhotoMutation,
+  useUpdatePasswordMutation,
+  useUpdateProfileMutation,
+  useUploadAccountPhotoMutation,
+} from './react/use-account';
 export {
   useCreateScanShareMutation,
   useDeleteScanShareMutation,

@@ -1,7 +1,7 @@
 import { Button } from '@scanvault/ui';
 import { Menu, X } from 'lucide-react';
 
-import { ThemeSwitcher } from './theme-switcher';
+import { AccountMenu } from './account-menu';
 
 export const SHELL_HEADING_ID = 'shell-page-title';
 export const MOBILE_NAV_ID = 'shell-mobile-nav';
@@ -43,8 +43,11 @@ export function Topbar({ title, navOpen, onToggleNav }: TopbarProps) {
         {title}
       </h1>
 
+      {/* The theme control moved into the account menu: it is a set-once
+          preference and the identity it now sits beside is the thing the
+          header was missing. */}
       <div className="ml-auto flex shrink-0 items-center gap-2">
-        <ThemeSwitcher />
+        <AccountMenu />
       </div>
     </header>
   );

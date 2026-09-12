@@ -1,5 +1,6 @@
 import type { RouteObject } from 'react-router-dom';
 
+import { accountRoutes } from '@/features/account/account-routes';
 import { createScanRoutes } from '@/features/create-scan/create-scan-routes';
 import { scanDetailRoutes } from '@/features/scan-detail';
 
@@ -21,4 +22,8 @@ import { scanDetailRoutes } from '@/features/scan-detail';
  * Keep this array flat and one import per feature area so four agents editing
  * it in parallel produce small, separable diffs.
  */
-export const featureRoutes: RouteObject[] = [...scanDetailRoutes, ...createScanRoutes];
+export const featureRoutes: RouteObject[] = [
+  ...scanDetailRoutes,
+  ...createScanRoutes,
+  ...accountRoutes,
+];

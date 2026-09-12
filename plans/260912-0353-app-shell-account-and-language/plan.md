@@ -1,14 +1,22 @@
 ---
-title: "App shell: account, profile and language"
-description: "The header chrome Scan Vault is missing — an account menu with a real identity block, the profile page behind it, and a language control — built before the create-scan redesign so the working create-scan flow stays untouched."
+title: 'App shell: account, profile and language'
+description: >-
+  The header chrome Scan Vault is missing — an account menu with a real identity
+  block, the profile page behind it, and a language control — built before the
+  create-scan redesign so the working create-scan flow stays untouched.
 status: pending
 priority: P1
-branch: "main"
-tags: [scan-vault, shell, account, i18n]
+branch: main
+tags:
+  - scan-vault
+  - shell
+  - account
+  - i18n
 blockedBy: []
-blocks: [260912-0321-create-scan-study-redesign]
-created: "2026-09-11T20:56:04.189Z"
-createdBy: "ck:plan"
+blocks:
+  - 260912-0321-create-scan-study-redesign
+created: '2026-09-11T20:56:04.189Z'
+createdBy: 'ck:plan'
 source: skill
 ---
 
@@ -35,7 +43,7 @@ rather than moving a target.
 | Legacy header control | Scan Vault |
 |---|---|
 | Mode toggle (light/dark, two states) | **Already better.** `theme-switcher.tsx` is a three-way light/dark/**system** control; `system` removes `data-theme` so the OS preference keeps driving the palette |
-| Account menu — avatar, name, role, Profile, Referrals, Certificates, Logout | **Missing entirely.** No identity anywhere in the shell |
+| Account menu — avatar, name, role, Profile, Referrals, Certificates, Logout | **Partly there, in the wrong place.** `UserSummary` in the sidebar carried an avatar, name, role and an unconfirmed one-click sign-out. Consolidated into a topbar menu in Phase 1 — see that phase's deviations |
 | Language switcher — 7 locales | **Missing.** No i18n seam at all |
 | Notification bell | Out of scope: push notifications are a feature-flagged LMS surface, not scan vault |
 | Feedback button | Out of scope: same |
@@ -47,7 +55,7 @@ Measured against local `gusi_dev`, read-only:
 
 | Question | Answer | Consequence |
 |---|---|---|
-| How many of the 3,151 users have a profile photo? | **Zero.** `photo` is empty on every user | The avatar is always initials. Build the fallback properly; keep the `<img>` path because the field and the upload route exist |
+| How many of the 3,151 users have a profile photo? | **Zero** in the database — but the API substitutes a shared grey silhouette, so `photo` is never null on the wire | Treat that placeholder as absent, or initials never render and every account looks identical. See Phase 1 |
 | How many have an extended profile (profession, licensing, facility)? | **Zero.** `userprofiles` is an empty collection | The legacy profile editor's six sections have no data behind them. Phase 2 builds identity and password only |
 | Do users have names? | 2,985 of 3,151 have a first name; all 3,151 have a username | The identity block falls back to username, not to a blank |
 
@@ -55,8 +63,8 @@ Measured against local `gusi_dev`, read-only:
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | [The account menu](./phase-01-the-account-menu.md) | Pending |
-| 2 | [Profile and password](./phase-02-profile-and-password.md) | Pending |
+| 1 | [The account menu](./phase-01-the-account-menu.md) | Completed |
+| 2 | [Profile and password](./phase-02-profile-and-password.md) | Completed |
 | 3 | [Language placeholder](./phase-03-language-placeholder.md) | Pending |
 
 ## Dependencies
@@ -71,20 +79,19 @@ Measured against local `gusi_dev`, read-only:
 
 ## Acceptance criteria
 
-- [ ] The header always says which account is signed in and what role it holds
-- [ ] Logout is reachable in two clicks from every page and confirms before acting
-- [ ] A user can change their own name and password without leaving Scan Vault
+- [x] The header always says which account is signed in and what role it holds
+- [x] Logout is reachable in two clicks from every page and confirms before acting
+- [x] A user can change their own name and password without leaving Scan Vault
 - [ ] The language control lists the locales the legacy app ships and persists a choice
 - [ ] Every string the new surfaces add goes through the translation seam, not a literal
 - [ ] `pnpm -w typecheck`, `lint`, `test`, `build` green; contrast gate green
 
-## Open question
+## Resolved question
 
-"Version design selection" is read here as **appearance**: the existing three-way theme control
-moves into the account menu beside the build version, which is Phase 1. If it instead meant a
-*UI version* switch — the legacy `SCANS_NEW_UI_V2` feature flag that swaps a row's action layout
-between an old and a new design — say so and Phase 1 changes shape. Scan Vault has one design,
-so a version switch would mean building a second one to switch to.
+"Version design selection" meant **appearance**, confirmed by Khoi on 12 Sep: the theme control
+moves into the account menu beside the build version. The alternative reading — a `SCANS_NEW_UI_V2`
+style switch between two row designs — was explicitly not what was wanted, so no second design
+is built.
 
 ## Source material
 

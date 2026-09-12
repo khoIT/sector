@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 import tailwindcss from '@tailwindcss/vite';
@@ -7,7 +8,28 @@ import { defineConfig } from 'vite';
 /** The legacy GUSI API this app reads from. */
 const LEGACY_API_ORIGIN = 'http://localhost:5001';
 
+/**
+ * The commit the bundle was built from, shown in the account menu.
+ *
+ * A package version does not move between releases, so it cannot identify the
+ * build a bug report came from; the commit can. Builds happen outside a git
+ * checkout often enough — a Docker layer, a released tarball — that this must
+ * degrade rather than fail.
+ */
+function buildCommit(): string {
+  try {
+    return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim();
+  } catch {
+    return 'unknown';
+  }
+}
+
 export default defineConfig({
+  define: {
+    __APP_COMMIT__: JSON.stringify(buildCommit()),
+  },
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

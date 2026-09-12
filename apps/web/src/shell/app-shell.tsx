@@ -5,7 +5,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 import { shellTitleFor } from './nav-config';
 import { NavList } from './nav-list';
-import { Sidebar, UserSummary } from './sidebar';
+import { Sidebar } from './sidebar';
 import { MOBILE_NAV_ID, SHELL_HEADING_ID, Topbar } from './topbar';
 import { useNavBadges } from './use-nav-badges';
 
@@ -77,7 +77,6 @@ export function AppShell() {
               className="border-b border-line px-3 pb-4 lg:hidden"
             >
               <NavList badges={badges} onNavigate={() => setNavOpen(false)} />
-              <UserSummary className="mt-3" />
             </nav>
           ) : null}
 

@@ -9,13 +9,15 @@ import { formatDate } from '@/lib/format';
 import {
   DateCell,
   GroupsCell,
+  OutcomeCell,
   ReviewedByCell,
-  StatusCell,
+  ScanTypeCell,
   TitleCell,
   UserCell,
   WaitingCell,
 } from './list-cells';
 import { AssessAction, OpenScanAction } from './row-actions';
+import { scanOutcome } from './scan-outcome';
 import { ScanRowMenu } from './scan-row-menu';
 
 export type ScanColumnContext = {
@@ -56,6 +58,9 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
           fileCount={scan.fileCount}
           fileTotal={scan.fileTotal}
           tags={scan.tags}
+          files={scan.files}
+          findings={scan.findings}
+          hasNotes={scan.notes.length > 0}
         />
       ),
     },
@@ -75,17 +80,21 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
     id: 'scanType',
     header: 'Scan type',
     sortField: 'scanType',
-    cell: (scan) => <span className="whitespace-nowrap text-ink">{scan.scanType.name}</span>,
+    cell: (scan) => <ScanTypeCell scanType={scan.scanType} />,
   });
 
   // Every row on a queue is `submitted` and every row on a reviewed list is
   // `reviewed`, so a status column there would be one repeated word.
+  //
+  // On My Scans the same column had the opposite problem: "Reviewed" is what
+  // the learner already knows, and whether they achieved competency — the
+  // thing they opened the page for — was one field away on the same row.
   if (view === 'my') {
     columns.push({
-      id: 'status',
-      header: 'Status',
+      id: 'outcome',
+      header: 'Outcome',
       sortField: 'status',
-      cell: (scan) => <StatusCell status={scan.status} />,
+      cell: (scan) => <OutcomeCell outcome={scanOutcome(scan)} status={scan.status} />,
     });
   }
 

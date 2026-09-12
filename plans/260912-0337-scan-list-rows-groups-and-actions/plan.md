@@ -4,7 +4,7 @@ description: >-
   Close the gap between the Scan Vault list and the legacy dashboard's row: drop
   the duplicated file count, make groups readable past the first name, and give
   every row the five actions the original has.
-status: pending
+status: completed
 priority: P1
 branch: main
 tags:
@@ -66,7 +66,7 @@ Measured against the local `gusi_dev` database (31,495 scans), read-only:
 | 2 | [Groups you can open](./phase-02-groups-you-can-open.md) | Completed |
 | 3 | [The actions a row needs](./phase-03-the-actions-a-row-needs.md) | Completed |
 | 4 | [Delete gated on the owner](./phase-04-delete-gated-on-the-owner.md) | Completed |
-| 5 | [Metadata the reviewer triages on](./phase-05-metadata-the-reviewer-triages-on.md) | Pending |
+| 5 | [Metadata the reviewer triages on](./phase-05-metadata-the-reviewer-triages-on.md) | Completed |
 
 ## Dependencies
 
