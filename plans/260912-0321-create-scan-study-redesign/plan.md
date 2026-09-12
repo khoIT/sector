@@ -61,7 +61,7 @@ surfaces**: one you work on, one you submit from.
 |-------|------|--------|
 | 1 | [Stop losing the learner's work](./phase-01-stop-losing-the-learner-s-work.md) | Completed |
 | 2 | [One study not four steps](./phase-02-one-study-not-four-steps.md) | Completed |
-| 3 | [Interpret with the images on screen](./phase-03-interpret-with-the-images-on-screen.md) | Pending |
+| 3 | [Interpret with the images on screen](./phase-03-interpret-with-the-images-on-screen.md) | Completed |
 | 4 | [Review that reviews](./phase-04-review-that-reviews.md) | Pending |
 | 5 | [A reload costs seconds](./phase-05-a-reload-costs-seconds.md) | Pending |
 

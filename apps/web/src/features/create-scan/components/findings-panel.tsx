@@ -74,7 +74,9 @@ export function FindingsPanel({
         ) : null}
       </CardHeader>
 
-      <CardContent>
+      {/* The container the rows measure themselves against, so a row renders
+          for the width it actually has rather than for the window's. */}
+      <CardContent className="@container">
         {isPending ? (
           <div className="flex flex-col gap-2">
             {Array.from({ length: 5 }, (_, index) => (

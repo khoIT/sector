@@ -1,4 +1,3 @@
-import type { MediaFile } from '@scanvault/api-client';
 import { mediaFormatLabel, mediaKindFor } from '@scanvault/api-client';
 import { Button, cn, EmptyState } from '@scanvault/ui';
 import { ChevronLeft, ChevronRight, ImageOff } from 'lucide-react';
@@ -6,11 +5,22 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { formatBytes } from '@/lib/format';
 
+import type { StageSource } from './media-source';
 import { ScanMediaStage } from './scan-media-stage';
 
 type ScanMediaViewerProps = {
-  files: MediaFile[];
+  files: StageSource[];
   className?: string;
+  /**
+   * Which keys step between files.
+   *
+   * Arrows on the reviewer's detail page, where the surrounding pane is mostly
+   * read-only. Brackets where the pane beside the viewer is entirely form
+   * controls — the findings options are toggle groups that claim arrow keys
+   * for roving focus, and widening the "is the user typing" guard until it
+   * covers every one of them makes the guard unreadable and still wrong.
+   */
+  navigationKeys?: 'arrows' | 'brackets';
 };
 
 /**
@@ -20,7 +30,11 @@ type ScanMediaViewerProps = {
  * short-lived CloudFront presign, so nothing here is cached or persisted; the
  * element re-reads whatever the current query data holds.
  */
-export function ScanMediaViewer({ files, className }: ScanMediaViewerProps) {
+export function ScanMediaViewer({
+  files,
+  className,
+  navigationKeys = 'arrows',
+}: ScanMediaViewerProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -50,13 +64,16 @@ export function ScanMediaViewer({ files, className }: ScanMediaViewerProps) {
       const tag = target.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) return;
 
-      if (event.key === 'ArrowLeft') goPrevious();
-      else if (event.key === 'ArrowRight') goNext();
+      const [previousKey, nextKey] =
+        navigationKeys === 'brackets' ? ['[', ']'] : ['ArrowLeft', 'ArrowRight'];
+
+      if (event.key === previousKey) goPrevious();
+      else if (event.key === nextKey) goNext();
     }
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [count, goNext, goPrevious]);
+  }, [count, goNext, goPrevious, navigationKeys]);
 
   if (count === 0 || !active) {
     return (
@@ -107,7 +124,8 @@ export function ScanMediaViewer({ files, className }: ScanMediaViewerProps) {
       </div>
 
       <p className="truncate text-[12px] text-ink-dim" title={active.filename}>
-        {active.filename} · {formatBytes(active.filesize)} ·{' '}
+        {active.filename}
+        {typeof active.filesize === 'number' ? ` · ${formatBytes(active.filesize)}` : ''} ·{' '}
         {mediaFormatLabel(active) || 'unknown type'}
       </p>
 
@@ -137,7 +155,7 @@ export function ScanMediaViewer({ files, className }: ScanMediaViewerProps) {
   );
 }
 
-function Thumbnail({ file }: { file: MediaFile }) {
+function Thumbnail({ file }: { file: StageSource }) {
   const kind = mediaKindFor(file);
   // Video renditions carry a poster; a still is its own thumbnail. Legacy rows
   // store the extension alone as `filetype`, so the kind has to be resolved

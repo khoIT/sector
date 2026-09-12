@@ -5,15 +5,23 @@ import {
   type ScanTypeSummary,
 } from '@scanvault/api-client';
 import { Card, CardContent, CardHeader, CardTitle, Input, Textarea } from '@scanvault/ui';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuth } from '@/auth/auth-context';
+
+import { ScanMediaViewer } from '@/features/scan-detail/components/scan-media-viewer';
 
 import { FindingsPanel } from '../components/findings-panel';
 import { InlineNotice } from '../components/inline-notice';
 import { ScanTypePicker } from '../components/scan-type-picker';
 import { SwitchScanTypeDialog } from '../components/switch-scan-type-dialog';
 import { missingRequiredFindings } from '../model/finding-controls';
+import {
+  revokeAllObjectUrls,
+  syncObjectUrls,
+  viewableDraftFiles,
+  type ObjectUrlMap,
+} from '../model/draft-file-sources';
 import { planFindingTransfer, type FindingTransferPlan } from '../model/transfer-findings';
 import { anyOrganizationCollectsScanIdentifier } from '../model/identifier-gate';
 import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
@@ -43,6 +51,25 @@ export function StepInterpretation({ draft }: StepInterpretationProps) {
     () => anyOrganizationCollectsScanIdentifier(organizations),
     [organizations],
   );
+
+  /**
+   * The study, on screen while it is being interpreted.
+   *
+   * The learner was the person holding the probe and is the only one who can
+   * say whether the window was adequate — and they were the one asked to
+   * answer blind, with the images one wizard step away. The reviewer has had
+   * media-left/form-right since day one; this is the same geometry.
+   *
+   * The URL map is a ref, not state: creating object URLs during render leaks
+   * one per frame, which on a 148 MB study is hundreds of megabytes within
+   * seconds of typing in the note field.
+   */
+  const objectUrls = useRef<ObjectUrlMap>(new Map());
+  const sources = syncObjectUrls(viewableDraftFiles(state.files), objectUrls.current);
+  useEffect(() => {
+    const urls = objectUrls.current;
+    return () => revokeAllObjectUrls(urls);
+  }, []);
 
   const fetchDefinitions = useFindingDefinitionsFetcher();
   const [pendingTypeId, setPendingTypeId] = useState<string | null>(null);
@@ -138,20 +165,44 @@ export function StepInterpretation({ draft }: StepInterpretationProps) {
         </CardContent>
       </Card>
 
-      {state.scanTypeId ? (
-        <FindingsPanel
-          scanTypeId={state.scanTypeId}
-          organizationId={state.organizationId}
-          answers={state.findings}
-          invalidKeys={missingRequired.map((definition) => definition.key)}
-          onChange={(findings) => update({ findings })}
-        />
-      ) : (
-        <InlineNotice tone="info" title="Pick a scan type to see its findings">
-          Findings differ per scan type, so the form appears once a type is chosen. Your files keep
-          uploading in the background meanwhile.
-        </InlineNotice>
-      )}
+      {/* Media left, form right — the geometry the reviewer's detail page has
+          always used, so a learner and their reviewer read the same study the
+          same way. Stacks media-first below xl, where a 450px findings rail
+          would be worse than a full-width one. */}
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:items-start">
+        {sources.length > 0 ? (
+          <div className="xl:sticky xl:top-4">
+            <ScanMediaViewer
+              files={sources}
+              // The pane beside this one is entirely form controls, and the
+              // findings options claim the arrow keys for roving focus.
+              navigationKeys="brackets"
+            />
+            <p className="mt-1 text-[11px] text-ink-dim">
+              Playing from this browser — nothing is fetched back from storage. Use{' '}
+              <kbd className="rounded border border-line px-1">[</kbd> and{' '}
+              <kbd className="rounded border border-line px-1">]</kbd> to step between files.
+            </p>
+          </div>
+        ) : null}
+
+        <div className="min-w-0">
+          {state.scanTypeId ? (
+            <FindingsPanel
+              scanTypeId={state.scanTypeId}
+              organizationId={state.organizationId}
+              answers={state.findings}
+              invalidKeys={missingRequired.map((definition) => definition.key)}
+              onChange={(findings) => update({ findings })}
+            />
+          ) : (
+            <InlineNotice tone="info" title="Pick a scan type to see its findings">
+              Findings differ per scan type, so the form appears once a type is chosen. Your files
+              keep uploading in the background meanwhile.
+            </InlineNotice>
+          )}
+        </div>
+      </div>
 
       <Card>
         <CardHeader>

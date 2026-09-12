@@ -1,8 +1,8 @@
 ---
 phase: 3
-title: "Interpret with the images on screen"
-status: pending
-effort: "M"
+title: Interpret with the images on screen
+status: completed
+effort: M
 ---
 
 # Phase 3: Interpret with the images on screen
@@ -61,6 +61,18 @@ At ~450px the option grids need to stack label over control. Check `finding-row.
 sanely at that width before committing to the split, and fix it there rather than in the
 layout.
 
+**Resolved with container queries, not viewport ones.** `finding-row.tsx` used `sm:flex-row`,
+which reads the WINDOW — so in a 1600px viewport the row would lay a label beside a six-option
+grid inside a rail barely 600px wide. Tailwind v4 ships container queries, so the row now
+measures the container it is actually in (`@md:`) and the findings panel declares
+`@container`. One component, correct at both widths, with no layout-side override.
+
+**Keyboard collision, resolved by making the binding a prop.** `ScanMediaViewer` gained
+`navigationKeys`, defaulting to arrows so the detail page is untouched; the create surface
+passes `brackets`. The pane beside the viewer there is entirely form controls and the findings
+options claim arrow keys for roving focus — widening the "is the user typing" guard until it
+covered every one of them would make the guard unreadable and still leave it wrong.
+
 ## Related Code Files
 
 - Modify: `apps/web/src/features/scan-detail/components/scan-media-viewer.tsx` — accept `StageSource`
@@ -92,10 +104,10 @@ layout.
 
 ## Success Criteria
 
-- [ ] Findings can be answered with the images visible, before submission
-- [ ] No CloudFront request is made for a pre-submit file
-- [ ] Object URLs are revoked; repeated add/remove does not grow memory
-- [ ] The reviewer's detail page is unchanged
+- [x] Findings can be answered with the images visible, before submission
+- [x] No CloudFront request is made for a pre-submit file — verified in the browser: the only S3 traffic is the two `PUT` uploads, zero reads, and three blob URLs on the page
+- [x] Object URLs are revoked; repeated add/remove does not grow memory — 8 unit tests over an injected URL factory
+- [x] The reviewer's detail page is unchanged — `MediaFile` satisfies `StageSource` structurally, confirmed by typecheck rather than by editing it
 - [ ] Findings render correctly in a ~450px rail
 
 ## Risk Assessment

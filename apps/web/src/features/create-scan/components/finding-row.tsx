@@ -88,13 +88,18 @@ export function FindingRow({ definition, value, onChange, invalid }: FindingRowP
   return (
     <li
       className={cn(
-        'flex flex-col gap-2 border-b border-line py-2.5 last:border-b-0 sm:flex-row sm:items-start sm:gap-4',
+        // Container queries, not viewport ones. This row now renders both full
+        // width and in a ~600px rail beside the media pane, and `sm:` would
+        // read the WINDOW — putting the label and a six-option grid side by
+        // side inside a rail far too narrow for them.
+        'flex flex-col gap-2 border-b border-line py-2.5 last:border-b-0',
+        '@md:flex-row @md:items-start @md:gap-4',
         invalid && 'rounded-token bg-crit-soft px-2',
       )}
     >
       {label}
 
-      <div className="flex flex-wrap gap-1.5 sm:max-w-[60%] sm:justify-end">
+      <div className="flex flex-wrap gap-1.5 @md:max-w-[60%] @md:justify-end">
         {kind === 'single'
           ? definition.options.map((option) => (
               <OptionButton
@@ -127,7 +132,7 @@ export function FindingRow({ definition, value, onChange, invalid }: FindingRowP
           : null}
 
         {kind === 'text' || kind === 'number' ? (
-          <div className="flex w-full items-center gap-1.5 sm:w-52">
+          <div className="flex w-full items-center gap-1.5 @md:w-52">
             {definition.prefixLabel ? (
               <span className="shrink-0 text-[12px] text-ink-dim">{definition.prefixLabel}</span>
             ) : null}
