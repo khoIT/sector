@@ -8,6 +8,7 @@ import { useAuth } from '@/auth/auth-context';
 
 import { ListErrorState } from '../empty/list-error-state';
 import { NarrowedEmptyState } from '../empty/narrowed-empty-state';
+import { PagePastEndState } from '../empty/page-past-end-state';
 import { sharedScanColumns } from '../rows/shared-scan-columns';
 import { toSharedScanColumnFilters } from '../scan-list-filters';
 import { ScanListShell } from '../scan-list-shell';
@@ -70,7 +71,18 @@ export function SharedScansPage() {
     );
   }
 
-  const emptyState = narrowed ? (
+  // Rows exist, just not here. Kept ahead of every other empty state because
+  // those diagnose WHY a list is empty, and "you lead no groups" is the wrong
+  // answer to "you are on page 12 of 3".
+  const pagePastEnd = rows.length === 0 && !query.isPending && (query.data?.totalItems ?? 0) > 0;
+
+  const emptyState = pagePastEnd ? (
+    <PagePastEndState
+      page={url.page}
+      totalItems={query.data?.totalItems ?? 0}
+      onGoToFirstPage={() => url.setPage(1)}
+    />
+  ) : narrowed ? (
     <NarrowedEmptyState
       keyword={url.keyword}
       filterCount={url.filters.length}
@@ -111,7 +123,7 @@ export function SharedScansPage() {
           caption={SCAN_VAULT_TITLE.shared}
         />
 
-        {rows.length > 0 ? (
+        {rows.length > 0 || pagePastEnd ? (
           <DataTablePagination
             page={url.page}
             limit={url.limit}

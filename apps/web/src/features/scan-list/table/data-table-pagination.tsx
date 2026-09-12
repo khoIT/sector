@@ -36,9 +36,13 @@ export function DataTablePagination({
   busy = false,
 }: DataTablePaginationProps) {
   const { t } = useTranslation();
-  const firstRow = totalItems === 0 ? 0 : (page - 1) * limit + 1;
-  const lastRow = Math.min(page * limit, totalItems);
   const lastPage = Math.max(1, totalPages);
+  // A page past the end is reachable from a bookmark, so the readout has to
+  // survive it: unclamped it computed a first row of 221 in a list of 7 and
+  // rendered "221-7 of 7".
+  const outOfRange = totalItems > 0 && (page - 1) * limit >= totalItems;
+  const firstRow = totalItems === 0 || outOfRange ? 0 : (page - 1) * limit + 1;
+  const lastRow = outOfRange ? 0 : Math.min(page * limit, totalItems);
 
   // Typing "12" in a 101-page list passes through "1", so the field holds its
   // own text and only reports a clamped page when the edit is finished.

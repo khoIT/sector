@@ -9,6 +9,7 @@ import { GroupQueueEmptyState } from '../empty/group-queue-empty-state';
 import { ListErrorState } from '../empty/list-error-state';
 import { MyScansEmptyState } from '../empty/my-scans-empty-state';
 import { NarrowedEmptyState } from '../empty/narrowed-empty-state';
+import { PagePastEndState } from '../empty/page-past-end-state';
 import { scanColumns } from '../rows/scan-columns';
 import { toScanColumnFilters } from '../scan-list-filters';
 import { ScanListShell } from '../scan-list-shell';
@@ -91,10 +92,15 @@ export function ScanListPage({ view }: { view: ScanListView }) {
     );
   }
 
+  // Rows exist, just not here. Kept ahead of every other empty state because
+  // those diagnose WHY a list is empty, and "you lead no groups" is the wrong
+  // answer to "you are on page 12 of 3".
+  const pagePastEnd = rows.length === 0 && !query.isPending && (query.data?.totalItems ?? 0) > 0;
+
   // My Scans with nothing in it replaces the whole surface — table, toolbar
   // and all — with an explanation of what a scan study is. An empty table with
   // a search box over it teaches a new learner nothing.
-  if (view === 'my' && !query.isPending && rows.length === 0 && !narrowed) {
+  if (view === 'my' && !query.isPending && rows.length === 0 && !narrowed && !pagePastEnd) {
     return (
       <ScanListShell view={view}>
         <MyScansEmptyState />
@@ -102,7 +108,13 @@ export function ScanListPage({ view }: { view: ScanListView }) {
     );
   }
 
-  const emptyState = narrowed ? (
+  const emptyState = pagePastEnd ? (
+    <PagePastEndState
+      page={url.page}
+      totalItems={query.data?.totalItems ?? 0}
+      onGoToFirstPage={() => url.setPage(1)}
+    />
+  ) : narrowed ? (
     <NarrowedEmptyState
       keyword={url.keyword}
       filterCount={url.filters.length}
@@ -141,7 +153,7 @@ export function ScanListPage({ view }: { view: ScanListView }) {
           caption={SCAN_VAULT_TITLE[view]}
         />
 
-        {rows.length > 0 ? (
+        {rows.length > 0 || pagePastEnd ? (
           <DataTablePagination
             page={url.page}
             limit={url.limit}
