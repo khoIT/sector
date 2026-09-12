@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { useAuth } from '@/auth/auth-context';
 
 import { ExpertReviewPanel } from '../components/expert-review-panel';
+import { GroupRoutingPanel } from '../components/group-routing-panel';
 import { InlineNotice } from '../components/inline-notice';
 import { StudySummary } from '../components/study-summary';
 import type { SubmitOutcome } from '../model/draft-types';
@@ -25,9 +26,27 @@ export type StepReviewRoutingProps = {
   draft: UseCreateScanDraft;
   onBack: () => void;
   onSubmitted: (outcome: SubmitOutcome) => void;
+  /**
+   * Render group routing here.
+   *
+   * In the study flow it lives on the working surface, because it is the one
+   * thing on this screen that could still be changed and it cannot be repaired
+   * afterwards — the API has no route that adds a group to an existing scan.
+   * The classic wizard has no working surface, so its last step is where
+   * routing has to be.
+   */
+  showGroupRouting?: boolean;
+  /** Where Back goes, named. The two flows come here from different places. */
+  backLabel?: string;
 };
 
-export function StepReviewRouting({ draft, onBack, onSubmitted }: StepReviewRoutingProps) {
+export function StepReviewRouting({
+  draft,
+  onBack,
+  onSubmitted,
+  showGroupRouting = false,
+  backLabel = 'Back to the study',
+}: StepReviewRoutingProps) {
   const client = useApiClient();
   const { user } = useAuth();
   const { data: groups } = useScanUserGroups();
@@ -81,6 +100,13 @@ export function StepReviewRouting({ draft, onBack, onSubmitted }: StepReviewRout
         collectsScanIdentifier={collectsScanIdentifier}
       />
 
+      {showGroupRouting ? (
+        <GroupRoutingPanel
+          selected={state.groupIds}
+          onChange={(nextGroupIds) => update({ groupIds: nextGroupIds })}
+        />
+      ) : null}
+
       {user ? (
         <ExpertReviewPanel
           userId={user.id}
@@ -107,7 +133,7 @@ export function StepReviewRouting({ draft, onBack, onSubmitted }: StepReviewRout
               title={`${stillMoving} ${stillMoving === 1 ? 'file has' : 'files have'} not finished uploading`}
               action={
                 <Button variant="secondary" size="sm" onClick={onBack}>
-                  Back to the study
+                  {backLabel}
                 </Button>
               }
             >
@@ -122,7 +148,7 @@ export function StepReviewRouting({ draft, onBack, onSubmitted }: StepReviewRout
               title="Nothing is in storage yet"
               action={
                 <Button variant="secondary" size="sm" onClick={onBack}>
-                  Back to the study
+                  {backLabel}
                 </Button>
               }
             >
@@ -169,7 +195,7 @@ export function StepReviewRouting({ draft, onBack, onSubmitted }: StepReviewRout
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Button variant="secondary" onClick={onBack} disabled={submitting}>
-          <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> Back to the study
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {backLabel}
         </Button>
         <Button
           onClick={() => void submit()}

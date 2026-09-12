@@ -37,16 +37,20 @@ function preMigrationDraft(step: string) {
   };
 }
 
-describe('parsePersistedDraft — step migration', () => {
+describe('parsePersistedDraft — the step a draft was saved on', () => {
   it.each(['files', 'interpretation', 'routing'])(
-    'opens a draft saved on the retired %s step, on the working surface',
+    'keeps the classic %s step, for a browser set to the classic flow',
     (step) => {
+      // These were retired once and are live again as the classic flow's
+      // steps, so the parse must hand them back rather than rewriting them.
+      // Mapping a step into the flow that is actually rendering belongs to
+      // stepForFlow, which knows which flow that is; this layer does not.
       const draft = parsePersistedDraft(preMigrationDraft(step));
 
       expect(draft).not.toBeNull();
-      expect(draft?.step).toBe('study');
-      // Everything else has to survive intact — the migration must not cost
-      // the learner the study it was meant to rescue.
+      expect(draft?.step).toBe(step);
+      // Everything else has to survive intact — a step it cannot place must
+      // never cost the learner the study.
       expect(draft?.findings).toEqual({ v5_aaa_long_lvl1: '≤ 3cm' });
       expect(draft?.files).toHaveLength(1);
       expect(draft?.note).toBe('Poor window, obese habitus.');

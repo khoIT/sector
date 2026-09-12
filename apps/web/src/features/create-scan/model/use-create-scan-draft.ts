@@ -15,6 +15,11 @@ import {
   putDraftSession,
   readDraftFiles,
 } from './draft-blob-store';
+import {
+  DEFAULT_CREATE_SCAN_FLOW,
+  stepForFlow,
+  type CreateScanFlow,
+} from './create-scan-flow';
 import { mintDraftId } from './draft-id';
 import { clearDraft, readDraft, restoreFiles, writeDraft } from './draft-storage';
 import type {
@@ -42,10 +47,10 @@ import { blocksMediaUpload, validateMediaFile } from './validate-media-file';
 /** Parallel transfers. Three keeps a slow link usable without starving it. */
 const MAX_CONCURRENT_UPLOADS = 3;
 
-function emptyDraft(draftId: string): DraftState {
+function emptyDraft(draftId: string, flow: CreateScanFlow): DraftState {
   return {
     draftId,
-    step: 'study',
+    step: flow === 'classic' ? 'files' : 'study',
     files: [],
     scanTypeId: null,
     scanTypeName: null,
@@ -89,17 +94,27 @@ function nextFilekey(name: string): string {
 
 export type UseCreateScanDraft = ReturnType<typeof useCreateScanDraft>;
 
-export function useCreateScanDraft() {
+/**
+ * @param flow which shell is rendering this draft. It decides only where a
+ *   restored draft lands: both flows share one draft and one model, so a
+ *   study saved under one shell must open under the other without stranding
+ *   itself on a step that shell cannot draw.
+ */
+export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FLOW) {
   const client = useApiClient();
 
   const [restoredDraft] = useState(() => readDraft());
   const [state, setState] = useState<DraftState>(() => {
-    if (!restoredDraft) return emptyDraft(mintDraftId());
+    if (!restoredDraft) return emptyDraft(mintDraftId(), flow);
     return {
       draftId: restoredDraft.draftId,
       // A restored draft never lands on the confirmation step: it was either
-      // finished (and cleared) or it was not.
-      step: restoredDraft.step === 'submitted' ? 'submit' : restoredDraft.step,
+      // finished (and cleared) or it was not. Then map it into the flow doing
+      // the rendering, which may not be the one that saved it.
+      step: stepForFlow(
+        restoredDraft.step === 'submitted' ? 'submit' : restoredDraft.step,
+        flow,
+      ),
       files: restoreFiles(restoredDraft),
       scanTypeId: restoredDraft.scanTypeId,
       scanTypeName: restoredDraft.scanTypeName,
@@ -463,8 +478,8 @@ export function useCreateScanDraft() {
     clearDraft();
     void clearDraftFiles(draftIdRef.current);
     setValidationFailures([]);
-    setState(emptyDraft(mintDraftId()));
-  }, [cancelAll]);
+    setState(emptyDraft(mintDraftId(), flow));
+  }, [cancelAll, flow]);
 
   const dismissValidationFailures = useCallback(() => setValidationFailures([]), []);
 

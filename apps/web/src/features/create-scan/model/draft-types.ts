@@ -1,30 +1,50 @@
 import type { MediaValidationConfidence, MediaValidationFailureReason } from './validate-media-file';
 
 /**
- * The three surfaces a study passes through.
+ * The steps a study can be parked on, across both flows.
  *
- * It was four ordered steps. Nothing in this flow has to happen in an order —
- * files commit on selection, and neither the interpretation nor the routing
- * step wrote anything the previous one had to finish first, so the gates
- * between them protected nothing while costing Back/Back/Next/Next on the
- * learner's real loop of add a file, change the exam type, answer a finding.
+ * There are two ways through this feature and the user picks which in their
+ * profile. They share one draft, one model and one set of panels; only the
+ * shell around the panels differs.
  *
- * One boundary does survive, and it is the only one: everything before Submit
- * is reversible in the app and Submit is not. One boundary is two surfaces.
+ *   STUDY (default)      study      the working surface — files, exam type,
+ *                                   findings, note, groups, all at once
+ *                        submit     read-only, what is about to be sent
  *
- *   study      the working surface — files, exam type, findings, note, groups
- *   submit     read-only, what is about to be sent
- *   submitted  the receipt, after it has been
+ *   CLASSIC              files          choose and upload
+ *                        interpretation exam type, findings, note
+ *                        routing        groups, expert review, submit
+ *
+ *   both                 submitted  the receipt, after it has been
+ *
+ * The study flow exists because nothing here has to happen in an order: files
+ * commit on selection, and neither interpretation nor routing writes anything
+ * the previous step had to finish first. The one boundary that survives is
+ * that everything before Submit is reversible and Submit is not.
+ *
+ * The classic flow is kept because an ordered wizard is a real preference —
+ * it makes "what do I do next" unambiguous, which matters to someone using
+ * this a handful of times rather than daily.
  */
-export const WIZARD_STEPS = ['study', 'submit', 'submitted'] as const;
+export const STUDY_STEPS = ['study', 'submit'] as const;
+export const CLASSIC_STEPS = ['files', 'interpretation', 'routing'] as const;
+
+/** The receipt. Shared, and the one step neither flow can leave. */
+export const SUBMITTED_STEP = 'submitted';
+
+export const WIZARD_STEPS = [...STUDY_STEPS, ...CLASSIC_STEPS, SUBMITTED_STEP] as const;
 export type WizardStep = (typeof WIZARD_STEPS)[number];
 
-/** Step values written by the four-step build. Read, never written. */
-export const RETIRED_WIZARD_STEPS = ['files', 'interpretation', 'routing'] as const;
+export function isWizardStep(value: unknown): value is WizardStep {
+  return typeof value === 'string' && (WIZARD_STEPS as readonly string[]).includes(value);
+}
 
 export const WIZARD_STEP_LABEL: Record<WizardStep, string> = {
   study: 'Study',
   submit: 'Review & submit',
+  files: 'Files',
+  interpretation: 'Interpretation',
+  routing: 'Review routing',
   submitted: 'Submitted',
 };
 

@@ -19,11 +19,16 @@ import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
 export type FilesPanelProps = {
   draft: UseCreateScanDraft;
   /** Folded to a summary row. Never set while a file still needs attention. */
-  collapsed: boolean;
-  onToggle: () => void;
+  collapsed?: boolean;
+  /**
+   * Omitted where folding makes no sense — the classic wizard's Files step is
+   * the whole step, and a step that can collapse itself to one row is a step
+   * showing nothing. Without this, no collapse affordance is offered.
+   */
+  onToggle?: () => void;
 };
 
-export function FilesPanel({ draft, collapsed, onToggle }: FilesPanelProps) {
+export function FilesPanel({ draft, collapsed = false, onToggle }: FilesPanelProps) {
   const { user } = useAuth();
   const { data: organizations } = useUserOrganizations(user?.id);
 
@@ -70,7 +75,7 @@ export function FilesPanel({ draft, collapsed, onToggle }: FilesPanelProps) {
             </div>
             {/* Only offered once nothing needs attention: a fold that hides a
                 failed upload is how a failed upload reaches Submit. */}
-            {canAutoCollapseFiles(files) ? (
+            {onToggle && canAutoCollapseFiles(files) ? (
               <Button variant="ghost" size="sm" onClick={onToggle} aria-expanded>
                 Collapse
               </Button>

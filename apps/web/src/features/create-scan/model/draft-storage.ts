@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { WIZARD_STEPS, type DraftFile, type DraftState } from './draft-types';
+import { isWizardStep, WIZARD_STEPS, type DraftFile, type DraftState } from './draft-types';
 import { isDraftId } from './draft-id';
 
 /**
@@ -37,20 +37,15 @@ const persistedDraftSchema = z.object({
   savedAt: z.number(),
   draftId: z.string(),
   /**
-   * Tolerant on purpose. A draft saved by the four-step build carries
-   * `files` / `interpretation` / `routing`, none of which exist any more, and
-   * a strict enum would reject the whole payload — losing a learner's study to
-   * a rename. Anything that is not a current step reads as `study`, which is
-   * where all three of the retired ones belong.
+   * Tolerant on purpose. A draft carries whichever step its flow was on when
+   * it was saved, and the user can change flows between one sitting and the
+   * next — so a value that is real but belongs to the other flow must survive
+   * the parse and be mapped afterwards, not rejected here.
    *
-   * `submitted` is the one retired-era value that must survive as itself: a
-   * draft parked there has a scan id and showing it the working surface again
-   * would invite a second submission.
+   * Anything unrecognisable reads as `study`. A strict enum would throw away
+   * a learner's whole study over one unknown string.
    */
-  step: z.preprocess(
-    (value) => (value === 'submit' || value === 'submitted' ? value : 'study'),
-    z.enum(WIZARD_STEPS),
-  ),
+  step: z.preprocess((value) => (isWizardStep(value) ? value : 'study'), z.enum(WIZARD_STEPS)),
   files: z.array(persistedFileSchema),
   scanTypeId: z.string().nullable(),
   scanTypeName: z.string().nullable(),

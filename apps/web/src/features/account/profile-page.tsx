@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@scanvault/ui';
 
+import { CreateScanFlowSetting } from './create-scan-flow-setting';
 import { PasswordForm } from './password-form';
 import { ProfileIdentityForm } from './profile-identity-form';
 import { ProfilePhoto } from './profile-photo';
@@ -34,6 +35,19 @@ export function ProfilePage() {
         <CardContent className="flex flex-col gap-5">
           <ProfilePhoto />
           <ProfileIdentityForm />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Create scan study</CardTitle>
+          <CardDescription>
+            How the create-scan page is laid out for you. Both layouts collect the same things and
+            share the same draft.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CreateScanFlowSetting />
         </CardContent>
       </Card>
 

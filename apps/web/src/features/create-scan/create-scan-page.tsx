@@ -1,12 +1,17 @@
 import { Button } from '@scanvault/ui';
 import { Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { SCAN_VAULT_PATH } from '@/features/scan-list/scan-list-views';
 
 import { DraftIndicator } from './components/draft-indicator';
 import { InlineNotice } from './components/inline-notice';
+import { WizardStepper } from './components/wizard-stepper';
+import { canEnterClassicStep } from './model/classic-steps';
+import { readCreateScanFlow } from './model/create-scan-flow';
 import { useCreateScanDraft } from './model/use-create-scan-draft';
+import { ClassicSteps } from './steps/classic-steps';
 import { StepReviewRouting } from './steps/step-review-routing';
 import { StepSubmitted } from './steps/step-submitted';
 import { StudySurface } from './steps/study-surface';
@@ -14,15 +19,25 @@ import { StudySurface } from './steps/study-surface';
 /**
  * Create Scan Study.
  *
- * Two surfaces over one draft that starts transferring bytes the moment a file
- * is chosen: the STUDY you work on, and the SUBMIT screen you commit from.
+ * Two ways through, chosen in the user's profile and read once here:
  *
- * It was four ordered steps. The order protected nothing — files commit on
- * selection, and neither the interpretation nor the routing step wrote anything
- * the previous one had to finish first — while the learner's real loop of add a
- * file, change the exam type, answer a finding, add another file cost Back,
- * Back, click, Next, Next. One boundary genuinely survives, and it is the only
- * one: everything before Submit is reversible in the app and Submit is not.
+ *   study (default)  one working surface, then a commit screen
+ *   classic          the ordered four-step wizard
+ *
+ * They share one draft, one model and every panel. Only the shell differs, so
+ * a fix to the file list or the findings lands in both.
+ *
+ * The study flow is the default because nothing in this feature has to happen
+ * in an order: files commit on selection, and neither the interpretation nor
+ * the routing step writes anything the previous one had to finish first, while
+ * the learner's real loop of add a file, change the exam type, answer a
+ * finding, add another file cost Back, Back, click, Next, Next. One boundary
+ * genuinely survives, and both flows keep it: everything before Submit is
+ * reversible in the app and Submit is not.
+ *
+ * The preference is read ONCE, into state. Re-reading it on every render would
+ * let a change in another tab swap the shell out from under a half-finished
+ * study.
  *
  * Nothing here tells the user not to close the browser, because nothing in it
  * depends on the tab staying open: uploaded objects live in S3 and the draft
@@ -32,8 +47,12 @@ import { StudySurface } from './steps/study-surface';
  * State, transfers and persistence are all in model/use-create-scan-draft.ts.
  */
 export function CreateScanPage() {
-  const draft = useCreateScanDraft();
+  const [flow] = useState(() => readCreateScanFlow(globalThis.localStorage));
+  const draft = useCreateScanDraft(flow);
   const { state } = draft;
+
+  const classic = flow === 'classic';
+  const submitted = state.step === 'submitted';
 
   return (
     <div className="flex flex-col gap-4">
@@ -49,7 +68,7 @@ export function CreateScanPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            {state.step !== 'submitted' && state.files.length > 0 ? (
+            {!submitted && state.files.length > 0 ? (
               <Button
                 variant="ghost"
                 size="sm"
@@ -65,10 +84,21 @@ export function CreateScanPage() {
           </div>
         </div>
 
-        {state.step !== 'submitted' ? <DraftIndicator files={state.files} /> : null}
+        {/* Only the classic flow has a sequence to show. A stepper over the
+            study flow's two surfaces would be narrating a boundary the user
+            can already see. */}
+        {classic ? (
+          <WizardStepper
+            current={state.step}
+            onSelect={draft.goToStep}
+            canSelect={(step) => !submitted && canEnterClassicStep(step, state)}
+          />
+        ) : null}
+
+        {!submitted ? <DraftIndicator files={state.files} /> : null}
       </header>
 
-      {draft.wasRestored && state.step !== 'submitted' ? (
+      {draft.wasRestored && !submitted ? (
         <InlineNotice
           tone="info"
           title="Picked up where you left off"
@@ -84,21 +114,19 @@ export function CreateScanPage() {
         </InlineNotice>
       ) : null}
 
-      {state.step === 'study' ? (
-        <StudySurface draft={draft} onReview={() => draft.goToStep('submit')} />
-      ) : null}
-
-      {state.step === 'submit' ? (
+      {submitted && state.submitOutcome ? (
+        <StepSubmitted outcome={state.submitOutcome} onCreateAnother={draft.reset} />
+      ) : classic ? (
+        <ClassicSteps draft={draft} onSubmitted={draft.finish} />
+      ) : state.step === 'submit' ? (
         <StepReviewRouting
           draft={draft}
           onBack={() => draft.goToStep('study')}
           onSubmitted={draft.finish}
         />
-      ) : null}
-
-      {state.step === 'submitted' && state.submitOutcome ? (
-        <StepSubmitted outcome={state.submitOutcome} onCreateAnother={draft.reset} />
-      ) : null}
+      ) : (
+        <StudySurface draft={draft} onReview={() => draft.goToStep('submit')} />
+      )}
     </div>
   );
 }
