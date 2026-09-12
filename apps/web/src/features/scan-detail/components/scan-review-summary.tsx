@@ -4,8 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle, StatusPill } from '@scanvault
 
 import { formatDateTime } from '@/lib/format';
 
+import { ReviewMarkdownBody } from './review-markdown-body';
+
 type ReviewSubject = {
   competencyMeasure?: CompetencyMeasure | null;
+  /** The AI-assisted written assessment, and its translation where one exists. */
+  reviewMD?: string | null;
+  translatedReviewMD?: string | null;
+  translatedLanguage?: string | null;
   overAllFeed?: string | null;
   technicalFeed?: string | null;
   teachingPoints?: string | null;
@@ -67,6 +73,14 @@ export function ScanReviewSummary({
       </CardHeader>
 
       <CardContent className="space-y-3">
+        {/* First, because on the reviews that carry one it is the assessment
+            and the short answers are its summary. */}
+        <ReviewMarkdownBody
+          reviewMD={review.reviewMD}
+          translatedReviewMD={review.translatedReviewMD}
+          translatedLanguage={review.translatedLanguage}
+        />
+
         <Block label="Overall feedback" value={review.overAllFeed} required />
         <Block label="Technical feedback" value={review.technicalFeed} />
         <Block label="Teaching points" value={review.teachingPoints} />

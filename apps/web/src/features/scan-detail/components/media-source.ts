@@ -19,3 +19,18 @@ export type StageSource = {
   /** Bytes, where known. A draft file knows its own size; both do in practice. */
   filesize?: number;
 };
+
+/**
+ * The files the stage can actually show.
+ *
+ * A scan keeps its whole file list, including objects whose upload never
+ * finished — 17.6% of scans in the local database hold at least one — and
+ * those arrive with a null url. Paging through them gave the reviewer blank
+ * frames inside a "4 / 7" that counted them as content.
+ *
+ * They are not hidden from the learner: the files panel beside the stage lists
+ * every file with its status, which is where a failed upload belongs.
+ */
+export function playableSources<T extends StageSource>(files: readonly T[]): T[] {
+  return files.filter((file) => Boolean(file.url));
+}

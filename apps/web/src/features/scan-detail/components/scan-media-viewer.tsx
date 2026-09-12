@@ -5,10 +5,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { formatBytes } from '@/lib/format';
 
-import type { StageSource } from './media-source';
+import { playableSources, type StageSource } from './media-source';
 import { ScanMediaStage } from './scan-media-stage';
 
 type ScanMediaViewerProps = {
+  /** Every file on the scan. Ones with no bytes are dropped from the stage. */
   files: StageSource[];
   className?: string;
   /**
@@ -31,13 +32,15 @@ type ScanMediaViewerProps = {
  * element re-reads whatever the current query data holds.
  */
 export function ScanMediaViewer({
-  files,
+  files: allFiles,
   className,
   navigationKeys = 'arrows',
 }: ScanMediaViewerProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
+  const files = playableSources(allFiles);
+  const withoutBytes = allFiles.length - files.length;
   const count = files.length;
   const safeIndex = count === 0 ? 0 : Math.min(activeIndex, count - 1);
   const active = files[safeIndex];
@@ -80,8 +83,12 @@ export function ScanMediaViewer({
       <EmptyState
         className={className}
         icon={<ImageOff className="h-5 w-5" aria-hidden />}
-        title="No media on this scan"
-        description="The upload never produced a file. The file list below shows what was expected."
+        title={withoutBytes > 0 ? 'Nothing to show yet' : 'No media on this scan'}
+        description={
+          withoutBytes > 0
+            ? `${withoutBytes} ${withoutBytes === 1 ? 'file is' : 'files are'} on this scan but none of their bytes reached storage. The file list below shows each one's status.`
+            : 'The upload never produced a file. The file list below shows what was expected.'
+        }
       />
     );
   }
@@ -128,6 +135,13 @@ export function ScanMediaViewer({
         {typeof active.filesize === 'number' ? ` · ${formatBytes(active.filesize)}` : ''} ·{' '}
         {mediaFormatLabel(active) || 'unknown type'}
       </p>
+
+      {withoutBytes > 0 ? (
+        <p className="text-[12px] text-warn">
+          {withoutBytes} {withoutBytes === 1 ? 'file has' : 'files have'} no stored bytes and cannot
+          be shown. They are listed with their status below.
+        </p>
+      ) : null}
 
       {count > 1 ? (
         <div className="flex gap-2 overflow-x-auto rounded-token border border-line bg-surface-2 p-2">
