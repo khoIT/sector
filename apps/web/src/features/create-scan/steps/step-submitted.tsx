@@ -2,6 +2,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, StatusPill } from '@s
 import { CheckCircle2, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import { scanDetailPathFor } from '@/features/scan-detail/scan-detail-links';
 import { SCAN_VAULT_PATH } from '@/features/scan-list/scan-list-views';
 
 import { InlineNotice } from '../components/inline-notice';
@@ -54,7 +55,7 @@ export function StepSubmitted({ outcome, onCreateAnother }: StepSubmittedProps) 
                 {outcome.expertReview === 'requested'
                   ? 'Requested'
                   : outcome.expertReview === 'failed'
-                    ? 'Not requested'
+                    ? 'Request failed'
                     : 'Not requested'}
               </dd>
             </div>
@@ -67,7 +68,7 @@ export function StepSubmitted({ outcome, onCreateAnother }: StepSubmittedProps) 
               action={
                 outcome.scanId ? (
                   <Button asChild variant="secondary" size="sm">
-                    <Link to={SCAN_VAULT_PATH.my}>Open my scans</Link>
+                    <Link to={scanDetailPathFor('my', outcome.scanId)}>Open the study</Link>
                   </Button>
                 ) : undefined
               }
@@ -79,8 +80,8 @@ export function StepSubmitted({ outcome, onCreateAnother }: StepSubmittedProps) 
                   </li>
                 ))}
               </ul>
-              The bytes are in storage; the study records the rest. Open the study and retry the
-              upload for those files.
+              The bytes are in storage, but the study does not reference them and nothing here can
+              attach them to it afterwards. Submit those files as their own study.
             </InlineNotice>
           ) : null}
 
@@ -89,14 +90,15 @@ export function StepSubmitted({ outcome, onCreateAnother }: StepSubmittedProps) 
               tone="warn"
               title="The expert review request did not go through"
               action={
-                <Button asChild variant="secondary" size="sm">
-                  <Link to={SCAN_VAULT_PATH.my}>Open my scans</Link>
-                </Button>
+                outcome.scanId ? (
+                  <Button asChild variant="secondary" size="sm">
+                    <Link to={scanDetailPathFor('my', outcome.scanId)}>Open the study</Link>
+                  </Button>
+                ) : undefined
               }
             >
               {outcome.expertReviewError ?? 'The request was rejected.'} The study itself is saved
-              and shared with your groups — request the expert review again from the study once the
-              credit is there.
+              and routed to your groups, and no credit was spent.
             </InlineNotice>
           ) : null}
         </CardContent>
@@ -107,7 +109,12 @@ export function StepSubmitted({ outcome, onCreateAnother }: StepSubmittedProps) 
           <Plus className="h-3.5 w-3.5" aria-hidden /> Create another study
         </Button>
         <Button asChild>
-          <Link to={SCAN_VAULT_PATH.my}>Go to my scans</Link>
+          {/* The study it just made, not the list it is somewhere in. The id
+              is right here in the outcome; making the learner find the row
+              they cannot yet see was the long way round. */}
+          <Link to={outcome.scanId ? scanDetailPathFor('my', outcome.scanId) : SCAN_VAULT_PATH.my}>
+            {outcome.scanId ? 'Open the study' : 'Go to my scans'}
+          </Link>
         </Button>
       </div>
     </div>

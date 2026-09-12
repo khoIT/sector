@@ -91,7 +91,9 @@ export function StudySummary({ state, onEdit, collectsScanIdentifier }: StudySum
         <Section title="Who sees this study">
           {chosenGroups.length === 0 ? (
             <Empty>
-              No groups. Only you will see this study, and it cannot be shared with a group later.
+              No groups. No group reviewer will see this study, and a group cannot be added to it
+              afterwards — the API has no route for that. You can still share it with named people
+              from the study itself.
             </Empty>
           ) : (
             <ul className="flex flex-col gap-1">

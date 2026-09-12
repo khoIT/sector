@@ -144,3 +144,60 @@ describe('planFindingTransfer', () => {
     expect(plan).toEqual({ carried: {}, kept: [], cleared: [] });
   });
 });
+
+describe('planFindingTransfer with duplicate identities', () => {
+  // MSK v1 carries six rows called "Effusion", one per joint. They differ only
+  // by parent, which the identity deliberately ignores, so they collide.
+  const source = [
+    definition({ key: 'knee-effusion', name: 'Effusion', options: ['Present', 'Absent'] }),
+    definition({ key: 'ankle-effusion', name: 'Effusion', options: ['Present', 'Absent'] }),
+  ];
+  const destination = [
+    definition({ key: 'effusion', name: 'Effusion', options: ['Present', 'Absent'] }),
+  ];
+
+  it('carries the first and reports the rest as lost, not as kept', () => {
+    const plan = planFindingTransfer(source, destination, {
+      'knee-effusion': 'Present',
+      'ankle-effusion': 'Absent',
+    });
+
+    expect(plan.carried).toEqual({ effusion: 'Present' });
+    expect(plan.kept).toEqual([{ key: 'effusion', name: 'Effusion', value: 'Present' }]);
+    expect(plan.cleared).toEqual([{ key: 'ankle-effusion', name: 'Effusion', value: 'Absent' }]);
+  });
+
+  it('never reports more answers than it carries', () => {
+    const plan = planFindingTransfer(source, destination, {
+      'knee-effusion': 'Present',
+      'ankle-effusion': 'Absent',
+    });
+
+    expect(plan.kept.length).toBe(Object.keys(plan.carried).length);
+  });
+});
+
+describe('planFindingTransfer when the source definitions are unavailable', () => {
+  // The definitions query has no retry override, so a failed lookup leaves the
+  // source list empty for the rest of the session. Every switch after that
+  // used to clear every answer and list raw keys as their names.
+  const destination = [
+    definition({ key: 'shared', name: 'Free fluid', options: ['Absent', 'Present'] }),
+    definition({ key: 'only-there', name: 'Aortic diameter', options: [] }),
+  ];
+
+  it('keeps an answer the new scan type still defines under the same key', () => {
+    const plan = planFindingTransfer([], destination, { shared: 'Present' });
+
+    expect(plan.carried).toEqual({ shared: 'Present' });
+    expect(plan.kept).toEqual([{ key: 'shared', name: 'Free fluid', value: 'Present' }]);
+    expect(plan.cleared).toEqual([]);
+  });
+
+  it('clears an answer the new scan type has no row for', () => {
+    const plan = planFindingTransfer([], destination, { gone: 'Present' });
+
+    expect(plan.carried).toEqual({});
+    expect(plan.cleared).toEqual([{ key: 'gone', name: 'gone', value: 'Present' }]);
+  });
+});

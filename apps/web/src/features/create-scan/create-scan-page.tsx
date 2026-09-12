@@ -5,10 +5,12 @@ import { Link } from 'react-router-dom';
 
 import { SCAN_VAULT_PATH } from '@/features/scan-list/scan-list-views';
 
+import { DiscardDraftDialog } from './components/discard-draft-dialog';
 import { DraftIndicator } from './components/draft-indicator';
 import { InlineNotice } from './components/inline-notice';
 import { WizardStepper } from './components/wizard-stepper';
 import { canEnterClassicStep } from './model/classic-steps';
+import { draftHoldings } from './model/draft-holdings';
 import { readCreateScanFlow } from './model/create-scan-flow';
 import { useCreateScanDraft } from './model/use-create-scan-draft';
 import { ClassicSteps } from './steps/classic-steps';
@@ -53,6 +55,12 @@ export function CreateScanPage() {
   const classic = flow === 'classic';
   const submitted = state.step === 'submitted';
 
+  const [discardOpen, setDiscardOpen] = useState(false);
+  // Everything the draft holds, not just its files: a study with a scan type,
+  // six findings and a note but no file yet is exactly the draft a learner
+  // most wants to throw away, and the control used to be hidden for it.
+  const holdings = draftHoldings(state);
+
   return (
     <div className="flex flex-col gap-4">
       <header className="flex flex-col gap-3">
@@ -67,11 +75,11 @@ export function CreateScanPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            {!submitted && state.files.length > 0 ? (
+            {!submitted && holdings.length > 0 ? (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={draft.reset}
+                onClick={() => setDiscardOpen(true)}
                 title="Discard this draft and start again"
               >
                 <Trash2 className="h-3.5 w-3.5" aria-hidden /> Discard draft
@@ -105,7 +113,7 @@ export function CreateScanPage() {
           tone="info"
           title="Picked up where you left off"
           action={
-            <Button variant="ghost" size="sm" onClick={draft.reset}>
+            <Button variant="ghost" size="sm" onClick={() => setDiscardOpen(true)}>
               Start fresh
             </Button>
           }
@@ -115,6 +123,13 @@ export function CreateScanPage() {
           file this browser no longer holds has to be chosen again — those are listed as such.
         </InlineNotice>
       ) : null}
+
+      <DiscardDraftDialog
+        open={discardOpen}
+        onOpenChange={setDiscardOpen}
+        holdings={holdings}
+        onConfirm={draft.reset}
+      />
 
       {submitted && state.submitOutcome ? (
         <StepSubmitted outcome={state.submitOutcome} onCreateAnother={draft.reset} />

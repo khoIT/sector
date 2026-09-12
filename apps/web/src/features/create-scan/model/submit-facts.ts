@@ -89,7 +89,10 @@ function findingsFact(answered: number, definitions: number, missingRequired: nu
  */
 function groupsFact(groupNames: readonly string[]): SubmitFact {
   if (groupNames.length === 0) {
-    return { label: 'Shared with', value: 'Nobody — no group selected', concerning: true };
+    // Not "nobody": the study can still be shared with named people afterwards,
+    // and an expert review puts it in front of a GUSI reviewer. What is lost
+    // for good is the group routing, which no route can add later.
+    return { label: 'Shared with', value: 'No group — no group reviewer', concerning: true };
   }
   return { label: 'Shared with', value: groupNames.join(', ') };
 }

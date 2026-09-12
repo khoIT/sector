@@ -104,10 +104,13 @@ describe('submitFacts', () => {
       });
     });
 
-    it('flags a study that is going nowhere', () => {
+    // "No group reviewer" rather than "nobody": named people can still be
+    // added afterwards and an expert review reaches a GUSI reviewer. The group
+    // routing is the part no route can repair.
+    it('flags a study no group reviewer will see', () => {
       expect(valueOf(submitFacts(input({ groupNames: [] })), 'Shared with')).toEqual({
         label: 'Shared with',
-        value: 'Nobody — no group selected',
+        value: 'No group — no group reviewer',
         concerning: true,
       });
     });

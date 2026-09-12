@@ -22,6 +22,7 @@ import {
 } from './create-scan-flow';
 import { mintDraftId } from './draft-id';
 import { clearDraft, readDraft, restoreFiles, writeDraft } from './draft-storage';
+import { draftHoldings } from './draft-holdings';
 import type {
   DraftFile,
   DraftFileError,
@@ -140,7 +141,17 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
   // again here would resurrect the draft that `finish()` just cleared.
   useEffect(() => {
     if (state.step === 'submitted') return;
-    if (state.files.length === 0 && !state.scanTypeId && !state.note) return;
+
+    // The same predicate the Discard control is offered on, so the two cannot
+    // disagree. The guard used to name three fields, which meant a draft whose
+    // only content was a patient id, a group choice or a review request was
+    // never written at all — and a draft emptied back down to those left its
+    // manifest on disk to be restored next time.
+    if (draftHoldings(state).length === 0) {
+      clearDraft();
+      return;
+    }
+
     writeDraft(state);
   }, [state]);
 
