@@ -1,15 +1,22 @@
-import { SHARED_SCAN_STATUS_LABEL, type SharedScanListItem } from '@scanvault/api-client';
+import {
+  SHARED_SCAN_STATUS_LABEL,
+  type AuthUser,
+  type SharedScanListItem,
+} from '@scanvault/api-client';
 import { StatusPill } from '@scanvault/ui';
 
 import { sharedScanDetailPathFor } from '@/features/scan-detail/scan-detail-links';
 
 import type { ListColumn } from '../table/column-model';
 import { formatDate } from '@/lib/format';
-import { DateCell, FilesCell, StatusCell, TitleCell, UserCell } from './list-cells';
+import { DateCell, StatusCell, TitleCell, UserCell } from './list-cells';
 import { OpenScanAction } from './row-actions';
+import { ScanRowMenu } from './scan-row-menu';
 
 export type SharedScanColumnContext = {
   returnUrl: string;
+  /** Needed by the row menu for the note permissions. */
+  user: AuthUser | null;
 };
 
 /**
@@ -23,6 +30,7 @@ export type SharedScanColumnContext = {
  */
 export function sharedScanColumns({
   returnUrl,
+  user,
 }: SharedScanColumnContext): Array<ListColumn<SharedScanListItem>> {
   return [
     {
@@ -70,15 +78,6 @@ export function sharedScanColumns({
       cell: (share) => <StatusCell status={share.scan.status} />,
     },
     {
-      id: 'files',
-      header: 'Files',
-      numeric: true,
-      defaultHidden: true,
-      cell: (share) => (
-        <FilesCell fileCount={share.scan.fileCount} fileTotal={share.scan.fileTotal} />
-      ),
-    },
-    {
       id: 'createdAt',
       header: 'Shared',
       sortField: 'createdAt',
@@ -91,8 +90,21 @@ export function sharedScanColumns({
       alwaysVisible: true,
       className: 'text-right',
       cell: (share) => (
-        <div className="flex justify-end">
+        <div className="flex items-center justify-end gap-1">
           <OpenScanAction to={sharedScanDetailPathFor(share.id, returnUrl)} />
+          <ScanRowMenu
+            // The SCAN's id, not the share's: notes and downloads address the
+            // scan. Only navigation goes through the share.
+            scanId={share.scan.id}
+            scanTitle={share.scan.title}
+            files={share.scan.files}
+            // The scan's own user. `sharedBy` is who sent it, which is a
+            // different person the moment someone shares a scan they do not own.
+            ownerId={share.scan.user.id}
+            view="shared"
+            user={user}
+            to={sharedScanDetailPathFor(share.id, returnUrl)}
+          />
         </div>
       ),
     },

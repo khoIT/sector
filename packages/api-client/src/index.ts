@@ -209,6 +209,7 @@ export {
   scanListPath,
 } from './endpoints/scan';
 
+export { deleteScan } from './endpoints/scan-delete';
 export { addScanNote, getScanNotes } from './endpoints/scan-note';
 export {
   createScanShare,
@@ -284,6 +285,7 @@ export {
   useScanNotes,
   type AddScanNoteVariables,
 } from './react/use-scan-notes';
+export { useDeleteScanMutation } from './react/use-scan-delete';
 export {
   useCreateScanShareMutation,
   useDeleteScanShareMutation,

@@ -3,6 +3,8 @@ import { EmptyState } from '@scanvault/ui';
 import { Share2 } from 'lucide-react';
 import { useMemo } from 'react';
 
+import { useAuth } from '@/auth/auth-context';
+
 import { ListErrorState } from '../empty/list-error-state';
 import { NarrowedEmptyState } from '../empty/narrowed-empty-state';
 import { sharedScanColumns } from '../rows/shared-scan-columns';
@@ -27,15 +29,17 @@ const DEFAULT_SORT: SortState[] = [{ id: 'createdAt', desc: true }];
  * ScanListPage. What it shares is the toolbar, table and pagination.
  */
 export function SharedScansPage() {
+  const { user } = useAuth();
+
   const defaultHidden = useMemo(
-    () => defaultHiddenColumns(sharedScanColumns({ returnUrl: '' })),
+    () => defaultHiddenColumns(sharedScanColumns({ returnUrl: '', user: null })),
     [],
   );
 
   const surface = useListSurface('shared', DEFAULT_SORT, defaultHidden);
   const { url, debouncedKeyword, hiddenColumns, returnUrl } = surface;
 
-  const columns = useMemo(() => sharedScanColumns({ returnUrl }), [returnUrl]);
+  const columns = useMemo(() => sharedScanColumns({ returnUrl, user }), [returnUrl, user]);
   const shown = useMemo(() => visibleColumns(columns, hiddenColumns), [columns, hiddenColumns]);
 
   const query = useSharedScanList({

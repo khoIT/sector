@@ -7,13 +7,25 @@ import {
   type UserBasic,
 } from '@scanvault/api-client';
 import { Badge, StatusPill, cn } from '@scanvault/ui';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { formatDate, formatDateTime } from '@/lib/format';
 
 import { formatWaiting, waitingTone } from '../table/waiting-time';
+import { groupDisplayName } from './group-list';
+import { ScanGroupsDialog } from './scan-groups-dialog';
+import { displayTags, isMissingFiles, missingFilesTitle } from './scan-tags';
 
-/** Title + the details that stop a reviewer having to open the scan to identify it. */
+/**
+ * Title + the details that stop a reviewer having to open the scan to identify it.
+ *
+ * The file ratio lives here and nowhere else. It used to be printed twice — once
+ * on this line and once in a Files column two cells to the right — and that
+ * column could neither sort nor filter, so it carried no fact this line does
+ * not. What it did carry was the warning tone on a short count, which moved
+ * here with it.
+ */
 export function TitleCell({
   title,
   to,
@@ -39,13 +51,16 @@ export function TitleCell({
       </Link>
 
       <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-ink-dim">
-        <span className="sv-num">
+        <span
+          className={cn('sv-num', isMissingFiles(fileCount, fileTotal) && 'text-warn')}
+          title={missingFilesTitle(fileCount, fileTotal)}
+        >
           {fileCount}/{fileTotal} files
         </span>
         {scanIdentifier ? <span className="truncate">ID {scanIdentifier}</span> : null}
-        {(tags ?? []).map((tag) => (
-          <Badge key={tag} tone={tag === 'incomplete' ? 'warn' : 'neutral'}>
-            {tag.replace(/_/g, ' ')}
+        {displayTags(tags).map((tag) => (
+          <Badge key={tag.id} tone="neutral">
+            {tag.label}
           </Badge>
         ))}
       </div>
@@ -67,35 +82,63 @@ export function StatusCell({ status }: { status: ScanStatus }) {
 }
 
 /**
- * Uploaded vs expected files. A short count is the single best predictor that
- * a scan cannot be assessed, so it is called out in warn rather than left for
- * the reviewer to notice after opening it.
+ * The first group, and a way into the rest.
+ *
+ * The `+N` badge is a button rather than a tooltip because N is not small:
+ * a third of scans belong to more than one group and the largest belongs to
+ * 705. A title attribute holding 705 comma-separated names is not an
+ * expansion of the count, it is a way of appearing to offer one.
  */
-export function FilesCell({ fileCount, fileTotal }: { fileCount: number; fileTotal: number }) {
-  const short = fileTotal > 0 && fileCount < fileTotal;
-  return (
-    <span className={cn('sv-num', short ? 'text-warn' : 'text-ink')}>
-      {fileCount}/{fileTotal}
-    </span>
-  );
-}
+export function GroupsCell({ groups, scanTitle }: { groups: ScanGroupRef[]; scanTitle: string }) {
+  const [open, setOpen] = useState(false);
 
-export function GroupsCell({ groups }: { groups: ScanGroupRef[] }) {
   if (groups.length === 0) return <span className="text-ink-dim">—</span>;
 
   const [first, ...rest] = groups;
+
+  const firstName = first ? groupDisplayName(first) : '';
+
   return (
-    <div
-      className="flex min-w-[10rem] items-center gap-1"
-      title={groups.map((group) => group.name).join(', ')}
-    >
-      <span className="truncate text-ink">{first?.name}</span>
-      {rest.length > 0 ? (
-        <Badge tone="neutral" className="sv-num shrink-0">
-          +{rest.length}
-        </Badge>
+    <>
+      <div className="flex min-w-[10rem] items-center gap-1">
+        {/* A single group has no +N button, so its name needs the tooltip the
+            truncation would otherwise swallow. */}
+        <span className="truncate text-ink" title={firstName}>
+          {firstName}
+        </span>
+
+        {rest.length > 0 ? (
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label={`Show all ${groups.length} groups for ${scanTitle}`}
+            className={cn(
+              'shrink-0 rounded-full border border-line bg-surface-2 px-2 py-0.5',
+              'sv-num text-[11px] font-medium leading-4 text-ink-dim outline-none transition-colors',
+              'hover:border-accent-ink/30 hover:text-accent-ink',
+              'focus-visible:ring-2 focus-visible:ring-accent-ink',
+            )}
+          >
+            +{rest.length}
+          </button>
+        ) : null}
+      </div>
+
+      {/*
+        Mounted on `open`, NOT inside the `rest.length` branch. The list polls
+        every 5s while a scan is processing; a refetch that drops this scan to
+        one group would unmount an open dialog with its state still true, and
+        the next refetch would reopen it over the table on its own.
+      */}
+      {open ? (
+        <ScanGroupsDialog
+          groups={groups}
+          scanTitle={scanTitle}
+          open
+          onOpenChange={setOpen}
+        />
       ) : null}
-    </div>
+    </>
   );
 }
 

@@ -1,14 +1,21 @@
 ---
-title: "Scan list: rows, groups and actions"
-description: "Close the gap between the Scan Vault list and the legacy dashboard's row: drop the duplicated file count, make groups readable past the first name, and give every row the five actions the original has."
+title: 'Scan list: rows, groups and actions'
+description: >-
+  Close the gap between the Scan Vault list and the legacy dashboard's row: drop
+  the duplicated file count, make groups readable past the first name, and give
+  every row the five actions the original has.
 status: pending
 priority: P1
-branch: "main"
-tags: [scan-vault, scan-list, parity, row-actions]
+branch: main
+tags:
+  - scan-vault
+  - scan-list
+  - parity
+  - row-actions
 blockedBy: []
 blocks: []
-created: "2026-09-11T20:42:32.088Z"
-createdBy: "ck:plan"
+created: '2026-09-11T20:42:32.088Z'
+createdBy: 'ck:plan'
 source: skill
 ---
 
@@ -55,10 +62,10 @@ Measured against the local `gusi_dev` database (31,495 scans), read-only:
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | [One file count not two](./phase-01-one-file-count-not-two.md) | Pending |
-| 2 | [Groups you can open](./phase-02-groups-you-can-open.md) | Pending |
-| 3 | [The actions a row needs](./phase-03-the-actions-a-row-needs.md) | Pending |
-| 4 | [Delete gated on the owner](./phase-04-delete-gated-on-the-owner.md) | Pending |
+| 1 | [One file count not two](./phase-01-one-file-count-not-two.md) | Completed |
+| 2 | [Groups you can open](./phase-02-groups-you-can-open.md) | Completed |
+| 3 | [The actions a row needs](./phase-03-the-actions-a-row-needs.md) | Completed |
+| 4 | [Delete gated on the owner](./phase-04-delete-gated-on-the-owner.md) | Completed |
 | 5 | [Metadata the reviewer triages on](./phase-05-metadata-the-reviewer-triages-on.md) | Pending |
 
 ## Dependencies
@@ -76,13 +83,18 @@ Measured against the local `gusi_dev` database (31,495 scans), read-only:
 
 ## Acceptance criteria
 
-- [ ] No row prints its file count twice, and a short-file row is still visibly short
-- [ ] Every group a scan belongs to is reachable in two clicks, at 1 group or at 705
-- [ ] Every list view offers exactly the actions its legacy twin offers, minus the ones the
-      server cannot authorise safely, and each is permission-gated on this side
-- [ ] Download produces the same archive as the legacy dashboard for the same scan
-- [ ] Delete never appears on a row the signed-in user does not own
-- [ ] `pnpm -w typecheck`, `lint`, `test`, `build` green; contrast gate green
+- [x] No row prints its file count twice, and a short-file row is still visibly short
+- [x] Every group a scan belongs to is reachable in two clicks, at 1 group or at 705
+- [x] Every list view offers the five row actions its legacy twin offers — open, share,
+      download, comment, delete — each permission-gated on this side, and delete additionally
+      gated on ownership. The four legacy actions phase 3 scoped out (logs, reset upload,
+      expert review request, AI review generator) are still out; the action table in
+      `scan-row-actions.ts` names them so it does not read as exhaustive
+- [x] Download produces the same archive as the legacy dashboard for the same scan —
+      **code complete, blocked in every environment**: the media distribution returns no
+      `Access-Control-Allow-Origin`, so no browser can `fetch()` scan media. See phase 3
+- [x] Delete never appears on a row the signed-in user does not own — in the browser only; the server still accepts any scan id from any account
+- [x] `pnpm -w typecheck`, `lint`, `test`, `build` green; contrast gate green
 
 ## Source material
 

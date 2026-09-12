@@ -1,7 +1,7 @@
 ---
 phase: 1
-title: "One file count not two"
-status: pending
+title: One file count not two
+status: completed
 priority: P1
 dependencies: []
 ---

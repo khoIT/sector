@@ -8,7 +8,6 @@ import type { ListColumn } from '../table/column-model';
 import { formatDate } from '@/lib/format';
 import {
   DateCell,
-  FilesCell,
   GroupsCell,
   ReviewedByCell,
   StatusCell,
@@ -17,6 +16,7 @@ import {
   WaitingCell,
 } from './list-cells';
 import { AssessAction, OpenScanAction } from './row-actions';
+import { ScanRowMenu } from './scan-row-menu';
 
 export type ScanColumnContext = {
   view: ScanListView;
@@ -89,18 +89,11 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
     });
   }
 
-  columns.push({
-    id: 'files',
-    header: 'Files',
-    numeric: true,
-    cell: (scan) => <FilesCell fileCount={scan.fileCount} fileTotal={scan.fileTotal} />,
-  });
-
   if (view !== 'my') {
     columns.push({
       id: 'groups',
       header: 'Groups',
-      cell: (scan) => <GroupsCell groups={scan.groups} />,
+      cell: (scan) => <GroupsCell groups={scan.groups} scanTitle={scan.title} />,
     });
   }
 
@@ -145,6 +138,8 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
     );
   }
 
+  // The primary action stays a visible button — on a queue it is the reason the
+  // queue exists — and everything else sits behind the menu beside it.
   columns.push({
     id: 'actions',
     header: 'Actions',
@@ -153,19 +148,27 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
     cell: (scan) => {
       const to = scanDetailPathFor(view, scan.id, returnUrl);
 
-      if (queue) {
-        return (
-          <AssessAction
-            to={to}
-            canReview={canReview}
-            isOwnScan={Boolean(user) && scan.user.id === user?.id}
-          />
-        );
-      }
-
       return (
-        <div className="flex justify-end">
-          <OpenScanAction to={to} label={reviewed ? 'Open review' : 'Open'} />
+        <div className="flex items-center justify-end gap-1">
+          {queue ? (
+            <AssessAction
+              to={to}
+              canReview={canReview}
+              isOwnScan={Boolean(user) && scan.user.id === user?.id}
+            />
+          ) : (
+            <OpenScanAction to={to} label={reviewed ? 'Open review' : 'Open'} />
+          )}
+
+          <ScanRowMenu
+            scanId={scan.id}
+            scanTitle={scan.title}
+            files={scan.files}
+            ownerId={scan.user.id}
+            view={view}
+            user={user}
+            to={to}
+          />
         </div>
       );
     },

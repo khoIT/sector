@@ -1,7 +1,7 @@
 ---
 phase: 2
-title: "Groups you can open"
-status: pending
+title: Groups you can open
+status: completed
 priority: P1
 dependencies: []
 ---

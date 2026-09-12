@@ -1,7 +1,7 @@
 ---
 phase: 3
-title: "The actions a row needs"
-status: pending
+title: The actions a row needs
+status: completed
 priority: P1
 dependencies: []
 ---
@@ -72,6 +72,21 @@ Two failure modes the legacy implementation swallows and this one must not:
    setup answers 403, because `gusi_dev` holds production records while `.env` points at the
    staging bucket (`docs/local-setup-lms.md`). A partial zip must not be presented as a
    complete one — report which files failed, by name.
+
+   **Found on 12 Sep, and it blocks the feature: the media distribution serves no CORS
+   headers at all.** A presigned CloudFront URL answers `200` to a plain GET, but the same
+   request carrying an `Origin` header comes back with no `Access-Control-Allow-Origin` —
+   tested against four different origins, none gets one. So a browser will not let `fetch()`
+   read those bytes from ANY origin, and the client-side zip cannot complete anywhere.
+
+   The legacy dashboard uses the same `fetch(url).blob()` path against the same host, so it
+   would fail identically in this environment; that follows from the missing header rather
+   than from watching legacy fail, which was not done.
+
+   The code is correct and the failure surfaces honestly — the user is told which file could
+   not be fetched instead of being handed an empty archive. What is needed is a CORS
+   configuration on the distribution (an AWS change, no credentials here). Until then
+   Download reports a failure every time.
 2. **A row with zero files.** Disable the item rather than producing an empty archive.
 
 Duplicate filenames inside one scan are possible (the create-scan wizard de-duplicates, but

@@ -1,9 +1,10 @@
 ---
 phase: 4
-title: "Delete gated on the owner"
-status: pending
+title: Delete gated on the owner
+status: completed
 priority: P2
-dependencies: [3]
+dependencies:
+  - 3
 ---
 
 # Phase 4: Delete gated on the owner
@@ -52,6 +53,11 @@ It is the second condition, not the first.
 **For the API backlog, not this phase:** `deleteScanById` needs an ownership-or-elevated-role
 check, and `delete:scan` needs to stop being universal. Worth raising with Liesl before the
 next sprint — it is a data-loss path open to every account.
+
+Independently confirmed in review on 12 Sep against `scan.controller.ts:1003`. Say plainly
+what shipped: **delete authorisation exists only in the browser.** A `curl` with any
+authenticated account's token still deletes any scan by id. Nothing in this plan or its
+acceptance criteria should read as "delete is permission-gated".
 
 ### Behaviour
 

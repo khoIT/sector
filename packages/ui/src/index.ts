@@ -90,6 +90,19 @@ export {
   type DialogContentProps,
 } from './components/dialog';
 
+export {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuHint,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  type DropdownMenuItemProps,
+} from './components/dropdown-menu';
+
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './components/tabs';
 
 export { Skeleton, SkeletonTable, type SkeletonProps, type SkeletonTableProps } from './components/skeleton';
