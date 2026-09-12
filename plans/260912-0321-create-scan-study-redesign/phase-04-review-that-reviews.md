@@ -1,8 +1,8 @@
 ---
 phase: 4
-title: "Review that reviews"
-status: pending
-effort: "S"
+title: Review that reviews
+status: completed
+effort: S
 ---
 
 # Phase 4: Review that reviews
@@ -77,6 +77,18 @@ notice are the good part of this screen and stay exactly as they are.
    is one surface; without it, the relevant step.
 4. Leave the existing warnings and the submit button untouched.
 
+### Added: the missing exam type is now named here
+
+Phase 2 made the submit surface reachable at any time on purpose — Review explains what is
+missing rather than being disabled without saying why. The browser check walked straight
+through to Submit with no exam type chosen and nothing on the screen said so, while the Submit
+button stayed live over a study the server would reject and a reviewer could not read.
+
+So the exam type joins files as a submit blocker, named in the same voice as the other two:
+it decides which findings a reviewer is asked, and it cannot be changed once the study exists.
+
+The back button also stopped saying "Interpretation", which is a step that no longer exists.
+
 ## Tests / Validation
 
 - Browser: submit a study with 3 findings answered of 7 required and confirm the four blank
@@ -87,10 +99,10 @@ notice are the good part of this screen and stay exactly as they are.
 
 ## Success Criteria
 
-- [ ] Every value sent by `submitDraft` appears on the submit surface first
-- [ ] Groups are named, not counted
-- [ ] Required-but-blank findings read "not assessed"
-- [ ] Existing incomplete-upload and zero-files warnings still fire
+- [x] Every value sent by `submitDraft` appears on the submit surface first
+- [x] Groups are named, not counted — with the wider-than-cohort ones marked
+- [x] Required-but-blank findings read "not assessed"
+- [x] Existing incomplete-upload and zero-files warnings still fire, and a third joined them — see below
 
 ## Risk Assessment
 
