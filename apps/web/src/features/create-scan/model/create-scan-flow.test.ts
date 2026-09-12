@@ -57,7 +57,8 @@ describe('writing the flow preference', () => {
 describe('which steps a flow can draw', () => {
   it.each([
     ['study', 'study', true],
-    ['submit', 'study', true],
+    ['submit', 'study', false],
+    ['submit', 'classic', false],
     ['files', 'study', false],
     ['files', 'classic', true],
     ['routing', 'classic', true],
@@ -80,9 +81,17 @@ describe('carrying a draft across a flow change', () => {
   it.each([
     ['files', 'study'],
     ['interpretation', 'study'],
-    ['routing', 'submit'],
+    ['routing', 'study'],
   ] as const)('classic %s becomes study-flow %s', (from, to) => {
     expect(stepForFlow(from, 'study')).toBe(to);
+  });
+
+  it('lands a draft parked on the retired submit step somewhere drawable', () => {
+    // The study flow submits through a confirm dialog now, so `submit` is a
+    // step nothing renders. A draft saved on it before that change must still
+    // open — on the surface in one flow, on the last wizard step in the other.
+    expect(stepForFlow('submit', 'study')).toBe('study');
+    expect(stepForFlow('submit', 'classic')).toBe('routing');
   });
 
   it('leaves the receipt alone in both directions', () => {
@@ -94,6 +103,6 @@ describe('carrying a draft across a flow change', () => {
 
   it('leaves a step the flow already owns untouched', () => {
     expect(stepForFlow('interpretation', 'classic')).toBe('interpretation');
-    expect(stepForFlow('submit', 'study')).toBe('submit');
+    expect(stepForFlow('study', 'study')).toBe('study');
   });
 });

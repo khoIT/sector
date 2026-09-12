@@ -1,38 +1,59 @@
-import { useFindingDefinitions, useScanUserGroups } from '@scanvault/api-client';
-import { Stethoscope, Users2 } from 'lucide-react';
+import { useFindingDefinitions, userDisplayName } from '@scanvault/api-client';
+import { cn } from '@scanvault/ui';
 import { useEffect, useMemo, useState } from 'react';
 
-import { FilesPanel } from '../components/files-panel';
-import { GroupRoutingPanel } from '../components/group-routing-panel';
-import { StudyBar, StudyChip } from '../components/study-bar';
+import { useAuth } from '@/auth/auth-context';
+
+import { ClinicalNotePanel } from '../components/clinical-note-panel';
+import { CommitBar } from '../components/commit-bar';
+import { ExpertReviewPanel } from '../components/expert-review-panel';
+import { FindingsPanel } from '../components/findings-panel';
+import { InlineNotice } from '../components/inline-notice';
+import { SetupBar } from '../components/setup-bar';
+import { StudyRail } from '../components/study-rail';
+import { SwitchScanTypeDialog } from '../components/switch-scan-type-dialog';
+import type { SubmitOutcome } from '../model/draft-types';
 import { canAutoCollapseFiles } from '../model/file-counts';
-import { defaultGroupCohort } from '../model/group-cohort';
-import { readinessFor, submitBlockers } from '../model/readiness';
+import { missingRequiredFindings } from '../model/finding-controls';
+import { readinessFor } from '../model/readiness';
+import { useDraftMediaSources } from '../model/use-draft-media-sources';
 import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
-import { StepInterpretation } from './step-interpretation';
+import { useScanTypeSwitch } from '../model/use-scan-type-switch';
 
 export type StudySurfaceProps = {
   draft: UseCreateScanDraft;
-  onReview: () => void;
+  onSubmitted: (outcome: SubmitOutcome) => void;
 };
 
 /**
- * The one surface a study is built on.
+ * Set up, work, commit.
  *
- * Files, exam type, findings, the note and group routing all live here, so the
- * learner's real loop — add a file, change the exam type, answer a finding,
- * add another file — costs no navigation at all. It used to cost Back, Back,
- * click, Next, Next.
+ * The job this page does has one dependency in it — the findings form is
+ * fetched per scan type and cannot be drawn before one is picked — and two
+ * things that hang off nothing at all: who the study is shared with, and
+ * getting the bytes off the learner's machine. Arranged that way it is three
+ * blocks.
  *
- * The study bar above carries the controls and the readiness counters; the
- * panels below carry the work.
+ * It was eight, and they repeated each other: a draft-saved line and a files
+ * summary row said "3 of 3 files in storage" a hundred pixels apart, the exam
+ * type was named by a chip, a folded row and a readiness counter, and a study
+ * bar summarised panels that had each learned to summarise themselves. Two
+ * summary systems, both right, endlessly agreeing. Only one layer describes
+ * the study now, and it is the panels.
+ *
+ * Media sits in a sticky column beside the findings rather than inside them,
+ * which is the geometry the reviewer's detail page has always used — a learner
+ * and their reviewer now read the same study the same way.
  */
-export function StudySurface({ draft, onReview }: StudySurfaceProps) {
-  const { state } = draft;
+export function StudySurface({ draft, onSubmitted }: StudySurfaceProps) {
+  const { user } = useAuth();
+  const { state, update } = draft;
   const { data: definitions } = useFindingDefinitions(state.scanTypeId, state.organizationId);
 
-  const [filesCollapsed, setFilesCollapsed] = useState(false);
+  const switcher = useScanTypeSwitch(draft);
+  const sources = useDraftMediaSources(state.files);
 
+  const [filesCollapsed, setFilesCollapsed] = useState(false);
   const collapsible = canAutoCollapseFiles(state.files);
 
   // Fold the files away once they are all safely stored, and unfold the moment
@@ -40,9 +61,13 @@ export function StudySurface({ draft, onReview }: StudySurfaceProps) {
   // Never the other way round: a panel that hides a failed upload is how a
   // failed upload reaches Submit.
   useEffect(() => {
-    if (!collapsible) setFilesCollapsed(false);
-    else setFilesCollapsed(true);
+    setFilesCollapsed(collapsible);
   }, [collapsible]);
+
+  const missingRequired = useMemo(
+    () => missingRequiredFindings(definitions?.items ?? [], state.findings),
+    [definitions, state.findings],
+  );
 
   const readiness = useMemo(
     () =>
@@ -56,97 +81,84 @@ export function StudySurface({ draft, onReview }: StudySurfaceProps) {
     [state.files, state.scanTypeId, state.findings, state.note, definitions],
   );
 
-  const blockers = submitBlockers(readiness);
-
-  // `groupIds === null` means "no explicit choice yet", and the panel below
-  // renders the DEFAULT cohort ticked in that case. Reading the raw length
-  // here would put "No groups" in the bar directly above a panel showing a
-  // group selected — the chip has to report the same effective set the panel
-  // does, or it contradicts what is on screen a few pixels below it.
-  const { data: groups } = useScanUserGroups();
-  const effectiveGroupIds = state.groupIds ?? defaultGroupCohort(groups);
-  const groupCount = effectiveGroupIds.length;
-
   return (
     <div className="flex flex-col gap-4">
-      <StudyBar readiness={readiness} onReview={onReview}>
-        {/* Both chips move the page to the panel they name rather than opening
-            a popover copy of it. One control, one place — a popover holding a
-            second scan-type grid is two things to keep in step. */}
-        <StudyChip
-          label="Exam type"
-          value={state.scanTypeName ?? 'Choose exam type'}
-          icon={<Stethoscope className="h-3.5 w-3.5 shrink-0 text-ink-dim" aria-hidden />}
-          onClick={() => scrollToPanel('study-exam')}
-        />
-        <StudyChip
-          label="Groups"
-          value={groupCount === 0 ? 'No groups' : `${groupCount} group${groupCount === 1 ? '' : 's'}`}
-          icon={<Users2 className="h-3.5 w-3.5 shrink-0 text-ink-dim" aria-hidden />}
-          onClick={() => scrollToPanel('study-groups')}
-        />
-      </StudyBar>
+      <SetupBar draft={draft} switcher={switcher} />
 
-      {/* Review is always reachable; it explains what is missing rather than
-          being disabled without saying why. */}
-      {blockers.length > 0 ? (
-        <p className="text-[12px] text-ink-dim">
-          Still needed before submitting:{' '}
-          {blockers.map((item) => item.label.toLowerCase()).join(' and ')}.
-        </p>
+      {switcher.pendingSwitch ? (
+        <SwitchScanTypeDialog
+          open
+          onOpenChange={(next) => {
+            if (!next) switcher.cancelSwitch();
+          }}
+          currentTypeName={state.scanTypeName ?? ''}
+          nextTypeName={switcher.pendingSwitch.scanType.name}
+          kept={switcher.pendingSwitch.plan.kept}
+          cleared={switcher.pendingSwitch.plan.cleared}
+          onConfirm={switcher.confirmSwitch}
+        />
       ) : null}
 
-      <FilesPanel
-        draft={draft}
-        collapsed={filesCollapsed}
-        onToggle={() => setFilesCollapsed((collapsed) => !collapsed)}
-      />
-
-      {/* `collapsibleScanType` only here: in the classic wizard the picker IS
-          the step, and a step that folds itself to one row is a step showing
-          nothing. */}
-      <div id="study-exam">
-        <StepInterpretation draft={draft} collapsibleScanType />
-      </div>
-
-      {/* Group routing lives here rather than on the submit screen, because it
-          is the one thing on that screen that could still be changed — and the
-          API has no route that adds a group to an existing scan, so getting it
-          wrong is unrecoverable. */}
-      <div id="study-groups">
-        <GroupRoutingPanel
-          selected={state.groupIds}
-          onChange={(ids) => draft.update({ groupIds: ids })}
+      {/* Media left, work right. Stacks media-first below xl, where a 450px
+          findings column would be worse than a full-width one. */}
+      <div
+        className={cn(
+          'grid gap-4 xl:items-start',
+          'xl:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]',
+        )}
+      >
+        <StudyRail
+          draft={draft}
+          sources={sources}
+          collapsed={filesCollapsed}
+          onToggle={() => setFilesCollapsed((collapsed) => !collapsed)}
         />
+
+        <div className="flex min-w-0 flex-col gap-4">
+          {state.scanTypeId ? (
+            <FindingsPanel
+              scanTypeId={state.scanTypeId}
+              organizationId={state.organizationId}
+              answers={state.findings}
+              invalidKeys={missingRequired.map((definition) => definition.key)}
+              onChange={(findings) => update({ findings })}
+            />
+          ) : (
+            <InlineNotice tone="info" title="Pick a scan type to see its findings">
+              Findings differ per scan type, so the form appears once a type is chosen. Your files
+              keep uploading in the background meanwhile.
+            </InlineNotice>
+          )}
+
+          {/* Beside the rows it is about, rather than two blocks below them
+              where it used to sit. */}
+          {missingRequired.length > 0 ? (
+            <InlineNotice
+              tone="warn"
+              title={`${missingRequired.length} required ${missingRequired.length === 1 ? 'finding is' : 'findings are'} still blank`}
+            >
+              {missingRequired.map((definition) => definition.name).join(', ')}. You can submit
+              without them, but a reviewer will not know whether they were normal or not assessed.
+            </InlineNotice>
+          ) : null}
+
+          <ClinicalNotePanel draft={draft} rows={4} />
+
+          {/* Its own block rather than a line in the commit bar: requesting a
+              review spends a credit and can open a purchase, which is more
+              than a bar should hold. */}
+          {user ? (
+            <ExpertReviewPanel
+              userId={user.id}
+              userName={userDisplayName(user)}
+              value={state.expertReview}
+              onChange={(expertReview) => update({ expertReview })}
+            />
+          ) : null}
+        </div>
       </div>
+
+      <CommitBar draft={draft} readiness={readiness} onSubmitted={onSubmitted} />
     </div>
   );
-}
-
-/** How long the jumped-to panel stays marked. Matches `sv-jump-target`. */
-const JUMP_FLASH_MS = 1200;
-
-/**
- * Move the page to a panel and mark it briefly, without changing what is
- * rendered.
- *
- * The mark is not decoration. A chip's target is very often ALREADY on screen
- * — on a fresh study every panel is — and there a scroll moves nothing, so
- * the click reads as dead. Marking the panel is what makes the control honest
- * about having done something.
- */
-function scrollToPanel(id: string): void {
-  const panel = document.getElementById(id);
-  if (!panel) return;
-
-  const reducedMotion =
-    globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
-  panel.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
-
-  // Removed and re-added around a forced reflow, so clicking the same chip
-  // twice replays the mark rather than doing nothing the second time.
-  panel.classList.remove('sv-jump-target');
-  void panel.offsetWidth;
-  panel.classList.add('sv-jump-target');
-  globalThis.setTimeout(() => panel.classList.remove('sv-jump-target'), JUMP_FLASH_MS);
 }

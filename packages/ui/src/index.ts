@@ -30,6 +30,8 @@ export {
 } from './styles/contrast';
 
 export { Button, buttonVariants, type ButtonProps } from './components/button';
+export { Combobox, type ComboboxOption, type ComboboxProps } from './components/combobox';
+export { filterComboboxOptions, nextHighlight } from './components/combobox-filter';
 export { Input, type InputProps } from './components/input';
 
 export {

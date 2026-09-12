@@ -1,0 +1,928 @@
+<meta charset="utf-8">
+<title>Interpret Scan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+  /* Palette lifted verbatim from packages/ui/src/styles/tokens.css. */
+  :root {
+    --bg:#efe7da; --surface:#fdfaf4; --surface-2:#f6f0e5;
+    --ink:#22201c; --ink-dim:#5e574c; --line:#ddd2be;
+    --accent:#ee7625; --accent-ink:#2f6b73; --accent-soft:#fce9d8;
+    --ok:#2e6b41; --ok-soft:#dcede1; --warn:#8a5300; --warn-soft:#faebcd;
+    --crit:#b3261e; --crit-soft:#f9dedb; --scan-ground:#14120f; --radius:8px;
+    --page:#f7f2e8; --rule:#cfc3ab; --shadow:rgba(34,32,28,.14);
+    --sans:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    --serif:'Source Serif 4',Georgia,'Times New Roman',serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --bg:#17150f; --surface:#211e17; --surface-2:#2b271d;
+      --ink:#f2eadc; --ink-dim:#b3a996; --line:#3d3729;
+      --accent:#ee7625; --accent-ink:#6ec3cd; --accent-soft:#3a2a1b;
+      --ok:#7fc79a; --ok-soft:#23331f; --warn:#e0ab54; --warn-soft:#35291a;
+      --crit:#ef8b82; --crit-soft:#3a201e;
+      --page:#131109; --rule:#3d3729; --shadow:rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme='dark'] {
+    --bg:#17150f; --surface:#211e17; --surface-2:#2b271d;
+    --ink:#f2eadc; --ink-dim:#b3a996; --line:#3d3729;
+    --accent:#ee7625; --accent-ink:#6ec3cd; --accent-soft:#3a2a1b;
+    --ok:#7fc79a; --ok-soft:#23331f; --warn:#e0ab54; --warn-soft:#35291a;
+    --crit:#ef8b82; --crit-soft:#3a201e;
+    --page:#131109; --rule:#3d3729; --shadow:rgba(0,0,0,.5);
+  }
+
+  body { background:var(--page); color:var(--ink); font-family:var(--sans); font-size:15px; line-height:1.6; }
+  .wrap { max-width:1120px; margin:0 auto; padding-inline:20px; padding-block:40px 72px; }
+  h1,h2,h3 { font-family:var(--serif); font-weight:600; text-wrap:balance; margin:0; }
+  h1 { font-size:clamp(28px,5vw,40px); line-height:1.12; letter-spacing:-.01em; }
+  h2 { font-size:clamp(20px,3vw,25px); line-height:1.2; }
+  h3 { font-size:16px; }
+  p { margin:0; text-wrap:pretty; }
+  .eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-dim); }
+  .lede { font-size:17px; color:var(--ink-dim); max-width:64ch; }
+  .prose { display:flex; flex-direction:column; gap:14px; max-width:68ch; }
+  .dim { color:var(--ink-dim); }
+  code { font-family:var(--mono); font-size:.88em; }
+  section { margin-top:52px; }
+  .head { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+  .head::after { content:''; height:1px; background:var(--rule); margin-top:10px; }
+  ul.list, ol.list { margin:0; padding-left:20px; display:flex; flex-direction:column; gap:10px; max-width:68ch; }
+
+  /* --- the dependency graph ------------------------------------------ */
+  .graph { display:flex; flex-direction:column; gap:8px; margin:22px 0 4px; font-size:14px; }
+  .grow { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .gate {
+    border:1px solid var(--accent-ink); color:var(--accent-ink);
+    border-radius:6px; padding:3px 10px; white-space:nowrap; font-weight:500;
+  }
+  .step { border:1px solid var(--line); background:var(--surface); border-radius:6px; padding:3px 10px; white-space:nowrap; }
+  .arr { color:var(--ink-dim); font-family:var(--mono); }
+  .free { border:1px dashed var(--line); color:var(--ink-dim); border-radius:6px; padding:3px 10px; white-space:nowrap; }
+
+  .flag {
+    border-left:2px solid var(--crit); padding:4px 0 4px 16px;
+    display:flex; flex-direction:column; gap:8px; max-width:68ch;
+  }
+  .flag .t { font-weight:600; }
+
+  /* ===================================================================
+     PROTOTYPE — product font, product tokens, product 13px base.
+     =================================================================== */
+  .proto {
+    background:var(--bg); border:1px solid var(--rule); border-radius:10px;
+    padding:14px; font-size:13px; line-height:1.5;
+    display:flex; flex-direction:column; gap:10px; position:relative;
+  }
+  .proto button { font:inherit; color:inherit; cursor:pointer; }
+
+  .setup {
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:9px 10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  }
+
+  /* combobox */
+  .cb { position:relative; }
+  .cb > .trigger {
+    display:inline-flex; align-items:center; gap:8px; min-width:190px;
+    background:var(--surface-2); border:1px solid var(--line); border-radius:6px;
+    padding:6px 10px; text-align:left; transition:border-color .12s;
+  }
+  .cb > .trigger:hover { border-color:var(--accent-ink); }
+  .cb > .trigger:focus-visible { outline:2px solid var(--accent-ink); outline-offset:1px; }
+  .cb .lbl { font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-dim); }
+  .cb .val { font-weight:600; }
+  .cb .val.empty { font-weight:400; color:var(--ink-dim); }
+  .cb .caret { margin-left:auto; color:var(--ink-dim); }
+
+  .pop {
+    position:absolute; top:calc(100% + 4px); left:0; z-index:30;
+    width:max(100%,270px); background:var(--surface);
+    border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:0 8px 24px var(--shadow); overflow:hidden;
+  }
+  .pop input {
+    width:100%; box-sizing:border-box; border:0; border-bottom:1px solid var(--line);
+    background:transparent; color:var(--ink); font:inherit; padding:9px 11px; outline:none;
+  }
+  .pop input::placeholder { color:var(--ink-dim); }
+  .opts { max-height:236px; overflow-y:auto; padding:4px; }
+  .opt {
+    width:100%; display:flex; align-items:center; gap:8px;
+    background:none; border:0; border-radius:5px; padding:6px 8px; text-align:left;
+  }
+  .opt:hover { background:var(--surface-2); }
+  .opt[aria-selected='true'] { background:var(--accent-soft); color:var(--accent-ink); font-weight:600; }
+  .opt .tick { margin-left:auto; opacity:0; }
+  .opt[aria-selected='true'] .tick { opacity:1; }
+  .opt .sub { color:var(--ink-dim); font-weight:400; font-size:12px; }
+  .empty-opt { padding:12px; color:var(--ink-dim); }
+
+  .orglabel {
+    display:inline-flex; flex-direction:column; gap:0;
+    border:1px solid var(--line); border-left:2px solid var(--accent-ink);
+    background:var(--surface-2); border-radius:6px; padding:6px 10px;
+  }
+  .orglabel .name { font-weight:600; }
+
+  .upload {
+    margin-left:auto; display:inline-flex; align-items:center; gap:8px;
+    border:1px dashed var(--line); border-radius:6px; padding:5px 10px; color:var(--ink-dim);
+    background:none;
+  }
+  .upload:hover { border-color:var(--accent-ink); color:var(--accent-ink); }
+  .upload b { color:var(--ink); font-variant-numeric:tabular-nums; }
+
+  /* work area */
+  .work { display:grid; grid-template-columns:minmax(0,340px) minmax(0,1fr); gap:10px; align-items:start; }
+  @media (max-width:820px) { .work { grid-template-columns:1fr; } }
+
+  .rail { display:flex; flex-direction:column; gap:7px; position:sticky; top:10px; }
+  .viewer {
+    background:var(--scan-ground); border-radius:var(--radius); aspect-ratio:4/3;
+    display:flex; align-items:center; justify-content:center;
+    color:#8b8579; font-family:var(--mono); font-size:11px; letter-spacing:.08em; position:relative;
+  }
+  .viewer.dropzone { background:var(--surface-2); border:1px dashed var(--line); color:var(--ink-dim); flex-direction:column; gap:6px; text-align:center; padding:16px; }
+  .viewer .count { position:absolute; right:8px; bottom:6px; }
+  .strip { display:flex; gap:5px; align-items:center; }
+  .thumb { width:38px; height:29px; border-radius:4px; background:var(--scan-ground); border:0; flex:none; }
+  .thumb[aria-current='true'] { outline:2px solid var(--accent); outline-offset:1px; }
+  .addmore { flex:1; border:1px dashed var(--line); background:none; border-radius:5px; padding:5px; color:var(--ink-dim); font-size:12px; }
+  .addmore:hover { border-color:var(--accent-ink); color:var(--accent-ink); }
+  .railnote { font-size:11px; color:var(--ink-dim); }
+
+  .ontology { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .ohead { display:flex; align-items:center; gap:8px; padding:9px 12px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  .ohead .t { font-weight:600; }
+  .quick { border:1px solid var(--line); background:var(--surface-2); border-radius:5px; padding:3px 9px; margin-left:auto; font-size:12px; }
+  .quick:hover { border-color:var(--accent-ink); color:var(--accent-ink); }
+
+  .frow { display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  .frow:last-child { border-bottom:0; }
+  .frow .name { flex:1; min-width:130px; }
+  .req { color:var(--crit); }
+  .frow.unanswered .name { color:var(--ink); }
+  .opts-inline { display:flex; gap:5px; flex-wrap:wrap; }
+  .o {
+    border:1px solid var(--line); background:var(--surface); border-radius:5px;
+    padding:3px 9px; font-size:12px; white-space:nowrap;
+  }
+  .o:hover { background:var(--surface-2); }
+  .o[aria-pressed='true'] { border-color:var(--accent-ink); background:var(--accent-soft); color:var(--accent-ink); font-weight:600; }
+
+  .placeholder { padding:20px 12px; color:var(--ink-dim); text-align:center; }
+  .placeholder code { display:block; margin-top:6px; font-size:11px; }
+
+  .notefield { padding:10px 12px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:6px; }
+  .notefield label { font-weight:600; }
+  .notefield textarea {
+    width:100%; box-sizing:border-box; background:var(--surface-2); color:var(--ink);
+    border:1px solid var(--line); border-radius:6px; padding:8px; font:inherit; resize:vertical; min-height:52px;
+  }
+  .notefield textarea:focus-visible { outline:2px solid var(--accent-ink); outline-offset:-1px; }
+
+  .commit {
+    background:var(--surface-2); border:1px solid var(--rule); border-radius:var(--radius);
+    padding:9px 11px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
+  .commit label.chk { display:inline-flex; align-items:center; gap:7px; cursor:pointer; }
+  .commit select {
+    background:var(--surface); color:var(--ink); border:1px solid var(--line);
+    border-radius:5px; padding:4px 7px; font:inherit;
+  }
+  .status { margin-left:auto; color:var(--ink-dim); }
+  .status.ready { color:var(--ok); }
+  .submit {
+    background:var(--accent); color:#fff; border:0; border-radius:6px;
+    padding:6px 14px; font-weight:600;
+  }
+  .submit:hover { filter:brightness(.95); }
+
+  /* confirm sheet */
+  .veil {
+    position:absolute; inset:0; background:color-mix(in srgb, var(--scan-ground) 55%, transparent);
+    display:flex; align-items:center; justify-content:center; padding:20px; border-radius:10px; z-index:40;
+  }
+  .sheet {
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:0 12px 40px var(--shadow); width:min(420px,100%); overflow:hidden;
+  }
+  .sheet h4 { margin:0; padding:12px 14px; border-bottom:1px solid var(--line); font-family:var(--serif); font-size:16px; }
+  .facts { padding:6px 14px; }
+  .fact { display:flex; gap:10px; padding:5px 0; border-bottom:1px solid var(--line); }
+  .fact:last-child { border-bottom:0; }
+  .fact .k { color:var(--ink-dim); width:104px; flex:none; }
+  .fact .v { font-weight:600; }
+  .fact .v.warnish { color:var(--warn); }
+  .sheet .acts { display:flex; gap:8px; justify-content:flex-end; padding:11px 14px; border-top:1px solid var(--line); }
+  .sheet .cancel { background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:6px 12px; }
+
+  .caption { font-size:13px; color:var(--ink-dim); margin-top:10px; max-width:74ch; }
+
+  /* before/after table */
+  .tablewrap { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; min-width:520px; font-size:14px; }
+  th,td { text-align:left; padding:9px 12px 9px 0; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-dim); font-weight:400; }
+  td.gone { color:var(--ink-dim); }
+  .footer { margin-top:60px; padding-top:18px; border-top:1px solid var(--rule); font-size:13.5px; color:var(--ink-dim); }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">ScanVault · Create scan study · first principles</p>
+    <h1>One chain gates the work. Groups and upload are not on it.</h1>
+    <p class="lede" style="margin-top:14px">
+      Organization narrows which scan types exist; the scan type loads the ontology. Everything
+      else — sharing, uploading — hangs off nothing and can happen whenever. Order the page
+      that way and it collapses to three blocks.
+    </p>
+
+    <div class="graph">
+      <div class="grow">
+        <span class="gate">organization</span>
+        <span class="arr">──▶</span>
+        <span class="gate">scan type</span>
+        <span class="arr">──▶</span>
+        <span class="step">ontology + org forms</span>
+        <span class="arr">──▶</span>
+        <span class="step">evaluate</span>
+        <span class="arr">──▶</span>
+        <span class="step">expert review?</span>
+        <span class="arr">──▶</span>
+        <span class="step">submit</span>
+      </div>
+      <div class="grow">
+        <span class="free">groups</span>
+        <span class="free">upload</span>
+        <span class="dim" style="font-size:13px">
+          routing and bytes · gate nothing · block nothing · free to happen at any point
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <section>
+    <div class="head">
+      <p class="eyebrow">01 · Why the order matters more than the styling</p>
+      <h2>ScanVault ships the pre-flag half of this flow</h2>
+    </div>
+
+    <div class="prose">
+      <p>
+        The legacy create-scan form has an <b>Organization</b> control at the top, behind the
+        GrowthBook flag <code>scans_org-with-forms_all</code>. When it is on, the organization
+        drives three separate fetches:
+      </p>
+      <ul class="list">
+        <li><code>getOrganizationScanTypes(org)</code> — <b>which scan types are offered at all</b></li>
+        <li><code>getOrganizationScanTypeItems(org, type)</code> — which ontology those rows come from</li>
+        <li><code>getOrganizationForms(org)</code> — the dynamic form fields</li>
+      </ul>
+      <p>
+        Changing the organization <b>clears the scan type and every answered finding</b>, because
+        a different org can define a different ontology. When the learner belongs to exactly one
+        organization it is auto-selected and rendered as a plain read-only label; a searchable
+        combobox appears only when there are several.
+      </p>
+
+      <div class="flag">
+        <span class="t">ScanVault implements the flag-off path, and only that.</span>
+        <p>
+          It calls the generic <code>/api/scan-type/:id/items</code>, never the org-narrowed
+          <code>/api/scan-type-org/:id/items?organization=</code>. The client has the
+          org-narrowed function and the <code>organizationId</code> field, but the field is
+          created <code>null</code> in <code>use-create-scan-draft.ts</code> and never assigned —
+          five read sites, zero writes. It renders <code>items</code> and drops <code>forms</code>,
+          which the schema comment states outright.
+        </p>
+        <p>
+          So this is not a dead wire somebody forgot. It is the older of two code paths, shipped
+          whole. Whether to close the gap is a product decision, not a bug fix — and the flag
+          defaults to <code>false</code> in the legacy config, so it may not be on anywhere.
+        </p>
+      </div>
+
+      <p>
+        Two consequences for the layout. <b>Organization belongs in the setup row</b> — it is the
+        first gate, and for a single-org learner it costs one label and no interaction.
+        And <b>groups do not belong there for any data reason</b>: a group is
+        <code>{ id, name, slug, parent }</code> with no organization on it, a tree of sharing
+        cohorts whose leaves are the default audience. Groups gate nothing. They sit in the setup
+        row only because the choice is unrecoverable after submit and the page's basement is the
+        wrong place for that.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <section>
+    <div class="head">
+      <p class="eyebrow">02 · The design · click it</p>
+      <h2>Three blocks: set up, work, commit</h2>
+    </div>
+
+    <div class="proto" id="proto">
+      <!-- ---------- SET UP ---------- -->
+      <div class="setup">
+        <div id="org-slot"></div>
+
+        <div class="cb" id="cb-type">
+          <button class="trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+            <span><span class="lbl">Scan type</span><br><span class="val empty" id="type-val">Choose…</span></span>
+            <span class="caret">▾</span>
+          </button>
+        </div>
+
+        <div class="cb" id="cb-group">
+          <button class="trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+            <span><span class="lbl">Share with</span><br><span class="val" id="group-val">1 group</span></span>
+            <span class="caret">▾</span>
+          </button>
+        </div>
+
+        <button class="upload" id="add-file" type="button">
+          ↑ <span id="file-label"><b>0</b> files</span>
+        </button>
+      </div>
+
+      <!-- ---------- WORK ---------- -->
+      <div class="work">
+        <div class="rail">
+          <div class="viewer dropzone" id="viewer">
+            <span>Drop images or clips here</span>
+            <span style="font-size:11px">they upload while you work</span>
+          </div>
+          <div class="strip" id="strip" hidden></div>
+          <span class="railnote" id="railnote" hidden></span>
+        </div>
+
+        <div class="ontology">
+          <div class="ohead">
+            <span class="t" id="onto-title">Findings</span>
+            <span class="dim" id="onto-sub">pick a scan type to load its ontology</span>
+            <button class="quick" id="no-path" type="button" hidden>No pathology</button>
+          </div>
+          <div id="rows">
+            <div class="placeholder">
+              The findings form appears once a scan type is chosen.
+              <code>GET /api/scan-type-org/:id/items?organization=…</code>
+            </div>
+          </div>
+          <div class="notefield">
+            <label for="note">Clinical note</label>
+            <textarea id="note" placeholder="e.g. 62M with flank pain, ruling out AAA. Limited windows due to bowel gas."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- COMMIT ---------- -->
+      <div class="commit">
+        <label class="chk"><input type="checkbox" id="expert"> Request expert review</label>
+        <select id="credit" hidden>
+          <option>Demo Learner · 2 credits</option>
+          <option>WCUCOM OMS II · 14 credits</option>
+        </select>
+        <span class="status" id="status">Still needed: scan type, files</span>
+        <button class="submit" id="submit" type="button">Submit study</button>
+      </div>
+    </div>
+
+    <p class="caption" style="margin-bottom:10px">
+      <b>Prototype control, not part of the design:</b>
+      <label style="margin-left:6px"><input type="radio" name="orgs" value="1" checked> learner in 1 organization</label>
+      <label style="margin-left:10px"><input type="radio" name="orgs" value="3"> in 3 organizations</label>
+      — the first is the common case and costs a label; the second is when a control appears.
+    </p>
+    <p class="caption">
+      Live prototype — the comboboxes open and search, the options toggle, files add, and Submit
+      opens the confirm. Only AAA and DVT carry real ontologies (one from your screenshot, one
+      observed running); every other type shows an honest placeholder rather than invented
+      clinical rows. “No pathology” here fills each row's normal option — the real
+      mapping belongs to the API, and is not guessed at.
+    </p>
+  </section>
+
+  <!-- ============================================================== -->
+  <section>
+    <div class="head">
+      <p class="eyebrow">03 · What each decision buys</p>
+      <h2>Six decisions</h2>
+    </div>
+    <ol class="list">
+      <li>
+        <b>The setup row is the whole gate, and it comes first.</b> Organization then scan
+        type, in that order, because that is the order the fetches depend on. For the common
+        single-org learner the organization is a label, not a control — one line, no interaction,
+        and the row still reads as two choices. This is the arrangement that makes
+        <code>organizationId</code> wirable at all, whenever the flag is worth turning on.
+      </li>
+      <li>
+        <b>Scan type is a searchable combobox, not a 22-tile grid.</b> The grid was defended on
+        the grounds that the choice is unrecoverable — but a grid does not make a choice more
+        careful, it just makes it taller. The confirm dialog on <em>switching after answering</em>
+        is what protects that, and it stays.
+      </li>
+      <li>
+        <b>Groups uses the identical control — but for a different reason.</b> Groups gate
+        nothing: the schema is <code>{ id, name, slug, parent }</code>, a tree of sharing cohorts
+        with no organization on it. It sits in the setup row purely because routing is fixed
+        forever at submit, and the page's basement is the wrong home for an irreversible choice.
+        Matching the control makes the row read as one act — set up the study.
+      </li>
+      <li>
+        <b>Upload is a control, not a zone.</b> One compact button in the setup row, the film
+        strip under the viewer, and the whole surface stays a drop target. With no files the
+        viewer <em>is</em> the dropzone — at viewer size, not a full-width slab at the top of the
+        page.
+      </li>
+      <li>
+        <b>The ontology is dense rows, media alongside.</b> Label left, every option the
+        definition declares on the right, hairlines between — the shape in your screenshot. The
+        media sticks beside it, because the viewer is only useful while the questions are being
+        answered.
+      </li>
+      <li>
+        <b>Submit confirms in place; there is no second screen.</b> Everything the old review
+        page restated is already on this one. What a confirm must add is the part that is
+        irreversible — and unlike today's summary, it <b>names the groups</b>.
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============================================================== -->
+  <section>
+    <div class="head">
+      <p class="eyebrow">04 · Count</p>
+      <h2>What goes away</h2>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Today</th><th>Becomes</th></tr></thead>
+        <tbody>
+          <tr><td>Draft-saved indicator row</td><td class="gone">the file count in the setup row</td></tr>
+          <tr><td>Study bar — 2 chips + 4 readiness chips + button</td><td class="gone">one status phrase in the commit bar</td></tr>
+          <tr><td>“Still needed before submitting” sentence</td><td class="gone">same phrase, one place</td></tr>
+          <tr><td>Files card + dropzone slab</td><td class="gone">viewer-as-dropzone + film strip</td></tr>
+          <tr><td>Folded scan-type row</td><td class="gone">the setup combobox</td></tr>
+          <tr><td>Scan type card, 22 tiles + search</td><td class="gone">the combobox popover</td></tr>
+          <tr><td>Findings card</td><td>kept — denser rows</td></tr>
+          <tr><td>Clinical note card</td><td>kept — folded into the ontology panel</td></tr>
+          <tr><td>Required-findings warning, two blocks away</td><td>kept — inline, under the rows</td></tr>
+          <tr><td>Share-with-groups card</td><td class="gone">the setup combobox</td></tr>
+          <tr><td>Review &amp; submit screen + summary</td><td class="gone">confirm sheet</td></tr>
+          <tr><td>Expert review panel on that screen</td><td class="gone">checkbox in the commit bar</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">Twelve blocks become three. Nothing in the list is a feature being dropped — every one of them is a place the same fact was being said again.</p>
+  </section>
+
+  <!-- ============================================================== -->
+  <section>
+    <div class="head">
+      <p class="eyebrow">05 · Care</p>
+      <h2>Three things this must not lose</h2>
+    </div>
+    <ul class="list">
+      <li>
+        <b>A failed or detached file still has to shout.</b> The strip carries a red marker and
+        the commit bar refuses to read “ready” — a compact upload control must not become a quiet
+        one. This is the single biggest risk in shrinking the files UI.
+      </li>
+      <li>
+        <b>The org forms are still not rendered, and that is the same decision as the
+        organization gate.</b> Your screenshot's “Did you use AI tools in the scan above?” is not
+        part of the AAA ontology — it comes from <code>getOrganizationForms(org)</code>, alongside
+        client ID, age, gender, county, referral reason and the GA calculator. ScanVault drops the
+        <code>forms</code> array the response already carries. Turning the organization gate on
+        and rendering those fields are one piece of work, not two, and this layout has the room
+        for them: directly under the findings rows, above the note.
+      </li>
+      <li>
+        <b>Changing scan type after findings are answered keeps its dialog.</b> The combobox is a
+        smaller control, not a looser one.
+      </li>
+    </ul>
+  </section>
+
+  <!-- ============================================================== -->
+  <section>
+    <div class="head">
+      <p class="eyebrow">06 · Open</p>
+      <h2>Four I cannot settle from the code</h2>
+    </div>
+    <ol class="list">
+      <li>
+        <b>Is <code>scans_org-with-forms_all</code> on anywhere?</b> It defaults to
+        <code>false</code> in the legacy config and resolves through GrowthBook at runtime, so
+        the real state per environment is not readable from the repo. If it is off everywhere,
+        ScanVault is not behind at all and this is a layout change only. If it is on in
+        production, ScanVault is serving a different ontology than the dashboard for the same
+        learner — and that is the whole ballgame.
+      </li>
+      <li>
+        <b>If the gate goes in, what happens to a draft saved under another organization?</b>
+        Changing org clears the scan type and every finding. A draft restored days later, after
+        the learner's org membership changed, hits that rule with answers already in it.
+      </li>
+      <li>
+        <b>Should the note stay above or below the findings?</b> It is drawn below here, as the
+        last thing you say. Some clinicians write context first.
+      </li>
+      <li>
+        <b>Does the classic wizard stay?</b> It is now the only place the 22-tile grid survives.
+        That is a defensible split — conservative flow, conservative control — or a thing to
+        retire.
+      </li>
+    </ol>
+  </section>
+
+  <p class="footer">
+    Prototype drawn in ScanVault's own tokens and 13px type scale from
+    <code>packages/ui/src/styles/tokens.css</code>. Scan-type list and the DVT ontology observed
+    against the running app; the AAA ontology is from your screenshot. Route names, the
+    <code>forms</code> passthrough and the unassigned <code>organizationId</code> were read from
+    the client source.
+  </p>
+</div>
+
+<script>
+  (function () {
+    var TYPES = ['AAA','Breast','DVT','Echo','FASH','FAST','Gallbladder','GI','GYN','Liver','Lung',
+      'MSK - Ankle/Foot','MSK - Elbow','MSK - Hand/Wrist','MSK - Hip','MSK - Knee','MSK - Shoulder',
+      'OB 1st Tri','OB 2nd/3rd','Ocular','Renal','Soft Tissue'];
+
+    var SIZE = ['≤ 3cm','>3 cm','Indeterminate','Not Examined'];
+    // Only ontologies actually observed. Everything else gets an honest placeholder
+    // rather than invented clinical rows.
+    var ONTOLOGY = {
+      AAA: [
+        { name:'Long', req:true, opts:SIZE },
+        { name:'Aneurism', req:true, opts:['Absent','Present','Indeterminate'] },
+        { name:'Short Proximal', req:true, opts:SIZE },
+        { name:'Short Mid', req:true, opts:SIZE },
+        { name:'Short Distal/Bifurcation', req:true, opts:SIZE }
+      ],
+      DVT: [
+        { name:'DVT of common femoral vein', req:true, opts:['Acute','Chronic','Absent','Not assessed'] },
+        { name:'DVT of popliteal vein', req:true, opts:['Acute','Chronic','Absent','Not assessed'] }
+      ]
+    };
+
+    var ORGS = [
+      { id:'o1', name:'William Carey University', desc:'COM · Hattiesburg' },
+      { id:'o2', name:'Global Ultrasound Institute', desc:'Fellowship programme' },
+      { id:'o3', name:'Kisumu County Health', desc:'Field programme' }
+    ];
+
+    var GROUPS = [
+      { name:'WCUCOM OMS II Class of 2029', org:'William Carey University_Parent', on:true },
+      { name:'WCUCOM Faculty', org:'William Carey University_Parent', on:false },
+      { name:'GUSI Fellows 2026', org:'Global Ultrasound Institute', on:false }
+    ];
+
+    var state = { org:ORGS[0], orgCount:1, type:null, files:0, answers:{} };
+    var $ = function (id) { return document.getElementById(id); };
+
+    /* ---------- combobox ---------- */
+    function combobox(root, opts) {
+      var trigger = root.querySelector('.trigger');
+      var pop = null;
+
+      function close() {
+        if (!pop) return;
+        pop.remove(); pop = null;
+        trigger.setAttribute('aria-expanded', 'false');
+        document.removeEventListener('mousedown', onOutside, true);
+        document.removeEventListener('keydown', onEsc, true);
+      }
+      function onOutside(e) { if (!root.contains(e.target)) close(); }
+      function onEsc(e) { if (e.key === 'Escape') { close(); trigger.focus(); } }
+
+      function open() {
+        if (pop) { close(); return; }
+        pop = document.createElement('div');
+        pop.className = 'pop';
+        pop.innerHTML = '<input type="text" placeholder="' + opts.placeholder + '" aria-label="' +
+          opts.placeholder + '"><div class="opts" role="listbox"></div>';
+        root.appendChild(pop);
+        trigger.setAttribute('aria-expanded', 'true');
+
+        var box = pop.querySelector('.opts');
+        var search = pop.querySelector('input');
+
+        function paint() {
+          var term = search.value.trim().toLowerCase();
+          var list = opts.items().filter(function (it) {
+            return it.label.toLowerCase().indexOf(term) !== -1;
+          });
+          box.innerHTML = '';
+          if (!list.length) {
+            var none = document.createElement('p');
+            none.className = 'empty-opt';
+            none.textContent = 'Nothing matches “' + search.value.trim() + '”.';
+            box.appendChild(none);
+            return;
+          }
+          list.forEach(function (it) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'opt';
+            b.setAttribute('role', 'option');
+            b.setAttribute('aria-selected', it.selected ? 'true' : 'false');
+            b.innerHTML = '<span>' + it.label +
+              (it.sub ? '<br><span class="sub">' + it.sub + '</span>' : '') +
+              '</span><span class="tick">✓</span>';
+            b.addEventListener('click', function () {
+              opts.pick(it);
+              if (opts.multi) paint(); else close();
+            });
+            box.appendChild(b);
+          });
+        }
+
+        search.addEventListener('input', paint);
+        paint();
+        search.focus();
+        document.addEventListener('mousedown', onOutside, true);
+        document.addEventListener('keydown', onEsc, true);
+      }
+
+      trigger.addEventListener('click', open);
+    }
+
+    /* ---------- organization ----------
+       One org: a read-only label, exactly as the legacy form does — it is a gate,
+       not a decision, and a combobox with one option is a decision that isn't one.
+       Several: the same combobox pattern as everything else in this row. */
+    function renderOrg() {
+      var slot = $('org-slot');
+      slot.innerHTML = '';
+
+      if (state.orgCount === 1) {
+        var box = document.createElement('div');
+        box.className = 'orglabel';
+        box.innerHTML = '<span class="lbl" style="font-family:var(--mono);font-size:10px;' +
+          'letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim)">Organization</span>' +
+          '<span class="name">' + state.org.name + '</span>';
+        slot.appendChild(box);
+        return;
+      }
+
+      var cb = document.createElement('div');
+      cb.className = 'cb';
+      cb.innerHTML = '<button class="trigger" type="button" aria-haspopup="listbox" ' +
+        'aria-expanded="false"><span><span class="lbl">Organization</span><br>' +
+        '<span class="val">' + state.org.name + '</span></span><span class="caret">\u25BE</span></button>';
+      slot.appendChild(cb);
+
+      combobox(cb, {
+        placeholder: 'Search organizations\u2026',
+        items: function () {
+          return ORGS.map(function (o) {
+            return { label:o.name, sub:o.desc, selected:state.org.id === o.id, value:o };
+          });
+        },
+        pick: function (it) {
+          if (it.value.id === state.org.id) return;
+          state.org = it.value;
+          // Legacy clears the scan type and every finding when the organization
+          // changes, because a different org can define a different ontology.
+          state.type = null;
+          state.answers = {};
+          var v = $('type-val');
+          v.textContent = 'Choose\u2026';
+          v.classList.add('empty');
+          renderOrg(); renderOntology(); render();
+        }
+      });
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="orgs"]'), function (r) {
+      r.addEventListener('change', function () {
+        state.orgCount = Number(this.value);
+        state.org = ORGS[0];
+        renderOrg(); render();
+      });
+    });
+
+    /* ---------- scan type ---------- */
+    combobox($('cb-type'), {
+      placeholder: 'Search scan type…',
+      items: function () {
+        return TYPES.map(function (t) {
+          return { label: t, selected: state.type === t, value: t };
+        });
+      },
+      pick: function (it) {
+        state.type = it.value;
+        state.answers = {};
+        var v = $('type-val');
+        v.textContent = it.value;
+        v.classList.remove('empty');
+        renderOntology();
+        render();
+      }
+    });
+
+    /* ---------- groups ---------- */
+    combobox($('cb-group'), {
+      placeholder: 'Search groups…',
+      multi: true,
+      items: function () {
+        return GROUPS.map(function (g, i) {
+          return { label: g.name, sub: 'in ' + g.org, selected: g.on, index: i };
+        });
+      },
+      pick: function (it) {
+        GROUPS[it.index].on = !GROUPS[it.index].on;
+        render();
+      }
+    });
+
+    /* ---------- ontology ---------- */
+    function renderOntology() {
+      var rows = $('rows');
+      var defs = ONTOLOGY[state.type];
+      $('onto-title').textContent = state.type ? 'Findings · ' + state.type : 'Findings';
+      $('no-path').hidden = !defs;
+
+      if (!state.type) {
+        $('onto-sub').textContent = 'pick a scan type to load its ontology';
+        rows.innerHTML = '<div class="placeholder">The findings form appears once a scan type is ' +
+          'chosen.<code>GET /api/scan-type-org/:id/items?organization=…</code></div>';
+        return;
+      }
+      if (!defs) {
+        $('onto-sub').textContent = '';
+        rows.innerHTML = '<div class="placeholder">The ontology for <b>' + state.type +
+          '</b> was not observed, so it is not invented here.' +
+          '<code>GET /api/scan-type-org/:id/items?organization=…</code></div>';
+        return;
+      }
+
+      $('onto-sub').textContent = defs.length + ' rows';
+      rows.innerHTML = '';
+      defs.forEach(function (def) {
+        var row = document.createElement('div');
+        row.className = 'frow';
+        var name = document.createElement('span');
+        name.className = 'name';
+        name.innerHTML = def.name + (def.req ? ' <span class="req">*</span>' : '');
+        row.appendChild(name);
+
+        var group = document.createElement('div');
+        group.className = 'opts-inline';
+        def.opts.forEach(function (o) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'o';
+          b.textContent = o;
+          b.setAttribute('aria-pressed', state.answers[def.name] === o ? 'true' : 'false');
+          b.addEventListener('click', function () {
+            // Clicking the chosen option again clears it, so a row touched by
+            // mistake returns to genuinely unanswered.
+            state.answers[def.name] = state.answers[def.name] === o ? undefined : o;
+            renderOntology();
+            render();
+          });
+          group.appendChild(b);
+        });
+        row.appendChild(group);
+        rows.appendChild(row);
+      });
+
+      var missing = defs.filter(function (d) { return d.req && !state.answers[d.name]; });
+      if (missing.length) {
+        var warn = document.createElement('div');
+        warn.className = 'frow';
+        warn.style.background = 'var(--warn-soft)';
+        warn.style.color = 'var(--warn)';
+        warn.textContent = '⚠ ' + missing.length + ' required ' +
+          (missing.length === 1 ? 'finding is' : 'findings are') +
+          ' still blank. You can submit without them, but a reviewer will not know whether they ' +
+          'were normal or not assessed.';
+        rows.appendChild(warn);
+      }
+    }
+
+    $('no-path').addEventListener('click', function () {
+      var defs = ONTOLOGY[state.type] || [];
+      defs.forEach(function (d) {
+        var normal = d.opts.indexOf('Absent') !== -1 ? 'Absent' : d.opts[0];
+        state.answers[d.name] = normal;
+      });
+      renderOntology(); render();
+    });
+
+    /* ---------- files ---------- */
+    function addFile() {
+      state.files += 1;
+      var strip = $('strip');
+      strip.hidden = false;
+      $('railnote').hidden = false;
+
+      strip.innerHTML = '';
+      for (var i = 0; i < state.files; i++) {
+        var t = document.createElement('button');
+        t.type = 'button';
+        t.className = 'thumb';
+        t.setAttribute('aria-label', 'File ' + (i + 1));
+        if (i === 0) t.setAttribute('aria-current', 'true');
+        strip.appendChild(t);
+      }
+      var more = document.createElement('button');
+      more.type = 'button';
+      more.className = 'addmore';
+      more.textContent = '+ add';
+      more.addEventListener('click', addFile);
+      strip.appendChild(more);
+
+      var viewer = $('viewer');
+      viewer.className = 'viewer';
+      viewer.innerHTML = 'MEDIA VIEWER<span class="count">1 / ' + state.files + '</span>';
+      $('railnote').textContent = state.files + ' in storage · drop anywhere on this page';
+      render();
+    }
+    $('add-file').addEventListener('click', addFile);
+
+    /* ---------- commit bar ---------- */
+    $('expert').addEventListener('change', function () {
+      $('credit').hidden = !this.checked;
+      render();
+    });
+
+    function groupNames() { return GROUPS.filter(function (g) { return g.on; }); }
+
+    function render() {
+      $('file-label').innerHTML = '<b>' + state.files + '</b> file' + (state.files === 1 ? '' : 's');
+
+      var picked = groupNames();
+      $('group-val').textContent = picked.length === 0
+        ? 'No groups'
+        : picked.length === 1 ? picked[0].name.replace(/ Class of.*/, '') : picked.length + ' groups';
+
+      var missing = [];
+      if (!state.type) missing.push('scan type');
+      if (!state.files) missing.push('files');
+      if (!picked.length) missing.push('a group');
+      var defs = ONTOLOGY[state.type] || [];
+      var blank = defs.filter(function (d) { return d.req && !state.answers[d.name]; }).length;
+      if (blank) missing.push(blank + ' findings');
+
+      var status = $('status');
+      if (missing.length) {
+        status.className = 'status';
+        status.textContent = 'Still needed: ' + missing.join(', ');
+      } else {
+        status.className = 'status ready';
+        status.textContent = '✓ ready to submit';
+      }
+    }
+
+    /* ---------- confirm ---------- */
+    $('submit').addEventListener('click', function () {
+      var picked = groupNames();
+      var defs = ONTOLOGY[state.type] || [];
+      var answered = defs.filter(function (d) { return state.answers[d.name]; }).length;
+      var blank = defs.length - answered;
+
+      var veil = document.createElement('div');
+      veil.className = 'veil';
+      veil.innerHTML =
+        '<div class="sheet" role="dialog" aria-modal="true" aria-label="Confirm submission">' +
+        '<h4>Submit this study?</h4><div class="facts">' +
+        fact('Organization', state.org.name, false) +
+        fact('Scan type', state.type || 'not chosen', !state.type) +
+        fact('Files', state.files + ' in storage', !state.files) +
+        fact('Findings', defs.length ? answered + ' of ' + defs.length + ' answered' : '—', blank > 0) +
+        fact('Shared with', picked.length ? picked.map(function (g) { return g.name; }).join(', ') : 'nobody', !picked.length) +
+        fact('Expert review', $('expert').checked ? $('credit').value : 'not requested', false) +
+        '</div><div class="acts"><button class="cancel" type="button">Cancel</button>' +
+        '<button class="submit" type="button">Submit</button></div></div>';
+
+      veil.addEventListener('click', function (e) {
+        if (e.target === veil || e.target.classList.contains('cancel') ||
+            e.target.classList.contains('submit')) veil.remove();
+      });
+      $('proto').appendChild(veil);
+      veil.querySelector('.cancel').focus();
+    });
+
+    function fact(k, v, warnish) {
+      return '<div class="fact"><span class="k">' + k + '</span><span class="v' +
+        (warnish ? ' warnish' : '') + '">' + v + '</span></div>';
+    }
+
+    renderOrg();
+    renderOntology();
+    render();
+  })();
+</script>

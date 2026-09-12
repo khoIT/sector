@@ -26,13 +26,27 @@ import type { MediaValidationConfidence, MediaValidationFailureReason } from './
  * it makes "what do I do next" unambiguous, which matters to someone using
  * this a handful of times rather than daily.
  */
-export const STUDY_STEPS = ['study', 'submit'] as const;
+export const STUDY_STEPS = ['study'] as const;
+/**
+ * Steps no shell draws any more.
+ *
+ * `submit` was the study flow's second screen before it submitted from its own
+ * surface. It stays in the union so a draft saved on it still PARSES — losing
+ * a study because its parked step retired would be the worst possible trade —
+ * and `stepForFlow` maps it onto something each flow can actually render.
+ */
+export const RETIRED_STEPS = ['submit'] as const;
 export const CLASSIC_STEPS = ['files', 'interpretation', 'routing'] as const;
 
 /** The receipt. Shared, and the one step neither flow can leave. */
 export const SUBMITTED_STEP = 'submitted';
 
-export const WIZARD_STEPS = [...STUDY_STEPS, ...CLASSIC_STEPS, SUBMITTED_STEP] as const;
+export const WIZARD_STEPS = [
+  ...STUDY_STEPS,
+  ...RETIRED_STEPS,
+  ...CLASSIC_STEPS,
+  SUBMITTED_STEP,
+] as const;
 export type WizardStep = (typeof WIZARD_STEPS)[number];
 
 export function isWizardStep(value: unknown): value is WizardStep {

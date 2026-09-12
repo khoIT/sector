@@ -12,7 +12,6 @@ import { canEnterClassicStep } from './model/classic-steps';
 import { readCreateScanFlow } from './model/create-scan-flow';
 import { useCreateScanDraft } from './model/use-create-scan-draft';
 import { ClassicSteps } from './steps/classic-steps';
-import { StepReviewRouting } from './steps/step-review-routing';
 import { StepSubmitted } from './steps/step-submitted';
 import { StudySurface } from './steps/study-surface';
 
@@ -21,7 +20,7 @@ import { StudySurface } from './steps/study-surface';
  *
  * Two ways through, chosen in the user's profile and read once here:
  *
- *   study (default)  one working surface, then a commit screen
+ *   study (default)  one working surface, submitting through a confirm
  *   classic          the ordered four-step wizard
  *
  * They share one draft, one model and every panel. Only the shell differs, so
@@ -95,7 +94,10 @@ export function CreateScanPage() {
           />
         ) : null}
 
-        {!submitted ? <DraftIndicator files={state.files} /> : null}
+        {/* Only the wizard needs this line. On the working surface the files
+            panel is on screen the whole time and says the same thing, which is
+            how the page ended up stating one fact three times. */}
+        {classic && !submitted ? <DraftIndicator files={state.files} /> : null}
       </header>
 
       {draft.wasRestored && !submitted ? (
@@ -118,14 +120,8 @@ export function CreateScanPage() {
         <StepSubmitted outcome={state.submitOutcome} onCreateAnother={draft.reset} />
       ) : classic ? (
         <ClassicSteps draft={draft} onSubmitted={draft.finish} />
-      ) : state.step === 'submit' ? (
-        <StepReviewRouting
-          draft={draft}
-          onBack={() => draft.goToStep('study')}
-          onSubmitted={draft.finish}
-        />
       ) : (
-        <StudySurface draft={draft} onReview={() => draft.goToStep('submit')} />
+        <StudySurface draft={draft} onSubmitted={draft.finish} />
       )}
     </div>
   );

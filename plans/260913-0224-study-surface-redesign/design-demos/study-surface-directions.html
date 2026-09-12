@@ -1,0 +1,813 @@
+<meta charset="utf-8">
+<title>Study Surface Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+  /* ------------------------------------------------------------------
+     Palette is ScanVault's own, copied from packages/ui/src/styles/tokens.css.
+     Nothing here is invented: the mockups have to be judged in the colours
+     they will actually ship in.
+     ------------------------------------------------------------------ */
+  :root {
+    --bg: #efe7da;
+    --surface: #fdfaf4;
+    --surface-2: #f6f0e5;
+    --ink: #22201c;
+    --ink-dim: #5e574c;
+    --line: #ddd2be;
+    --accent: #ee7625;
+    --accent-ink: #2f6b73;
+    --accent-soft: #fce9d8;
+    --ok: #2e6b41;
+    --ok-soft: #dcede1;
+    --warn: #8a5300;
+    --warn-soft: #faebcd;
+    --crit: #b3261e;
+    --crit-soft: #f9dedb;
+    --scan-ground: #14120f;
+    --radius: 8px;
+
+    --page: #f7f2e8;
+    --rule: #cfc3ab;
+
+    --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --bg: #17150f;
+      --surface: #211e17;
+      --surface-2: #2b271d;
+      --ink: #f2eadc;
+      --ink-dim: #b3a996;
+      --line: #3d3729;
+      --accent: #ee7625;
+      --accent-ink: #6ec3cd;
+      --accent-soft: #3a2a1b;
+      --ok: #7fc79a;
+      --ok-soft: #23331f;
+      --warn: #e0ab54;
+      --warn-soft: #35291a;
+      --crit: #ef8b82;
+      --crit-soft: #3a201e;
+      --page: #131109;
+      --rule: #3d3729;
+    }
+  }
+
+  :root[data-theme='dark'] {
+    --bg: #17150f;
+    --surface: #211e17;
+    --surface-2: #2b271d;
+    --ink: #f2eadc;
+    --ink-dim: #b3a996;
+    --line: #3d3729;
+    --accent: #ee7625;
+    --accent-ink: #6ec3cd;
+    --accent-soft: #3a2a1b;
+    --ok: #7fc79a;
+    --ok-soft: #23331f;
+    --warn: #e0ab54;
+    --warn-soft: #35291a;
+    --crit: #ef8b82;
+    --crit-soft: #3a201e;
+    --page: #131109;
+    --rule: #3d3729;
+  }
+
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 40px 72px;
+  }
+
+  /* ---- document type ------------------------------------------------ */
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(30px, 5vw, 42px); line-height: 1.12; letter-spacing: -0.01em; }
+  h2 { font-size: clamp(21px, 3vw, 26px); line-height: 1.2; }
+  h3 { font-size: 17px; line-height: 1.3; }
+  p { margin: 0; text-wrap: pretty; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  .lede { font-size: 17px; color: var(--ink-dim); max-width: 62ch; }
+  .prose { display: flex; flex-direction: column; gap: 14px; max-width: 68ch; }
+  .dim { color: var(--ink-dim); }
+  code, .num { font-family: var(--mono); font-size: 0.9em; font-variant-numeric: tabular-nums; }
+
+  section { margin-top: 56px; }
+  .head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; }
+  .head::after { content: ''; height: 1px; background: var(--rule); margin-top: 10px; }
+
+  /* ---- audit table --------------------------------------------------- */
+  .tablewrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 460px; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-dim); font-weight: 400;
+  }
+  td.count { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .bad { color: var(--crit); font-weight: 600; }
+
+  /* ---- callouts ------------------------------------------------------ */
+  .note {
+    border-left: 2px solid var(--accent);
+    padding: 2px 0 2px 16px;
+    font-size: 15px;
+  }
+  .note strong { font-weight: 600; }
+
+  /* ==================================================================
+     MOCKUP FRAMES — drawn in the product's own font and tokens, at the
+     product's own 13px base, so what is on screen here is what would be
+     on screen there.
+     ================================================================== */
+  .frame {
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 12px;
+    font-size: 12px;
+    line-height: 1.45;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .frame * { min-width: 0; }
+
+  .row {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 7px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .row.quiet { background: var(--surface-2); }
+  .row.tall { padding: 12px 10px; }
+
+  .chip {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 6px;
+    padding: 3px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+  .pill {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .ghost {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 3px 8px;
+    color: var(--ink-dim);
+    white-space: nowrap;
+  }
+  .spacer { margin-left: auto; }
+  .stat { color: var(--ink-dim); white-space: nowrap; }
+  .stat.ok { color: var(--ok); }
+  .stat.todo { color: var(--ink-dim); }
+
+  .media {
+    background: var(--scan-ground);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8b8579;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+  .strip { display: flex; gap: 5px; }
+  .thumb { width: 34px; height: 26px; border-radius: 4px; background: var(--scan-ground); flex: none; }
+  .thumb.bad { outline: 2px solid var(--crit); outline-offset: 1px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .card .t { font-weight: 600; }
+  .finding {
+    background: var(--crit-soft);
+    border-radius: 5px;
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .finding.done { background: var(--surface-2); }
+  .field {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    color: var(--ink-dim);
+  }
+  .warnrow {
+    background: var(--warn-soft);
+    color: var(--warn);
+    border-radius: 6px;
+    padding: 7px 10px;
+  }
+  .drop {
+    border: 1px dashed var(--line);
+    border-radius: 6px;
+    color: var(--ink-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+  }
+  .sticky {
+    background: var(--surface-2);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 7px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    box-shadow: 0 -1px 0 var(--line);
+  }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; align-items: start; }
+  .cols.rail { grid-template-columns: 44% 1fr; }
+  @media (max-width: 620px) { .cols, .cols.rail { grid-template-columns: 1fr; } }
+
+  /* annotation marks on the "today" frame */
+  .mark {
+    position: relative;
+    outline: 1.5px dashed var(--crit);
+    outline-offset: 2px;
+  }
+  .mark::after {
+    content: attr(data-mark);
+    position: absolute;
+    top: -9px;
+    right: 4px;
+    background: var(--crit);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    border-radius: 3px;
+    padding: 0 5px;
+    line-height: 1.6;
+  }
+
+  /* ---- direction blocks ---------------------------------------------- */
+  .direction { margin-top: 40px; }
+  .dhead { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+  .tag {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--accent-ink);
+    border: 1px solid var(--accent-ink); border-radius: 4px; padding: 1px 7px;
+  }
+  .tag.pick { background: var(--accent-ink); color: var(--surface); }
+  .thesis { font-family: var(--serif); font-size: 18px; font-style: italic; color: var(--ink-dim); margin: 6px 0 16px; max-width: 60ch; }
+
+  .pc { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 18px; }
+  @media (max-width: 720px) { .pc { grid-template-columns: 1fr; gap: 14px; } }
+  .pc h4 {
+    margin: 0 0 8px; font-family: var(--mono); font-size: 11px; font-weight: 400;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .pc .for h4 { color: var(--ok); }
+  .pc .against h4 { color: var(--crit); }
+  .pc ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 7px; font-size: 14.5px; }
+
+  ol.steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; max-width: 68ch; }
+
+  .caption { font-size: 13px; color: var(--ink-dim); margin-top: 8px; }
+  .footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13.5px; color: var(--ink-dim); }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">ScanVault · Create scan study · one working surface</p>
+    <h1>The surface has two summary systems, and they are copying each other</h1>
+    <p class="lede" style="margin-top:14px">
+      Measured on the live page: five facts, stated twelve times, across four full-width
+      status rows before any work begins. Here is the audit, three ways out, and the one
+      I would build.
+    </p>
+  </header>
+
+  <!-- ============================================================== -->
+  <section>
+    <div class="head">
+      <p class="eyebrow">01 · Evidence</p>
+      <h2>What is actually on screen today</h2>
+    </div>
+
+    <div class="prose" style="margin-bottom:22px">
+      <p>
+        Captured at 1440 × 1100 with three files stored and an exam type chosen. The page
+        runs <span class="num">1361px</span> — 1.24 screens — and the first
+        <span class="num">~190px</span> of it is status about the study rather than the study.
+      </p>
+    </div>
+
+    <div class="frame">
+      <div class="row quiet mark" data-mark="files ①">
+        <span>Draft saved — <b>3</b> of <b>3</b> files in storage</span>
+      </div>
+
+      <div class="row mark" data-mark="exam ① · groups ① · files ②">
+        <span class="chip">AAA <span class="dim">↓</span></span>
+        <span class="chip">1 group <span class="dim">↓</span></span>
+        <span class="spacer stat ok">✓ Files 3</span>
+        <span class="stat ok">✓ Exam</span>
+        <span class="stat todo">○ Findings 0 of 1</span>
+        <span class="stat todo">○ Note</span>
+        <span class="pill">Review &amp; submit →</span>
+      </div>
+
+      <div class="row mark" data-mark="files ③ — same sentence as ①">
+        <span><b>3</b> files in storage</span>
+        <span class="dim">170 KB</span><span class="spacer dim">⌄</span>
+      </div>
+
+      <div class="row mark" data-mark="exam ②">
+        <span>AAA</span><span class="spacer dim">Change ⌄</span>
+      </div>
+
+      <div class="cols">
+        <div class="media" style="height:150px">MEDIA VIEWER · 1 / 3</div>
+        <div class="card">
+          <span class="t">Findings</span>
+          <span class="dim">What the study shows.</span>
+          <span class="ghost" style="align-self:flex-start">No pathology</span>
+          <div class="finding">
+            <span>Abdominal Aortic Aneurysm *</span>
+            <span class="spacer ghost">Present</span><span class="ghost">Absent</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="t">Clinical note</span>
+        <div class="field" style="height:44px"></div>
+        <span class="dim">External patient ID</span>
+        <div class="field" style="height:20px; width:45%"></div>
+      </div>
+
+      <div class="warnrow mark" data-mark="findings ② — two blocks from the findings">
+        ⚠ 1 required finding is still blank
+      </div>
+
+      <div class="card mark" data-mark="groups ②">
+        <span class="t">Share with groups</span>
+        <div class="finding done"><span>✓ WCUCOM OMS II Class of 2029</span></div>
+      </div>
+    </div>
+    <p class="caption">
+      Today, with the repeats marked. Rows 1 and 3 are the same sentence
+      <span class="num">116px</span> apart.
+    </p>
+
+    <h3 style="margin-top:32px; margin-bottom:10px">The count</h3>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Fact</th><th>Stated in</th><th>Times</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Files in storage</td>
+            <td>draft indicator · readiness chip · files summary row</td>
+            <td class="count bad">3</td>
+          </tr>
+          <tr>
+            <td>Exam type</td>
+            <td>bar chip · folded scan-type row · readiness chip</td>
+            <td class="count bad">3</td>
+          </tr>
+          <tr>
+            <td>Groups</td>
+            <td>bar chip · “Share with groups” card</td>
+            <td class="count">2</td>
+          </tr>
+          <tr>
+            <td>Findings outstanding</td>
+            <td>readiness chip “0 of 1” · amber “1 required finding is still blank”</td>
+            <td class="count">2</td>
+          </tr>
+          <tr>
+            <td>Note</td>
+            <td>readiness chip · Clinical note card</td>
+            <td class="count">2</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose" style="margin-top:24px">
+      <p>Three more things the capture shows, which nobody asked about but which the same fix resolves:</p>
+      <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px">
+        <li>
+          <b>The findings card is the smallest block on the page.</b> One row, boxed top-right,
+          while the media viewer takes ~340px on the left. The findings are the product;
+          the upload is logistics.
+        </li>
+        <li>
+          <b>The amber warning is two blocks away from what it warns about</b>, below the
+          clinical note.
+        </li>
+        <li>
+          <b>Nothing is sticky.</b> Scroll to the groups card and <i>Review &amp; submit</i>
+          has left the screen.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <section>
+    <div class="head">
+      <p class="eyebrow">02 · Diagnosis</p>
+      <h2>Nobody designed this. It accreted.</h2>
+    </div>
+    <div class="prose">
+      <p>
+        The study bar replaced a four-step stepper, and that was the right call: it answers
+        <i>what is still missing</i> instead of <i>where am I</i>. But afterwards each panel
+        learned to summarise <em>itself</em> — files fold to a count, scan type folds to a name.
+      </p>
+      <p>
+        So the page now runs <strong>two summary systems at once</strong>: a bar that summarises
+        the panels, and panels that summarise themselves. Every fold I add to a panel creates a
+        new duplicate of a chip in the bar. The last one shipped yesterday.
+      </p>
+      <p class="note">
+        <strong>Summary belongs to exactly one layer.</strong> This is not a styling problem and
+        it will not be fixed by rewording chips — whichever layer keeps the job, the other has
+        to stop doing it.
+      </p>
+      <p>
+        So the rule for everything below: <b>one fact, one place</b> — unless the second place
+        does a genuinely different job. Only two qualify: a fact that is <i>off-screen</i> when
+        you need it (that earns a sticky bar), and a fact restated <i>at the point of no
+        return</i> (that earns a line on the submit screen).
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <section>
+    <div class="head">
+      <p class="eyebrow">03 · Directions</p>
+      <h2>Three ways out, same content</h2>
+    </div>
+
+    <!-- ---------------- A ---------------- -->
+    <div class="direction">
+      <div class="dhead">
+        <span class="tag">Direction A</span>
+        <h3>One header, one body</h3>
+      </div>
+      <p class="thesis">Keep the bar, but make it the only summary — the panels stop describing themselves.</p>
+
+      <div class="frame">
+        <div class="row tall">
+          <span class="chip">Exam <b>AAA</b> <span class="dim">▾</span></span>
+          <span class="chip">Groups <b>1</b> <span class="dim">▾</span></span>
+          <span class="chip">Files <b>3</b> · 170 KB <span class="dim">▾</span></span>
+          <span class="spacer dim">Findings 0 of 1 · note empty</span>
+          <span class="pill">Review &amp; submit →</span>
+        </div>
+        <div class="cols">
+          <div class="media" style="height:150px">MEDIA VIEWER · 1 / 3</div>
+          <div class="card">
+            <span class="t">Findings</span>
+            <div class="finding">
+              <span>Abdominal Aortic Aneurysm *</span>
+              <span class="spacer ghost">Present</span><span class="ghost">Absent</span>
+            </div>
+            <div class="warnrow">⚠ 1 required finding is still blank</div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="t">Clinical note</span>
+          <div class="field" style="height:44px"></div>
+        </div>
+        <div class="card">
+          <span class="t">Share with groups</span>
+          <div class="finding done"><span>✓ WCUCOM OMS II Class of 2029</span></div>
+        </div>
+      </div>
+      <p class="caption">
+        Four status rows become one. Each chip <em>is</em> the control — it opens the thing
+        inline instead of scrolling to a copy of it.
+      </p>
+
+      <div class="pc">
+        <div class="for">
+          <h4>For</h4>
+          <ul>
+            <li>Smallest diff of the three. Nothing moves; rows are deleted.</li>
+            <li>Removes ~130px of chrome and five of the twelve statements immediately.</li>
+            <li>The warning moves next to the findings, where it belongs.</li>
+          </ul>
+        </div>
+        <div class="against">
+          <h4>Against</h4>
+          <ul>
+            <li>One strip doing four jobs. It is already crowded at 1280 and this adds a chip.</li>
+            <li>
+              <b>Groups still appears twice</b> — the chip and the panel — and the panel cannot
+              simply go (see the risk below).
+            </li>
+            <li>Upload is still not given space of its own; it just got smaller.</li>
+            <li>Leaves the two-summary-systems architecture in place. The next fold re-creates the bug.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------- B ---------------- -->
+    <div class="direction">
+      <div class="dhead">
+        <span class="tag pick">Direction B · recommended</span>
+        <h3>Media rail, work column</h3>
+      </div>
+      <p class="thesis">The media is the constant; everything else is the work. Give each a column and delete the bar entirely.</p>
+
+      <div class="frame">
+        <div class="cols rail">
+          <div style="display:flex; flex-direction:column; gap:7px">
+            <div class="media" style="height:238px">MEDIA VIEWER · 1 / 3</div>
+            <div class="strip">
+              <span class="thumb"></span><span class="thumb"></span><span class="thumb"></span>
+              <span class="drop" style="flex:1; padding:4px 8px">+ Add files</span>
+            </div>
+            <span class="dim" style="font-size:11px">3 in storage · 170 KB · drop anywhere</span>
+            <span class="dim" style="font-size:11px; font-family:var(--mono)">↑ rail stays put while the study scrolls</span>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:7px">
+            <div class="row"><b>AAA</b><span class="spacer dim">Change ⌄</span></div>
+            <div class="card">
+              <span class="t">Findings</span>
+              <span class="ghost" style="align-self:flex-start">No pathology</span>
+              <div class="finding">
+                <span>Abdominal Aortic Aneurysm *</span>
+                <span class="spacer ghost">Present</span><span class="ghost">Absent</span>
+              </div>
+              <div class="warnrow">⚠ 1 required finding is still blank</div>
+            </div>
+            <div class="card">
+              <span class="t">Clinical note</span>
+              <div class="field" style="height:38px"></div>
+            </div>
+            <div class="card">
+              <span class="t">Share with groups</span>
+              <div class="finding done"><span>✓ WCUCOM OMS II Class of 2029</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sticky">
+          <span class="dim">Still needed:</span> <span>findings</span>
+          <span class="spacer pill">Review &amp; submit →</span>
+        </div>
+      </div>
+      <p class="caption">
+        The rail <em>is</em> the file list — there is no Files card. The bar is gone, so exam
+        and groups each appear exactly once. The footer sticks, so submit never leaves.
+      </p>
+
+      <div class="pc">
+        <div class="for">
+          <h4>For</h4>
+          <ul>
+            <li>
+              <b>Removes the duplication structurally.</b> There is no bar left to duplicate
+              anything — it is not a wording fix that can regress.
+            </li>
+            <li>
+              Upload gets literally its own space, and leaves the reading order of the work.
+              Drag-and-drop still works page-wide.
+            </li>
+            <li>
+              <b>It is the geometry the app already committed to.</b> The reviewer's scan-detail
+              page is media-left / form-right, and the interpretation panel already says so in
+              its own comment. This makes creating and reviewing a study the same shape.
+            </li>
+            <li>Findings get full height beside the media instead of a box in a corner.</li>
+            <li>The sticky footer fixes submit going off-screen, which nothing does today.</li>
+          </ul>
+        </div>
+        <div class="against">
+          <h4>Against</h4>
+          <ul>
+            <li>Biggest diff. <code>StudySurface</code> is rewritten; <code>StudyBar</code> is deleted.</li>
+            <li>
+              Must stack below ~1280 — media first, then work — so the laptop-width layout has
+              to be designed, not inherited.
+            </li>
+            <li>
+              A fresh study opens with an empty rail. That empty state has to carry the
+              “drop files here” job on its own and be good.
+            </li>
+            <li>The work column is narrower, so the 22-tile exam grid needs a different expanded form.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------- C ---------------- -->
+    <div class="direction">
+      <div class="dhead">
+        <span class="tag">Direction C</span>
+        <h3>Findings first, everything else docked</h3>
+      </div>
+      <p class="thesis">The page <em>is</em> the findings form. Metadata collapses to a tray; upload becomes an ambient lane.</p>
+
+      <div class="frame">
+        <div class="row quiet">
+          <span class="dim">Study details</span>
+          <span class="chip">AAA</span><span class="chip">1 group</span>
+          <span class="chip">note empty</span><span class="spacer dim">⌄ expand</span>
+        </div>
+        <div class="card" style="gap:8px">
+          <span class="t">Findings · AAA</span>
+          <span class="ghost" style="align-self:flex-start">No pathology</span>
+          <div class="finding">
+            <span>Abdominal Aortic Aneurysm *</span>
+            <span class="spacer ghost">Present</span><span class="ghost">Absent</span>
+          </div>
+          <div class="cols">
+            <div class="media" style="height:96px">MEDIA · 1 / 3</div>
+            <div class="finding done"><span class="dim">answer while you watch</span></div>
+          </div>
+        </div>
+        <div class="sticky">
+          <span>↑ Drop files or browse</span><span class="dim">3 in storage · 170 KB</span>
+          <span class="spacer pill">Review &amp; submit →</span>
+        </div>
+      </div>
+      <p class="caption">Upload is one line at the bottom edge that expands on drag. Metadata is one line at the top.</p>
+
+      <div class="pc">
+        <div class="for">
+          <h4>For</h4>
+          <ul>
+            <li>Maximum focus on the one thing that is actually teaching material.</li>
+            <li>Upload never leads and never blocks — the least intrusive of the three.</li>
+            <li>Shortest page by a wide margin.</li>
+          </ul>
+        </div>
+        <div class="against">
+          <h4>Against</h4>
+          <ul>
+            <li>
+              <b>It hides two choices that cannot be undone.</b> Exam type and group routing are
+              both fixed at creation — the API has no route to change either afterwards.
+            </li>
+            <li>
+              <b>And the safety net is missing.</b> In this flow the submit screen never restates
+              groups (verified below), so a collapsed tray would be the <em>only</em> place
+              routing is ever shown.
+            </li>
+            <li>Two docked bars eat vertical space on a 13" laptop, where the page is thinnest.</li>
+            <li>A docked upload lane is the easiest place to hide a failed upload.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <section>
+    <div class="head">
+      <p class="eyebrow">04 · Recommendation</p>
+      <h2>Build B</h2>
+    </div>
+    <div class="prose">
+      <p>
+        A and C both treat the symptom. A edits the chips; C hides them. Only <b>B removes the
+        thing that generates duplicates</b> — with the bar gone there is no second summary layer,
+        so the next panel that learns to fold cannot re-create this.
+      </p>
+      <p>
+        And B is not a new idea imported from outside: it is the geometry this app already uses
+        to <i>read</i> a study. Making creation the same shape as review is the kind of
+        consistency a learner feels without being able to name it.
+      </p>
+      <p>
+        C is the more exciting design and I would want it if group routing were reversible.
+        It is not, and the submit screen does not currently name it, so C trades a real safety
+        property for polish. That is the wrong trade on patient-adjacent work.
+      </p>
+    </div>
+
+    <h3 style="margin-top:28px; margin-bottom:12px">What it costs</h3>
+    <ol class="steps">
+      <li><code>StudySurface</code> rewritten as two columns plus a sticky footer — roughly 120 lines.</li>
+      <li><code>StudyBar</code> / <code>StudyChip</code> deleted, along with the jump-scroll helper and its flash.</li>
+      <li><code>FilesPanel</code> gains a rail form: viewer + film strip + add-files footer. The existing panel stays for the classic wizard.</li>
+      <li><code>ScanMediaViewer</code> moves up one level, out of the interpretation panel and into the rail.</li>
+      <li>
+        Unchanged: the <code>readiness</code> model (the sticky footer reads the same function),
+        <code>FindingsPanel</code>, <code>GroupRoutingPanel</code>, the note, the submit screen,
+        and the whole classic wizard — it does not use <code>StudySurface</code>.
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============================================================== -->
+  <section>
+    <div class="head">
+      <p class="eyebrow">05 · Must hold, whichever we pick</p>
+      <h2>Three things not to break</h2>
+    </div>
+    <ol class="steps">
+      <li>
+        <b>A failed or detached file still has to shout.</b> The current panel refuses to fold
+        while anything needs attention, and that guard exists because a hidden failed upload is
+        how a broken study reaches submit. In a rail, that means a red marker on the film strip
+        <em>and</em> a notice in the work column — not a smaller dropzone.
+      </li>
+      <li>
+        <b>“What will be sent” does not say who it is being sent to.</b> Verified: the summary
+        lists exam type, files, scan identifier, patient ID and expert review — no groups — and
+        this flow renders the submit screen with group routing off. Group routing is fixed
+        forever at creation. That is a gap today, independent of this redesign, and it should be
+        closed before any direction that makes routing less prominent.
+      </li>
+      <li>
+        <b>Changing exam type after findings are answered must keep its dialog.</b> Whatever the
+        exam control becomes, the confirm-what-survives step stays.
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============================================================== -->
+  <section>
+    <div class="head">
+      <p class="eyebrow">06 · Open</p>
+      <h2>Questions I could not settle from the code</h2>
+    </div>
+    <ol class="steps">
+      <li>
+        Below ~1280, does the media stack <em>above</em> the work or below it? Media-first
+        matches what the interpretation panel does today; work-first gets the learner typing sooner.
+      </li>
+      <li>
+        In a narrower work column, does exam type stay a 22-tile grid on expand, or become a
+        searchable list? The grid was chosen deliberately because the choice is unrecoverable.
+      </li>
+      <li>
+        Does the clinical note deserve its own card, or is it the last block of the findings
+        card? It is the same act — saying what you saw.
+      </li>
+      <li>
+        Should the classic wizard inherit any of this, or stay exactly as it is as the
+        deliberately conservative option?
+      </li>
+    </ol>
+  </section>
+
+  <p class="footer">
+    Mockups drawn in ScanVault's own tokens and type scale, from
+    <code>packages/ui/src/styles/tokens.css</code>. Evidence captured at 1440 × 1100 against the
+    running app with three files stored and an exam type chosen.
+  </p>
+</div>

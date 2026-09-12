@@ -90,5 +90,7 @@ export function stepForFlow(step: WizardStep, flow: CreateScanFlow): WizardStep 
     return step === 'submit' ? 'routing' : 'files';
   }
 
-  return step === 'routing' ? 'submit' : 'study';
+  // Nothing in the study flow is a step but the surface itself: it submits
+  // through a confirm dialog rather than by navigating to a second screen.
+  return 'study';
 }

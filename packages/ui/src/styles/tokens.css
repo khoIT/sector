@@ -217,37 +217,3 @@ body {
     opacity: 0.5;
   }
 }
-
-/*
- * A panel that was just jumped to.
- *
- * A control that moves the page has to prove it did something, and the study
- * bar's chips often target a panel that is ALREADY on screen — there the
- * scroll is a few pixels or none at all, and without this the click reads as
- * "nothing happened". The caller removes the class once the flash is over.
- */
-@keyframes sv-jump-flash {
-  0% {
-    box-shadow: 0 0 0 2px var(--accent-ink);
-  }
-  100% {
-    box-shadow: 0 0 0 2px transparent;
-  }
-}
-
-.sv-jump-target {
-  border-radius: var(--radius);
-  animation: sv-jump-flash 1.2s ease-out 1;
-}
-
-/*
- * Not `animation: none` alone: the whole point is feedback, and removing it
- * would leave exactly the dead click this exists to fix. The ring is simply
- * held still for the same time instead of fading.
- */
-@media (prefers-reduced-motion: reduce) {
-  .sv-jump-target {
-    animation: none;
-    box-shadow: 0 0 0 2px var(--accent-ink);
-  }
-}
