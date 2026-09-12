@@ -37,6 +37,16 @@ const persistedDraftSchema = z.object({
   savedAt: z.number(),
   draftId: z.string(),
   /**
+   * Who the draft belongs to.
+   *
+   * Optional because drafts written before this field existed must still
+   * parse. It is what lets a shared machine purge one learner's bytes when the
+   * NEXT learner signs in, rather than destroying them the moment a token
+   * lapses — which is the same event as a sign-out to the transport and the
+   * opposite of it to the person sitting there.
+   */
+  ownerId: z.string().optional(),
+  /**
    * Tolerant on purpose. A draft carries whichever step its flow was on when
    * it was saved, and the user can change flows between one sitting and the
    * next — so a value that is real but belongs to the other flow must survive
@@ -81,11 +91,12 @@ export function parsePersistedDraft(value: unknown): PersistedDraft | null {
   return result.data;
 }
 
-export function writeDraft(state: DraftState): void {
+export function writeDraft(state: DraftState, ownerId?: string): void {
   const payload: PersistedDraft = {
     version: 1,
     savedAt: Date.now(),
     draftId: state.draftId,
+    ...(ownerId ? { ownerId } : {}),
     step: state.step,
     files: state.files
       // A rejected or cancelled file is not part of the study; keeping it would
@@ -183,6 +194,25 @@ export function restoreFiles(persisted: PersistedDraft): DraftFile[] {
  * sign in on a shared teaching-room machine is not acceptable, and the blobs
  * outlive the manifest unless something goes and gets them.
  */
+/**
+ * Who the stored draft belongs to, if it says.
+ *
+ * Read straight out of localStorage rather than through the full parse: the
+ * caller is the auth layer deciding whether to purge, and a draft too damaged
+ * to parse is exactly one it should still be able to purge.
+ */
+export function currentDraftOwnerId(): string | null {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    const owner = (parsed as { ownerId?: unknown }).ownerId;
+    return typeof owner === 'string' && owner ? owner : null;
+  } catch {
+    return null;
+  }
+}
+
 export function currentDraftId(): string | null {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);

@@ -1,3 +1,4 @@
+import { playableSources } from '@/features/scan-detail/components/media-source';
 import { ScanMediaViewer } from '@/features/scan-detail/components/scan-media-viewer';
 
 import type { StageSource } from '../model/draft-file-sources';
@@ -31,12 +32,18 @@ export type StudyRailProps = {
  * being answered.
  */
 export function StudyRail({ draft, sources, collapsed, onToggle }: StudyRailProps) {
+  // Playable, not merely present. A draft restored from its manifest still
+  // lists its files, but their bytes are in S3 and not in this browser, so
+  // there is nothing to put on a stage — and a viewer frame offering to step
+  // between files it cannot show is worse than no viewer.
+  const playable = playableSources(sources);
+
   return (
     <div className="flex min-w-0 flex-col gap-3 xl:sticky xl:top-4">
-      {sources.length > 0 ? (
+      {playable.length > 0 ? (
         <div className="min-w-0">
           <ScanMediaViewer
-            files={sources}
+            files={playable}
             // The column beside this one is entirely form controls, and the
             // findings options claim the arrow keys for roving focus.
             navigationKeys="brackets"
@@ -47,6 +54,11 @@ export function StudyRail({ draft, sources, collapsed, onToggle }: StudyRailProp
             <kbd className="rounded border border-line px-1">]</kbd> to step between files.
           </p>
         </div>
+      ) : sources.length > 0 ? (
+        <p className="text-[11px] text-ink-dim">
+          Previews are played from this browser, so a study picked up after a reload has none. The
+          list below shows where each file actually is.
+        </p>
       ) : null}
 
       <FilesPanel draft={draft} collapsed={collapsed} onToggle={onToggle} />

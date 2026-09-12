@@ -21,6 +21,8 @@ import {
   type CreateScanFlow,
 } from './create-scan-flow';
 import { mintDraftId } from './draft-id';
+import { useAuth } from '@/auth/auth-context';
+
 import { clearDraft, readDraft, restoreFiles, writeDraft } from './draft-storage';
 import { draftHoldings } from './draft-holdings';
 import type {
@@ -103,6 +105,7 @@ export type UseCreateScanDraft = ReturnType<typeof useCreateScanDraft>;
  */
 export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FLOW) {
   const client = useApiClient();
+  const userId = useAuth().user?.id;
 
   const [restoredDraft] = useState(() => readDraft());
   const [state, setState] = useState<DraftState>(() => {
@@ -152,8 +155,10 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
       return;
     }
 
-    writeDraft(state);
-  }, [state]);
+    // Stamped with the owner so a shared machine can purge the RIGHT bytes at
+    // the next sign-in, instead of purging every learner's at a token lapse.
+    writeDraft(state, userId);
+  }, [state, userId]);
 
   /**
    * Bring back the bytes of anything that had not finished, and the point its

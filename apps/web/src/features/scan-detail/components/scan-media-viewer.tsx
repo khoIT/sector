@@ -83,10 +83,10 @@ export function ScanMediaViewer({
       <EmptyState
         className={className}
         icon={<ImageOff className="h-5 w-5" aria-hidden />}
-        title={withoutBytes > 0 ? 'Nothing to show yet' : 'No media on this scan'}
+        title={withoutBytes > 0 ? 'No preview available' : 'No media on this scan'}
         description={
           withoutBytes > 0
-            ? `${withoutBytes} ${withoutBytes === 1 ? 'file is' : 'files are'} on this scan but none of their bytes reached storage. The file list below shows each one's status.`
+            ? `${withoutBytes} ${withoutBytes === 1 ? 'file' : 'files'} cannot be previewed here. The file list below names each one and its status.`
             : 'The upload never produced a file. The file list below shows what was expected.'
         }
       />
@@ -138,8 +138,9 @@ export function ScanMediaViewer({
 
       {withoutBytes > 0 ? (
         <p className="text-[12px] text-warn">
-          {withoutBytes} {withoutBytes === 1 ? 'file has' : 'files have'} no stored bytes and cannot
-          be shown. They are listed with their status below.
+          {withoutBytes} more {withoutBytes === 1 ? 'file' : 'files'} cannot be previewed here. The
+          list below names {withoutBytes === 1 ? 'it' : 'them'} and {withoutBytes === 1 ? 'its' : 'their'}{' '}
+          status.
         </p>
       ) : null}
 

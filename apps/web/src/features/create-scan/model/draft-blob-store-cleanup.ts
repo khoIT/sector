@@ -6,4 +6,4 @@
  * reach the upload pump, and a barrel that let it would invite exactly that.
  */
 export { clearDraftFiles } from './draft-blob-store';
-export { currentDraftId } from './draft-storage';
+export { currentDraftId, currentDraftOwnerId } from './draft-storage';

@@ -24,6 +24,7 @@ import {
 import {
   clearDraftFiles,
   currentDraftId,
+  currentDraftOwnerId,
 } from '@/features/create-scan/model/draft-blob-store-cleanup';
 import { sessionStore, setUnauthorizedHandler } from '@/lib/api';
 
@@ -86,15 +87,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus('anonymous');
     queryClient.clear();
 
-    // The create-scan draft keeps unfinished upload bytes in IndexedDB, which
-    // outlive the session unless something goes and gets them. Leaving one
-    // learner's ultrasound clips in the browser for whoever signs in next on a
-    // shared teaching-room machine is not acceptable.
-    const draftId = currentDraftId();
-    if (draftId) void clearDraftFiles(draftId);
+    // Purging is deliberately NOT done here. A 401 and a sign-out are the same
+    // event to the transport and opposite events to the person at the machine:
+    // a token that lapsed mid-upload would take every unfinished file's bytes
+    // with it and leave the manifest listing them, unrecoverable. The shared
+    // teaching-room case this protects is a DIFFERENT learner arriving, so the
+    // purge belongs at sign-in, below, and at an explicit sign-out.
   }, [queryClient]);
 
+  /** Explicit sign-out: the session goes and so do the bytes. */
+  const signOut = useCallback(() => {
+    clearSession();
+    const draftId = currentDraftId();
+    if (draftId) void clearDraftFiles(draftId);
+  }, [clearSession]);
+
   const applySession = useCallback((next: AuthSession) => {
+    // A draft left by SOMEONE ELSE on this machine goes now. Its owner is on
+    // the manifest; a draft with no owner recorded predates the field, and is
+    // purged too rather than risk leaving one learner's clips for the next.
+    const draftId = currentDraftId();
+    if (draftId && currentDraftOwnerId() !== next.user.id) {
+      void clearDraftFiles(draftId);
+    }
+
     sessionStore.write(next);
     setSession(next);
     setStatus('authenticated');
@@ -181,12 +197,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       permissions: session?.user.role.permissions ?? NO_PERMISSIONS,
       token: session?.token ?? null,
       signIn,
-      signOut: clearSession,
+      signOut,
       updateUser,
       can: (permission) => hasPermission(session?.user, permission),
       canAny: (permissions) => hasAnyPermission(session?.user, permissions),
     }),
-    [status, session, signIn, clearSession, updateUser],
+    [status, session, signIn, signOut, updateUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

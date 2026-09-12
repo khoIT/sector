@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, cn } from '@scanvault/ui';
 import { ChevronDown, Stethoscope } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { playableSources } from '@/features/scan-detail/components/media-source';
 import { ScanMediaViewer } from '@/features/scan-detail/components/scan-media-viewer';
 
 import { ClinicalNotePanel } from '../components/clinical-note-panel';
@@ -40,6 +41,9 @@ export function StepInterpretation({
   );
 
   const sources = useDraftMediaSources(state.files);
+  // Playable, not merely present: a draft restored from its manifest lists its
+  // files, but their bytes are in S3 rather than in this browser.
+  const playable = playableSources(sources);
   const switcher = useScanTypeSwitch(draft);
   const { pendingTypeId, pendingSwitch } = switcher;
 
@@ -126,13 +130,13 @@ export function StepInterpretation({
           // Two columns only when there is something to put in the first one.
           // Unconditionally, a study with no playable file left the findings
           // at half width against an empty half-screen.
-          sources.length > 0 && 'xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]',
+          playable.length > 0 && 'xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]',
         )}
       >
-        {sources.length > 0 ? (
+        {playable.length > 0 ? (
           <div className="xl:sticky xl:top-4">
             <ScanMediaViewer
-              files={sources}
+              files={playable}
               // The pane beside this one is entirely form controls, and the
               // findings options claim the arrow keys for roving focus.
               navigationKeys="brackets"
