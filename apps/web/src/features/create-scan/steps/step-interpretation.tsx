@@ -4,7 +4,8 @@ import {
   useUserOrganizations,
   type ScanTypeSummary,
 } from '@scanvault/api-client';
-import { Card, CardContent, CardHeader, CardTitle, Input, Textarea } from '@scanvault/ui';
+import { Card, CardContent, CardHeader, CardTitle, Input, Textarea, cn } from '@scanvault/ui';
+import { ChevronDown, Stethoscope } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuth } from '@/auth/auth-context';
@@ -28,9 +29,17 @@ import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
 
 export type StepInterpretationProps = {
   draft: UseCreateScanDraft;
+  /**
+   * Whether the scan-type grid may fold itself to a summary row once a type is
+   * chosen. Off for the classic wizard, where the picker IS the step.
+   */
+  collapsibleScanType?: boolean;
 };
 
-export function StepInterpretation({ draft }: StepInterpretationProps) {
+export function StepInterpretation({
+  draft,
+  collapsibleScanType = false,
+}: StepInterpretationProps) {
   const { user } = useAuth();
   const { data: organizations } = useUserOrganizations(user?.id);
   const { state, update } = draft;
@@ -76,6 +85,26 @@ export function StepInterpretation({ draft }: StepInterpretationProps) {
   const [pendingSwitch, setPendingSwitch] = useState<
     { scanType: ScanTypeSummary; plan: FindingTransferPlan } | null
   >(null);
+
+  /**
+   * The 22-tile grid folds to one row once a type is chosen.
+   *
+   * It used to stay open forever, which left the longest panel on the page
+   * showing a decision that had already been made — and made the study bar's
+   * exam chip a jump to something the learner had finished with.
+   *
+   * Keyed on the id rather than set once: picking a DIFFERENT type has to fold
+   * it again, and a restored draft has to render folded rather than flashing
+   * the grid first. Expanding is always manual, so re-opening it and then
+   * choosing the type that is already selected leaves it open — that click is
+   * a deliberate no-op, and folding on it would read as a rejection.
+   */
+  const [typeCollapsed, setTypeCollapsed] = useState(
+    () => collapsibleScanType && Boolean(state.scanTypeId),
+  );
+  useEffect(() => {
+    if (collapsibleScanType && state.scanTypeId) setTypeCollapsed(true);
+  }, [collapsibleScanType, state.scanTypeId]);
 
   function applySwitch(scanType: ScanTypeSummary, findings: Record<string, string>) {
     update({ scanTypeId: scanType.id, scanTypeName: scanType.name, findings });
@@ -131,45 +160,74 @@ export function StepInterpretation({ draft }: StepInterpretationProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Scan type</CardTitle>
-          <p className="mt-0.5 text-[12px] text-ink-dim">
-            Required, and fixed once the study is submitted — the API has no way to change a scan's
-            type afterwards.
-          </p>
-        </CardHeader>
-        <CardContent>
-          <ScanTypePicker
-            value={state.scanTypeId}
-            pendingTypeId={pendingTypeId}
-            onChange={(scanType) => void chooseScanType(scanType)}
-          />
+      {/* Outside the panel below, not inside it: a dialog a fold could unmount
+          is a dialog that can vanish mid-decision. */}
+      {pendingSwitch ? (
+        <SwitchScanTypeDialog
+          open
+          onOpenChange={(next) => {
+            if (!next) setPendingSwitch(null);
+          }}
+          currentTypeName={state.scanTypeName ?? ''}
+          nextTypeName={pendingSwitch.scanType.name}
+          kept={pendingSwitch.plan.kept}
+          cleared={pendingSwitch.plan.cleared}
+          onConfirm={() => {
+            applySwitch(pendingSwitch.scanType, pendingSwitch.plan.carried);
+            setPendingSwitch(null);
+          }}
+        />
+      ) : null}
 
-          {pendingSwitch ? (
-            <SwitchScanTypeDialog
-              open
-              onOpenChange={(next) => {
-                if (!next) setPendingSwitch(null);
-              }}
-              currentTypeName={state.scanTypeName ?? ''}
-              nextTypeName={pendingSwitch.scanType.name}
-              kept={pendingSwitch.plan.kept}
-              cleared={pendingSwitch.plan.cleared}
-              onConfirm={() => {
-                applySwitch(pendingSwitch.scanType, pendingSwitch.plan.carried);
-                setPendingSwitch(null);
-              }}
+      {typeCollapsed && state.scanTypeName ? (
+        <button
+          type="button"
+          onClick={() => setTypeCollapsed(false)}
+          aria-expanded={false}
+          className="flex w-full items-center gap-2 rounded-token border border-line bg-surface px-3 py-2.5 text-left outline-none transition-colors hover:bg-surface-2 focus-visible:ring-2 focus-visible:ring-accent-ink"
+        >
+          <Stethoscope className="h-4 w-4 shrink-0 text-ink-dim" aria-hidden />
+          <span className="sr-only">Scan type: </span>
+          <span className="min-w-0 truncate text-body text-ink">{state.scanTypeName}</span>
+          {/* "Change", not a bare chevron. The type is fixed for good once the
+              study is submitted, so the row names what opening it is for. */}
+          <span className="ml-auto inline-flex shrink-0 items-center gap-1 text-[12px] text-ink-dim">
+            Change
+            <ChevronDown className="h-4 w-4" aria-hidden />
+          </span>
+        </button>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Scan type</CardTitle>
+            <p className="mt-0.5 text-[12px] text-ink-dim">
+              Required, and fixed once the study is submitted — the API has no way to change a
+              scan's type afterwards.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <ScanTypePicker
+              value={state.scanTypeId}
+              pendingTypeId={pendingTypeId}
+              onChange={(scanType) => void chooseScanType(scanType)}
             />
-          ) : null}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Media left, form right — the geometry the reviewer's detail page has
           always used, so a learner and their reviewer read the same study the
           same way. Stacks media-first below xl, where a 450px findings rail
           would be worse than a full-width one. */}
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:items-start">
+      <div
+        className={cn(
+          'grid gap-4 xl:items-start',
+          // Two columns only when there is something to put in the first one.
+          // Unconditionally, a study with no playable file left the findings
+          // at half width against an empty half-screen.
+          sources.length > 0 && 'xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]',
+        )}
+      >
         {sources.length > 0 ? (
           <div className="xl:sticky xl:top-4">
             <ScanMediaViewer

@@ -102,8 +102,11 @@ export function StudySurface({ draft, onReview }: StudySurfaceProps) {
         onToggle={() => setFilesCollapsed((collapsed) => !collapsed)}
       />
 
+      {/* `collapsibleScanType` only here: in the classic wizard the picker IS
+          the step, and a step that folds itself to one row is a step showing
+          nothing. */}
       <div id="study-exam">
-        <StepInterpretation draft={draft} />
+        <StepInterpretation draft={draft} collapsibleScanType />
       </div>
 
       {/* Group routing lives here rather than on the submit screen, because it
@@ -120,7 +123,30 @@ export function StudySurface({ draft, onReview }: StudySurfaceProps) {
   );
 }
 
-/** Move the page to a panel without changing what is rendered. */
+/** How long the jumped-to panel stays marked. Matches `sv-jump-target`. */
+const JUMP_FLASH_MS = 1200;
+
+/**
+ * Move the page to a panel and mark it briefly, without changing what is
+ * rendered.
+ *
+ * The mark is not decoration. A chip's target is very often ALREADY on screen
+ * — on a fresh study every panel is — and there a scroll moves nothing, so
+ * the click reads as dead. Marking the panel is what makes the control honest
+ * about having done something.
+ */
 function scrollToPanel(id: string): void {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const panel = document.getElementById(id);
+  if (!panel) return;
+
+  const reducedMotion =
+    globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  panel.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+
+  // Removed and re-added around a forced reflow, so clicking the same chip
+  // twice replays the mark rather than doing nothing the second time.
+  panel.classList.remove('sv-jump-target');
+  void panel.offsetWidth;
+  panel.classList.add('sv-jump-target');
+  globalThis.setTimeout(() => panel.classList.remove('sv-jump-target'), JUMP_FLASH_MS);
 }

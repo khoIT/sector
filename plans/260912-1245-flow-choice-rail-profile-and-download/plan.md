@@ -22,8 +22,10 @@ Three requests, three independent tracks, one session.
 | 1 | [Download reaches the bytes](phase-01-download-reaches-the-bytes.md) | completed |
 | 2 | [The account control moves to the rail](phase-02-the-account-control-moves-to-the-rail.md) | completed |
 | 3 | [Two ways through create scan](phase-03-two-ways-through-create-scan.md) | completed |
+| 4 | [The study bar stops promising a menu](phase-04-the-study-bar-stops-promising-a-menu.md) | completed |
 
-No dependencies between them; they touch disjoint files.
+Phases 1-3 are independent and touch disjoint files. Phase 4 followed a
+report against the surface phase 3 made switchable.
 
 ## Acceptance criteria
 
@@ -34,6 +36,8 @@ No dependencies between them; they touch disjoint files.
 - [x] The rail control sits on the bottom edge and opens upward
 - [x] A profile setting switches the create-scan flow, saved per browser
 - [x] A draft started in one flow opens in the other with its contents intact
+- [x] The study bar's chips no longer claim to open a menu they never opened
+- [x] The scan-type grid folds once a type is chosen, and only where folding makes sense
 - [x] `pnpm -w typecheck`, `lint`, `build` clean; tests 241 web / 91 api-client / 69 ui
 
 ## What this did not fix

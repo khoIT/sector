@@ -1,5 +1,5 @@
 import { Button, cn } from '@scanvault/ui';
-import { ArrowRight, Check, ChevronDown, Circle, Minus } from 'lucide-react';
+import { ArrowDown, ArrowRight, Check, Circle, Minus } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import type { ReadinessItem, ReadinessState } from '../model/readiness';
@@ -84,36 +84,39 @@ function ReadinessChip({ item }: { item: ReadinessItem }) {
 }
 
 /**
- * One control in the bar: a labelled value that opens what it names.
+ * One entry in the bar: a labelled value that moves the page to the panel
+ * owning it.
  *
  * The value is the point, not the label — a learner scanning the bar wants to
- * read "Cardiac", not "Exam type:". So the label is dim and small and the
- * value carries the weight.
+ * read "AAA", not "Exam type:". So the label is dim and small and the value
+ * carries the weight.
+ *
+ * The trailing mark is an ARROW, not a chevron, and there is no
+ * `aria-expanded`. This is not a disclosure control and it never was: it
+ * scrolls. A chevron here promised a menu that never opened, which is what
+ * made the chip feel broken — the affordance has to describe what the click
+ * actually does.
  */
 export function StudyChip({
   label,
   value,
   icon,
   onClick,
-  expanded,
 }: {
   label: string;
   value: string;
   icon?: ReactNode;
   onClick: () => void;
-  expanded?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-expanded={expanded}
       className={cn(
-        'inline-flex max-w-[16rem] items-center gap-1.5 rounded-token border border-line',
+        'group inline-flex max-w-[16rem] items-center gap-1.5 rounded-token border border-line',
         'bg-surface px-2.5 py-1 text-body outline-none transition-colors',
         'hover:border-accent-ink/30 hover:bg-surface-2',
         'focus-visible:ring-2 focus-visible:ring-accent-ink',
-        expanded && 'border-accent-ink/40 bg-surface-2',
       )}
     >
       {icon}
@@ -121,8 +124,9 @@ export function StudyChip({
       <span className="min-w-0 truncate text-ink" title={value}>
         {value}
       </span>
-      <ChevronDown
-        className={cn('h-3.5 w-3.5 shrink-0 text-ink-dim transition-transform', expanded && 'rotate-180')}
+      <span className="sr-only">, go to the {label.toLowerCase()} section</span>
+      <ArrowDown
+        className="h-3.5 w-3.5 shrink-0 text-ink-dim transition-transform group-hover:translate-y-0.5"
         aria-hidden
       />
     </button>
