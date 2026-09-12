@@ -6,39 +6,34 @@ import { SCAN_VAULT_PATH } from '@/features/scan-list/scan-list-views';
 
 import { DraftIndicator } from './components/draft-indicator';
 import { InlineNotice } from './components/inline-notice';
-import { WizardStepper } from './components/wizard-stepper';
-import type { WizardStep } from './model/draft-types';
-import { countStored } from './model/file-counts';
 import { useCreateScanDraft } from './model/use-create-scan-draft';
-import { StepFiles } from './steps/step-files';
-import { StepInterpretation } from './steps/step-interpretation';
 import { StepReviewRouting } from './steps/step-review-routing';
 import { StepSubmitted } from './steps/step-submitted';
+import { StudySurface } from './steps/study-surface';
 
 /**
  * Create Scan Study.
  *
- * Four steps — Files, Interpretation, Review routing, Submitted — over one
- * draft that starts transferring bytes the moment a file is chosen. Nothing in
- * this flow tells the user not to close the browser, because nothing in it
+ * Two surfaces over one draft that starts transferring bytes the moment a file
+ * is chosen: the STUDY you work on, and the SUBMIT screen you commit from.
+ *
+ * It was four ordered steps. The order protected nothing — files commit on
+ * selection, and neither the interpretation nor the routing step wrote anything
+ * the previous one had to finish first — while the learner's real loop of add a
+ * file, change the exam type, answer a finding, add another file cost Back,
+ * Back, click, Next, Next. One boundary genuinely survives, and it is the only
+ * one: everything before Submit is reversible in the app and Submit is not.
+ *
+ * Nothing here tells the user not to close the browser, because nothing in it
  * depends on the tab staying open: uploaded objects live in S3 and the draft
  * manifest lives in localStorage. The persistent "Draft saved" line is the
  * honest version of that warning.
  *
- * State, transfers and persistence are all in model/use-create-scan-draft.ts;
- * this file is the shell and the step routing.
+ * State, transfers and persistence are all in model/use-create-scan-draft.ts.
  */
 export function CreateScanPage() {
   const draft = useCreateScanDraft();
   const { state } = draft;
-
-  const canSelectStep = (step: WizardStep): boolean => {
-    if (state.step === 'submitted') return false;
-    if (step === 'files') return true;
-    if (step === 'interpretation') return state.files.length > 0;
-    if (step === 'routing') return Boolean(state.scanTypeId) && countStored(state.files) > 0;
-    return false;
-  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -70,8 +65,6 @@ export function CreateScanPage() {
           </div>
         </div>
 
-        <WizardStepper current={state.step} onSelect={draft.goToStep} canSelect={canSelectStep} />
-
         {state.step !== 'submitted' ? <DraftIndicator files={state.files} /> : null}
       </header>
 
@@ -90,22 +83,14 @@ export function CreateScanPage() {
         </InlineNotice>
       ) : null}
 
-      {state.step === 'files' ? (
-        <StepFiles draft={draft} onNext={() => draft.goToStep('interpretation')} />
+      {state.step === 'study' ? (
+        <StudySurface draft={draft} onReview={() => draft.goToStep('submit')} />
       ) : null}
 
-      {state.step === 'interpretation' ? (
-        <StepInterpretation
-          draft={draft}
-          onBack={() => draft.goToStep('files')}
-          onNext={() => draft.goToStep('routing')}
-        />
-      ) : null}
-
-      {state.step === 'routing' ? (
+      {state.step === 'submit' ? (
         <StepReviewRouting
           draft={draft}
-          onBack={() => draft.goToStep('interpretation')}
+          onBack={() => draft.goToStep('study')}
           onSubmitted={draft.finish}
         />
       ) : null}

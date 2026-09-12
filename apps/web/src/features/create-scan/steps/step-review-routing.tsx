@@ -11,7 +11,6 @@ import { useState } from 'react';
 import { useAuth } from '@/auth/auth-context';
 
 import { ExpertReviewPanel } from '../components/expert-review-panel';
-import { GroupRoutingPanel } from '../components/group-routing-panel';
 import { InlineNotice } from '../components/inline-notice';
 import type { SubmitOutcome } from '../model/draft-types';
 import { defaultGroupCohort } from '../model/group-cohort';
@@ -71,7 +70,6 @@ export function StepReviewRouting({ draft, onBack, onSubmitted }: StepReviewRout
 
   return (
     <div className="flex flex-col gap-4">
-      <GroupRoutingPanel selected={state.groupIds} onChange={(ids) => update({ groupIds: ids })} />
 
       {user ? (
         <ExpertReviewPanel

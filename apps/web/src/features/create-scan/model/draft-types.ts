@@ -1,13 +1,30 @@
 import type { MediaValidationConfidence, MediaValidationFailureReason } from './validate-media-file';
 
-/** The four wizard steps, in order. */
-export const WIZARD_STEPS = ['files', 'interpretation', 'routing', 'submitted'] as const;
+/**
+ * The three surfaces a study passes through.
+ *
+ * It was four ordered steps. Nothing in this flow has to happen in an order —
+ * files commit on selection, and neither the interpretation nor the routing
+ * step wrote anything the previous one had to finish first, so the gates
+ * between them protected nothing while costing Back/Back/Next/Next on the
+ * learner's real loop of add a file, change the exam type, answer a finding.
+ *
+ * One boundary does survive, and it is the only one: everything before Submit
+ * is reversible in the app and Submit is not. One boundary is two surfaces.
+ *
+ *   study      the working surface — files, exam type, findings, note, groups
+ *   submit     read-only, what is about to be sent
+ *   submitted  the receipt, after it has been
+ */
+export const WIZARD_STEPS = ['study', 'submit', 'submitted'] as const;
 export type WizardStep = (typeof WIZARD_STEPS)[number];
 
+/** Step values written by the four-step build. Read, never written. */
+export const RETIRED_WIZARD_STEPS = ['files', 'interpretation', 'routing'] as const;
+
 export const WIZARD_STEP_LABEL: Record<WizardStep, string> = {
-  files: 'Files',
-  interpretation: 'Interpretation',
-  routing: 'Review routing',
+  study: 'Study',
+  submit: 'Review & submit',
   submitted: 'Submitted',
 };
 

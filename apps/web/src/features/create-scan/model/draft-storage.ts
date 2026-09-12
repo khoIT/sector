@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { DraftFile, DraftState } from './draft-types';
+import { WIZARD_STEPS, type DraftFile, type DraftState } from './draft-types';
 import { isDraftId } from './draft-id';
 
 /**
@@ -36,7 +36,21 @@ const persistedDraftSchema = z.object({
   version: z.literal(1),
   savedAt: z.number(),
   draftId: z.string(),
-  step: z.enum(['files', 'interpretation', 'routing', 'submitted']),
+  /**
+   * Tolerant on purpose. A draft saved by the four-step build carries
+   * `files` / `interpretation` / `routing`, none of which exist any more, and
+   * a strict enum would reject the whole payload — losing a learner's study to
+   * a rename. Anything that is not a current step reads as `study`, which is
+   * where all three of the retired ones belong.
+   *
+   * `submitted` is the one retired-era value that must survive as itself: a
+   * draft parked there has a scan id and showing it the working surface again
+   * would invite a second submission.
+   */
+  step: z.preprocess(
+    (value) => (value === 'submit' || value === 'submitted' ? value : 'study'),
+    z.enum(WIZARD_STEPS),
+  ),
   files: z.array(persistedFileSchema),
   scanTypeId: z.string().nullable(),
   scanTypeName: z.string().nullable(),
@@ -57,6 +71,20 @@ const persistedDraftSchema = z.object({
 });
 
 export type PersistedDraft = z.infer<typeof persistedDraftSchema>;
+
+/**
+ * Parse a stored payload, migrations included.
+ *
+ * Separate from `readDraft` so the step migration can be tested against a real
+ * pre-migration payload without a `localStorage` stub. That migration is this
+ * module's only silent failure mode: get it wrong and someone's saved study
+ * opens as a blank page with no error anywhere.
+ */
+export function parsePersistedDraft(value: unknown): PersistedDraft | null {
+  const result = persistedDraftSchema.safeParse(value);
+  if (!result.success || !isDraftId(result.data.draftId)) return null;
+  return result.data;
+}
 
 export function writeDraft(state: DraftState): void {
   const payload: PersistedDraft = {
@@ -122,18 +150,18 @@ export function readDraft(): PersistedDraft | null {
     return null;
   }
 
-  const result = persistedDraftSchema.safeParse(parsed);
-  if (!result.success || !isDraftId(result.data.draftId)) {
+  const draft = parsePersistedDraft(parsed);
+  if (!draft) {
     clearDraft();
     return null;
   }
 
-  if (Date.now() - result.data.savedAt > EXPIRY_MS) {
+  if (Date.now() - draft.savedAt > EXPIRY_MS) {
     clearDraft();
     return null;
   }
 
-  return result.data;
+  return draft;
 }
 
 /** Rebuild in-memory files from a manifest. Bytes are gone; keys are not. */

@@ -38,7 +38,7 @@ const MAX_CONCURRENT_UPLOADS = 3;
 function emptyDraft(draftId: string): DraftState {
   return {
     draftId,
-    step: 'files',
+    step: 'study',
     files: [],
     scanTypeId: null,
     scanTypeName: null,
@@ -92,7 +92,7 @@ export function useCreateScanDraft() {
       draftId: restoredDraft.draftId,
       // A restored draft never lands on the confirmation step: it was either
       // finished (and cleared) or it was not.
-      step: restoredDraft.step === 'submitted' ? 'routing' : restoredDraft.step,
+      step: restoredDraft.step === 'submitted' ? 'submit' : restoredDraft.step,
       files: restoreFiles(restoredDraft),
       scanTypeId: restoredDraft.scanTypeId,
       scanTypeName: restoredDraft.scanTypeName,

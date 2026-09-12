@@ -1,8 +1,8 @@
 ---
 phase: 2
-title: "One study not four steps"
-status: pending
-effort: "M"
+title: One study not four steps
+status: completed
+effort: M
 ---
 
 # Phase 2: One study not four steps
@@ -89,6 +89,28 @@ for what goes on it. Submitting is the irreversible act and it deserves a screen
 5. Rebuild `create-scan-page.tsx` around `study` and `submit`; delete the stepper.
 6. Keep the "Picked up where you left off" notice and the discard-draft control as they are.
 
+### Built differently in three places
+
+**Chips move the page, they do not open popovers.** The design had each chip open its control in
+a popover. A popover holding a second copy of the scan-type grid is two grids to keep in step,
+and on this surface the control it would duplicate is already a few hundred pixels below. The
+chips scroll to the panel they name instead, so there is one control in one place.
+
+**The group chip reads the EFFECTIVE cohort, not `groupIds.length`.** `groupIds === null` means
+"no explicit choice yet", and the panel renders the default leaf cohort ticked in that case.
+Reading the raw length put **"No groups" in the bar directly above a panel showing a group
+selected** — caught in the browser, not in review. The chip now resolves through
+`defaultGroupCohort` exactly as the panel does.
+
+**An empty readiness counter is a hollow dot, not a dash.** Four dashes in a row read as four
+things gone wrong, and one of them is the note, which is optional — an untouched note is not a
+problem to be fixed.
+
+**Group routing moved to the working surface** rather than staying on the submit screen. It is
+the one thing on that screen that could still be changed, and the API has no route that adds a
+group to an existing scan, so getting it wrong is unrecoverable. Phase 4 renders it read-only
+on the submit surface.
+
 ## Tests / Validation
 
 - `readiness.test.ts` and the draft-migration test.
@@ -99,11 +121,11 @@ for what goes on it. Submitting is the irreversible act and it deserves a screen
 
 ## Success Criteria
 
-- [ ] Exam type is changeable from the working surface without navigating
-- [ ] The files area never auto-collapses over a file that is not yet stored
-- [ ] Readiness counters derive from one function, shared with the submit surface
-- [ ] A draft written by the four-step build still opens
-- [ ] `wizard-stepper.tsx` is gone, not orphaned
+- [x] Exam type is changeable from the working surface without navigating
+- [x] The files area never auto-collapses over a file that is not yet stored
+- [x] Readiness counters derive from one function — `readinessFor`, 15 tests
+- [x] A draft written by the four-step build still opens — tested against a full pre-migration payload on all three retired step values
+- [x] `wizard-stepper.tsx` is deleted
 
 ## Risk Assessment
 

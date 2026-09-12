@@ -4,8 +4,7 @@ import {
   useUserOrganizations,
   type ScanTypeSummary,
 } from '@scanvault/api-client';
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Textarea } from '@scanvault/ui';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, Input, Textarea } from '@scanvault/ui';
 import { useMemo, useState } from 'react';
 
 import { useAuth } from '@/auth/auth-context';
@@ -21,11 +20,9 @@ import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
 
 export type StepInterpretationProps = {
   draft: UseCreateScanDraft;
-  onBack: () => void;
-  onNext: () => void;
 };
 
-export function StepInterpretation({ draft, onBack, onNext }: StepInterpretationProps) {
+export function StepInterpretation({ draft }: StepInterpretationProps) {
   const { user } = useAuth();
   const { data: organizations } = useUserOrganizations(user?.id);
   const { state, update } = draft;
@@ -204,20 +201,6 @@ export function StepInterpretation({ draft, onBack, onNext }: StepInterpretation
         </InlineNotice>
       ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Button variant="secondary" onClick={onBack}>
-          <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> Files
-        </Button>
-
-        <div className="flex items-center gap-2">
-          {!state.scanTypeId ? (
-            <span className="text-[12px] text-ink-dim">Choose a scan type to continue.</span>
-          ) : null}
-          <Button onClick={onNext} disabled={!state.scanTypeId}>
-            Review routing <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-          </Button>
-        </div>
-      </div>
     </div>
   );
 }
