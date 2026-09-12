@@ -1,10 +1,13 @@
 import {
   isApiError,
+  reviewKeys,
+  scanKeys,
   useApiClient,
   useScanUserGroups,
   useUserOrganizations,
   userDisplayName,
 } from '@scanvault/api-client';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@scanvault/ui';
 import { ArrowLeft, Send } from 'lucide-react';
 import { useState } from 'react';
@@ -48,6 +51,7 @@ export function StepReviewRouting({
   backLabel = 'Back to the study',
 }: StepReviewRoutingProps) {
   const client = useApiClient();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
   const { data: groups } = useScanUserGroups();
   const { data: organizations } = useUserOrganizations(user?.id);
@@ -71,11 +75,20 @@ export function StepReviewRouting({
         client,
         state,
         groupIds,
+        groupNames: groupIds
+          .map((id) => groups?.find((group) => group.id === id)?.name)
+          .filter((name): name is string => Boolean(name)),
+        userId: user?.id ?? '',
         // Persist the new scan id before the per-file confirmations run, so a
         // failure halfway through resumes on this scan instead of making a
         // second one.
         onScanCreated: (scanId) => update({ scanId }),
       });
+      // submitDraft calls the review endpoint directly rather than through
+      // useRequestExpertScanReview, so nothing has invalidated the balance it
+      // just spent, or the list the new study belongs in.
+      void queryClient.invalidateQueries({ queryKey: reviewKeys.credits() });
+      void queryClient.invalidateQueries({ queryKey: scanKeys.listRoot('my') });
       onSubmitted(outcome);
     } catch (error) {
       setSubmitError(

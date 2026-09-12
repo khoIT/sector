@@ -357,6 +357,7 @@ export {
   scanFilePayloadSchema,
   scanFileRecordSchema,
   updateFilePayloadSchema,
+  updateScanPayloadSchema,
   uploadPresignPayloadSchema,
   uploadPresignResponseSchema,
   type CreateScanPayload,
@@ -366,6 +367,7 @@ export {
   type ScanFilePayload,
   type ScanFileRecord,
   type UpdateFilePayload,
+  type UpdateScanPayload,
   type UploadPresignResponse,
 } from './schemas/scan-payloads';
 
@@ -399,7 +401,20 @@ export {
   uploadPresign,
 } from './endpoints/scan-upload';
 
-export { createScan, updateFileDetailsStatus, updateScanFileStatus } from './endpoints/scan-write';
+export {
+  createScan,
+  updateFileDetailsStatus,
+  updateScan,
+  updateScanFileStatus,
+} from './endpoints/scan-write';
+export { createUserLogs } from './endpoints/user-logs';
+export {
+  USER_LOG_SEVERITIES,
+  createUserLogsResponseSchema,
+  userLogEntrySchema,
+  type UserLogEntry,
+  type UserLogSeverity,
+} from './schemas/user-log';
 
 export {
   getScanReviewCredits,

@@ -1,12 +1,17 @@
 import {
   isApiError,
+  reviewKeys,
+  scanKeys,
   useApiClient,
   useFindingDefinitions,
   useScanUserGroups,
 } from '@scanvault/api-client';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, cn } from '@scanvault/ui';
 import { ArrowRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
+
+import { useAuth } from '@/auth/auth-context';
 
 import type { SubmitOutcome } from '../model/draft-types';
 import { countStored, countTracked } from '../model/file-counts';
@@ -40,6 +45,8 @@ export type CommitBarProps = {
  */
 export function CommitBar({ draft, readiness, onSubmitted }: CommitBarProps) {
   const client = useApiClient();
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
   const { state, update } = draft;
   const { data: groups } = useScanUserGroups();
   const { data: definitions } = useFindingDefinitions(state.scanTypeId, state.organizationId);
@@ -49,6 +56,15 @@ export function CommitBar({ draft, readiness, onSubmitted }: CommitBarProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const groupIds = state.groupIds ?? defaultGroupCohort(groups);
+  // Memoised because it feeds a memo: a fresh array every render would defeat
+  // the one below it.
+  const groupNames = useMemo(
+    () =>
+      groupIds
+        .map((id) => groups?.find((group) => group.id === id)?.name)
+        .filter((name): name is string => Boolean(name)),
+    [groupIds, groups],
+  );
   const blockers = submitBlockers(readiness);
 
   const facts = useMemo(() => {
@@ -60,12 +76,10 @@ export function CommitBar({ draft, readiness, onSubmitted }: CommitBarProps) {
       answered: Object.values(state.findings).filter((value) => value).length,
       definitions: items.length,
       missingRequired: missingRequiredFindings(items, state.findings).length,
-      groupNames: groupIds
-        .map((id) => groups?.find((group) => group.id === id)?.name)
-        .filter((name): name is string => Boolean(name)),
+      groupNames,
       expertReviewLabel: state.expertReview?.label ?? null,
     });
-  }, [state, definitions, groups, groupIds]);
+  }, [state, definitions, groupNames]);
 
   const submit = async () => {
     setSubmitting(true);
@@ -76,11 +90,20 @@ export function CommitBar({ draft, readiness, onSubmitted }: CommitBarProps) {
         client,
         state,
         groupIds,
+        // Named, not counted: the submission email lists them, and an id in an
+        // email tells the reader nothing.
+        groupNames,
+        userId: user?.id ?? '',
         // Persist the new scan id before the per-file confirmations run, so a
         // failure halfway through resumes on this scan instead of making a
         // second one.
         onScanCreated: (scanId) => update({ scanId }),
       });
+      // submitDraft calls the review endpoint directly rather than through
+      // useRequestExpertScanReview, so nothing has invalidated the balance it
+      // just spent, or the list the new study belongs in.
+      void queryClient.invalidateQueries({ queryKey: reviewKeys.credits() });
+      void queryClient.invalidateQueries({ queryKey: scanKeys.listRoot('my') });
       onSubmitted(outcome);
     } catch (error) {
       setSubmitError(

@@ -10,6 +10,7 @@ import type {
   CreateScanResponse,
   FileDetailsStatusPayload,
   UpdateFilePayload,
+  UpdateScanPayload,
 } from '../schemas/scan-payloads';
 
 /** Scan write endpoints used by the create-scan wizard. */
@@ -70,4 +71,20 @@ export async function updateFileDetailsStatus(
     schema: fileDetailsStatusResponseSchema,
     signal,
   });
+}
+
+/**
+ * PUT /api/scan/:scanId/update — the notification route.
+ *
+ * Create does not notify anybody: its own notification is guarded on
+ * `scanLogs`, which cannot exist before the scan does. So a study is
+ * announced here, after its files are confirmed, or not at all.
+ */
+export async function updateScan(
+  client: ApiClient,
+  scanId: string,
+  payload: UpdateScanPayload,
+  signal?: AbortSignal,
+): Promise<void> {
+  await client.put(`/api/scan/${scanId}/update`, { body: payload, signal });
 }

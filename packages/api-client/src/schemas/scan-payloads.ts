@@ -179,3 +179,24 @@ export const updateFilePayloadSchema = z.object({
 });
 
 export type UpdateFilePayload = z.infer<typeof updateFilePayloadSchema>;
+
+/**
+ * PUT /api/scan/:scanId/update.
+ *
+ * The only route that sends the submission notifications. `notifyUser` alone
+ * reaches the GROUP LEADERS (the server gates that on the status being
+ * submitted/failed/failed_upload); the OWNER's email and push additionally
+ * require the scan to have at least one `scanLogs` entry, which is why the
+ * ids from POST /api/user-logs are passed with it.
+ *
+ * `scanLogs` is MERGED with what the scan already holds, never replaced.
+ */
+export const updateScanPayloadSchema = z.object({
+  status: z.enum(['pending', 'processing', 'submitted', 'failed', 'failed_upload', 'partially_uploaded', 'reviewed']).optional(),
+  scanIdentifier: z.string().nullish(),
+  externalPatientId: z.string().max(100).nullish(),
+  scanLogs: z.array(z.string()).optional(),
+  notifyUser: z.boolean().optional(),
+});
+
+export type UpdateScanPayload = z.infer<typeof updateScanPayloadSchema>;

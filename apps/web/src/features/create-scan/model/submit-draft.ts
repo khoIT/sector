@@ -1,9 +1,11 @@
 import {
   createScan,
+  createUserLogs,
   getScanById,
   isApiError,
   requestExpertScanReview,
   updateFileDetailsStatus,
+  updateScan,
   updateScanFileStatus,
   type ApiClient,
   type CreateScanPayload,
@@ -12,6 +14,7 @@ import {
 
 import type { DraftFile, DraftState, SubmitOutcome } from './draft-types';
 import { toFindingsPayload } from './finding-controls';
+import { statusAfterSubmit, submitLogEntries } from './submit-logs';
 
 /**
  * Turn a draft whose bytes are already in storage into a submitted scan.
@@ -46,8 +49,60 @@ export type SubmitDraftInput = {
   state: DraftState;
   /** Resolved group ids (the default cohort when the user never touched it). */
   groupIds: string[];
+  /** Those groups by name, for the activity trail. Ids mean nothing in an email. */
+  groupNames?: readonly string[];
+  /** The submitter, so the trail is attributed to them and not only authored by them. */
+  userId?: string;
   onScanCreated: (scanId: string) => void;
 };
+
+/**
+ * Announce the finished study: write its activity trail, then update the scan
+ * so the server sends the notifications.
+ *
+ * Both halves are needed and neither is optional bookkeeping. `notifyUser`
+ * on the update is what reaches the GROUP LEADERS, and the owner's own email
+ * and push are additionally gated on the scan having at least one entry in
+ * `scanLogs` — create cannot carry those, because the logs reference a scan
+ * that does not exist yet. Without this call a submitted study is announced to
+ * nobody and opens with an empty Activity log.
+ *
+ * Never throws. The study exists and is submitted by the time this runs; a
+ * failed announcement is not something the learner can act on, and turning it
+ * into a submit failure would invite a second study for the same files.
+ */
+async function announce(
+  client: ApiClient,
+  scanId: string,
+  state: DraftState,
+  groupNames: readonly string[],
+  userId: string,
+  confirmed: number,
+  unconfirmed: readonly string[],
+): Promise<void> {
+  try {
+    const scanLogs = await createUserLogs(
+      client,
+      submitLogEntries({
+        userId,
+        scanTypeName: state.scanTypeName ?? '',
+        files: state.files,
+        confirmed,
+        unconfirmed,
+        groupNames,
+        expertReviewLabel: state.expertReview?.label ?? null,
+      }),
+    );
+
+    await updateScan(client, scanId, {
+      status: statusAfterSubmit(confirmed, confirmed + unconfirmed.length),
+      scanLogs,
+      notifyUser: true,
+    });
+  } catch {
+    // Deliberately swallowed: see above.
+  }
+}
 
 export class NoStoredFilesError extends Error {
   constructor() {
@@ -80,6 +135,8 @@ export async function submitDraft({
   client,
   state,
   groupIds,
+  groupNames = [],
+  userId = '',
   onScanCreated,
 }: SubmitDraftInput): Promise<SubmitOutcome> {
   const ready = storedFiles(state.files);
@@ -97,6 +154,15 @@ export async function submitDraft({
 
     const confirmation = await confirmFiles(client, state.scanId, ready, fileIds);
     const review = await requestReview(client, state.scanId, state);
+    await announce(
+      client,
+      state.scanId,
+      state,
+      groupNames,
+      userId,
+      confirmation.confirmed,
+      confirmation.unconfirmed.map((file) => file.name),
+    );
 
     return {
       scanId: state.scanId,
@@ -130,6 +196,15 @@ export async function submitDraft({
 
   const confirmation = await confirmFiles(client, created.id, ready, fileIds);
   const review = await requestReview(client, created.id, state);
+  await announce(
+    client,
+    created.id,
+    state,
+    groupNames,
+    userId,
+    confirmation.confirmed,
+    confirmation.unconfirmed.map((file) => file.name),
+  );
 
   return {
     scanId: created.id,
