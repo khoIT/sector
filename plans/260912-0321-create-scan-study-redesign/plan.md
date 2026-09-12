@@ -1,14 +1,21 @@
 ---
-title: "Create Scan Study, redrawn"
-description: "Turn the four-step create-scan wizard into one working surface plus a submit surface, and stop the two ways it currently loses a learner's work."
+title: 'Create Scan Study, redrawn'
+description: >-
+  Turn the four-step create-scan wizard into one working surface plus a submit
+  surface, and stop the two ways it currently loses a learner's work.
 status: pending
 priority: P1
-branch: "main"
-tags: [scan-vault, create-scan, upload, ux]
-blockedBy: [260912-0353-app-shell-account-and-language]
+branch: main
+tags:
+  - scan-vault
+  - create-scan
+  - upload
+  - ux
+blockedBy:
+  - 260912-0353-app-shell-account-and-language
 blocks: []
-created: "2026-09-11T20:24:25.688Z"
-createdBy: "ck:plan"
+created: '2026-09-11T20:24:25.688Z'
+createdBy: 'ck:plan'
 source: skill
 ---
 
@@ -52,7 +59,7 @@ surfaces**: one you work on, one you submit from.
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | [Stop losing the learner's work](./phase-01-stop-losing-the-learner-s-work.md) | Pending |
+| 1 | [Stop losing the learner's work](./phase-01-stop-losing-the-learner-s-work.md) | Completed |
 | 2 | [One study not four steps](./phase-02-one-study-not-four-steps.md) | Pending |
 | 3 | [Interpret with the images on screen](./phase-03-interpret-with-the-images-on-screen.md) | Pending |
 | 4 | [Review that reviews](./phase-04-review-that-reviews.md) | Pending |

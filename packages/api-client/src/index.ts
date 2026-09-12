@@ -304,6 +304,7 @@ export {
   useScanNotes,
   type AddScanNoteVariables,
 } from './react/use-scan-notes';
+export { useFindingDefinitionsFetcher } from './react/use-create-scan-lookups';
 export { useDeleteScanMutation } from './react/use-scan-delete';
 export {
   useRemoveAccountPhotoMutation,

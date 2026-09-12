@@ -1,6 +1,6 @@
 import { useScanTypes, type ScanTypeSummary } from '@scanvault/api-client';
 import { Button, EmptyState, Input, Skeleton, cn } from '@scanvault/ui';
-import { Check, Stethoscope } from 'lucide-react';
+import { Check, Loader2, Stethoscope } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { InlineNotice } from './inline-notice';
@@ -8,6 +8,12 @@ import { InlineNotice } from './inline-notice';
 export type ScanTypePickerProps = {
   value: string | null;
   onChange: (scanType: ScanTypeSummary) => void;
+  /**
+   * A type whose definitions are being fetched before the switch can be
+   * described. Only that tile shows a pending state; the rest of the grid
+   * stays live, so a slow fetch never locks the picker.
+   */
+  pendingTypeId?: string | null;
 };
 
 /**
@@ -17,7 +23,7 @@ export type ScanTypePickerProps = {
  * starting over, so it gets its own explicit step rather than a dropdown
  * buried next to the notes field.
  */
-export function ScanTypePicker({ value, onChange }: ScanTypePickerProps) {
+export function ScanTypePicker({ value, onChange, pendingTypeId }: ScanTypePickerProps) {
   const { data, isPending, isError, error, refetch } = useScanTypes();
   const [search, setSearch] = useState('');
 
@@ -75,25 +81,34 @@ export function ScanTypePicker({ value, onChange }: ScanTypePickerProps) {
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {filtered.map((type) => {
             const selected = type.id === value;
+            const pending = type.id === pendingTypeId;
             return (
               <li key={type.id}>
                 <button
                   type="button"
                   onClick={() => onChange(type)}
                   aria-pressed={selected}
+                  aria-busy={pending || undefined}
+                  disabled={pending}
                   className={cn(
                     'flex h-full w-full flex-col items-start gap-1 rounded-token border px-3 py-2.5 text-left transition-colors',
                     'outline-none focus-visible:ring-2 focus-visible:ring-accent-ink',
                     selected
                       ? 'border-accent-ink bg-accent-soft'
                       : 'border-line bg-surface hover:bg-surface-2',
+                    pending && 'opacity-60',
                   )}
                 >
                   <span className="flex w-full items-center gap-1.5">
                     <span className="min-w-0 flex-1 truncate text-body font-medium text-ink">
                       {type.name}
                     </span>
-                    {selected ? (
+                    {pending ? (
+                      <Loader2
+                        className="h-4 w-4 shrink-0 animate-spin text-ink-dim"
+                        aria-hidden
+                      />
+                    ) : selected ? (
                       <Check className="h-4 w-4 shrink-0 text-accent-ink" aria-hidden />
                     ) : null}
                   </span>

@@ -1,8 +1,8 @@
 ---
 phase: 1
-title: "Stop losing the learner's work"
-status: pending
-effort: "S"
+title: Stop losing the learner's work
+status: completed
+effort: S
 ---
 
 # Phase 1: Stop losing the learner's work
@@ -103,16 +103,42 @@ an explicit warning rather than blocking the switch.
 
 ## Success Criteria
 
-- [ ] No code path clears a findings answer without the learner having seen its name
-- [ ] Re-selecting the current scan type remains a no-op
-- [ ] Switching with zero answers shows no dialog
-- [ ] `planFindingTransfer` is pure and covered by unit tests
-- [ ] A failed definitions fetch degrades to today's behaviour with a visible warning
+- [x] No code path clears a findings answer without the learner having seen its name
+- [x] Re-selecting the current scan type remains a no-op
+- [x] Switching with zero answers shows no dialog
+- [x] `planFindingTransfer` is pure and covered by unit tests — 12 cases
+- [x] A failed definitions fetch degrades to today's behaviour, through the same dialog so the loss is still named
 
 ## Risk Assessment
 
+### Measured before trusting the rule
+
+Run over **every ordered pair of v2 scan types** — the richest generation, 251 definitions —
+against local `gusi_dev`:
+
+| | rows | carried |
+|---|---|---|
+| strict rule (name + kind + options) | 4,655 | **28 (1%)** |
+| name-only rule | 4,655 | 36 (1%) |
+
+Two things follow.
+
+**The strict rule costs almost nothing.** Loosening to name-only buys 8 rows out of 4,655.
+
+**Those 8 rows are exactly the ones that must not move.** The clearest is AAA → Gallbladder,
+where both types have a row called *Long*: AAA's offers aorta diameters
+`≤ 3cm / >3 cm / Indeterminate / Not Examined`, Gallbladder's offers `Long / Not Examined`.
+A name-only rule files an aortic measurement as a gallbladder finding, in a control that
+cannot display it. FAST ↔ FASH is subtler — *RUQ - Free Fluid Abdomen* on both, differing only
+by whether `Not Examined` is offered — and one direction would store a value the destination
+does not have.
+
+**And the headline number is the real finding: scan types share almost nothing.** Transfer is
+~1% either way, so on nearly every switch the kept list is empty and the dialog's whole job is
+naming the loss. The dialog is ordered accordingly — cleared first, carried second.
+
 | Risk | Mitigation |
 |---|---|
-| The three-way match is too strict and transfers almost nothing | Acceptable failure direction: a cleared answer is visible in the dialog, a wrongly-transferred one is invisible forever. Measure on real type pairs before loosening |
+| ~~The three-way match is too strict and transfers almost nothing~~ | **Measured, and accepted.** 28 vs 36 rows out of 4,655; the 8 it refuses are the wrong ones to move. See above |
 | Definitions fetch makes the picker feel slow | Pending state on the clicked tile only; the rest of the grid stays live. The fetch is already cached by TanStack Query for any type visited before |
 | Dialog becomes a habitual click-through | It only appears when something is actually lost, which on the common path is never |

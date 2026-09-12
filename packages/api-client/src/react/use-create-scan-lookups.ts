@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 
 import {
   getFindingDefinitions,
@@ -46,6 +47,35 @@ export function useFindingDefinitions(scanTypeId: string | null, organizationId?
     enabled: Boolean(scanTypeId),
     staleTime: CONFIG_STALE_TIME,
   });
+}
+
+/**
+ * Fetch one scan type's definitions on demand, outside a render.
+ *
+ * The scan-type picker needs the DESTINATION type's definitions before it can
+ * say what a switch would clear, and that type is not known until the click.
+ * `fetchQuery` reuses the same key and the same staleTime as the hook above,
+ * so a type the user has already visited answers from cache with no request,
+ * and a type fetched here is warm for the hook that renders it next.
+ */
+export function useFindingDefinitionsFetcher() {
+  const client = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useCallback(
+    (scanTypeId: string, organizationId?: string | null) =>
+      queryClient.fetchQuery({
+        queryKey: organizationId
+          ? scanTypeKeys.orgItems(organizationId, scanTypeId)
+          : scanTypeKeys.items(scanTypeId),
+        queryFn: ({ signal }) =>
+          organizationId
+            ? getOrganizationFindingDefinitions(client, organizationId, scanTypeId, signal)
+            : getFindingDefinitions(client, scanTypeId, signal),
+        staleTime: CONFIG_STALE_TIME,
+      }),
+    [client, queryClient],
+  );
 }
 
 export function useUserOrganizations(userId: string | undefined) {

@@ -1,14 +1,21 @@
-import { useFindingDefinitions, useUserOrganizations } from '@scanvault/api-client';
+import {
+  useFindingDefinitions,
+  useFindingDefinitionsFetcher,
+  useUserOrganizations,
+  type ScanTypeSummary,
+} from '@scanvault/api-client';
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Textarea } from '@scanvault/ui';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useAuth } from '@/auth/auth-context';
 
 import { FindingsPanel } from '../components/findings-panel';
 import { InlineNotice } from '../components/inline-notice';
 import { ScanTypePicker } from '../components/scan-type-picker';
+import { SwitchScanTypeDialog } from '../components/switch-scan-type-dialog';
 import { missingRequiredFindings } from '../model/finding-controls';
+import { planFindingTransfer, type FindingTransferPlan } from '../model/transfer-findings';
 import { anyOrganizationCollectsScanIdentifier } from '../model/identifier-gate';
 import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
 
@@ -40,6 +47,64 @@ export function StepInterpretation({ draft, onBack, onNext }: StepInterpretation
     [organizations],
   );
 
+  const fetchDefinitions = useFindingDefinitionsFetcher();
+  const [pendingTypeId, setPendingTypeId] = useState<string | null>(null);
+  const [pendingSwitch, setPendingSwitch] = useState<
+    { scanType: ScanTypeSummary; plan: FindingTransferPlan } | null
+  >(null);
+
+  function applySwitch(scanType: ScanTypeSummary, findings: Record<string, string>) {
+    update({ scanTypeId: scanType.id, scanTypeName: scanType.name, findings });
+  }
+
+  /**
+   * Choosing a different scan type used to discard every answer with no dialog
+   * and no undo. Now the destination's definitions are fetched first, the
+   * transfer is planned, and the learner only sees a dialog when something
+   * would actually be lost.
+   */
+  async function chooseScanType(scanType: ScanTypeSummary) {
+    // Re-selecting the current type is a no-op, and must stay one: the legacy
+    // version cleared the findings here and unmounted the whole block.
+    if (scanType.id === state.scanTypeId) return;
+
+    const answered = Object.values(state.findings).some((value) => value);
+    if (!answered) {
+      applySwitch(scanType, {});
+      return;
+    }
+
+    setPendingTypeId(scanType.id);
+    try {
+      const destination = await fetchDefinitions(scanType.id, state.organizationId);
+      const plan = planFindingTransfer(
+        definitions?.items ?? [],
+        destination.items ?? [],
+        state.findings,
+      );
+
+      // Nothing lost, nothing to confirm.
+      if (plan.cleared.length === 0) applySwitch(scanType, plan.carried);
+      else setPendingSwitch({ scanType, plan });
+    } catch {
+      // The switch must not be blocked by a failed lookup. Fall back to the
+      // old behaviour — clear everything — but say so rather than doing it
+      // silently, which is the defect this phase exists to fix.
+      setPendingSwitch({
+        scanType,
+        plan: {
+          carried: {},
+          kept: [],
+          cleared: Object.entries(state.findings)
+            .filter(([, value]) => value)
+            .map(([key, value]) => ({ key, name: key, value })),
+        },
+      });
+    } finally {
+      setPendingTypeId(null);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <Card>
@@ -53,16 +118,26 @@ export function StepInterpretation({ draft, onBack, onNext }: StepInterpretation
         <CardContent>
           <ScanTypePicker
             value={state.scanTypeId}
-            onChange={(scanType) => {
-              // Findings are keyed per scan type, so switching type clears them
-              // rather than carrying answers that no longer have a question.
-              update({
-                scanTypeId: scanType.id,
-                scanTypeName: scanType.name,
-                findings: scanType.id === state.scanTypeId ? state.findings : {},
-              });
-            }}
+            pendingTypeId={pendingTypeId}
+            onChange={(scanType) => void chooseScanType(scanType)}
           />
+
+          {pendingSwitch ? (
+            <SwitchScanTypeDialog
+              open
+              onOpenChange={(next) => {
+                if (!next) setPendingSwitch(null);
+              }}
+              currentTypeName={state.scanTypeName ?? ''}
+              nextTypeName={pendingSwitch.scanType.name}
+              kept={pendingSwitch.plan.kept}
+              cleared={pendingSwitch.plan.cleared}
+              onConfirm={() => {
+                applySwitch(pendingSwitch.scanType, pendingSwitch.plan.carried);
+                setPendingSwitch(null);
+              }}
+            />
+          ) : null}
         </CardContent>
       </Card>
 
