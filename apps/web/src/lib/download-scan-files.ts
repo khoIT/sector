@@ -12,6 +12,8 @@
  * first-paint bundle: most sessions never download anything.
  */
 
+import { mediaFetchUrl } from './media-proxy-url';
+
 export type DownloadableFile = { url: string; filename: string };
 
 export type DownloadResult = {
@@ -82,6 +84,11 @@ export function uniqueFilenames(names: readonly string[]): string[] {
 /**
  * Fetch every file, keeping going past the ones that fail.
  *
+ * The URL is passed through `toFetchUrl` first, because the media CDN serves
+ * no CORS headers and the browser will not let this read bytes straight from
+ * it; in development that returns a same-origin dev-server route to the same
+ * object. See media-proxy-url.ts.
+ *
  * A presigned URL can legitimately 403 — it expires, and in the local setup
  * every scan submitted after 2025-11-10 answers 403 because the database holds
  * production records while the bucket is staging. A partial archive is still
@@ -91,13 +98,14 @@ export function uniqueFilenames(names: readonly string[]): string[] {
 export async function fetchScanFiles(
   files: readonly DownloadableFile[],
   fetchImpl: typeof fetch = fetch,
+  toFetchUrl: (url: string) => string = mediaFetchUrl,
 ): Promise<{ fetched: Array<{ filename: string; blob: Blob }>; failed: string[] }> {
   const names = uniqueFilenames(files.map((file) => file.filename));
 
   const settled = await Promise.all(
     files.map(async (file, index) => {
       try {
-        const response = await fetchImpl(file.url);
+        const response = await fetchImpl(toFetchUrl(file.url));
         if (!response.ok) return { filename: names[index] as string, blob: null };
         return { filename: names[index] as string, blob: await response.blob() };
       } catch {

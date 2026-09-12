@@ -6,6 +6,7 @@ import {
   uniqueFilenames,
   zipFilename,
 } from './download-scan-files';
+import { proxiedMediaUrl } from './media-proxy-url';
 
 describe('uniqueFilenames', () => {
   it('leaves distinct names alone', () => {
@@ -151,5 +152,27 @@ describe('safeFilename', () => {
 describe('uniqueFilenames sanitises before de-duplicating', () => {
   it('treats two traversal names that flatten to the same file as duplicates', () => {
     expect(uniqueFilenames(['../a.png', 'a.png'])).toEqual(['a.png', 'a (2).png']);
+  });
+});
+
+describe('reaching media the CDN will not share with fetch', () => {
+  it('fetches through whatever route the caller says to use', async () => {
+    // The media CDN serves no CORS headers, so the bytes are read through a
+    // same-origin route in development rather than from the CDN directly.
+    const seen: string[] = [];
+    const fetchImpl = vi.fn(async (url: string) => {
+      seen.push(url);
+      return ok('bytes');
+    });
+
+    await fetchScanFiles(
+      [{ url: 'https://d2i5h4x9hhv8tx.cloudfront.net/k.mp4?Signature=x', filename: 'a.mp4' }],
+      fetchImpl as unknown as typeof fetch,
+      proxiedMediaUrl,
+    );
+
+    expect(seen).toEqual([
+      '/media-proxy?url=https%3A%2F%2Fd2i5h4x9hhv8tx.cloudfront.net%2Fk.mp4%3FSignature%3Dx',
+    ]);
   });
 });

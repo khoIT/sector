@@ -5,6 +5,8 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
+import { mediaProxyPlugin } from './vite-media-proxy';
+
 /** The legacy GUSI API this app reads from. */
 const LEGACY_API_ORIGIN = 'http://localhost:5001';
 
@@ -30,7 +32,7 @@ export default defineConfig({
   define: {
     __APP_COMMIT__: JSON.stringify(buildCommit()),
   },
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), mediaProxyPlugin()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
