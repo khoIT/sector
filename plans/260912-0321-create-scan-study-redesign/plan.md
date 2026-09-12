@@ -85,12 +85,12 @@ others.
 
 ## Acceptance criteria
 
-- [ ] Switching scan type never clears an answer without saying which answers, by name
-- [ ] A learner can see the images while recording findings, without leaving the page
-- [ ] The submit surface shows everything that will be sent, read-only
-- [ ] A mid-upload reload resumes the transfer rather than asking for the files again
-- [ ] Draft manifests written by the current app still load after the step union changes
-- [ ] `pnpm -w typecheck`, `lint`, `test`, `build` green; contrast gate green
+- [x] Switching scan type never clears an answer without saying which answers, by name
+- [x] A learner can see the images while recording findings, without leaving the page
+- [x] The submit surface shows everything that will be sent, read-only
+- [x] A mid-upload reload resumes the transfer rather than asking for the files again
+- [x] Draft manifests written by the current app still load after the step union changes
+- [x] `pnpm -w typecheck`, `lint`, `test`, `build` green; contrast gate green
 
 ## Source material
 
