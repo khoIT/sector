@@ -12,3 +12,6 @@ coverage/
 
 # Generated, and enormous.
 pnpm-lock.yaml
+
+# Agent memory, not source.
+.claude/agent-memory/

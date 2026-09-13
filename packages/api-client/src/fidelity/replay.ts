@@ -46,6 +46,12 @@ export type ReplayEntry = {
   filter?: Document;
   /** Load whatever `project` will need for this batch of documents. */
   prefetch?: (batch: Document[], context: ReplayContext) => Promise<void>;
+  /**
+   * Documents the route drops before it serialises anything — a `$unwind` on
+   * a join that found nothing, typically. Runs after `prefetch`, so it can
+   * consult the references. Dropped documents are counted, not parsed.
+   */
+  include?: (doc: Document, context: ReplayContext) => boolean;
   /** Raw document → what the route puts on the wire. */
   project: (doc: Document, context: ReplayContext) => unknown;
   /** Shapes production holds that the schema deliberately rejects. */
@@ -66,6 +72,8 @@ export type ReplayResult = {
   collection: string;
   total: number;
   parsed: number;
+  /** Documents `include` declined: the route would never have sent them. */
+  skipped: number;
   shapes: ShapeFailure[];
   durationMs: number;
 };
@@ -127,6 +135,7 @@ export async function replayEntry(
   const shapes = new Map<string, ShapeFailure>();
   let total = 0;
   let parsed = 0;
+  let skipped = 0;
 
   const cursor = db
     .collection(entry.collection)
@@ -139,6 +148,10 @@ export async function replayEntry(
     if (batch.length === 0) return;
     await entry.prefetch?.(batch, context);
     for (const doc of batch) {
+      if (entry.include && !entry.include(doc, context)) {
+        skipped += 1;
+        continue;
+      }
       total += 1;
       const wire = entry.project(doc, context);
       const result = entry.schema.safeParse(wire);
@@ -173,6 +186,7 @@ export async function replayEntry(
     collection: entry.collection,
     total,
     parsed,
+    skipped,
     shapes: [...shapes.values()].sort((a, b) => b.count - a.count),
     durationMs: Date.now() - started,
   };

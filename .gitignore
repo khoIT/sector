@@ -17,3 +17,6 @@ pnpm-debug.log*
 .vite/
 .idea/
 .vscode/
+
+# Per-agent memory that review tooling writes into the checkout.
+.claude/agent-memory/
