@@ -157,9 +157,17 @@ defence, because none of them carries a permission gate. A route whose only
 protection is a constant nobody thinks of as security is one refactor from being
 open.
 
-**Adjacent, and worse:** `PUT` and `DELETE /api/group-members/:id` have no
-`assertLeadsGroup` at all, only a permission gate. Same family, same data, no
-scoping. Worth its own look.
+**Adjacent, and worse — two of them, both verified:**
+
+- `PUT` and `DELETE /api/group-members/:id` have no `assertLeadsGroup` at all, only a
+  permission gate. Same family, same data, no scoping.
+- `GET /api/group-assignment/learners?groupId=<any>` has **no scoping of any kind** —
+  zero `assertLeadsGroup` in that controller — and it returns learner **email
+  addresses**. The seeded `subscriber` role holds `read:group-assignment`, so the
+  lowest-privileged account in the system can read the roster of any group by id.
+
+That last one is the most directly exploitable item in this document. Group ids are
+not secret; they appear in URLs.
 
 ## 9. The Referrals surface carries an enumerable PII leak
 
