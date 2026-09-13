@@ -7,8 +7,15 @@ import { defineConfig } from 'vite';
 
 import { mediaProxyPlugin } from './vite-media-proxy';
 
-/** The legacy GUSI API this app reads from. */
-const LEGACY_API_ORIGIN = 'http://localhost:5001';
+/**
+ * The legacy GUSI API this app reads from.
+ *
+ * Overridable so a second dev server can be pointed at a second API — the one
+ * that serves the production mirror on :5002 — without touching this file or
+ * the running :5001 instance. Read at config time, not via VITE_*, because it
+ * configures the proxy rather than the bundle.
+ */
+const LEGACY_API_ORIGIN = process.env.SECTOR_API_ORIGIN ?? 'http://localhost:5001';
 
 /**
  * The commit the bundle was built from, shown in the account menu.

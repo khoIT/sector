@@ -14,11 +14,17 @@
     "lint": "turbo run lint && prettier --check .",
     "test": "turbo run test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "fidelity": "turbo run fidelity"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1131.0",
     "@sector/config": "workspace:*",
+    "@types/bcryptjs": "^3.0.0",
+    "bcryptjs": "^3.0.3",
+    "mongodb": "^7.6.0",
     "prettier": "^3.4.2",
+    "tsx": "^4.23.13",
     "turbo": "^2.5.8",
     "typescript": "~5.7.3"
   },
