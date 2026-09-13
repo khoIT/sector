@@ -114,5 +114,25 @@
     "path": "/administer/groups/6a6ae3d759ab84398c7cee4f/assignments",
     "role": "reviewer",
     "needs": "Assignments"
+  },
+  {
+    "path": "/learn/courses/681a4b63779a0d9e6c9cc55b/681a4d96acc6f28eaec5e30b",
+    "role": "learner",
+    "needs": "Ultrasound Basics"
+  },
+  {
+    "path": "/learn/courses/681a4b63779a0d9e6c9cc55b/681a4e2c82414b2fcc5af816",
+    "role": "learner",
+    "needs": "Physics and Probes"
+  },
+  {
+    "path": "/learn/courses/681a4b63779a0d9e6c9cc55b/681a4f4d4bc509ae57597c1b",
+    "role": "learner",
+    "needs": "Ultrasound Basics Physics and Probes|Start|Continue|Retake"
+  },
+  {
+    "path": "/learn/course-progress/6aa68680341eed9251900a2e/681a4b63779a0d9e6c9cc55b",
+    "role": "admin",
+    "needs": "progress|Pediatric Residency"
   }
 ]

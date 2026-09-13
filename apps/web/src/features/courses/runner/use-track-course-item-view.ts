@@ -16,12 +16,21 @@ export type TrackCourseItemViewExtra = { hasVideo?: boolean; videoCompleted?: bo
  * the moment the embedded Vimeo player reports `ended` — the one interior
  * state transition (`hasVideo: true` -> `videoCompleted: true`) this generic
  * mount/unmount pair cannot express on its own.
+ *
+ * `enabled` defers the mount ping: `extra.hasVideo` is derived from content
+ * that loads asynchronously (`useCourseTopicDetail`), so firing on the FIRST
+ * render — before that query resolves — would always read `hasVideo` as
+ * `undefined` and let a video topic complete on sight, exactly backwards.
+ * The caller flips `enabled` once its own content query settles, at which
+ * point `extra` reflects the real value for the render that triggers this
+ * effect.
  */
 export function useTrackCourseItemView(
   courseId: string,
   contentType: TrackContentType,
   contentId: string,
   extra?: TrackCourseItemViewExtra,
+  enabled = true,
 ): { trackNow: (moreExtra?: TrackCourseItemViewExtra) => Promise<void> } {
   const client = useApiClient();
   const queryClient = useQueryClient();
@@ -50,6 +59,8 @@ export function useTrackCourseItemView(
   );
 
   useEffect(() => {
+    if (!enabled) return undefined;
+
     mountedAtRef.current = Date.now();
     let cancelled = false;
 
@@ -73,10 +84,12 @@ export function useTrackCourseItemView(
     // contentId/courseId/contentType identify the item; a real change of any
     // of them (client-side navigation to a different item, or a different
     // course) is exactly when this should re-fire. `extra` is intentionally
-    // read once, at mount, not tracked as a dependency: the video flags are
-    // constant for a given topic's initial "viewed" ping.
+    // not tracked as its own dependency: the effect already re-runs when
+    // `enabled` flips (the render that flips it is the one whose `extra`
+    // closure this effect uses), and video flags never change again for the
+    // same mounted item after that.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, courseId, contentType, contentId]);
+  }, [client, courseId, contentType, contentId, enabled]);
 
   return { trackNow };
 }

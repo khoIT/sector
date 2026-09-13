@@ -31,7 +31,16 @@ export function TopicView({ courseId, item }: TopicViewProps) {
   const contentRef = useRef<HTMLDivElement>(null);
 
   const hasVideo = Boolean(detail.data?.content?.includes('player.vimeo.com'));
-  const { trackNow } = useTrackCourseItemView(courseId, 'topic', item.id, { hasVideo });
+  // Deferred until the content query settles: see the hook's own doc comment
+  // on `enabled` for why firing on an unresolved query would always read
+  // `hasVideo` as false and complete a video topic on sight.
+  const { trackNow } = useTrackCourseItemView(
+    courseId,
+    'topic',
+    item.id,
+    { hasVideo },
+    detail.isSuccess,
+  );
 
   useVimeoWatchTracking(contentRef, detail.data?.content, () => {
     void trackNow({ hasVideo: true, videoCompleted: true });
