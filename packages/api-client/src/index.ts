@@ -487,3 +487,67 @@ export {
 
 export { useGroups, type UseGroupsOptions } from './react/use-groups';
 export { useGroupMembers, type UseGroupMembersOptions } from './react/use-group-members';
+
+// ─── password recovery, group invitations, group notification preferences,
+// account deletion ─────────────────────────────────────────────────────────
+export {
+  forgotPasswordPayloadSchema,
+  forgotPasswordResultSchema,
+  resetPasswordPayloadSchema,
+  verifyForgotPasswordOtpPayloadSchema,
+  verifyForgotPasswordOtpResultSchema,
+  type ForgotPasswordPayload,
+  type ForgotPasswordResult,
+  type ResetPasswordPayload,
+  type VerifyForgotPasswordOtpPayload,
+  type VerifyForgotPasswordOtpResult,
+} from './schemas/password-recovery';
+
+export {
+  resetPassword,
+  sendPasswordResetOtp,
+  verifyPasswordResetOtp,
+} from './endpoints/password-reset';
+
+export {
+  useResetPasswordMutation,
+  useSendPasswordResetOtpMutation,
+  useVerifyPasswordResetOtpMutation,
+} from './react/use-password-reset';
+
+export {
+  confirmGroupInvitationPayloadSchema,
+  confirmGroupInvitationResultSchema,
+  type ConfirmGroupInvitationPayload,
+  type ConfirmGroupInvitationResult,
+} from './schemas/invitation';
+
+export { confirmGroupInvitation } from './endpoints/invitation';
+export { useConfirmGroupInvitationMutation } from './react/use-invitation';
+
+export {
+  groupNotificationPreferenceListSchema,
+  groupWithNotificationPreferenceSchema,
+  notificationTypeSchema,
+  updateGroupNotificationPreferencePayloadSchema,
+  NOTIFICATION_TYPES,
+  type GroupWithNotificationPreference,
+  type NotificationType,
+  type UpdateGroupNotificationPreferencePayload,
+} from './schemas/group-notification-preferences';
+
+export {
+  getGroupNotificationPreferences,
+  updateGroupNotificationPreference,
+} from './endpoints/group-notification-preferences';
+
+export {
+  useGroupNotificationPreferences,
+  useUpdateGroupNotificationPreferenceMutation,
+} from './react/use-group-notification-preferences';
+
+export { deleteAccountPayloadSchema, type DeleteAccountPayload } from './schemas/account';
+export { deleteAccount } from './endpoints/account-delete';
+export { useDeleteAccountMutation } from './react/use-account';
+
+export { notificationPreferenceKeys } from './query-keys';

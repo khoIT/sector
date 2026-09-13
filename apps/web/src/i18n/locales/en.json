@@ -230,5 +230,82 @@
         "retry": "Try again"
       }
     }
+  },
+  "auth": {
+    "tagline": "Global Ultrasound Institute",
+    "signInTitle": "Sign in",
+    "usernameOrEmailLabel": "Username or email",
+    "passwordLabel": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "forgotPasswordLink": "Forgot password?",
+    "rateLimited": "Too many sign-in attempts. Wait a few minutes and try again.",
+    "networkError": "Could not reach the server. Is the API running on :5001?"
+  },
+  "recovery": {
+    "forgotTitle": "Forgot password?",
+    "forgotDescription": "Enter your email address and we'll send you a code to reset your password.",
+    "emailLabel": "Email",
+    "sendCode": "Send code",
+    "sending": "Sending…",
+    "backToLogin": "Back to sign in",
+    "rateLimited": "Too many attempts. Wait a few minutes and try again.",
+    "networkError": "Could not reach the server. Try again in a moment.",
+    "sentTitle": "Check your email",
+    "sentDescription": "If an account exists for this address, a code has been sent.",
+    "codeLabel": "Verification code",
+    "verify": "Verify code",
+    "verifying": "Verifying…",
+    "invalidCode": "That code is not valid or has expired.",
+    "resendCode": "Send a new code",
+    "resending": "Sending a new code…",
+    "resendSent": "A new code is on its way.",
+    "missingFlow": "Start the password reset again.",
+    "startOver": "Start over",
+    "resetTitle": "Choose a new password",
+    "resetDescription": "Choose a password with at least 8 characters.",
+    "newPasswordLabel": "New password",
+    "confirmPasswordLabel": "Confirm new password",
+    "resetButton": "Reset password",
+    "resetting": "Resetting…",
+    "resetError": "Your reset link is invalid or has expired. Start again to get a new one.",
+    "successNotice": "Your password has been reset. Sign in with your new password."
+  },
+  "invitation": {
+    "title": "You have been invited to join a group",
+    "description": "Confirm the invitation below. If this is a new account, the password you set here becomes your sign-in password.",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm password",
+    "confirmButton": "Confirm invitation",
+    "confirming": "Confirming…",
+    "missingToken": "This invitation link is missing its token. Ask your group leader to resend it.",
+    "networkError": "Could not reach the server. Try again in a moment.",
+    "successNotice": "Your account is ready. Sign in to continue."
+  },
+  "notifications": {
+    "title": "Group scan notifications",
+    "description": "Groups you lead. Choose which scan events email you.",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "loadError": "Your group notification settings could not be loaded.",
+    "retry": "Try again",
+    "saveError": "This setting could not be saved.",
+    "types": {
+      "scan_created": "Scan created",
+      "scan_submitted": "Scan submitted",
+      "scan_reviewed": "Scan reviewed",
+      "scan_failed": "Scan failed"
+    }
+  },
+  "deleteAccount": {
+    "trigger": "Delete account",
+    "cardDescription": "This cannot be undone by you, and there is no other door once you confirm.",
+    "title": "Delete your account?",
+    "warning": "This cannot be undone. Your account is deactivated and your email is freed up for reuse — but your scans, reviews and group memberships are not removed and stay on record.",
+    "confirmLabel": "Type your email to confirm: {{email}}",
+    "error": "Your account could not be deleted.",
+    "pending": "Deleting…",
+    "confirm": "Delete account",
+    "successNotice": "Your account has been deleted."
   }
 }

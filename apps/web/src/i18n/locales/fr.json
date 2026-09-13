@@ -152,5 +152,82 @@
         "retry": "Réessayer"
       }
     }
+  },
+  "auth": {
+    "tagline": "Global Ultrasound Institute",
+    "signInTitle": "Connectez-vous",
+    "usernameOrEmailLabel": "Nom d'utilisateur ou e-mail",
+    "passwordLabel": "Mot de passe",
+    "signIn": "Connectez-vous",
+    "signingIn": "Connexion en cours…",
+    "forgotPasswordLink": "Mot de passe oublié ?",
+    "rateLimited": "Trop de tentatives de connexion. Attendez quelques minutes et réessayez.",
+    "networkError": "Impossible de contacter le serveur. L'API est-elle bien lancée sur le port :5001 ?"
+  },
+  "recovery": {
+    "forgotTitle": "Mot de passe oublié ?",
+    "forgotDescription": "Saisissez votre adresse e-mail et nous vous enverrons un code pour réinitialiser votre mot de passe.",
+    "emailLabel": "Courrier électronique",
+    "sendCode": "Envoyer le code",
+    "sending": "Envoi en cours…",
+    "backToLogin": "Retour à la page de connexion",
+    "rateLimited": "Trop de tentatives. Attendez quelques minutes et réessayez.",
+    "networkError": "Impossible de contacter le serveur. Réessayez dans un instant.",
+    "sentTitle": "Consultez votre e-mail",
+    "sentDescription": "Si un compte existe pour cette adresse, un code a été envoyé.",
+    "codeLabel": "Code de vérification",
+    "verify": "Vérifier le code",
+    "verifying": "Vérification en cours…",
+    "invalidCode": "Ce code n'est pas valide ou a expiré.",
+    "resendCode": "Envoyer un nouveau code",
+    "resending": "Envoi d'un nouveau code…",
+    "resendSent": "Un nouveau code est en route.",
+    "missingFlow": "Recommencez la réinitialisation du mot de passe.",
+    "startOver": "Recommencer",
+    "resetTitle": "Réinitialiser le mot de passe",
+    "resetDescription": "Choisissez un mot de passe d'au moins 8 caractères.",
+    "newPasswordLabel": "Nouveau mot de passe",
+    "confirmPasswordLabel": "Confirmer le nouveau mot de passe",
+    "resetButton": "Réinitialiser le mot de passe",
+    "resetting": "Réinitialisation en cours…",
+    "resetError": "Votre lien de réinitialisation n'est pas valide ou a expiré. Recommencez pour en obtenir un nouveau.",
+    "successNotice": "Votre mot de passe a été réinitialisé. Connectez-vous avec votre nouveau mot de passe."
+  },
+  "invitation": {
+    "title": "Vous avez été invité à rejoindre un groupe",
+    "description": "Confirmez l'invitation ci-dessous. S'il s'agit d'un nouveau compte, le mot de passe que vous définissez ici devient votre mot de passe de connexion.",
+    "passwordLabel": "Mot de passe",
+    "confirmPasswordLabel": "Confirmer le mot de passe",
+    "confirmButton": "Confirmer l'invitation",
+    "confirming": "Confirmation en cours…",
+    "missingToken": "Ce lien d'invitation n'a pas de jeton. Demandez à votre chef de groupe de le renvoyer.",
+    "networkError": "Impossible de contacter le serveur. Réessayez dans un instant.",
+    "successNotice": "Votre compte est prêt. Connectez-vous pour continuer."
+  },
+  "notifications": {
+    "title": "Notifications de scan du groupe",
+    "description": "Groupes que vous dirigez. Choisissez quels événements de scan vous sont envoyés par e-mail.",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "loadError": "Les paramètres de notification de vos groupes n'ont pas pu être chargés.",
+    "retry": "Réessayer",
+    "saveError": "Ce paramètre n'a pas pu être enregistré.",
+    "types": {
+      "scan_created": "Scan créé",
+      "scan_submitted": "Scan soumis",
+      "scan_reviewed": "Scan examiné",
+      "scan_failed": "Échec du scan"
+    }
+  },
+  "deleteAccount": {
+    "trigger": "Supprimer le compte",
+    "cardDescription": "Vous ne pouvez pas annuler ceci vous-même, et il n'y a pas d'autre recours une fois que vous confirmez.",
+    "title": "Supprimer votre compte ?",
+    "warning": "Cette action est irréversible. Votre compte est désactivé et votre adresse e-mail est libérée pour être réutilisée — mais vos scans, avis et adhésions aux groupes ne sont pas supprimés et restent enregistrés.",
+    "confirmLabel": "Saisissez votre e-mail pour confirmer : {{email}}",
+    "error": "Votre compte n'a pas pu être supprimé.",
+    "pending": "Suppression du compte…",
+    "confirm": "Supprimer le compte",
+    "successNotice": "Votre compte a été supprimé."
   }
 }

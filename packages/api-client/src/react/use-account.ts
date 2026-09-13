@@ -1,14 +1,17 @@
 import { useMutation } from '@tanstack/react-query';
 
+import { deleteAccount } from '../endpoints/account-delete';
 import {
   removeAccountPhoto,
   updateAccountPassword,
   updateAccountProfile,
   uploadAccountPhoto,
 } from '../endpoints/account';
+import { mutationKeys } from '../query-keys';
 import type {
   AccountPhotoResult,
   AccountUser,
+  DeleteAccountPayload,
   UpdatePasswordPayload,
   UpdateProfilePayload,
 } from '../schemas/account';
@@ -52,5 +55,20 @@ export function useRemoveAccountPhotoMutation() {
 
   return useMutation<void, Error, void>({
     mutationFn: () => removeAccountPhoto(client),
+  });
+}
+
+/**
+ * Soft-deletes the signed-in account. The caller is responsible for signing
+ * out afterwards — this mutation only calls the route, it does not touch the
+ * session, because the auth context's `signOut` also purges local draft
+ * files and that cleanup belongs at the call site, not buried in here.
+ */
+export function useDeleteAccountMutation() {
+  const client = useApiClient();
+
+  return useMutation<void, Error, DeleteAccountPayload>({
+    mutationKey: mutationKeys.deleteAccount(),
+    mutationFn: (payload) => deleteAccount(client, payload),
   });
 }

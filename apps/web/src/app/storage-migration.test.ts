@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { createSessionStore } from '@sector/api-client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { STEP_TOKEN_STORAGE_KEY } from '@/auth/password-recovery-model';
 import { DRAFT_BLOB_DATABASE } from '@/features/create-scan/model/draft-blob-store';
 
 import {
@@ -226,6 +227,9 @@ const declaredNames = new Set([
   // Not a localStorage key and so not in the table, but persisted all the same:
   // it migrates itself, inside the module that owns it.
   DRAFT_BLOB_DATABASE,
+  // A sessionStorage key, not a localStorage one: it never existed under the
+  // legacy dashboard's name, so there is nothing for this sweep to carry over.
+  STEP_TOKEN_STORAGE_KEY,
   ...PERSISTED_KEYS.map((key) => key.name),
 ]);
 

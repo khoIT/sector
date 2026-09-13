@@ -14,9 +14,12 @@ import {
  * Every route here is scoped to the caller by `authUser` on the server — there
  * is no user id in any path — so none of them can read or write anyone else.
  *
- * `DELETE /api/account/delete` exists and is deliberately not wired. Deleting
- * an account from inside a scan vault is not a flow anyone asked for, and it
- * is not recoverable.
+ * `DELETE /api/account/delete` is now wired (see `endpoints/account-delete.ts`).
+ * It was left unwired while Sector was a companion to the legacy dashboard,
+ * on the reasoning that deleting an account from inside a scan vault was not
+ * a flow anyone asked for. Sector now REPLACES that dashboard, so once it
+ * ships there is no other door for a user who wants their account gone —
+ * leaving it unreachable here would remove the only path they had.
  */
 
 /** GET /api/account/profile. */

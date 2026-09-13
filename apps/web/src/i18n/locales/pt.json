@@ -152,5 +152,82 @@
         "retry": "Tentar novamente"
       }
     }
+  },
+  "auth": {
+    "tagline": "Global Ultrasound Institute",
+    "signInTitle": "Iniciar sessão",
+    "usernameOrEmailLabel": "Nome de usuário ou e-mail",
+    "passwordLabel": "Senha",
+    "signIn": "Iniciar sessão",
+    "signingIn": "Iniciando sessão…",
+    "forgotPasswordLink": "Esqueceu a senha?",
+    "rateLimited": "Muitas tentativas de login. Aguarde alguns minutos e tente novamente.",
+    "networkError": "Não foi possível conectar ao servidor. A API está em execução na porta :5001?"
+  },
+  "recovery": {
+    "forgotTitle": "Esqueceu a senha?",
+    "forgotDescription": "Digite seu endereço de e-mail e enviaremos um código para redefinir sua senha.",
+    "emailLabel": "E-mail",
+    "sendCode": "Enviar código",
+    "sending": "Enviando…",
+    "backToLogin": "Voltar ao Login",
+    "rateLimited": "Muitas tentativas. Aguarde alguns minutos e tente novamente.",
+    "networkError": "Não foi possível conectar ao servidor. Tente novamente em instantes.",
+    "sentTitle": "Verifique seu e-mail",
+    "sentDescription": "Se existir uma conta para este endereço, um código foi enviado.",
+    "codeLabel": "Código de verificação",
+    "verify": "Verificar código",
+    "verifying": "Verificando…",
+    "invalidCode": "Esse código não é válido ou expirou.",
+    "resendCode": "Enviar um novo código",
+    "resending": "Enviando um novo código…",
+    "resendSent": "Um novo código está a caminho.",
+    "missingFlow": "Reinicie a redefinição de senha.",
+    "startOver": "Começar de novo",
+    "resetTitle": "Redefinir senha",
+    "resetDescription": "Escolha uma senha com pelo menos 8 caracteres.",
+    "newPasswordLabel": "Nova senha",
+    "confirmPasswordLabel": "Confirme a nova senha",
+    "resetButton": "Redefinir senha",
+    "resetting": "Redefinindo…",
+    "resetError": "Seu link de redefinição é inválido ou expirou. Comece novamente para obter um novo.",
+    "successNotice": "Sua senha foi redefinida. Faça login com sua nova senha."
+  },
+  "invitation": {
+    "title": "Você foi convidado para participar de um grupo",
+    "description": "Confirme o convite abaixo. Se esta for uma conta nova, a senha que você definir aqui se torna sua senha de acesso.",
+    "passwordLabel": "Senha",
+    "confirmPasswordLabel": "Confirme a senha",
+    "confirmButton": "Confirme o convite",
+    "confirming": "Confirmando…",
+    "missingToken": "Este link de convite está sem o token. Peça ao seu líder de grupo para reenviá-lo.",
+    "networkError": "Não foi possível conectar ao servidor. Tente novamente em instantes.",
+    "successNotice": "Sua conta está pronta. Faça login para continuar."
+  },
+  "notifications": {
+    "title": "Notificações de digitalização do grupo",
+    "description": "Grupos que você lidera. Escolha quais eventos de digitalização chegam por e-mail.",
+    "enabled": "Ativado",
+    "disabled": "Desativado",
+    "loadError": "Não foi possível carregar as configurações de notificação dos seus grupos.",
+    "retry": "Tentar novamente",
+    "saveError": "Não foi possível salvar esta configuração.",
+    "types": {
+      "scan_created": "Digitalização criada",
+      "scan_submitted": "Digitalização enviada",
+      "scan_reviewed": "Digitalização revisada",
+      "scan_failed": "Falha na digitalização"
+    }
+  },
+  "deleteAccount": {
+    "trigger": "Excluir conta",
+    "cardDescription": "Você não pode desfazer isso sozinho, e não há outra porta depois que você confirmar.",
+    "title": "Excluir sua conta?",
+    "warning": "Isso não pode ser desfeito. Sua conta é desativada e seu e-mail fica livre para reutilização — mas suas digitalizações, revisões e associações a grupos não são removidas e permanecem registradas.",
+    "confirmLabel": "Digite seu e-mail para confirmar: {{email}}",
+    "error": "Não foi possível excluir sua conta.",
+    "pending": "Excluindo a conta…",
+    "confirm": "Excluir conta",
+    "successNotice": "Sua conta foi excluída."
   }
 }

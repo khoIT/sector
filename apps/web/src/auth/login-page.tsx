@@ -1,11 +1,10 @@
 import { isApiError } from '@sector/api-client';
 import { Button, Card, CardContent, CardHeader, CardTitle, Input } from '@sector/ui';
 import { useState, type FormEvent } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 
-import { SectorMark } from '@/shell/sector-mark';
-import { ThemeSwitcher } from '@/shell/theme-switcher';
-
+import { AuthPageLayout } from './auth-page-layout';
 import { useAuth } from './auth-context';
 import { returnPathFrom } from './safe-redirect';
 
@@ -19,6 +18,7 @@ import { returnPathFrom } from './safe-redirect';
  */
 export function LoginPage() {
   const { status, signIn } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -29,6 +29,10 @@ export function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const redirectTo = returnPathFrom(location.search);
+  // Set by the reset-password and invitation pages via `navigate(..., {
+  // state })` rather than a query string: it is a one-time notice, not part
+  // of the URL a bookmark or a reload should keep re-showing.
+  const notice = (location.state as { notice?: string } | null)?.notice ?? null;
 
   if (status === 'authenticated') return <Navigate to={redirectTo} replace />;
 
@@ -45,14 +49,10 @@ export function LoginPage() {
       if (isApiError(error)) {
         // Auth routes are rate limited to 20 requests per 15 minutes per IP,
         // and the 429 body reads like a generic failure. Say what it is.
-        setFormError(
-          error.statusCode === 429
-            ? 'Too many sign-in attempts. Wait a few minutes and try again.'
-            : error.message,
-        );
+        setFormError(error.statusCode === 429 ? t('auth.rateLimited') : error.message);
         setFieldErrors(error.fieldErrors());
       } else {
-        setFormError('Could not reach the server. Is the API running on :5001?');
+        setFormError(t('auth.networkError'));
       }
     } finally {
       setSubmitting(false);
@@ -60,71 +60,73 @@ export function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center bg-bg px-4 py-10">
-      <div className="w-full max-w-sm">
-        <div className="mb-5 flex flex-col items-center gap-2 text-center">
-          <SectorMark size={36} />
-          <div>
-            <h1 className="text-[20px] font-semibold tracking-tight text-ink">Sector</h1>
-            <p className="mt-0.5 text-body text-ink-dim">Global Ultrasound Institute</p>
-          </div>
-        </div>
+    <AuthPageLayout>
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('auth.signInTitle')}</CardTitle>
+        </CardHeader>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Sign in</CardTitle>
-          </CardHeader>
-
-          <CardContent>
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col gap-3"
-              aria-busy={submitting}
-              noValidate
+        <CardContent>
+          {notice ? (
+            <p
+              role="status"
+              className="mb-3 rounded-token border border-ok/25 bg-ok-soft px-3 py-2 text-body text-ok"
             >
-              <Input
-                label="Username or email"
-                name="userEmail"
-                type="text"
-                autoComplete="username"
-                autoFocus
-                value={userEmail}
-                onChange={(event) => setUserEmail(event.target.value)}
-                error={fieldErrors.userEmail}
-                required
-              />
+              {notice}
+            </p>
+          ) : null}
 
-              <Input
-                label="Password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                error={fieldErrors.password}
-                required
-              />
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-3"
+            aria-busy={submitting}
+            noValidate
+          >
+            <Input
+              label={t('auth.usernameOrEmailLabel')}
+              name="userEmail"
+              type="text"
+              autoComplete="username"
+              autoFocus
+              value={userEmail}
+              onChange={(event) => setUserEmail(event.target.value)}
+              error={fieldErrors.userEmail}
+              required
+            />
 
-              {formError ? (
-                <p
-                  role="alert"
-                  className="rounded-token bg-crit-soft px-2.5 py-2 text-body text-crit"
-                >
-                  {formError}
-                </p>
-              ) : null}
+            <Input
+              label={t('auth.passwordLabel')}
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              error={fieldErrors.password}
+              required
+            />
 
-              <Button type="submit" size="lg" disabled={submitting} className="mt-1 w-full">
-                {submitting ? 'Signing in…' : 'Sign in'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+            {formError ? (
+              <p
+                role="alert"
+                className="rounded-token bg-crit-soft px-2.5 py-2 text-body text-crit"
+              >
+                {formError}
+              </p>
+            ) : null}
 
-        <div className="mt-4 flex justify-center">
-          <ThemeSwitcher />
-        </div>
-      </div>
-    </main>
+            <Button type="submit" size="lg" disabled={submitting} className="mt-1 w-full">
+              {submitting ? t('auth.signingIn') : t('auth.signIn')}
+            </Button>
+
+            <Link
+              to="/forgot-password"
+              className="text-center text-body text-accent-ink hover:underline"
+            >
+              {t('auth.forgotPasswordLink')}
+            </Link>
+          </form>
+        </CardContent>
+      </Card>
+    </AuthPageLayout>
   );
 }

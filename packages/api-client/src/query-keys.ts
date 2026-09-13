@@ -102,6 +102,11 @@ export const authKeys = {
   session: () => ['auth-session'] as const,
 } as const;
 
+/** A leader's own led-groups, each carrying its scan-notification preference. */
+export const notificationPreferenceKeys = {
+  list: () => ['group-notification-preferences'] as const,
+} as const;
+
 /**
  * Mutation keys, for useIsMutating checks and devtools readability. The two
  * legacy mutations that carried no key (updateScanById, deleteScanById) get
@@ -134,4 +139,10 @@ export const mutationKeys = {
   deleteSharedScan: () => ['delete-shared-scan'] as const,
   exportGroupUserScans: () => ['export-group-user-scans'] as const,
   exportGroupsUserScans: () => ['export-groups-user-scans'] as const,
+  sendPasswordResetOtp: () => ['send-password-reset-otp'] as const,
+  verifyPasswordResetOtp: () => ['verify-password-reset-otp'] as const,
+  resetPassword: () => ['reset-password'] as const,
+  confirmGroupInvitation: () => ['confirm-group-invitation'] as const,
+  updateGroupNotificationPreference: () => ['update-group-notification-preference'] as const,
+  deleteAccount: () => ['delete-account'] as const,
 } as const;

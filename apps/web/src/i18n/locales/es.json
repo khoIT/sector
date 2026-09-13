@@ -152,5 +152,82 @@
         "retry": "Intentar de nuevo"
       }
     }
+  },
+  "auth": {
+    "tagline": "Global Ultrasound Institute",
+    "signInTitle": "Iniciar sesión",
+    "usernameOrEmailLabel": "Usuario o correo electrónico",
+    "passwordLabel": "Contraseña",
+    "signIn": "Iniciar sesión",
+    "signingIn": "Iniciando sesión…",
+    "forgotPasswordLink": "¿Ha olvidado la contraseña?",
+    "rateLimited": "Demasiados intentos de inicio de sesión. Espera unos minutos y vuelve a intentarlo.",
+    "networkError": "No se pudo conectar con el servidor. ¿Está la API ejecutándose en el puerto :5001?"
+  },
+  "recovery": {
+    "forgotTitle": "¿Ha olvidado la contraseña?",
+    "forgotDescription": "Introduce tu dirección de correo electrónico y te enviaremos un código para restablecer tu contraseña.",
+    "emailLabel": "Correo electrónico",
+    "sendCode": "Enviar código",
+    "sending": "Enviando…",
+    "backToLogin": "Volver al inicio de sesión",
+    "rateLimited": "Demasiados intentos. Espera unos minutos y vuelve a intentarlo.",
+    "networkError": "No se pudo conectar con el servidor. Vuelve a intentarlo en un momento.",
+    "sentTitle": "Revisa tu correo electrónico",
+    "sentDescription": "Si existe una cuenta para esta dirección, se ha enviado un código.",
+    "codeLabel": "Código de verificación",
+    "verify": "Verificar código",
+    "verifying": "Verificando…",
+    "invalidCode": "Ese código no es válido o ha caducado.",
+    "resendCode": "Enviar un nuevo código",
+    "resending": "Enviando un nuevo código…",
+    "resendSent": "Un nuevo código está en camino.",
+    "missingFlow": "Vuelve a iniciar el restablecimiento de contraseña.",
+    "startOver": "Empezar de nuevo",
+    "resetTitle": "Restablecer contraseña",
+    "resetDescription": "Elige una contraseña de al menos 8 caracteres.",
+    "newPasswordLabel": "Contraseña nueva",
+    "confirmPasswordLabel": "Confirme la nueva contraseña",
+    "resetButton": "Restablecer contraseña",
+    "resetting": "Restableciendo…",
+    "resetError": "Tu enlace de restablecimiento no es válido o ha caducado. Vuelve a empezar para obtener uno nuevo.",
+    "successNotice": "Tu contraseña se ha restablecido. Inicia sesión con tu nueva contraseña."
+  },
+  "invitation": {
+    "title": "Se le ha invitado a unirse a un grupo",
+    "description": "Confirma la invitación a continuación. Si se trata de una cuenta nueva, la contraseña que establezcas aquí será tu contraseña de acceso.",
+    "passwordLabel": "Contraseña",
+    "confirmPasswordLabel": "Confirmar contraseña",
+    "confirmButton": "Confirmar invitación",
+    "confirming": "Confirmando…",
+    "missingToken": "A este enlace de invitación le falta el token. Pide a tu líder de grupo que lo reenvíe.",
+    "networkError": "No se pudo conectar con el servidor. Vuelve a intentarlo en un momento.",
+    "successNotice": "Tu cuenta está lista. Inicia sesión para continuar."
+  },
+  "notifications": {
+    "title": "Notificaciones de escaneo de grupo",
+    "description": "Grupos que lideras. Elige qué eventos de escaneo te llegan por correo.",
+    "enabled": "Habilitado",
+    "disabled": "Desactivado",
+    "loadError": "No se pudieron cargar los ajustes de notificación de tus grupos.",
+    "retry": "Intentar de nuevo",
+    "saveError": "No se pudo guardar este ajuste.",
+    "types": {
+      "scan_created": "Escaneo creado",
+      "scan_submitted": "Escaneo enviado",
+      "scan_reviewed": "Escaneo revisado",
+      "scan_failed": "Escaneo fallido"
+    }
+  },
+  "deleteAccount": {
+    "trigger": "Eliminar cuenta",
+    "cardDescription": "Esto no se puede deshacer por tu cuenta, y no hay otra puerta una vez que confirmes.",
+    "title": "¿Eliminar tu cuenta?",
+    "warning": "Esto no se puede deshacer. Tu cuenta se desactiva y tu correo electrónico queda libre para reutilizarse, pero tus escaneos, revisiones y membresías de grupo no se eliminan y permanecen registrados.",
+    "confirmLabel": "Escribe tu correo electrónico para confirmar: {{email}}",
+    "error": "No se pudo eliminar tu cuenta.",
+    "pending": "Eliminando cuenta…",
+    "confirm": "Eliminar cuenta",
+    "successNotice": "Tu cuenta ha sido eliminada."
   }
 }

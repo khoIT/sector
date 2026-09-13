@@ -152,5 +152,82 @@
         "retry": "Erneut versuchen"
       }
     }
+  },
+  "auth": {
+    "tagline": "Global Ultrasound Institute",
+    "signInTitle": "Einloggen",
+    "usernameOrEmailLabel": "Benutzername oder E-Mail",
+    "passwordLabel": "Passwort",
+    "signIn": "Einloggen",
+    "signingIn": "Anmeldung läuft…",
+    "forgotPasswordLink": "Passwort vergessen?",
+    "rateLimited": "Zu viele Anmeldeversuche. Warten Sie einige Minuten und versuchen Sie es erneut.",
+    "networkError": "Der Server konnte nicht erreicht werden. Läuft die API auf Port :5001?"
+  },
+  "recovery": {
+    "forgotTitle": "Passwort vergessen?",
+    "forgotDescription": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Code, mit dem Sie Ihr Passwort zurücksetzen können.",
+    "emailLabel": "E-Mail",
+    "sendCode": "Code senden",
+    "sending": "Wird gesendet…",
+    "backToLogin": "Zurück zum Login",
+    "rateLimited": "Zu viele Versuche. Warten Sie einige Minuten und versuchen Sie es erneut.",
+    "networkError": "Der Server konnte nicht erreicht werden. Versuchen Sie es gleich noch einmal.",
+    "sentTitle": "Überprüfen Sie Ihre E-Mails",
+    "sentDescription": "Falls es ein Konto für diese Adresse gibt, wurde ein Code gesendet.",
+    "codeLabel": "Bestätigungscode",
+    "verify": "Code bestätigen",
+    "verifying": "Wird bestätigt…",
+    "invalidCode": "Dieser Code ist ungültig oder abgelaufen.",
+    "resendCode": "Neuen Code senden",
+    "resending": "Neuer Code wird gesendet…",
+    "resendSent": "Ein neuer Code ist unterwegs.",
+    "missingFlow": "Starten Sie die Passwortzurücksetzung erneut.",
+    "startOver": "Von vorne beginnen",
+    "resetTitle": "Passwort zurücksetzen",
+    "resetDescription": "Wählen Sie ein Passwort mit mindestens 8 Zeichen.",
+    "newPasswordLabel": "Neues Passwort",
+    "confirmPasswordLabel": "Neues Passwort bestätigen",
+    "resetButton": "Passwort zurücksetzen",
+    "resetting": "Wird zurückgesetzt…",
+    "resetError": "Ihr Zurücksetzungslink ist ungültig oder abgelaufen. Starten Sie erneut, um einen neuen zu erhalten.",
+    "successNotice": "Ihr Passwort wurde zurückgesetzt. Melden Sie sich mit Ihrem neuen Passwort an."
+  },
+  "invitation": {
+    "title": "Sie wurden eingeladen, einer Gruppe beizutreten",
+    "description": "Bestätigen Sie die Einladung unten. Handelt es sich um ein neues Konto, wird das hier festgelegte Passwort Ihr Anmeldepasswort.",
+    "passwordLabel": "Passwort",
+    "confirmPasswordLabel": "Passwort bestätigen",
+    "confirmButton": "Einladung bestätigen",
+    "confirming": "Bestätigen…",
+    "missingToken": "Diesem Einladungslink fehlt das Token. Bitten Sie Ihren Gruppenleiter, ihn erneut zu senden.",
+    "networkError": "Der Server konnte nicht erreicht werden. Versuchen Sie es gleich noch einmal.",
+    "successNotice": "Ihr Konto ist bereit. Melden Sie sich an, um fortzufahren."
+  },
+  "notifications": {
+    "title": "Scan-Benachrichtigungen für Gruppen",
+    "description": "Gruppen, die Sie leiten. Wählen Sie, bei welchen Scan-Ereignissen Sie eine E-Mail erhalten.",
+    "enabled": "Aktiviert",
+    "disabled": "Deaktiviert",
+    "loadError": "Ihre Gruppenbenachrichtigungseinstellungen konnten nicht geladen werden.",
+    "retry": "Erneut versuchen",
+    "saveError": "Diese Einstellung konnte nicht gespeichert werden.",
+    "types": {
+      "scan_created": "Scan erstellt",
+      "scan_submitted": "Scan eingereicht",
+      "scan_reviewed": "Scan überprüft",
+      "scan_failed": "Scan fehlgeschlagen"
+    }
+  },
+  "deleteAccount": {
+    "trigger": "Konto löschen",
+    "cardDescription": "Dies können Sie selbst nicht rückgängig machen, und es gibt keinen anderen Weg zurück, sobald Sie bestätigen.",
+    "title": "Konto löschen?",
+    "warning": "Dies kann nicht rückgängig gemacht werden. Ihr Konto wird deaktiviert und Ihre E-Mail-Adresse wird zur Wiederverwendung freigegeben — Ihre Scans, Überprüfungen und Gruppenmitgliedschaften werden jedoch nicht entfernt und bleiben erhalten.",
+    "confirmLabel": "Geben Sie Ihre E-Mail-Adresse ein, um zu bestätigen: {{email}}",
+    "error": "Ihr Konto konnte nicht gelöscht werden.",
+    "pending": "Konto wird gelöscht…",
+    "confirm": "Konto löschen",
+    "successNotice": "Ihr Konto wurde gelöscht."
   }
 }
