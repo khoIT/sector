@@ -1,7 +1,7 @@
 ---
 phase: 2
 title: "Real data, proven"
-status: pending
+status: completed
 priority: P1
 effort: "6 days"
 dependencies: []
@@ -77,12 +77,16 @@ a task.
 
 ## Success criteria
 
-- [ ] Every `packages/api-client` schema parses 100% of its production collection, or
-      the exception is documented with the shape and a decision
-- [ ] The app is usable against the mirror at production row counts, with the slow
-      surfaces named and measured
-- [ ] No script in this phase can run against an Atlas URI
-- [ ] `pnpm fidelity` runs in CI and fails on an unparsed shape
+- [x] Every `packages/api-client` schema parses 100% of its production collection, or
+      the exception is documented with the shape and a decision — 21 collection entries
+      and 21 route walks at 100%; six shapes learned, each with evidence in a comment
+- [x] The app is usable against the mirror at production row counts, with the slow
+      surfaces named and measured — see the report
+- [x] No script in this phase can run against an Atlas URI — loopback allow-list in
+      every script and in the harness
+- [~] `pnpm fidelity` fails on an unparsed shape. The manifest guard runs in every
+      `pnpm test`; the replay itself is a local pre-merge gate until an anonymised
+      fixture dump exists, because there is no CI yet and the real dumps carry PII
 
 ## Risk / rollback
 
