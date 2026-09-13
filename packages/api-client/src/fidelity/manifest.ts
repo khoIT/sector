@@ -11,6 +11,7 @@ import {
 import { groupSchema } from '../schemas/group';
 import { groupFilterOptionSchema } from '../schemas/group-filter';
 import { groupMemberSchema } from '../schemas/group-member';
+import { groupWithNotificationPreferenceSchema } from '../schemas/group-notification-preferences';
 import {
   scanFindingSchema,
   scanNoteSchema,
@@ -262,6 +263,32 @@ export const REPLAY_ENTRIES: readonly ReplayEntry[] = [
     }),
   },
   {
+    name: 'groupnotifications → GET /api/group-notifications item',
+    collection: 'groupnotifications',
+    schema: groupWithNotificationPreferenceSchema,
+    proves: [
+      'groupWithNotificationPreferenceSchema',
+      'groupNotificationPreferenceListSchema',
+      'notificationTypeSchema',
+    ],
+    prefetch: async (_batch, { refs }) => refs.loadAll('groups'),
+    // The route lists the groups a leader leads and decorates each with its
+    // preference; a preference whose group is gone decorates nothing.
+    include: (preference, { refs }) => refs.get('groups', preference.group) !== null,
+    project: (preference, { refs }) => {
+      const group = refs.get('groups', preference.group) as Document;
+      // The controller spreads `group.toObject()` and adds two fields; it
+      // reads the types only off an ENABLED preference (the lookup filters on
+      // emailNotifications), so a disabled one arrives with an empty list.
+      const enabled = preference.emailNotifications === true;
+      return {
+        ...(toWire(group) as Record<string, unknown>),
+        notificationsEnabled: enabled,
+        notificationTypes: enabled ? toWire(preference.notificationTypes ?? []) : [],
+      };
+    },
+  },
+  {
     name: 'scantypes → scan.scanType',
     collection: 'scantypes',
     schema: scanTypeRefSchema,
@@ -428,4 +455,15 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   userLogEntrySchema: 'the userlogs collection is in no dump',
   createUserLogsResponseSchema: 'the userlogs collection is in no dump',
   scanFormFieldPayloadSchema: 'request body (form answers as written)',
+  forgotPasswordPayloadSchema: 'request body of POST /api/forgot-password/send-otp',
+  forgotPasswordResultSchema: 'a step token minted per request',
+  verifyForgotPasswordOtpPayloadSchema: 'request body of POST /api/forgot-password/verify-otp',
+  verifyForgotPasswordOtpResultSchema: 'a step token minted per request',
+  resetPasswordPayloadSchema: 'request body of POST /api/forgot-password/reset',
+  confirmGroupInvitationPayloadSchema: 'request body of POST /api/group-members/confirm-invitation',
+  confirmGroupInvitationResultSchema:
+    'three ids echoed back by the confirmation; the membership itself is proved by the groupmembers entry',
+  updateGroupNotificationPreferencePayloadSchema:
+    'request body of PUT /api/group-notifications/:groupId',
+  deleteAccountPayloadSchema: 'request body of DELETE /api/account/delete',
 };
