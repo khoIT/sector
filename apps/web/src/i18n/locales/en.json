@@ -322,5 +322,89 @@
       "registration": "Accounts are created for you by your organisation or by a group invitation. Sign in with the details you were sent.",
       "switch-user": "Signing in as another user is done from the internal console, not from here."
     }
+  },
+  "courses": {
+    "index": {
+      "title": "My Courses",
+      "searchPlaceholder": "Search courses",
+      "statusFilter": {
+        "label": "Status",
+        "all": "All statuses",
+        "not_started": "Not started",
+        "in_progress": "In progress",
+        "completed": "Completed",
+        "active": "Active",
+        "paused": "Paused",
+        "dropped": "Dropped",
+        "expired": "Expired"
+      },
+      "status": {
+        "not_started": "Not started",
+        "in_progress": "In progress",
+        "completed": "Completed"
+      },
+      "action": {
+        "start": "Start",
+        "resume": "Resume",
+        "review": "Review"
+      },
+      "progressLabel": "{{percent}}% complete",
+      "empty": {
+        "title": "No courses yet",
+        "description": "Courses assigned to you, personally or through a group, show up here."
+      },
+      "noMatch": {
+        "title": "No courses match your search",
+        "description": "No course title matches “{{keyword}}”."
+      },
+      "pagePastEnd": {
+        "title": "Nothing on this page",
+        "backToFirstPage": "Go to first page"
+      },
+      "error": {
+        "title": "This list could not be loaded",
+        "retry": "Try again"
+      },
+      "expired": {
+        "title_one": "{{count}} expired enrolment",
+        "title_other": "{{count}} expired enrolments",
+        "description": "Access to these has ended; renewing an assignment is handled by your group leader or administrator.",
+        "badge": "Expired"
+      }
+    },
+    "outline": {
+      "title": "Course outline",
+      "backToCourses": "My Courses",
+      "progress": "{{completed}}/{{total}} completed ({{percent}}%)",
+      "resume": {
+        "start": "Start: {{title}}",
+        "resume": "Resume: {{title}}",
+        "review": "Review: {{title}}"
+      },
+      "completedBanner": "You have completed this course.",
+      "empty": {
+        "title": "This course has no content yet"
+      },
+      "error": {
+        "title": "This outline could not be loaded",
+        "retry": "Try again"
+      },
+      "kind": {
+        "lesson": "Lesson",
+        "topic": "Topic",
+        "quiz": "Quiz"
+      },
+      "itemStatus": {
+        "not_started": "Not started",
+        "in_progress": "In progress",
+        "completed": "Completed"
+      },
+      "blocked": {
+        "quiz_has_no_questions": "This quiz has no questions yet and cannot be opened."
+      },
+      "quiz": {
+        "bestPercentage": "Best: {{percent}}%"
+      }
+    }
   }
 }
