@@ -383,4 +383,7 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   userLogEntrySchema: 'the userlogs collection is in no dump',
   createUserLogsResponseSchema: 'the userlogs collection is in no dump',
   scanFormFieldPayloadSchema: 'request body (form answers as written)',
+  scanTagPayloadSchema: 'request body of POST/DELETE /api/scan/:id/tags',
+  scanTagsResponseSchema:
+    'response of GET /api/scan/:id/tags — a scan’s tags array, already proved by the scans entry via scanSchema.tags',
 };

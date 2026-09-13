@@ -465,3 +465,16 @@ export {
   type RunWithUploadRetryOptions,
   type UploadRetryPolicy,
 } from './upload-retry-policy';
+
+// ─── scan tags (mark complete/incomplete, and every other reviewer tag) ───────
+export {
+  scanTagPayloadSchema,
+  scanTagsResponseSchema,
+  type ScanTagPayload,
+} from './schemas/scan-tags';
+export { addScanTag, getScanTags, removeScanTag } from './endpoints/scan-tags';
+export { useAddScanTag, useRemoveScanTag, useScanTags } from './react/use-scan-tags';
+
+// ─── reset-upload (recovering a failed or failed-upload scan) ────────────────
+export { resetScanUpload } from './endpoints/scan-reset-upload';
+export { useResetScanUpload } from './react/use-scan-reset-upload';
