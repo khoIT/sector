@@ -224,3 +224,134 @@ all five faithfully. The difference is almost entirely the dashboard home.
 `visibleNavGroups` resolves every destination through `SCAN_VAULT_PATH[landing]` and `canOpenView`.
 Adding Pathology Gallery, Courses or Sage means widening that model, not appending a row. Half a
 day, and it has to land first.
+
+---
+
+# The plan
+
+## ~71 engineer-days, not 137
+
+Summing the seven agents' own totals gives 137–162 days. That number is wrong for three reasons:
+
+1. **The LMS was counted three times.** The courses agent (28–32d), the quizzes agent (15.5d) and
+   the data-model agent (22–28d) are three views of one surface; the quiz runner appears in all
+   three. Built from components rather than summed, the whole LMS read path is **~40d**.
+2. **The drop set is large and genuinely free** — dashboard home (20–30d), commerce (25–40d),
+   Fellowship V1 (7d).
+3. **~9,250 lines of unreachable v1/v2 forks** would otherwise inflate every estimate by ~150%.
+
+Two engineers with the parallelism the phases allow: **7–8 calendar weeks.** One engineer: ~14.
+**The first usable thing ships in week two.**
+
+What the 71 days buys is not a copy of ScanHub. It is a smaller product: one quiz engine instead
+of four, one members surface instead of two, one server-resolved outline instead of four
+client-side traversals, one group schema shared between the write side and the read side
+ScanVault already ships. Three of those consolidations are **cost-negative inside the port**.
+
+## The sequence
+
+| Phase | What ships | Days |
+| --- | --- | --- |
+| 1. Close the lockout hole | forgot-password (3 pages), invitation landing, group scan-notification preferences, account deletion | 7 |
+| 2. Foundations, proven by Question Banks | sanitized HTML renderer, **one** quiz engine, 9 UI primitives, question banks end to end | 17 |
+| 3. The course read seam | resolved-outline endpoint (2–3d API), course api-client, entitlement, My Courses, course outline | 11 |
+| 4. Actually taking a course | layout + sidebar, lesson, topic (Vimeo), course-quiz adapter, admin read-only view, i18n | 12 |
+| 5. Group administration | groups index, **one** role-parameterised members surface, four exports, form layer | 15 |
+| 6. Assignments, gallery, Sage, nav | assignments + its 40 missing keys, pathology gallery, Sage frame, nav widening | 9 |
+
+**Phase 1 first because the port introduced a lockout.** ScanVault has **no in-app password
+recovery** — a grep for `register|forgot` across `apps/web/src` returns only prose in comments. A
+user who forgets a password has no path. That hole was introduced by the port, not inherited.
+Alongside it: **916 group leaders across 554 groups** have live scan-notification settings (2,363
+documents, 2,353 with email on) that the new app can neither read nor write.
+
+**Phase 2 ships Question Banks because they are the only real LMS surface that stands alone** — 5
+endpoints, no permission gate, no feature flag, no course dependency. That forces the two most
+expensive foundations to be proven against real migrated WordPress content *before* any course
+surface depends on them.
+
+## The one irreversible mistake
+
+**Starting the course UI before the read seam lands.** Port against today's four-parallel-arrays
+shape and ScanVault permanently inherits 553 lines of `util.ts`, four client-side traversals of
+one graph, three React Router patterns for one quiz component, and blindness to the fourth
+nesting shape. None of it is removable later without a second port. It is a scheduling risk, not
+a technical one — which makes it the easy one to lose to pressure.
+
+## Two changes to the course model, and only one blocks the port
+
+| | Read seam | Write fix |
+| --- | --- | --- |
+| What | `GET /learners/courses/:id` returns a resolved ordered outline with prev/next and a resume pointer | The published snapshot becomes a real immutable content tree |
+| Cost | **2–3 API days** | **12–15 API days** |
+| Blocks the port? | **Yes** | No |
+| Effect | Makes the port ~4–5 days *cheaper* | Stops corrupting learner progress |
+
+Build the seam against today's pointer structure; swap its data source to a real snapshot later
+with **no client change**. Doing the write fix first delays every user-visible course phase by
+three weeks for zero user-visible gain.
+
+The seam also fixes two live bugs by construction. The course-meta tree contains a **fourth
+nesting shape — `course > topic > quiz`, 9 live instances — that the frontend has no route for**:
+those quizzes have no URL, appear in no sidebar, are skipped by prev/next, and still count toward
+`totalItems`, so their courses can never reach 100% or issue a certificate. The same permanent
+incompletion applies to the **146 published quizzes with zero questions**. If the server names the
+route, there is no fourth shape and no unreachable item.
+
+## What to drop, with the evidence
+
+- **Dashboard home** — Insights is the replacement and ScanVault already decided (`/` →
+  `VaultIndexRedirect`). 21% dead already.
+- **The entire commerce stack** (~13,000 LOC, ~35 endpoints) — every flag false, storefront routes
+  commented out, checkout submit handler commented out, 0 rows in orders/subscriptions/payment
+  methods. **Separately urgent: that broken checkout is live and linked from the expired-course
+  banner.** A learner enters a full card number, presses Pay, and gets no order, no error and no
+  navigation. Fix or unlink it in the old app today, independent of this port.
+- **Rapid Review ×2** — not GUSI code. Sandboxed iframes onto a third-party Reflex app, both flags
+  false, identity asserted by unsigned URL query string.
+- **Fellowship V1** — frozen since 2025-07-02, superseded by 57 v2 endpoints no React calls, and
+  `/api/schedule-slots` (which the V1 UI calls) **is not mounted**, so scheduling 404s today.
+- **Certificates** — `CERTIFICATE_DOWNLOAD_MAINTENANCE = true`; every row action returns null.
+- **Referrals** — 0 documents against 3,152 users, plus an enumerable PII leak.
+- **Push notifications** — 4 user-settings documents against 3,152 users.
+- **Resources**, the **Modules view** (gated on four hardcoded @scanhub.com emails), the
+  **expired-course renewal notice**, and ~9,250 LOC of dead forks.
+- **DICOM upload as a separate page** — fold into create-scan (1–2d) or drop. Do not rebuild it.
+
+## Risks worth naming
+
+- **The `z.any()` progress blobs are the biggest estimate risk.** ScanVault's contract is
+  parse-not-cast, and the source schema punts on exactly the two shapes the quiz runner needs. Add
+  ~30% to the course-quiz work if they cannot be pinned against staging. The read seam is the
+  mitigation.
+- **GrowthBook is the runtime authority and nobody in this study could read it.** Every
+  "flag-default false" drop rests on code defaults, and `FEATURE_DEFAULTS` is dead configuration.
+  Ten minutes of dashboard access can falsify several drop decisions. **Do that before deleting
+  anything.**
+- **The zero-row counts are proven for local dev only.** One read-only `countDocuments` against
+  the production secondary settles it — reads only, never writes.
+- **The phases assume API capacity that is not committed.** Without an API engineer for the
+  2–3-day seam, roughly 27 of the 71 days have no safe start.
+- **One refresh token per user, globally.** A second device invalidates the first. Related and
+  introduced by the port: `GET /api/me` sits inside the 20-per-15-min-per-IP auth limiter and
+  ScanVault calls it on every cold boot, so a classroom behind one NAT can exhaust the sign-in
+  budget in 20 page loads. ~0.5–1d to fix.
+
+## Unresolved questions
+
+1. Is the immutable-snapshot write fix funded and assigned, and is it CTP-1016?
+2. Is self-service registration still wanted, or are all real accounts minted by the WooCommerce
+   webhook? (0 referrals against 3,152 users says the latter.) If dead, register is a delete, not
+   a port.
+3. What is the **production** GrowthBook state for the nine flags this plan's drops rest on?
+4. Does DICOM upload survive as a surface — and should `create:dicom-ingestion` still be granted
+   to every role, given the pipeline makes an OpenAI vision call per DICOM?
+5. Is the expired-course renewal flow meant to work at all? Today it takes a card number and does
+   nothing.
+6. Who operates the 57 `/api/v2/fellowship-*` endpoints — the external Applovin app?
+7. Is Insights confirmed as the dashboard replacement, and on what timeline?
+8. Who owns `CERTIFICATE_DOWNLOAD_MAINTENANCE` and CTP-399? Until it lifts, course completion has
+   no payoff anywhere — worth knowing before investing 23 days in the course track.
+9. **Where does `gusi_scanhub_console` live?** Every authoring claim here is inferred from the API
+   contract, never observed. Nobody on this team can currently reproduce an authoring complaint in
+   a repo they own.
