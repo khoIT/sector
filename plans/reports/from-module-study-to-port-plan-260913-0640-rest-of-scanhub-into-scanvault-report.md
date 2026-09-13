@@ -128,3 +128,99 @@ Bugs worth fixing in the rewrite rather than porting:
   "Question data not found", and the attempt can never complete.
 - **Per-question `incorrectMessage` is authored, returned, typed, carried into state, and never
   rendered.** Clinician authors write remediation text no learner has ever seen.
+
+---
+
+## Courses — 28–32 days, and the redesign makes it cheaper
+
+15,223 lines under `my-courses`, of which **6,087 across 33 components are reachable**. The v1
+and v2 variants are not flag-gated alternatives — `page.tsx`, `list/page.tsx` and `content/layout.tsx`
+all hardcode the V3 import, and the `COURSE_NEW_UI_V2_ALL` / `COURSE_NEW_UI_V3_ALL` flags are
+declared and read by nothing. Eight routes, four of which are the quiz runner under different
+`useParams` wrappers.
+
+Estimate basis: 6,087 live lines, 9 missing api-client endpoints, 7 missing UI primitives, at the
+~200 live-lines/day rate implied by ScanVault's existing scan surfaces. **+30%** if the `z.any()`
+progress shapes have to be reverse-engineered rather than pinned against staging.
+
+**The one redesign: have the server return the resolved outline** — an ordered flat item list with
+per-item status, `next`/`prev`, and the resume pointer — instead of four parallel arrays joined by
+`itemRef` with progress typed `z.any()`.
+
+The client currently re-derives navigation **four times**: `generateCourseRoutesV3` (~90 lines),
+`generateBreadcrumbsV3` (~175), the Start/Resume walk in `course-progress-button-v3`, and a fourth
+assembly inside the 1,005-line sidebar. Each with its own edge cases, and the class of bug where
+Resume, the breadcrumb and the sidebar highlight disagree.
+
+Cost ~2 API days — the traversal already exists server-side in `learners.structure.helper.ts` (336
+lines) — and it **deletes ~420 lines of client code and about 4 of the 30 days.** It is also what
+turns the quiz runner's resume hydration from `isRecord` guards over a blob into a typed read.
+
+Other things found on the way, worth fixing rather than porting:
+
+- My Courses pulls 100 courses and filters in the browser; the API's own keyword/status filters go
+  unused, and a learner with more than 100 enrolments silently cannot see them all.
+- A feature is gated on **four hardcoded user emails committed to the repo**, beside the
+  GrowthBook flag that exists to do exactly that.
+- **Certificates are switched off by a hardcoded constant** — completion has no payoff today.
+- Sequential access control was written and then disabled in place: a prop that reads as access
+  control and enforces nothing.
+- **677 lines of render-time WordPress HTML repair** between the database and the learner.
+
+## Pathology Gallery — 3–4 days, port it, but not its taxonomy
+
+The smallest real surface here: 569 UI lines over 4 components, 154 API lines, **3 read-only
+endpoints, no writes, no permissions**, 27 i18n keys. A category bar, a sub-category rail, a
+20-per-page card grid, and a dialog with the clip in an iframe.
+
+The taxonomy is the problem. `category` and `subCategory` are nullable **free-text strings** with
+no reference to ScanType; the server guesses which scan type each means by lowercasing names and
+returns `id: null` when it guesses wrong; and the client then **throws away anything outside a
+hardcoded 13-name array** in `scan-type-list.tsx`. So:
+
+- Content people cannot publish a new category. The server returns it, the UI drops it silently.
+- A typo or a casing change orphans a whole category from its icon.
+- Corrections ship as one-off scripts — `scripts/db/update-pathology-gallery.ts` is **775 lines**
+  of re-filing, with comments like "Client Request 1A: Fix subcategory for shooters abscess items".
+
+Three more defects, all cheap to not-repeat: the default category comes from a *different
+endpoint* than the category bar (so a first visit can land on a category with no button
+highlighted and an empty grid); the categories endpoint issues **~13 serial S3 presigns plus a
+full collection scan on every page load**, uncached, and it gates the whole screen; and an
+unfiltered list fetch fires before any category exists and is thrown away.
+
+**Recommendation: give the pathology document a real `scanTypeId` reference, serve the category
+bar from that relation, and delete the client whitelist.** ~4–6 days, most of it the backfill
+migration rather than code. Porting the gallery first and fixing the taxonomy later means porting
+the whitelist into the new app, where it will be just as invisible.
+
+## Dashboard home — 20–30 days, and I would not spend it
+
+The heaviest thing in the study by an order of magnitude: **~8,570 lines, 23 components, 14
+endpoints**, a 1,189-line member table with Excel export, 242 i18n keys × 7 locales, and recharts
+— which is not a dependency of the new app at all.
+
+**21% of it is already unreachable.** Two of the four role dashboards are dead: `group_leader`
+and `scan_reviewer` fall through to `<AdminDashboard/>`, so two roles are served a surface built
+for a third — including its group-wide member table and export — while 412 lines of purpose-built
+dashboards sit unshipped.
+
+More telling for a port: chart colours and translation keys are derived by comparing **English
+label strings returned by the API** (`label === 'Completed'`, `'Pending'`, `'Reviewed'`). Rename
+or localise a status server-side and slices render grey with a raw missing-key string, failing
+silently. And `console.log` ships inside a `useMemo` in the admin hot path, printing group names
+and ids on every interaction.
+
+**The new app has already made this decision.** `router.tsx` sends `/` to `VaultIndexRedirect` —
+the first scan list the role may open. There is no dashboard home in ScanVault, Insights is the
+stated replacement for the analytics, and adding one back is a product reversal, not a port.
+
+**Bundle: ~5–8 days** for gallery + the Sage frame + a decision on DICOM, against ~30–45 to port
+all five faithfully. The difference is almost entirely the dashboard home.
+
+## One blocker before any of them
+
+`apps/web/src/shell/nav-config.ts` types `NavItemId` as a **closed union of four scan ids**, and
+`visibleNavGroups` resolves every destination through `SCAN_VAULT_PATH[landing]` and `canOpenView`.
+Adding Pathology Gallery, Courses or Sage means widening that model, not appending a row. Half a
+day, and it has to land first.
