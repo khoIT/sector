@@ -67,7 +67,7 @@ endpoint ships in the production route table.
 
 | Phase | Name | Days | Depends on | Status |
 |-------|------|------|------------|--------|
-| 1 | [Name, mark and the nav model](./phase-01-name-mark-and-the-nav-model.md) | 3 | — | **In progress** |
+| 1 | [Name, mark and the nav model](./phase-01-name-mark-and-the-nav-model.md) | 3 | — | **Done** |
 | 2 | [Real data, proven](./phase-02-real-data-proven.md) | 6 | — | **Done** |
 | 3 | [Close the lockout](./phase-03-close-the-lockout.md) | 7 | 1 | **Done** |
 | 4 | [Scan surfaces to parity](./phase-04-scan-surfaces-to-parity.md) | 16 | 2 | **In progress** (reviewed, blockers being fixed) |
