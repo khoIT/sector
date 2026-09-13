@@ -307,5 +307,20 @@
     "pending": "Deleting…",
     "confirm": "Delete account",
     "successNotice": "Your account has been deleted."
+  },
+  "retired": {
+    "title": "This part of the old dashboard was retired",
+    "goInstead": "Go to the nearest thing that works",
+    "reason": {
+      "commerce": "Orders, subscriptions and payment methods are no longer sold here. Expert review credits are bought when you submit a study.",
+      "certificates": "Certificate downloads are switched off while the certificate service is under maintenance. Your course progress is kept.",
+      "fellowship": "The fellowship pages were frozen and their scheduling backend has been replaced. Ask your programme lead for the current arrangement.",
+      "rapid-review": "The Rapid Review challenges were a separate product embedded in a frame and are not part of Sector.",
+      "referrals": "Referrals were never used and have been removed.",
+      "resources": "The resources page was a placeholder that was never filled.",
+      "notifications": "The in-app notification list has been removed; everything that matters reaches you by email.",
+      "registration": "Accounts are created for you by your organisation or by a group invitation. Sign in with the details you were sent.",
+      "switch-user": "Signing in as another user is done from the internal console, not from here."
+    }
   }
 }

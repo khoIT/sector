@@ -229,5 +229,20 @@
     "pending": "Excluindo a conta…",
     "confirm": "Excluir conta",
     "successNotice": "Sua conta foi excluída."
+  },
+  "retired": {
+    "title": "Esta parte do painel antigo foi descontinuada",
+    "goInstead": "Ir para o que funciona",
+    "reason": {
+      "commerce": "Pedidos, assinaturas e métodos de pagamento não são mais vendidos aqui. Os créditos de revisão especializada são comprados ao enviar um estudo.",
+      "certificates": "O download de certificados está desativado enquanto o serviço de certificados está em manutenção. Seu progresso nos cursos é mantido.",
+      "fellowship": "As páginas do fellowship foram congeladas e seu sistema de agendamento foi substituído. Pergunte ao responsável pelo seu programa.",
+      "rapid-review": "Os desafios Rapid Review eram um produto separado incorporado em um frame e não fazem parte do Sector.",
+      "referrals": "As indicações nunca foram usadas e foram removidas.",
+      "resources": "A página de recursos era um espaço reservado que nunca foi preenchido.",
+      "notifications": "A lista de notificações no aplicativo foi removida; tudo o que importa chega a você por e-mail.",
+      "registration": "Sua organização ou um convite de grupo cria a conta para você. Entre com os dados que recebeu.",
+      "switch-user": "Entrar como outro usuário é feito pelo console interno, não por aqui."
+    }
   }
 }

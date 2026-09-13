@@ -229,5 +229,20 @@
     "pending": "Suppression du compte…",
     "confirm": "Supprimer le compte",
     "successNotice": "Votre compte a été supprimé."
+  },
+  "retired": {
+    "title": "Cette partie de l’ancien tableau de bord a été retirée",
+    "goInstead": "Aller vers ce qui fonctionne",
+    "reason": {
+      "commerce": "Les commandes, abonnements et moyens de paiement ne sont plus vendus ici. Les crédits de revue experte s’achètent lors de l’envoi d’une étude.",
+      "certificates": "Le téléchargement des certificats est désactivé pendant la maintenance du service. Votre progression dans les cours est conservée.",
+      "fellowship": "Les pages du fellowship ont été gelées et leur système de planification a été remplacé. Demandez à votre responsable de programme.",
+      "rapid-review": "Les défis Rapid Review étaient un produit distinct intégré dans un cadre et ne font pas partie de Sector.",
+      "referrals": "Les parrainages n’ont jamais été utilisés et ont été supprimés.",
+      "resources": "La page des ressources était un espace réservé jamais rempli.",
+      "notifications": "La liste des notifications dans l’application a été supprimée ; tout ce qui compte vous parvient par e-mail.",
+      "registration": "Votre organisation ou une invitation de groupe crée votre compte pour vous. Connectez-vous avec les identifiants reçus.",
+      "switch-user": "Se connecter en tant qu’un autre utilisateur se fait depuis la console interne, pas d’ici."
+    }
   }
 }

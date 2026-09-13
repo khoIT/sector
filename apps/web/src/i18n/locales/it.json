@@ -229,5 +229,20 @@
     "pending": "Eliminazione dell'account…",
     "confirm": "Elimina account",
     "successNotice": "Il tuo account è stato eliminato."
+  },
+  "retired": {
+    "title": "Questa parte della vecchia dashboard è stata ritirata",
+    "goInstead": "Vai alla cosa più vicina che funziona",
+    "reason": {
+      "commerce": "Ordini, abbonamenti e metodi di pagamento non si vendono più qui. I crediti per la revisione esperta si acquistano quando invii uno studio.",
+      "certificates": "Il download dei certificati è disattivato durante la manutenzione del servizio. I tuoi progressi nei corsi sono conservati.",
+      "fellowship": "Le pagine del fellowship sono state congelate e il loro sistema di pianificazione è stato sostituito. Chiedi al responsabile del programma.",
+      "rapid-review": "Le sfide Rapid Review erano un prodotto separato incorporato in un frame e non fanno parte di Sector.",
+      "referrals": "I referral non sono mai stati usati e sono stati rimossi.",
+      "resources": "La pagina delle risorse era un segnaposto mai riempito.",
+      "notifications": "L’elenco delle notifiche nell’app è stato rimosso; tutto ciò che conta ti arriva via e-mail.",
+      "registration": "L’account viene creato per te dalla tua organizzazione o da un invito di gruppo. Accedi con i dati che ti sono stati inviati.",
+      "switch-user": "Accedere come un altro utente si fa dalla console interna, non da qui."
+    }
   }
 }

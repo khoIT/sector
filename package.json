@@ -15,7 +15,8 @@
     "test": "turbo run test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "fidelity": "turbo run fidelity"
+    "fidelity": "turbo run fidelity",
+    "docs:legacy-routes": "tsx --tsconfig apps/web/tsconfig.json scripts/docs/render-legacy-route-map.ts"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.1131.0",
