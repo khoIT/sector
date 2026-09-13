@@ -6,7 +6,6 @@ import {
 } from '../endpoints/group-notification-preferences';
 import { mutationKeys, notificationPreferenceKeys } from '../query-keys';
 import type {
-  GroupNotificationPreference,
   GroupWithNotificationPreference,
   UpdateGroupNotificationPreferencePayload,
 } from '../schemas/group-notification-preferences';
@@ -33,7 +32,7 @@ export function useUpdateGroupNotificationPreferenceMutation() {
   const queryClient = useQueryClient();
 
   return useMutation<
-    GroupNotificationPreference,
+    void,
     Error,
     { groupId: string; payload: UpdateGroupNotificationPreferencePayload }
   >({

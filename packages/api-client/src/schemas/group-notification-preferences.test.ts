@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  groupNotificationPreferenceListSchema,
-  groupNotificationPreferenceSchema,
-} from './group-notification-preferences';
+import { groupNotificationPreferenceListSchema } from './group-notification-preferences';
 
 /**
  * Fixtures shaped like real `gusi_prod_mirror.groupnotifications` documents
@@ -74,20 +71,39 @@ describe('groupWithNotificationPreferenceSchema', () => {
 
     expect(parsed).not.toHaveProperty('description');
   });
-});
 
-describe('groupNotificationPreferenceSchema', () => {
-  it('parses the PUT response — the stored preference document, not the group', () => {
-    const parsed = groupNotificationPreferenceSchema.parse({
-      id: 'pref-1',
-      user: 'user-1',
-      group: '681a59c3c5a226f3463cb40e',
-      emailNotifications: true,
-      notificationTypes: ['scan_created', 'scan_submitted', 'scan_reviewed', 'scan_failed'],
-      createdAt: '2025-06-18T17:52:19.232Z',
-      updatedAt: '2025-06-18T17:52:19.232Z',
-    });
+  it('parses a group with no `type` at all — 391 of 1,519 groups in the mirror have none', () => {
+    // Group.type is `required: false` with no schema default, so a document
+    // stored without it hydrates with the path unset and the JSON omits the
+    // key entirely — this is a real mirror document, not the `null` a
+    // defaulted field would leave behind.
+    const parsed = groupNotificationPreferenceListSchema.parse([
+      {
+        id: '68b28ad9e5e5ed11829029bf',
+        name: 'Malaga Course _September 13-14, 2025',
+        slug: 'malaga-course-september-13-14-2025',
+        parent: null,
+        notificationsEnabled: false,
+        notificationTypes: [],
+      },
+    ])[0]!;
 
-    expect(parsed.notificationTypes).toHaveLength(4);
+    expect(parsed.type).toBeUndefined();
+  });
+
+  it('parses a group with `type` explicitly null the same way', () => {
+    const parsed = groupNotificationPreferenceListSchema.parse([
+      {
+        id: 'g1',
+        name: 'Group',
+        slug: 'group',
+        type: null,
+        parent: null,
+        notificationsEnabled: false,
+        notificationTypes: [],
+      },
+    ])[0]!;
+
+    expect(parsed.type).toBeNull();
   });
 });

@@ -455,8 +455,8 @@ export {
   type UploadScanObjectOptions,
 } from './multipart-upload';
 
-// ─── close the lockout: password recovery, invitation, group notification
-// preferences, account deletion ────────────────────────────────────────────
+// ─── password recovery, group invitations, group notification preferences,
+// account deletion ─────────────────────────────────────────────────────────
 export {
   forgotPasswordPayloadSchema,
   forgotPasswordResultSchema,
@@ -494,12 +494,10 @@ export { useConfirmGroupInvitationMutation } from './react/use-invitation';
 
 export {
   groupNotificationPreferenceListSchema,
-  groupNotificationPreferenceSchema,
   groupWithNotificationPreferenceSchema,
   notificationTypeSchema,
   updateGroupNotificationPreferencePayloadSchema,
   NOTIFICATION_TYPES,
-  type GroupNotificationPreference,
   type GroupWithNotificationPreference,
   type NotificationType,
   type UpdateGroupNotificationPreferencePayload,
