@@ -85,6 +85,170 @@
   "empty": {
     "loading": "Wird geladen"
   },
+  "groups": {
+    "index": {
+      "title": "Gruppen",
+      "searchPlaceholder": "Gruppen suchen",
+      "columns": {
+        "name": "Gruppe",
+        "type": "Typ",
+        "members": "Mitglieder",
+        "leaders": "Anführer",
+        "seats": "Plätze",
+        "expires": "Läuft ab"
+      },
+      "type": {
+        "group": "Gruppe",
+        "class": "Klasse"
+      },
+      "seatsUsed": "{{used}} / {{total}}",
+      "unlimitedSeats": "Unbegrenzt",
+      "empty": {
+        "title": "Noch keine Gruppen",
+        "description": "Gruppen, die Sie leiten, oder alle Gruppen bei vollem Zugriff, werden hier angezeigt."
+      },
+      "noMatch": {
+        "title": "Keine Gruppen entsprechen Ihrer Suche",
+        "description": "Kein Gruppenname oder Slug entspricht „{{keyword}}“."
+      },
+      "pagePastEnd": {
+        "title": "Nichts auf dieser Seite",
+        "backToFirstPage": "Zur ersten Seite"
+      },
+      "error": {
+        "title": "Diese Liste konnte nicht geladen werden",
+        "retry": "Erneut versuchen"
+      }
+    },
+    "members": {
+      "title": "Mitglieder",
+      "subtitle_one": "{{count}} Mitglied",
+      "subtitle_other": "{{count}} Mitglieder",
+      "backToGroups": "Alle Gruppen",
+      "searchPlaceholder": "Mitglieder suchen",
+      "columns": {
+        "member": "Mitglied",
+        "role": "Rolle",
+        "status": "Status",
+        "joined": "Beigetreten",
+        "expires": "Läuft ab"
+      },
+      "role": {
+        "leader": "Anführer",
+        "learner": "Lernender"
+      },
+      "status": {
+        "active": "Aktiv",
+        "pending": "Ausstehend",
+        "inactive": "Inaktiv",
+        "expired": "Abgelaufen"
+      },
+      "empty": {
+        "title": "Noch keine Mitglieder",
+        "description": "Laden Sie jemanden ein, um diese Gruppe zu starten."
+      },
+      "noMatch": {
+        "title": "Keine Mitglieder entsprechen Ihrer Suche",
+        "description": "Kein Name oder keine E-Mail entspricht „{{keyword}}“."
+      },
+      "error": {
+        "title": "Diese Liste konnte nicht geladen werden",
+        "retry": "Erneut versuchen"
+      }
+    }
+  },
+  "auth": {
+    "tagline": "Global Ultrasound Institute",
+    "signInTitle": "Einloggen",
+    "usernameOrEmailLabel": "Benutzername oder E-Mail",
+    "passwordLabel": "Passwort",
+    "signIn": "Einloggen",
+    "signingIn": "Anmeldung läuft…",
+    "forgotPasswordLink": "Passwort vergessen?",
+    "rateLimited": "Zu viele Anmeldeversuche. Warten Sie einige Minuten und versuchen Sie es erneut.",
+    "networkError": "Der Server konnte nicht erreicht werden. Läuft die API auf Port :5001?"
+  },
+  "recovery": {
+    "forgotTitle": "Passwort vergessen?",
+    "forgotDescription": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Code, mit dem Sie Ihr Passwort zurücksetzen können.",
+    "emailLabel": "E-Mail",
+    "sendCode": "Code senden",
+    "sending": "Wird gesendet…",
+    "backToLogin": "Zurück zum Login",
+    "rateLimited": "Zu viele Versuche. Warten Sie einige Minuten und versuchen Sie es erneut.",
+    "networkError": "Der Server konnte nicht erreicht werden. Versuchen Sie es gleich noch einmal.",
+    "sentTitle": "Überprüfen Sie Ihre E-Mails",
+    "sentDescription": "Falls es ein Konto für diese Adresse gibt, wurde ein Code gesendet.",
+    "codeLabel": "Bestätigungscode",
+    "verify": "Code bestätigen",
+    "verifying": "Wird bestätigt…",
+    "invalidCode": "Dieser Code ist ungültig oder abgelaufen.",
+    "resendCode": "Neuen Code senden",
+    "resending": "Neuer Code wird gesendet…",
+    "resendSent": "Ein neuer Code ist unterwegs.",
+    "missingFlow": "Starten Sie die Passwortzurücksetzung erneut.",
+    "startOver": "Von vorne beginnen",
+    "resetTitle": "Passwort zurücksetzen",
+    "resetDescription": "Wählen Sie ein Passwort mit mindestens 8 Zeichen.",
+    "newPasswordLabel": "Neues Passwort",
+    "confirmPasswordLabel": "Neues Passwort bestätigen",
+    "resetButton": "Passwort zurücksetzen",
+    "resetting": "Wird zurückgesetzt…",
+    "resetError": "Ihr Zurücksetzungslink ist ungültig oder abgelaufen. Starten Sie erneut, um einen neuen zu erhalten.",
+    "successNotice": "Ihr Passwort wurde zurückgesetzt. Melden Sie sich mit Ihrem neuen Passwort an."
+  },
+  "invitation": {
+    "title": "Sie wurden eingeladen, einer Gruppe beizutreten",
+    "description": "Bestätigen Sie die Einladung unten. Handelt es sich um ein neues Konto, wird das hier festgelegte Passwort Ihr Anmeldepasswort.",
+    "passwordLabel": "Passwort",
+    "confirmPasswordLabel": "Passwort bestätigen",
+    "confirmButton": "Einladung bestätigen",
+    "confirming": "Bestätigen…",
+    "missingToken": "Diesem Einladungslink fehlt das Token. Bitten Sie Ihren Gruppenleiter, ihn erneut zu senden.",
+    "networkError": "Der Server konnte nicht erreicht werden. Versuchen Sie es gleich noch einmal.",
+    "successNotice": "Ihr Konto ist bereit. Melden Sie sich an, um fortzufahren."
+  },
+  "notifications": {
+    "title": "Scan-Benachrichtigungen für Gruppen",
+    "description": "Gruppen, die Sie leiten. Wählen Sie, bei welchen Scan-Ereignissen Sie eine E-Mail erhalten.",
+    "enabled": "Aktiviert",
+    "disabled": "Deaktiviert",
+    "loadError": "Ihre Gruppenbenachrichtigungseinstellungen konnten nicht geladen werden.",
+    "retry": "Erneut versuchen",
+    "saveError": "Diese Einstellung konnte nicht gespeichert werden.",
+    "types": {
+      "scan_created": "Scan erstellt",
+      "scan_submitted": "Scan eingereicht",
+      "scan_reviewed": "Scan überprüft",
+      "scan_failed": "Scan fehlgeschlagen"
+    }
+  },
+  "deleteAccount": {
+    "trigger": "Konto löschen",
+    "cardDescription": "Dies können Sie selbst nicht rückgängig machen, und es gibt keinen anderen Weg zurück, sobald Sie bestätigen.",
+    "title": "Konto löschen?",
+    "warning": "Dies kann nicht rückgängig gemacht werden. Ihr Konto wird deaktiviert und Ihre E-Mail-Adresse wird zur Wiederverwendung freigegeben — Ihre Scans, Überprüfungen und Gruppenmitgliedschaften werden jedoch nicht entfernt und bleiben erhalten.",
+    "confirmLabel": "Geben Sie Ihre E-Mail-Adresse ein, um zu bestätigen: {{email}}",
+    "error": "Ihr Konto konnte nicht gelöscht werden.",
+    "pending": "Konto wird gelöscht…",
+    "confirm": "Konto löschen",
+    "successNotice": "Ihr Konto wurde gelöscht."
+  },
+  "retired": {
+    "title": "Dieser Teil des alten Dashboards wurde eingestellt",
+    "goInstead": "Zur nächstgelegenen funktionierenden Seite",
+    "reason": {
+      "commerce": "Bestellungen, Abonnements und Zahlungsmethoden werden hier nicht mehr verkauft. Guthaben für Expertenbewertungen wird beim Einreichen einer Studie gekauft.",
+      "certificates": "Zertifikat-Downloads sind abgeschaltet, während der Zertifikatsdienst gewartet wird. Ihr Kursfortschritt bleibt erhalten.",
+      "fellowship": "Die Fellowship-Seiten wurden eingefroren und ihr Terminplanungssystem wurde ersetzt. Fragen Sie Ihre Programmleitung nach der aktuellen Regelung.",
+      "rapid-review": "Die Rapid-Review-Challenges waren ein separates, eingebettetes Produkt und gehören nicht zu Sector.",
+      "referrals": "Empfehlungen wurden nie genutzt und sind entfernt worden.",
+      "resources": "Die Ressourcen-Seite war ein Platzhalter, der nie gefüllt wurde.",
+      "notifications": "Die Benachrichtigungsliste in der App wurde entfernt; alles Wichtige erreicht Sie per E-Mail.",
+      "registration": "Konten werden von Ihrer Organisation oder über eine Gruppeneinladung für Sie erstellt. Melden Sie sich mit den zugesandten Daten an.",
+      "switch-user": "Die Anmeldung als anderer Benutzer erfolgt über die interne Konsole, nicht von hier."
+    }
+  },
   "createScan": {
     "storageDegradedTitle": "Dieser Browser konnte deinen Fortschritt nicht speichern",
     "storageDegradedBody": "Bereits hochgeladene Dateien sind sicher gespeichert, aber dieser Entwurf übersteht das Schließen oder Neuladen dieses Tabs nicht. Lass ihn geöffnet, bis du absendest.",

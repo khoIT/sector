@@ -85,6 +85,170 @@
   "empty": {
     "loading": "Pag-load"
   },
+  "groups": {
+    "index": {
+      "title": "Mga Grupo",
+      "searchPlaceholder": "Maghanap ng mga grupo",
+      "columns": {
+        "name": "Grupo",
+        "type": "Uri",
+        "members": "Mga Miyembro",
+        "leaders": "Mga Pinuno",
+        "seats": "Puwesto",
+        "expires": "Mag-e-expire"
+      },
+      "type": {
+        "group": "Grupo",
+        "class": "Klase"
+      },
+      "seatsUsed": "{{used}} / {{total}}",
+      "unlimitedSeats": "Walang Limitasyon",
+      "empty": {
+        "title": "Wala pang mga grupo",
+        "description": "Ang mga grupong pinamumunuan mo, o lahat ng grupo kung mayroon kang buong access, ay lalabas dito."
+      },
+      "noMatch": {
+        "title": "Walang grupong tumutugma sa iyong paghahanap",
+        "description": "Walang pangalan ng grupo na tumutugma sa “{{keyword}}”."
+      },
+      "pagePastEnd": {
+        "title": "Walang laman sa pahinang ito",
+        "backToFirstPage": "Pumunta sa unang pahina"
+      },
+      "error": {
+        "title": "Hindi ma-load ang listahang ito",
+        "retry": "Subukan muli"
+      }
+    },
+    "members": {
+      "title": "Mga Miyembro",
+      "subtitle_one": "{{count}} miyembro",
+      "subtitle_other": "{{count}} na miyembro",
+      "backToGroups": "Lahat ng grupo",
+      "searchPlaceholder": "Maghanap ng mga miyembro",
+      "columns": {
+        "member": "Miyembro",
+        "role": "Papel",
+        "status": "Katayuan",
+        "joined": "Sumali noong",
+        "expires": "Mag-e-expire"
+      },
+      "role": {
+        "leader": "Pinuno",
+        "learner": "Mag-aaral"
+      },
+      "status": {
+        "active": "Aktibo",
+        "pending": "Naghihintay",
+        "inactive": "Hindi Aktibo",
+        "expired": "Nag-expire na"
+      },
+      "empty": {
+        "title": "Wala pang mga miyembro",
+        "description": "Mag-imbita ng isang tao upang simulan ang grupong ito."
+      },
+      "noMatch": {
+        "title": "Walang miyembrong tumutugma sa iyong paghahanap",
+        "description": "Walang pangalan o email na tumutugma sa “{{keyword}}”."
+      },
+      "error": {
+        "title": "Hindi ma-load ang listahang ito",
+        "retry": "Subukan muli"
+      }
+    }
+  },
+  "auth": {
+    "tagline": "Global Ultrasound Institute",
+    "signInTitle": "Mag-sign in",
+    "usernameOrEmailLabel": "Username o email",
+    "passwordLabel": "Password",
+    "signIn": "Mag-sign in",
+    "signingIn": "Nagsa-sign in…",
+    "forgotPasswordLink": "Nakalimutan ang password?",
+    "rateLimited": "Masyadong maraming pagtatangka sa pag-sign in. Maghintay ng ilang minuto at subukang muli.",
+    "networkError": "Hindi maabot ang server. Tumatakbo ba ang API sa :5001?"
+  },
+  "recovery": {
+    "forgotTitle": "Nakalimutan ang password?",
+    "forgotDescription": "Ipasok ang iyong email address at magpapadala kami sa iyo ng code upang i-reset ang iyong password.",
+    "emailLabel": "Email",
+    "sendCode": "Ipadala ang code",
+    "sending": "Ipinapadala…",
+    "backToLogin": "Bumalik sa Login",
+    "rateLimited": "Masyadong maraming pagtatangka. Maghintay ng ilang minuto at subukang muli.",
+    "networkError": "Hindi maabot ang server. Subukang muli sa ilang sandali.",
+    "sentTitle": "Suriin ang iyong email",
+    "sentDescription": "Kung mayroong account para sa address na ito, nakapadala na ng code.",
+    "codeLabel": "Verification code",
+    "verify": "I-verify ang code",
+    "verifying": "Nagve-verify…",
+    "invalidCode": "Ang code na iyon ay hindi wasto o nag-expire na.",
+    "resendCode": "Magpadala ng bagong code",
+    "resending": "Ipinapadala ang bagong code…",
+    "resendSent": "Paparating na ang bagong code.",
+    "missingFlow": "Simulan muli ang pag-reset ng password.",
+    "startOver": "Magsimula muli",
+    "resetTitle": "I-reset ang Password",
+    "resetDescription": "Pumili ng password na hindi bababa sa 8 na character.",
+    "newPasswordLabel": "Bagong Password",
+    "confirmPasswordLabel": "Kumpirmahin ang Bagong Password",
+    "resetButton": "I-reset ang Password",
+    "resetting": "Nire-reset…",
+    "resetError": "Ang iyong link sa pag-reset ay hindi wasto o nag-expire na. Magsimula muli upang makakuha ng bago.",
+    "successNotice": "Na-reset na ang iyong password. Mag-sign in gamit ang iyong bagong password."
+  },
+  "invitation": {
+    "title": "Inanyayahan ka na sumali sa isang grupo",
+    "description": "Kumpirmahin ang imbitasyon sa ibaba. Kung bago ang account na ito, ang password na itatakda mo dito ang magiging password mo sa pag-sign in.",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Kumpirmahin ang Password",
+    "confirmButton": "Kumpirmahin ang Imbitasyon",
+    "confirming": "Nagpapatunay…",
+    "missingToken": "Kulang ng token ang link ng imbitasyong ito. Hilingin sa iyong lider ng grupo na ipadala itong muli.",
+    "networkError": "Hindi maabot ang server. Subukang muli sa ilang sandali.",
+    "successNotice": "Handa na ang iyong account. Mag-sign in upang magpatuloy."
+  },
+  "notifications": {
+    "title": "Mga Abiso sa Scan ng Grupo",
+    "description": "Mga grupong pinamumunuan mo. Piliin kung aling mga scan event ang ipapadala sa iyong email.",
+    "enabled": "Pinagana",
+    "disabled": "Hindi pinagana",
+    "loadError": "Hindi na-load ang mga setting ng abiso ng iyong grupo.",
+    "retry": "Subukang muli",
+    "saveError": "Hindi na-save ang setting na ito.",
+    "types": {
+      "scan_created": "Nagawa ang Scan",
+      "scan_submitted": "Naisumite ang Scan",
+      "scan_reviewed": "Nasuri ang Scan",
+      "scan_failed": "Nabigo ang Scan"
+    }
+  },
+  "deleteAccount": {
+    "trigger": "Tanggalin ang Account",
+    "cardDescription": "Hindi mo ito maibabalik, at wala nang ibang pinto kapag kumpirmado mo na.",
+    "title": "Tanggalin ang iyong account?",
+    "warning": "Hindi na ito maibabalik. Nadi-deactivate ang iyong account at malalaya ang iyong email para muling magamit — ngunit ang iyong mga scan, review, at pagiging miyembro sa grupo ay hindi tinatanggal at nananatiling nakatala.",
+    "confirmLabel": "I-type ang iyong email upang kumpirmahin: {{email}}",
+    "error": "Hindi natanggal ang iyong account.",
+    "pending": "Tinatanggal ang account…",
+    "confirm": "Tanggalin ang Account",
+    "successNotice": "Natanggal na ang iyong account."
+  },
+  "retired": {
+    "title": "Inalis na ang bahaging ito ng dating dashboard",
+    "goInstead": "Pumunta sa pinakamalapit na gumagana",
+    "reason": {
+      "commerce": "Hindi na ibinebenta rito ang mga order, subscription at paraan ng pagbabayad. Binibili ang expert review credits kapag nagsumite ka ng study.",
+      "certificates": "Naka-off ang pag-download ng certificate habang minamantina ang certificate service. Nananatili ang iyong progreso sa kurso.",
+      "fellowship": "Na-freeze ang mga pahina ng fellowship at napalitan na ang scheduling backend nito. Magtanong sa iyong programme lead para sa kasalukuyang kaayusan.",
+      "rapid-review": "Ang mga Rapid Review challenge ay hiwalay na produkto na naka-embed sa frame at hindi bahagi ng Sector.",
+      "referrals": "Hindi kailanman ginamit ang referrals at inalis na.",
+      "resources": "Ang pahina ng resources ay placeholder na hindi napunan.",
+      "notifications": "Inalis ang listahan ng notification sa app; lahat ng mahalaga ay darating sa iyo sa email.",
+      "registration": "Ginagawa para sa iyo ang account ng iyong organisasyon o ng imbitasyon ng grupo. Mag-sign in gamit ang mga detalyeng ipinadala sa iyo.",
+      "switch-user": "Ang pag-sign in bilang ibang user ay ginagawa mula sa internal console, hindi mula rito."
+    }
+  },
   "createScan": {
     "storageDegradedTitle": "Hindi na-save ng browser na ito ang iyong progreso",
     "storageDegradedBody": "Ligtas sa storage ang mga na-upload nang file, pero hindi mabubuhay ang draft na ito kapag isinara o ni-reload ang tab. Panatilihin itong bukas hanggang sa mag-submit ka.",

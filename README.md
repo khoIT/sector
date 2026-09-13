@@ -116,6 +116,21 @@ Note: `/api/login` and `/api/me` share a **20 requests / 15 minutes per IP** lim
 Repeated sign-ins while testing will start returning 429; the response's
 `RateLimit-Reset` header says how many seconds remain.
 
+### One page load, before anything merges
+
+The suites run in a node environment with no DOM, so nothing in them ever
+renders. A slice can pass lint, typecheck, every test, the build and the
+fidelity replay and still be dead on screen. Open the routes:
+
+```bash
+node scripts/check/cold-load-sweep.mjs "$SECTOR_MIRROR_JWT_SECRET" <fixture-dir>
+```
+
+Each route gets a fresh browser context, because the bug this exists to catch
+was invisible on a second visit with a warm query cache. The fixture directory
+holds `sweep-ids.json` (a user id per role) and `sweep-routes.json` (the paths
+and which role opens each).
+
 ### The production mirror, and proving the schemas against it
 
 The dumps beside this repo hold every production content and scan collection.
@@ -178,6 +193,23 @@ SECTOR_TEST_PASSWORD='<the same>'       pnpm tsx scripts/data/seed-test-accounts
 | `leader@sector.test`   | group_leader  | leads the same group as the demo leader   | leads the largest production queue |
 | `reviewer@sector.test` | scan_reviewer | leads the same group as the demo reviewer | leads the largest production queue |
 | `admin@sector.test`    | administrator | `full-access`                             | `full-access`                      |
+
+The learner is also enrolled in every course that has a published version, 115
+of them on the mirror, because the dumps carry no enrolments and a learner with
+more than a hundred is the case My Courses has to get right.
+
+`scripts/data/seed-course-progress.ts` then gives that learner real progress by
+driving the API rather than by writing documents, so the records are shaped the
+way the version pinning and recalculation shape them:
+
+```bash
+pnpm tsx scripts/data/seed-course-progress.ts        # needs the mirror API on :5002
+```
+
+It leaves a spread the surfaces can be judged against — one course untouched,
+four part way, one finished — and a course only reaches 100% because its
+quizzes are answered question by question, which is the one thing an ordinary
+track call cannot do.
 
 `--remove` takes them out again. Keep the password in `.env.local` (gitignored)
 so the route replay can find it: `pnpm fidelity` also walks every list view

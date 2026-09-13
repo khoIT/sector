@@ -32,8 +32,9 @@ export function formatReplayReport(results: ReplayResult[]): string {
     `${'entry'.padEnd(width)}  ${'total'.padStart(7)}  ${'parsed'.padStart(7)}     rate     time`,
   );
   for (const result of results) {
+    const skipped = result.skipped ? `  (${result.skipped} the route would drop)` : '';
     lines.push(
-      `${result.name.padEnd(width)}  ${String(result.total).padStart(7)}  ${String(result.parsed).padStart(7)}  ${rate(result)}  ${(result.durationMs / 1000).toFixed(1).padStart(6)}s`,
+      `${result.name.padEnd(width)}  ${String(result.total).padStart(7)}  ${String(result.parsed).padStart(7)}  ${rate(result)}  ${(result.durationMs / 1000).toFixed(1).padStart(6)}s${skipped}`,
     );
   }
 

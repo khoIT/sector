@@ -1,6 +1,4 @@
-import { GraduationCap, ListChecks, Settings2, type LucideIcon } from 'lucide-react';
-
-import { SCAN_VAULT_PERMISSION } from '@/features/scan-list/scan-list-views';
+import { GraduationCap, ListChecks, type LucideIcon } from 'lucide-react';
 
 /**
  * Sections that have a place in the rail and a URL, and nothing behind them
@@ -22,7 +20,7 @@ import { SCAN_VAULT_PERMISSION } from '@/features/scan-list/scan-list-views';
  * the real page under the same path, and the rail follows.
  */
 
-export type UnbuiltSurfaceId = 'courses' | 'question-banks' | 'group-administration';
+export type UnbuiltSurfaceId = 'courses' | 'question-banks';
 
 export type UnbuiltSurface = {
   /** Absolute URL, for links; the router mounts it relative. */
@@ -49,23 +47,5 @@ export const UNBUILT_SURFACES: Readonly<Record<UnbuiltSurfaceId, UnbuiltSurface>
     permission: null,
     labelKey: 'nav.questionBanks',
     icon: ListChecks,
-  },
-  'group-administration': {
-    path: '/administer/groups',
-    // BORROWED, and only until there is something real behind this route.
-    // The seeded roles carry no `manage:group` string — checked against
-    // POST /api/login for all four demo accounts — so gating on one would hide
-    // the entry from everybody, including the people it is for, and the
-    // widened nav model would go unexercised by the running app. What marks a
-    // group leader in this data is the group queue, so that is what is read
-    // here — by reference, never as a second copy of the literal, because the
-    // scan permissions have exactly one home and a rename there has to reach
-    // every reader. Give group administration its own permission before
-    // putting anything behind this route: the gate is right about WHO today
-    // and wrong about WHY, which stops being harmless the moment the page
-    // shows group data.
-    permission: SCAN_VAULT_PERMISSION.pending,
-    labelKey: 'nav.groupAdministration',
-    icon: Settings2,
   },
 };

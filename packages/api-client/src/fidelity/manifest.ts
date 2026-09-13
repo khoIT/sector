@@ -8,7 +8,10 @@ import {
   organizationSchema,
   scanTypeSummarySchema,
 } from '../schemas/create-scan-lookups';
+import { groupSchema } from '../schemas/group';
 import { groupFilterOptionSchema } from '../schemas/group-filter';
+import { groupMemberSchema } from '../schemas/group-member';
+import { groupWithNotificationPreferenceSchema } from '../schemas/group-notification-preferences';
 import {
   scanFindingSchema,
   scanNoteSchema,
@@ -217,6 +220,75 @@ export const REPLAY_ENTRIES: readonly ReplayEntry[] = [
     project: (group) => ({ id: String(group._id), name: group.name }),
   },
   {
+    name: 'groups → GET /api/groups item',
+    collection: 'groups',
+    schema: groupSchema,
+    proves: ['groupSchema', 'groupTypeSchema'],
+    prefetch: async (batch, { refs }) => {
+      await refs.loadAll('groups');
+      const ids = batch.map((group) => group._id);
+      // The three counts on a group are Mongoose count-virtuals over the
+      // memberships and the group courses that are not soft-deleted.
+      await Promise.all([
+        refs.prefetchChildren('groupmembers', 'group', ids),
+        refs.prefetchChildren('groupcourses', 'group', ids),
+      ]);
+    },
+    project: (group, { refs }) => {
+      const parent = refs.get('groups', group.parent);
+      const members = refs.children('groupmembers', 'group', group._id);
+      return {
+        ...(toWire(group) as Record<string, unknown>),
+        parent: parent ? { id: String(parent._id), name: parent.name, slug: parent.slug } : null,
+        leaderCount: members.filter((member) => member.role === 'leader').length,
+        learnerCount: members.filter((member) => member.role === 'learner').length,
+        courseCount: refs.children('groupcourses', 'group', group._id).length,
+      };
+    },
+  },
+  {
+    name: 'groupmembers → GET /api/group-members item',
+    collection: 'groupmembers',
+    schema: groupMemberSchema,
+    proves: ['groupMemberSchema', 'groupMemberRoleSchema', 'groupMemberStatusSchema'],
+    prefetch: async (_batch, { refs }) => refs.loadAll('users'),
+    // The members aggregation `$unwind`s the joined user, so a membership whose
+    // user document is gone never reaches the wire. The mirror's users
+    // collection holds scan owners and a handful of accounts, not every
+    // member, so here that is most rows — counted, not parsed.
+    include: (member, { refs }) => refs.get('users', member.user) !== null,
+    project: (member, { refs }) => ({
+      ...(toWire(member) as Record<string, unknown>),
+      user: populatedUser(refs, member.user),
+    }),
+  },
+  {
+    name: 'groupnotifications → GET /api/group-notifications item',
+    collection: 'groupnotifications',
+    schema: groupWithNotificationPreferenceSchema,
+    proves: [
+      'groupWithNotificationPreferenceSchema',
+      'groupNotificationPreferenceListSchema',
+      'notificationTypeSchema',
+    ],
+    prefetch: async (_batch, { refs }) => refs.loadAll('groups'),
+    // The route lists the groups a leader leads and decorates each with its
+    // preference; a preference whose group is gone decorates nothing.
+    include: (preference, { refs }) => refs.get('groups', preference.group) !== null,
+    project: (preference, { refs }) => {
+      const group = refs.get('groups', preference.group) as Document;
+      // The controller spreads `group.toObject()` and adds two fields; it
+      // reads the types only off an ENABLED preference (the lookup filters on
+      // emailNotifications), so a disabled one arrives with an empty list.
+      const enabled = preference.emailNotifications === true;
+      return {
+        ...(toWire(group) as Record<string, unknown>),
+        notificationsEnabled: enabled,
+        notificationTypes: enabled ? toWire(preference.notificationTypes ?? []) : [],
+      };
+    },
+  },
+  {
     name: 'scantypes → scan.scanType',
     collection: 'scantypes',
     schema: scanTypeRefSchema,
@@ -383,6 +455,18 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   userLogEntrySchema: 'the userlogs collection is in no dump',
   createUserLogsResponseSchema: 'the userlogs collection is in no dump',
   scanFormFieldPayloadSchema: 'request body (form answers as written)',
+  forgotPasswordPayloadSchema: 'request body of POST /api/forgot-password/send-otp',
+  forgotPasswordResultSchema: 'a step token minted per request',
+  verifyForgotPasswordOtpPayloadSchema: 'request body of POST /api/forgot-password/verify-otp',
+  verifyForgotPasswordOtpResultSchema: 'a step token minted per request',
+  resetPasswordPayloadSchema: 'request body of POST /api/forgot-password/reset',
+  confirmGroupInvitationPayloadSchema: 'request body of POST /api/group-members/confirm-invitation',
+  confirmGroupInvitationResultSchema:
+    'three ids echoed back by the confirmation; the membership itself is proved by the groupmembers entry',
+  updateGroupNotificationPreferencePayloadSchema:
+    'request body of PUT /api/group-notifications/:groupId',
+  deleteAccountPayloadSchema: 'request body of DELETE /api/account/delete',
+
   scanTagPayloadSchema: 'request body of POST/DELETE /api/scan/:id/tags',
   scanTagsResponseSchema:
     'response of GET /api/scan/:id/tags — a scan’s tags array, already proved by the scans entry via scanSchema.tags',

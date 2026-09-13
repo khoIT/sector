@@ -21,6 +21,11 @@ import { assertLocalMirrorUri } from '../../packages/api-client/src/fidelity/mir
  * production-scale account the plan asks for: a queue of thousands, not two.
  * Pass `--group <id>` to choose the group yourself.
  *
+ * The learner is enrolled in EVERY course that has a published version — 170
+ * or so on the mirror — because the dumps hold no enrolments at all and the
+ * course surfaces have a case to prove: a learner with more than a hundred
+ * enrolments must still find the hundred-and-first. Pass `--no-enrol` to skip.
+ *
  * Idempotent: re-running updates the password and memberships in place.
  * `--remove` deletes the four accounts and everything this script created for
  * them. Nothing here can reach the production cluster: the URI must be local.
@@ -80,6 +85,7 @@ const uri = arg('--uri', 'mongodb://localhost:27017/?directConnection=true') as 
 const dbName = arg('--db', 'gusi_prod_mirror') as string;
 const remove = process.argv.includes('--remove');
 const chosenGroup = arg('--group');
+const enrol = !process.argv.includes('--no-enrol');
 
 assertLocalMirrorUri(uri);
 if (dbName === 'gusi' || dbName === 'gusi_test') {
@@ -98,6 +104,51 @@ async function largestQueueGroup(db: Db): Promise<ObjectId | null> {
     ])
     .toArray();
   return top?._id ?? null;
+}
+
+/**
+ * Enrol a user in every course that has a published version, pinned to that
+ * version the way the API's own enrolment writes it (courseMetaVersion and
+ * its number), so the learner routes resolve the same structure the API would.
+ */
+async function enrolInPublishedCourses(db: Db, userId: ObjectId, now: Date): Promise<number> {
+  const versions = await db
+    .collection('v2coursemetaversions')
+    .aggregate<{ _id: ObjectId; versionId: ObjectId; version: number }>([
+      { $match: { status: 'published', deletedAt: null } },
+      { $sort: { version: -1 } },
+      {
+        $group: {
+          _id: '$courseId',
+          versionId: { $first: '$_id' },
+          version: { $first: '$version' },
+        },
+      },
+    ])
+    .toArray();
+
+  let enrolled = 0;
+  for (const entry of versions) {
+    const course = await db.collection('v2courses').findOne({ _id: entry._id, deletedAt: null });
+    if (!course) continue;
+    await db.collection('usercourses').updateOne(
+      { user: userId, course: entry._id },
+      {
+        $set: {
+          courseMetaVersion: entry.versionId,
+          courseMetaVersionNumber: entry.version,
+          status: 'active',
+          expiresAt: null,
+          deletedAt: null,
+          updatedAt: now,
+        },
+        $setOnInsert: { enrolledAt: now, metadata: null, createdAt: now },
+      },
+      { upsert: true },
+    );
+    enrolled += 1;
+  }
+  return enrolled;
 }
 
 async function seed(db: Db, password: string): Promise<void> {
@@ -189,8 +240,11 @@ async function seed(db: Db, password: string): Promise<void> {
       }
     }
 
+    const courses =
+      enrol && account.role === 'subscriber' ? await enrolInPublishedCourses(db, userId, now) : 0;
+
     process.stdout.write(
-      `${account.email.padEnd(24)} ${account.role.padEnd(14)} ${String(userId)}  memberships ${groups}\n`,
+      `${account.email.padEnd(24)} ${account.role.padEnd(14)} ${String(userId)}  memberships ${groups}  courses ${courses}\n`,
     );
   }
 }
@@ -206,9 +260,11 @@ async function unseed(db: Db): Promise<void> {
   const notifications = await db
     .collection('groupnotifications')
     .deleteMany({ user: { $in: ids } });
+  const enrolments = await db.collection('usercourses').deleteMany({ user: { $in: ids } });
+  const progress = await db.collection('usercourseprogresses').deleteMany({ user: { $in: ids } });
   const removed = await db.collection('users').deleteMany({ _id: { $in: ids } });
   process.stdout.write(
-    `removed ${removed.deletedCount} accounts, ${members.deletedCount} memberships, ${notifications.deletedCount} notification preferences\n`,
+    `removed ${removed.deletedCount} accounts, ${members.deletedCount} memberships, ${notifications.deletedCount} notification preferences, ${enrolments.deletedCount} enrolments, ${progress.deletedCount} progress records\n`,
   );
 }
 

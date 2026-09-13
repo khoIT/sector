@@ -1,11 +1,16 @@
 import { createBrowserRouter } from 'react-router-dom';
 
+import { ForgotPasswordPage } from '@/auth/forgot-password-page';
+import { InvitationLandingPage } from '@/auth/invitation-landing-page';
 import { LoginPage } from '@/auth/login-page';
 import { RequireAuth } from '@/auth/require-auth';
+import { ResetPasswordPage } from '@/auth/reset-password-page';
+import { ResetSentPage } from '@/auth/reset-sent-page';
 import { featureRoutes } from '@/routes/feature-routes';
 import { AppShell } from '@/shell/app-shell';
 
 import { LegacyRedirect } from './legacy-redirect';
+import { LEGACY_ROOTS } from './legacy-route-map';
 import { NotFoundPage } from './not-found-page';
 import { RouteErrorPage } from './route-error-page';
 import { scanVaultRoutes } from './scan-vault-routes';
@@ -14,12 +19,18 @@ import { VaultIndexRedirect } from './vault-index-redirect';
 /**
  * The route tree.
  *
- *   /login                      public
+ *   /login                                    public
+ *   /forgot-password                          public — password recovery, step 1
+ *   /forgot-password/verify                   public — step 2
+ *   /forgot-password/reset                    public — step 3
+ *   /group-invitation-confirmation            public — the invitation email's link
  *   <RequireAuth>               redirects to /login?from=<path> when signed out
  *     /  <AppShell>             sidebar + topbar frame, content in <Outlet/>
  *        index                  forwards to the first permitted tab
  *        ...scanVaultRoutes     the four tabs, each behind its permission
  *        ...featureRoutes       everything else features register
+ *        /dashboard/*, /register/*, /certificates/*, /store-listing/*, /switch-user
+ *                               every legacy URL, forwarded or explained
  *        *                      404, inside the shell
  *
  * There are two mounting points and they are separate on purpose:
@@ -29,6 +40,9 @@ import { VaultIndexRedirect } from './vault-index-redirect';
  *   - `featureRoutes` (routes/feature-routes.tsx) is where every other feature
  *     surface registers — scan detail, upload, review.
  * Keeping them apart means parallel edits land in different files.
+ *
+ * The five public routes above sit outside `<RequireAuth>` for the same
+ * reason `/login` does: a visitor with no session must be able to reach them.
  *
  * The catch-all lives INSIDE the shell, so an unknown URL from a signed-out
  * visitor goes through RequireAuth to /login (and back afterwards) instead of
@@ -44,6 +58,26 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
     errorElement: <RouteErrorPage />,
   },
   {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+    errorElement: <RouteErrorPage />,
+  },
+  {
+    path: '/forgot-password/verify',
+    element: <ResetSentPage />,
+    errorElement: <RouteErrorPage />,
+  },
+  {
+    path: '/forgot-password/reset',
+    element: <ResetPasswordPage />,
+    errorElement: <RouteErrorPage />,
+  },
+  {
+    path: '/group-invitation-confirmation',
+    element: <InvitationLandingPage />,
+    errorElement: <RouteErrorPage />,
+  },
+  {
     element: <RequireAuth />,
     errorElement: <RouteErrorPage />,
     children: [
@@ -54,9 +88,12 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
           { index: true, element: <VaultIndexRedirect /> },
           ...scanVaultRoutes,
           ...featureRoutes,
-          // The API writes legacy dashboard paths into every scan
-          // notification, so those URLs have to resolve here.
-          { path: 'dashboard/*', element: <LegacyRedirect /> },
+          // Every URL the dashboard served resolves here — to the surface
+          // that took over, or to a page that says the surface was retired.
+          // The API writes `/dashboard/scans/...` into every scan notification,
+          // and bookmarks keep the rest (app/legacy-route-map.ts).
+          ...LEGACY_ROOTS.map((root) => ({ path: `${root}/*`, element: <LegacyRedirect /> })),
+          ...LEGACY_ROOTS.map((root) => ({ path: root, element: <LegacyRedirect /> })),
           { path: '*', element: <NotFoundPage /> },
         ],
       },

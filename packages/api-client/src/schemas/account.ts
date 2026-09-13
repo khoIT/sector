@@ -85,3 +85,15 @@ export const accountPhotoResultSchema = z.object({
 });
 
 export type AccountPhotoResult = z.infer<typeof accountPhotoResultSchema>;
+
+/**
+ * `DELETE /api/account/delete` body. The server checks `email` against the
+ * SIGNED-IN account's own email server-side and answers 400 "Email not
+ * matched" on a mismatch — the typed confirmation the dialog asks for is
+ * enforced twice, not just in the browser.
+ */
+export const deleteAccountPayloadSchema = z.object({
+  email: z.string().email().trim(),
+});
+
+export type DeleteAccountPayload = z.infer<typeof deleteAccountPayloadSchema>;

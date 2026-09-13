@@ -95,6 +95,7 @@ function finish(name: string, into: Tally, started: number): ReplayResult {
     collection: name,
     total: into.total,
     parsed: into.parsed,
+    skipped: 0,
     shapes: [...into.shapes.values()].sort((a, b) => b.count - a.count),
     durationMs: Date.now() - started,
   };

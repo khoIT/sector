@@ -85,6 +85,170 @@
   "empty": {
     "loading": "Chargement"
   },
+  "groups": {
+    "index": {
+      "title": "Groupes",
+      "searchPlaceholder": "Rechercher des groupes",
+      "columns": {
+        "name": "Groupe",
+        "type": "Type",
+        "members": "Membres",
+        "leaders": "Dirigeants",
+        "seats": "Places",
+        "expires": "Expire"
+      },
+      "type": {
+        "group": "Groupe",
+        "class": "Classe"
+      },
+      "seatsUsed": "{{used}} / {{total}}",
+      "unlimitedSeats": "Illimité",
+      "empty": {
+        "title": "Aucun groupe pour l’instant",
+        "description": "Les groupes que vous dirigez, ou tous les groupes avec un accès complet, s’affichent ici."
+      },
+      "noMatch": {
+        "title": "Aucun groupe ne correspond à votre recherche",
+        "description": "Aucun nom de groupe ne correspond à « {{keyword}} »."
+      },
+      "pagePastEnd": {
+        "title": "Rien sur cette page",
+        "backToFirstPage": "Aller à la première page"
+      },
+      "error": {
+        "title": "Impossible de charger cette liste",
+        "retry": "Réessayer"
+      }
+    },
+    "members": {
+      "title": "Membres",
+      "subtitle_one": "{{count}} membre",
+      "subtitle_other": "{{count}} membres",
+      "backToGroups": "Tous les groupes",
+      "searchPlaceholder": "Rechercher des membres",
+      "columns": {
+        "member": "Membre",
+        "role": "Rôle",
+        "status": "Statut",
+        "joined": "Rejoint le",
+        "expires": "Expire"
+      },
+      "role": {
+        "leader": "Dirigeant",
+        "learner": "Apprenant"
+      },
+      "status": {
+        "active": "Actif",
+        "pending": "En attente",
+        "inactive": "Inactif",
+        "expired": "Expiré"
+      },
+      "empty": {
+        "title": "Aucun membre pour l’instant",
+        "description": "Invitez quelqu’un pour démarrer ce groupe."
+      },
+      "noMatch": {
+        "title": "Aucun membre ne correspond à votre recherche",
+        "description": "Aucun nom ou e-mail ne correspond à « {{keyword}} »."
+      },
+      "error": {
+        "title": "Impossible de charger cette liste",
+        "retry": "Réessayer"
+      }
+    }
+  },
+  "auth": {
+    "tagline": "Global Ultrasound Institute",
+    "signInTitle": "Connectez-vous",
+    "usernameOrEmailLabel": "Nom d'utilisateur ou e-mail",
+    "passwordLabel": "Mot de passe",
+    "signIn": "Connectez-vous",
+    "signingIn": "Connexion en cours…",
+    "forgotPasswordLink": "Mot de passe oublié ?",
+    "rateLimited": "Trop de tentatives de connexion. Attendez quelques minutes et réessayez.",
+    "networkError": "Impossible de contacter le serveur. L'API est-elle bien lancée sur le port :5001 ?"
+  },
+  "recovery": {
+    "forgotTitle": "Mot de passe oublié ?",
+    "forgotDescription": "Saisissez votre adresse e-mail et nous vous enverrons un code pour réinitialiser votre mot de passe.",
+    "emailLabel": "Courrier électronique",
+    "sendCode": "Envoyer le code",
+    "sending": "Envoi en cours…",
+    "backToLogin": "Retour à la page de connexion",
+    "rateLimited": "Trop de tentatives. Attendez quelques minutes et réessayez.",
+    "networkError": "Impossible de contacter le serveur. Réessayez dans un instant.",
+    "sentTitle": "Consultez votre e-mail",
+    "sentDescription": "Si un compte existe pour cette adresse, un code a été envoyé.",
+    "codeLabel": "Code de vérification",
+    "verify": "Vérifier le code",
+    "verifying": "Vérification en cours…",
+    "invalidCode": "Ce code n'est pas valide ou a expiré.",
+    "resendCode": "Envoyer un nouveau code",
+    "resending": "Envoi d'un nouveau code…",
+    "resendSent": "Un nouveau code est en route.",
+    "missingFlow": "Recommencez la réinitialisation du mot de passe.",
+    "startOver": "Recommencer",
+    "resetTitle": "Réinitialiser le mot de passe",
+    "resetDescription": "Choisissez un mot de passe d'au moins 8 caractères.",
+    "newPasswordLabel": "Nouveau mot de passe",
+    "confirmPasswordLabel": "Confirmer le nouveau mot de passe",
+    "resetButton": "Réinitialiser le mot de passe",
+    "resetting": "Réinitialisation en cours…",
+    "resetError": "Votre lien de réinitialisation n'est pas valide ou a expiré. Recommencez pour en obtenir un nouveau.",
+    "successNotice": "Votre mot de passe a été réinitialisé. Connectez-vous avec votre nouveau mot de passe."
+  },
+  "invitation": {
+    "title": "Vous avez été invité à rejoindre un groupe",
+    "description": "Confirmez l'invitation ci-dessous. S'il s'agit d'un nouveau compte, le mot de passe que vous définissez ici devient votre mot de passe de connexion.",
+    "passwordLabel": "Mot de passe",
+    "confirmPasswordLabel": "Confirmer le mot de passe",
+    "confirmButton": "Confirmer l'invitation",
+    "confirming": "Confirmation en cours…",
+    "missingToken": "Ce lien d'invitation n'a pas de jeton. Demandez à votre chef de groupe de le renvoyer.",
+    "networkError": "Impossible de contacter le serveur. Réessayez dans un instant.",
+    "successNotice": "Votre compte est prêt. Connectez-vous pour continuer."
+  },
+  "notifications": {
+    "title": "Notifications de scan du groupe",
+    "description": "Groupes que vous dirigez. Choisissez quels événements de scan vous sont envoyés par e-mail.",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "loadError": "Les paramètres de notification de vos groupes n'ont pas pu être chargés.",
+    "retry": "Réessayer",
+    "saveError": "Ce paramètre n'a pas pu être enregistré.",
+    "types": {
+      "scan_created": "Scan créé",
+      "scan_submitted": "Scan soumis",
+      "scan_reviewed": "Scan examiné",
+      "scan_failed": "Échec du scan"
+    }
+  },
+  "deleteAccount": {
+    "trigger": "Supprimer le compte",
+    "cardDescription": "Vous ne pouvez pas annuler ceci vous-même, et il n'y a pas d'autre recours une fois que vous confirmez.",
+    "title": "Supprimer votre compte ?",
+    "warning": "Cette action est irréversible. Votre compte est désactivé et votre adresse e-mail est libérée pour être réutilisée — mais vos scans, avis et adhésions aux groupes ne sont pas supprimés et restent enregistrés.",
+    "confirmLabel": "Saisissez votre e-mail pour confirmer : {{email}}",
+    "error": "Votre compte n'a pas pu être supprimé.",
+    "pending": "Suppression du compte…",
+    "confirm": "Supprimer le compte",
+    "successNotice": "Votre compte a été supprimé."
+  },
+  "retired": {
+    "title": "Cette partie de l’ancien tableau de bord a été retirée",
+    "goInstead": "Aller vers ce qui fonctionne",
+    "reason": {
+      "commerce": "Les commandes, abonnements et moyens de paiement ne sont plus vendus ici. Les crédits de revue experte s’achètent lors de l’envoi d’une étude.",
+      "certificates": "Le téléchargement des certificats est désactivé pendant la maintenance du service. Votre progression dans les cours est conservée.",
+      "fellowship": "Les pages du fellowship ont été gelées et leur système de planification a été remplacé. Demandez à votre responsable de programme.",
+      "rapid-review": "Les défis Rapid Review étaient un produit distinct intégré dans un cadre et ne font pas partie de Sector.",
+      "referrals": "Les parrainages n’ont jamais été utilisés et ont été supprimés.",
+      "resources": "La page des ressources était un espace réservé jamais rempli.",
+      "notifications": "La liste des notifications dans l’application a été supprimée ; tout ce qui compte vous parvient par e-mail.",
+      "registration": "Votre organisation ou une invitation de groupe crée votre compte pour vous. Connectez-vous avec les identifiants reçus.",
+      "switch-user": "Se connecter en tant qu’un autre utilisateur se fait depuis la console interne, pas d’ici."
+    }
+  },
   "createScan": {
     "storageDegradedTitle": "Ce navigateur n'a pas pu enregistrer votre progression",
     "storageDegradedBody": "Les fichiers déjà envoyés sont en sécurité dans le stockage, mais ce brouillon ne survivra pas à la fermeture ou au rechargement de cet onglet. Laissez-le ouvert jusqu'à l'envoi.",

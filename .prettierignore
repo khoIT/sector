@@ -12,3 +12,9 @@ coverage/
 
 # Generated, and enormous.
 pnpm-lock.yaml
+
+# Agent memory, not source.
+.claude/agent-memory/
+
+# Generated from the legacy route map; a test asserts it byte for byte.
+docs/decommission-dashboard.md

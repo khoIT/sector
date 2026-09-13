@@ -1,6 +1,7 @@
 import type { AuthUser } from '@sector/api-client';
 import { describe, expect, it } from 'vitest';
 
+import { GROUP_ADMINISTRATION_PATH } from '@/features/groups/groups-links';
 import { SCAN_VAULT_PATH } from '@/features/scan-list/scan-list-views';
 import { UNBUILT_SURFACES } from '@/routes/unbuilt-surfaces';
 
@@ -36,6 +37,11 @@ const LEADER = userWithPermissions('leader', [
   'view:scan',
   'view:scan:pending',
   'view:scan:reviewed',
+  // The seeded group_leader role's actual group permissions (POST
+  // /api/login, local gusi_dev) — 'administer' now gates on the real
+  // read:group rather than a borrowed scan permission.
+  'view:group',
+  'read:group',
 ]);
 
 const REVIEWED_ONLY = userWithPermissions('reviewed-only', ['view:scan', 'view:scan:reviewed']);
@@ -80,9 +86,7 @@ describe('destinations that are not scan lists', () => {
 
   it('names the section in the topbar heading', () => {
     expect(shellTitleKeyFor(UNBUILT_SURFACES.courses.path)).toBe('nav.courses');
-    expect(shellTitleKeyFor(UNBUILT_SURFACES['group-administration'].path)).toBe(
-      'nav.groupAdministration',
-    );
+    expect(shellTitleKeyFor(GROUP_ADMINISTRATION_PATH)).toBe('nav.groupAdministration');
   });
 });
 

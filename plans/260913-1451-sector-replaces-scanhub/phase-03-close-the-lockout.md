@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: "Close the lockout"
-status: pending
+status: completed
 priority: P1
 effort: "7 days"
 dependencies: [1]
@@ -61,11 +61,14 @@ Alongside it, three account-level surfaces the new app cannot reach at all.
 
 ## Success criteria
 
-- [ ] A user who forgets a password recovers without anyone's help
-- [ ] An invited user activates from the email link
-- [ ] A group leader's notification settings read and write, per group
-- [ ] Account deletion works and says what it does
-- [ ] Zero hard-coded English on these surfaces
+- [x] A user who forgets a password recovers without anyone's help — verified end to end
+      in a browser against the mirror stack with the OTP read from Mailpit
+- [~] An invited user activates from the email link — page and call built and tested; a
+      real invitation token cannot be minted without inviting a real address
+- [x] A group leader's notification settings read and write, per group — verified
+- [~] Account deletion works and says what it does — built, endpoint-tested, copy true to
+      the soft delete; not exercised destructively
+- [x] Zero hard-coded English on these surfaces — parity test over 7 locales
 
 ## Risk / rollback
 
