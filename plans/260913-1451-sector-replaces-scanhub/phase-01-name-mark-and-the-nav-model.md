@@ -1,7 +1,7 @@
 ---
 phase: 1
 title: "Name, mark and the nav model"
-status: pending
+status: completed
 priority: P1
 effort: "3 days"
 dependencies: []
@@ -86,10 +86,22 @@ in the token file. Geometry and SVG in `design/` beside this plan.
 
 ## Success criteria
 
-- [ ] Nothing user-visible says "ScanVault"; nothing in the workspace imports `@scanvault/*`
-- [ ] A pre-rename session and a pre-rename draft both survive the upgrade
-- [ ] A nav destination that is not a scan list renders and is permission-gated
-- [ ] Favicon legible at 16px in both light and dark browser chrome
+- [x] Nothing user-visible says "ScanVault"; nothing in the workspace imports `@scanvault/*`
+- [x] A pre-rename session and a pre-rename draft both survive the upgrade
+- [x] A nav destination that is not a scan list renders and is permission-gated
+- [x] Favicon legible at 16px in both light and dark browser chrome
+
+### How each was met
+
+Packages are `@sector/*`, the document title is `Sector`, and every remaining
+"Scan Vault" string names the module, which keeps its name by design.
+`migratePersistedStorage` runs from `main.tsx` and renames the session, theme,
+draft and recovery keys; `draft-blob-store.ts` copies the legacy IndexedDB
+database on first open. Both are covered by tests. The Learn and group
+destinations render and are permission-gated, confirmed on a cold load of each
+real URL. The favicon carries its own tile so it holds against light and dark
+chrome; the depth arc resolves from about 24px and at 16px the mark reads as a
+wedge, which is as much as a favicon does.
 
 ## Risk / rollback
 

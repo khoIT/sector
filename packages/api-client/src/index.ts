@@ -504,3 +504,157 @@ export {
   useQuestionBankList,
   useQuestionBankProgress,
 } from './react/use-question-banks';
+
+// ─── group administration (groups index + members surface) ──────────────────
+export {
+  GROUP_ADMIN_BYPASS_PERMISSIONS,
+  GROUP_TYPES,
+  groupSchema,
+  groupTypeSchema,
+  type Group,
+  type GroupTypeValue,
+} from './schemas/group';
+
+export {
+  GROUP_MEMBER_ROLES,
+  GROUP_MEMBER_STATUSES,
+  groupMemberRoleSchema,
+  groupMemberSchema,
+  groupMemberStatusSchema,
+  type GroupMember,
+  type GroupMemberRoleValue,
+  type GroupMemberStatusValue,
+} from './schemas/group-member';
+
+export { getAllGroups, getLedGroups, type GroupListQuery } from './endpoints/group';
+
+export {
+  getAnyGroupMembers,
+  getLedGroupMembers,
+  type GroupMemberListQuery,
+} from './endpoints/group-member';
+
+export { useGroups, type UseGroupsOptions } from './react/use-groups';
+export { useGroupMembers, type UseGroupMembersOptions } from './react/use-group-members';
+
+// ─── password recovery, group invitations, group notification preferences,
+// account deletion ─────────────────────────────────────────────────────────
+export {
+  forgotPasswordPayloadSchema,
+  forgotPasswordResultSchema,
+  resetPasswordPayloadSchema,
+  verifyForgotPasswordOtpPayloadSchema,
+  verifyForgotPasswordOtpResultSchema,
+  type ForgotPasswordPayload,
+  type ForgotPasswordResult,
+  type ResetPasswordPayload,
+  type VerifyForgotPasswordOtpPayload,
+  type VerifyForgotPasswordOtpResult,
+} from './schemas/password-recovery';
+
+export {
+  resetPassword,
+  sendPasswordResetOtp,
+  verifyPasswordResetOtp,
+} from './endpoints/password-reset';
+
+export {
+  useResetPasswordMutation,
+  useSendPasswordResetOtpMutation,
+  useVerifyPasswordResetOtpMutation,
+} from './react/use-password-reset';
+
+export {
+  confirmGroupInvitationPayloadSchema,
+  confirmGroupInvitationResultSchema,
+  type ConfirmGroupInvitationPayload,
+  type ConfirmGroupInvitationResult,
+} from './schemas/invitation';
+
+export { confirmGroupInvitation } from './endpoints/invitation';
+export { useConfirmGroupInvitationMutation } from './react/use-invitation';
+
+export {
+  groupNotificationPreferenceListSchema,
+  groupWithNotificationPreferenceSchema,
+  notificationTypeSchema,
+  updateGroupNotificationPreferencePayloadSchema,
+  NOTIFICATION_TYPES,
+  type GroupWithNotificationPreference,
+  type NotificationType,
+  type UpdateGroupNotificationPreferencePayload,
+} from './schemas/group-notification-preferences';
+
+export {
+  getGroupNotificationPreferences,
+  updateGroupNotificationPreference,
+} from './endpoints/group-notification-preferences';
+
+export {
+  useGroupNotificationPreferences,
+  useUpdateGroupNotificationPreferenceMutation,
+} from './react/use-group-notification-preferences';
+
+export { deleteAccountPayloadSchema, type DeleteAccountPayload } from './schemas/account';
+export { deleteAccount } from './endpoints/account-delete';
+export { useDeleteAccountMutation } from './react/use-account';
+
+export { notificationPreferenceKeys } from './query-keys';
+
+// ─── courses: My Courses + the resolved course outline ────────────────────
+export {
+  ASSIGNMENT_TYPES,
+  COURSE_PROGRESS_STATUSES,
+  ENROLLMENT_STATUSES,
+  EXPIRATION_TYPES,
+  assignmentTypeSchema,
+  courseProgressStatusSchema,
+  enrollmentStatusSchema,
+  expirationTypeSchema,
+  learnerCourseAuthorSchema,
+  learnerCourseGroupSchema,
+  learnerCourseListItemSchema,
+  learnerCourseMetaVersionSummarySchema,
+  learnerCourseProgressSchema,
+  learnerCourseSummarySchema,
+  learnerCoursesPageSchema,
+  type AssignmentType,
+  type CourseProgressStatus,
+  type EnrollmentStatus,
+  type ExpirationType,
+  type LearnerCourseAuthor,
+  type LearnerCourseGroup,
+  type LearnerCourseListItem,
+  type LearnerCourseMetaVersionSummary,
+  type LearnerCourseProgress,
+  type LearnerCourseSummary,
+  type LearnerCoursesPage,
+} from './schemas/course';
+
+export {
+  COURSE_OUTLINE_BLOCKED_REASONS,
+  COURSE_OUTLINE_ITEM_KINDS,
+  courseOutlineBlockedReasonSchema,
+  courseOutlineItemKindSchema,
+  courseOutlineItemSchema,
+  courseOutlineQuizSummarySchema,
+  courseOutlineResumeSchema,
+  courseOutlineSchema,
+  type CourseOutline,
+  type CourseOutlineBlockedReason,
+  type CourseOutlineItem,
+  type CourseOutlineItemKind,
+  type CourseOutlineQuizSummary,
+  type CourseOutlineResume,
+} from './schemas/course-outline';
+
+export {
+  getCourseOutline,
+  getLearnerCourses,
+  type CourseListStatusFilter,
+  type CoursesListQuery,
+} from './endpoints/course';
+
+export { useCourses, type UseCoursesOptions } from './react/use-courses';
+export { useCourseOutline, type UseCourseOutlineOptions } from './react/use-course-outline';
+export { courseKeys } from './query-keys';

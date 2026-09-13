@@ -1,6 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sector/ui';
+import { useTranslation } from 'react-i18next';
 
 import { CreateScanFlowSetting } from './create-scan-flow-setting';
+import { DeleteAccountDialog } from './delete-account-dialog';
+import { NotificationPreferences } from './notification-preferences';
 import { PasswordForm } from './password-form';
 import { ProfileIdentityForm } from './profile-identity-form';
 import { ProfilePhoto } from './profile-photo';
@@ -19,6 +22,8 @@ import { ProfilePhoto } from './profile-photo';
  * name, photo and password.
  */
 export function ProfilePage() {
+  const { t } = useTranslation();
+
   return (
     <section aria-labelledby="profile-heading" className="flex max-w-3xl flex-col gap-5">
       <h2 id="profile-heading" className="text-[17px] font-semibold tracking-tight text-ink">
@@ -58,6 +63,18 @@ export function ProfilePage() {
         </CardHeader>
         <CardContent>
           <PasswordForm />
+        </CardContent>
+      </Card>
+
+      <NotificationPreferences />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('deleteAccount.trigger')}</CardTitle>
+          <CardDescription>{t('deleteAccount.cardDescription')}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DeleteAccountDialog />
         </CardContent>
       </Card>
     </section>

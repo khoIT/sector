@@ -131,5 +131,253 @@
     "timeLabel": "Tiempo",
     "yourAnswer": "Tu respuesta",
     "yourAnswers": "Tus respuestas"
+  },
+  "groups": {
+    "index": {
+      "title": "Grupos",
+      "searchPlaceholder": "Buscar grupos",
+      "columns": {
+        "name": "Grupo",
+        "type": "Tipo",
+        "members": "Miembros",
+        "leaders": "Líderes",
+        "seats": "Plazas",
+        "expires": "Vence"
+      },
+      "type": {
+        "group": "Grupo",
+        "class": "Clase"
+      },
+      "seatsUsed": "{{used}} / {{total}}",
+      "unlimitedSeats": "Ilimitado",
+      "empty": {
+        "title": "Aún no hay grupos",
+        "description": "Los grupos que lideras, o todos los grupos si tienes acceso completo, aparecerán aquí."
+      },
+      "noMatch": {
+        "title": "Ningún grupo coincide con tu búsqueda",
+        "description": "Ningún nombre de grupo coincide con «{{keyword}}»."
+      },
+      "pagePastEnd": {
+        "title": "Nada en esta página",
+        "backToFirstPage": "Ir a la primera página"
+      },
+      "error": {
+        "title": "No se pudo cargar esta lista",
+        "retry": "Intentar de nuevo"
+      }
+    },
+    "members": {
+      "title": "Miembros",
+      "subtitle_one": "{{count}} miembro",
+      "subtitle_other": "{{count}} miembros",
+      "backToGroups": "Todos los grupos",
+      "searchPlaceholder": "Buscar miembros",
+      "columns": {
+        "member": "Miembro",
+        "role": "Rol",
+        "status": "Estado",
+        "joined": "Se unió",
+        "expires": "Vence"
+      },
+      "role": {
+        "leader": "Líder",
+        "learner": "Estudiante"
+      },
+      "status": {
+        "active": "Activo",
+        "pending": "Pendiente",
+        "inactive": "Inactivo",
+        "expired": "Caducado"
+      },
+      "empty": {
+        "title": "Aún no hay miembros",
+        "description": "Invita a alguien para comenzar con este grupo."
+      },
+      "noMatch": {
+        "title": "Ningún miembro coincide con tu búsqueda",
+        "description": "Ningún nombre o correo coincide con «{{keyword}}»."
+      },
+      "error": {
+        "title": "No se pudo cargar esta lista",
+        "retry": "Intentar de nuevo"
+      }
+    }
+  },
+  "auth": {
+    "tagline": "Global Ultrasound Institute",
+    "signInTitle": "Iniciar sesión",
+    "usernameOrEmailLabel": "Usuario o correo electrónico",
+    "passwordLabel": "Contraseña",
+    "signIn": "Iniciar sesión",
+    "signingIn": "Iniciando sesión…",
+    "forgotPasswordLink": "¿Ha olvidado la contraseña?",
+    "rateLimited": "Demasiados intentos de inicio de sesión. Espera unos minutos y vuelve a intentarlo.",
+    "networkError": "No se pudo conectar con el servidor. ¿Está la API ejecutándose en el puerto :5001?"
+  },
+  "recovery": {
+    "forgotTitle": "¿Ha olvidado la contraseña?",
+    "forgotDescription": "Introduce tu dirección de correo electrónico y te enviaremos un código para restablecer tu contraseña.",
+    "emailLabel": "Correo electrónico",
+    "sendCode": "Enviar código",
+    "sending": "Enviando…",
+    "backToLogin": "Volver al inicio de sesión",
+    "rateLimited": "Demasiados intentos. Espera unos minutos y vuelve a intentarlo.",
+    "networkError": "No se pudo conectar con el servidor. Vuelve a intentarlo en un momento.",
+    "sentTitle": "Revisa tu correo electrónico",
+    "sentDescription": "Si existe una cuenta para esta dirección, se ha enviado un código.",
+    "codeLabel": "Código de verificación",
+    "verify": "Verificar código",
+    "verifying": "Verificando…",
+    "invalidCode": "Ese código no es válido o ha caducado.",
+    "resendCode": "Enviar un nuevo código",
+    "resending": "Enviando un nuevo código…",
+    "resendSent": "Un nuevo código está en camino.",
+    "missingFlow": "Vuelve a iniciar el restablecimiento de contraseña.",
+    "startOver": "Empezar de nuevo",
+    "resetTitle": "Restablecer contraseña",
+    "resetDescription": "Elige una contraseña de al menos 8 caracteres.",
+    "newPasswordLabel": "Contraseña nueva",
+    "confirmPasswordLabel": "Confirme la nueva contraseña",
+    "resetButton": "Restablecer contraseña",
+    "resetting": "Restableciendo…",
+    "resetError": "Tu enlace de restablecimiento no es válido o ha caducado. Vuelve a empezar para obtener uno nuevo.",
+    "successNotice": "Tu contraseña se ha restablecido. Inicia sesión con tu nueva contraseña."
+  },
+  "invitation": {
+    "title": "Se le ha invitado a unirse a un grupo",
+    "description": "Confirma la invitación a continuación. Si se trata de una cuenta nueva, la contraseña que establezcas aquí será tu contraseña de acceso.",
+    "passwordLabel": "Contraseña",
+    "confirmPasswordLabel": "Confirmar contraseña",
+    "confirmButton": "Confirmar invitación",
+    "confirming": "Confirmando…",
+    "missingToken": "A este enlace de invitación le falta el token. Pide a tu líder de grupo que lo reenvíe.",
+    "networkError": "No se pudo conectar con el servidor. Vuelve a intentarlo en un momento.",
+    "successNotice": "Tu cuenta está lista. Inicia sesión para continuar."
+  },
+  "notifications": {
+    "title": "Notificaciones de escaneo de grupo",
+    "description": "Grupos que lideras. Elige qué eventos de escaneo te llegan por correo.",
+    "enabled": "Habilitado",
+    "disabled": "Desactivado",
+    "loadError": "No se pudieron cargar los ajustes de notificación de tus grupos.",
+    "retry": "Intentar de nuevo",
+    "saveError": "No se pudo guardar este ajuste.",
+    "types": {
+      "scan_created": "Escaneo creado",
+      "scan_submitted": "Escaneo enviado",
+      "scan_reviewed": "Escaneo revisado",
+      "scan_failed": "Escaneo fallido"
+    }
+  },
+  "deleteAccount": {
+    "trigger": "Eliminar cuenta",
+    "cardDescription": "Esto no se puede deshacer por tu cuenta, y no hay otra puerta una vez que confirmes.",
+    "title": "¿Eliminar tu cuenta?",
+    "warning": "Esto no se puede deshacer. Tu cuenta se desactiva y tu correo electrónico queda libre para reutilizarse, pero tus escaneos, revisiones y membresías de grupo no se eliminan y permanecen registrados.",
+    "confirmLabel": "Escribe tu correo electrónico para confirmar: {{email}}",
+    "error": "No se pudo eliminar tu cuenta.",
+    "pending": "Eliminando cuenta…",
+    "confirm": "Eliminar cuenta",
+    "successNotice": "Tu cuenta ha sido eliminada."
+  },
+  "retired": {
+    "title": "Esta parte del panel anterior se retiró",
+    "goInstead": "Ir a lo más cercano que funciona",
+    "reason": {
+      "commerce": "Los pedidos, suscripciones y métodos de pago ya no se venden aquí. Los créditos de revisión experta se compran al enviar un estudio.",
+      "certificates": "Las descargas de certificados están desactivadas mientras el servicio de certificados está en mantenimiento. Su progreso en los cursos se conserva.",
+      "fellowship": "Las páginas del fellowship se congelaron y su sistema de programación fue reemplazado. Consulte con el responsable de su programa.",
+      "rapid-review": "Los desafíos de Rapid Review eran un producto aparte incrustado en un marco y no forman parte de Sector.",
+      "referrals": "Las referencias nunca se usaron y se han eliminado.",
+      "resources": "La página de recursos era un marcador de posición que nunca se completó.",
+      "notifications": "La lista de notificaciones en la aplicación se eliminó; todo lo importante le llega por correo electrónico.",
+      "registration": "Su organización o una invitación de grupo crean la cuenta por usted. Inicie sesión con los datos que le enviaron.",
+      "switch-user": "Iniciar sesión como otro usuario se hace desde la consola interna, no desde aquí."
+    }
+  },
+  "courses": {
+    "index": {
+      "title": "Mis cursos",
+      "searchPlaceholder": "Buscar cursos",
+      "statusFilter": {
+        "label": "Estado",
+        "all": "Todos los estados",
+        "not_started": "No iniciado",
+        "in_progress": "En progreso",
+        "completed": "Completado",
+        "active": "Activo",
+        "paused": "Pausado",
+        "dropped": "Abandonado",
+        "expired": "Caducado"
+      },
+      "status": {
+        "not_started": "No iniciado",
+        "in_progress": "En progreso",
+        "completed": "Completado"
+      },
+      "action": {
+        "start": "Comenzar",
+        "resume": "Continuar",
+        "review": "Revisar"
+      },
+      "progressLabel": "{{percent}}% completado",
+      "empty": {
+        "title": "Aún no hay cursos",
+        "description": "Los cursos que se te asignen, de forma personal o a través de un grupo, aparecerán aquí."
+      },
+      "noMatch": {
+        "title": "Ningún curso coincide con tu búsqueda",
+        "description": "Ningún título de curso coincide con «{{keyword}}»."
+      },
+      "pagePastEnd": {
+        "title": "No hay nada en esta página",
+        "backToFirstPage": "Ir a la primera página"
+      },
+      "error": {
+        "title": "No se pudo cargar esta lista",
+        "retry": "Intentar de nuevo"
+      },
+      "expired": {
+        "title_one": "{{count}} inscripción caducada",
+        "title_other": "{{count}} inscripciones caducadas",
+        "description": "El acceso a estos ha terminado; renovar una asignación lo gestiona tu líder de grupo o administrador.",
+        "badge": "Caducado"
+      }
+    },
+    "outline": {
+      "title": "Esquema del curso",
+      "backToCourses": "Mis cursos",
+      "progress": "{{completed}}/{{total}} completado ({{percent}}%)",
+      "resume": {
+        "start": "Comenzar: {{title}}",
+        "resume": "Continuar: {{title}}",
+        "review": "Revisar: {{title}}"
+      },
+      "completedBanner": "Has completado este curso.",
+      "empty": {
+        "title": "Este curso aún no tiene contenido"
+      },
+      "error": {
+        "title": "No se pudo cargar este esquema",
+        "retry": "Intentar de nuevo"
+      },
+      "kind": {
+        "lesson": "Lección",
+        "topic": "Tema",
+        "quiz": "Cuestionario"
+      },
+      "itemStatus": {
+        "not_started": "No iniciado",
+        "in_progress": "En progreso",
+        "completed": "Completado"
+      },
+      "blocked": {
+        "quiz_has_no_questions": "Este cuestionario aún no tiene preguntas y no se puede abrir."
+      },
+      "quiz": {
+        "bestPercentage": "Mejor: {{percent}}%"
+      }
+    }
   }
 }

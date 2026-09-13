@@ -32,9 +32,30 @@ by lowercasing names and returns `id: null` when it guesses wrong; and the clien
   **775 lines** of re-filing.
 
 **Give the pathology document a real `scanTypeId` reference, serve the category bar
-from that relation, and delete the client whitelist.** Most of the cost is the backfill
-migration, not the code. Porting the gallery first and fixing the taxonomy later means
-porting the whitelist into Sector, where it will be just as invisible.
+from that relation, and delete the client whitelist.** Porting the gallery first and
+fixing the taxonomy later means porting the whitelist into Sector, where it will be just
+as invisible.
+
+**The backfill is far smaller than this phase assumed** (measured against the production
+mirror, 13 Sep 2026). Of 1,305 live gallery items, all published:
+
+| | |
+| --- | --- |
+| Map to a scan type by exact name, case-insensitive | **1,288** |
+| Do not map | **17** — `FAST/EFAST` ×2, `Rapid Reviews` ×15 |
+
+And the client whitelist drops exactly those same 17 rows, so it is currently hiding
+nothing the server could have resolved. Two decisions, not a migration project:
+`FAST/EFAST` is either `FAST` or the separate `eFAST` scan type, which a clinician
+should say; `Rapid Reviews` is the third-party product this plan retires, so its 15
+items have no scan type by design and want their own answer (drop, or a category that
+is not a scan type). Budget the backfill as an afternoon with one clinical question
+attached, not as the bulk of the phase.
+
+**The gallery needs no object storage.** All 1,305 items carry a Vimeo `videoUrl` and a
+`i.vimeocdn.com` thumbnail; **zero** carry an `imageUrl`. Only the category bar's icons
+come from S3, through the scan type's `imagePath`. So the grid, the dialog and the
+playback are all verifiable against the mirror with nothing seeded.
 
 Three more defects, cheap to not repeat: the default category comes from a *different
 endpoint* than the category bar, so a first visit can land on a category with no button

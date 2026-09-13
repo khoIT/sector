@@ -90,10 +90,28 @@ export const groupKeys = {
    *  is a different result set rather than a client-side view of one. */
   filterOptions: (keyword: string, page: number) =>
     ['get-group-filter-options', keyword, page] as const,
+  /** Prefix for every page of the group index, across both scoped endpoints. */
+  listRoot: () => ['get-groups'] as const,
+  list: (params: unknown) => ['get-groups', params] as const,
+  /** Prefix for every page of one group's member list. */
+  membersRoot: (groupId: string) => ['get-group-members', groupId] as const,
+  members: (groupId: string, params: unknown) => ['get-group-members', groupId, params] as const,
+} as const;
+
+export const courseKeys = {
+  /** Prefix for every page of My Courses, across every keyword/status/sort. */
+  listRoot: () => ['get-learner-courses'] as const,
+  list: (params: unknown) => ['get-learner-courses', params] as const,
+  outline: (courseId: string) => ['get-learner-course-outline', courseId] as const,
 } as const;
 
 export const authKeys = {
   session: () => ['auth-session'] as const,
+} as const;
+
+/** A leader's own led-groups, each carrying its scan-notification preference. */
+export const notificationPreferenceKeys = {
+  list: () => ['group-notification-preferences'] as const,
 } as const;
 
 /**
@@ -142,4 +160,10 @@ export const mutationKeys = {
   deleteSharedScan: () => ['delete-shared-scan'] as const,
   exportGroupUserScans: () => ['export-group-user-scans'] as const,
   exportGroupsUserScans: () => ['export-groups-user-scans'] as const,
+  sendPasswordResetOtp: () => ['send-password-reset-otp'] as const,
+  verifyPasswordResetOtp: () => ['verify-password-reset-otp'] as const,
+  resetPassword: () => ['reset-password'] as const,
+  confirmGroupInvitation: () => ['confirm-group-invitation'] as const,
+  updateGroupNotificationPreference: () => ['update-group-notification-preference'] as const,
+  deleteAccount: () => ['delete-account'] as const,
 } as const;

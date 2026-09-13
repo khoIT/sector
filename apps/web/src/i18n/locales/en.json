@@ -209,5 +209,253 @@
     "timeLabel": "Time",
     "yourAnswer": "Your answer",
     "yourAnswers": "Your answers"
+  },
+  "groups": {
+    "index": {
+      "title": "Groups",
+      "searchPlaceholder": "Search groups",
+      "columns": {
+        "name": "Group",
+        "type": "Type",
+        "members": "Members",
+        "leaders": "Leaders",
+        "seats": "Seats",
+        "expires": "Expires"
+      },
+      "type": {
+        "group": "Group",
+        "class": "Class"
+      },
+      "seatsUsed": "{{used}} / {{total}}",
+      "unlimitedSeats": "Unlimited",
+      "empty": {
+        "title": "No groups yet",
+        "description": "Groups you lead, or every group once you have full access, show up here."
+      },
+      "noMatch": {
+        "title": "No groups match your search",
+        "description": "No group name or slug matches “{{keyword}}”."
+      },
+      "pagePastEnd": {
+        "title": "Nothing on this page",
+        "backToFirstPage": "Go to first page"
+      },
+      "error": {
+        "title": "This list could not be loaded",
+        "retry": "Try again"
+      }
+    },
+    "members": {
+      "title": "Members",
+      "subtitle_one": "{{count}} member",
+      "subtitle_other": "{{count}} members",
+      "backToGroups": "All groups",
+      "searchPlaceholder": "Search members",
+      "columns": {
+        "member": "Member",
+        "role": "Role",
+        "status": "Status",
+        "joined": "Joined",
+        "expires": "Expires"
+      },
+      "role": {
+        "leader": "Leader",
+        "learner": "Learner"
+      },
+      "status": {
+        "active": "Active",
+        "pending": "Pending",
+        "inactive": "Inactive",
+        "expired": "Expired"
+      },
+      "empty": {
+        "title": "No members yet",
+        "description": "Invite someone to get this group started."
+      },
+      "noMatch": {
+        "title": "No members match your search",
+        "description": "No member name or email matches “{{keyword}}”."
+      },
+      "error": {
+        "title": "This list could not be loaded",
+        "retry": "Try again"
+      }
+    }
+  },
+  "auth": {
+    "tagline": "Global Ultrasound Institute",
+    "signInTitle": "Sign in",
+    "usernameOrEmailLabel": "Username or email",
+    "passwordLabel": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "forgotPasswordLink": "Forgot password?",
+    "rateLimited": "Too many sign-in attempts. Wait a few minutes and try again.",
+    "networkError": "Could not reach the server. Is the API running on :5001?"
+  },
+  "recovery": {
+    "forgotTitle": "Forgot password?",
+    "forgotDescription": "Enter your email address and we'll send you a code to reset your password.",
+    "emailLabel": "Email",
+    "sendCode": "Send code",
+    "sending": "Sending…",
+    "backToLogin": "Back to sign in",
+    "rateLimited": "Too many attempts. Wait a few minutes and try again.",
+    "networkError": "Could not reach the server. Try again in a moment.",
+    "sentTitle": "Check your email",
+    "sentDescription": "If an account exists for this address, a code has been sent.",
+    "codeLabel": "Verification code",
+    "verify": "Verify code",
+    "verifying": "Verifying…",
+    "invalidCode": "That code is not valid or has expired.",
+    "resendCode": "Send a new code",
+    "resending": "Sending a new code…",
+    "resendSent": "A new code is on its way.",
+    "missingFlow": "Start the password reset again.",
+    "startOver": "Start over",
+    "resetTitle": "Choose a new password",
+    "resetDescription": "Choose a password with at least 8 characters.",
+    "newPasswordLabel": "New password",
+    "confirmPasswordLabel": "Confirm new password",
+    "resetButton": "Reset password",
+    "resetting": "Resetting…",
+    "resetError": "Your reset link is invalid or has expired. Start again to get a new one.",
+    "successNotice": "Your password has been reset. Sign in with your new password."
+  },
+  "invitation": {
+    "title": "You have been invited to join a group",
+    "description": "Confirm the invitation below. If this is a new account, the password you set here becomes your sign-in password.",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm password",
+    "confirmButton": "Confirm invitation",
+    "confirming": "Confirming…",
+    "missingToken": "This invitation link is missing its token. Ask your group leader to resend it.",
+    "networkError": "Could not reach the server. Try again in a moment.",
+    "successNotice": "Your account is ready. Sign in to continue."
+  },
+  "notifications": {
+    "title": "Group scan notifications",
+    "description": "Groups you lead. Choose which scan events email you.",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "loadError": "Your group notification settings could not be loaded.",
+    "retry": "Try again",
+    "saveError": "This setting could not be saved.",
+    "types": {
+      "scan_created": "Scan created",
+      "scan_submitted": "Scan submitted",
+      "scan_reviewed": "Scan reviewed",
+      "scan_failed": "Scan failed"
+    }
+  },
+  "deleteAccount": {
+    "trigger": "Delete account",
+    "cardDescription": "This cannot be undone by you, and there is no other door once you confirm.",
+    "title": "Delete your account?",
+    "warning": "This cannot be undone. Your account is deactivated and your email is freed up for reuse — but your scans, reviews and group memberships are not removed and stay on record.",
+    "confirmLabel": "Type your email to confirm: {{email}}",
+    "error": "Your account could not be deleted.",
+    "pending": "Deleting…",
+    "confirm": "Delete account",
+    "successNotice": "Your account has been deleted."
+  },
+  "retired": {
+    "title": "This part of the old dashboard was retired",
+    "goInstead": "Go to the nearest thing that works",
+    "reason": {
+      "commerce": "Orders, subscriptions and payment methods are no longer sold here. Expert review credits are bought when you submit a study.",
+      "certificates": "Certificate downloads are switched off while the certificate service is under maintenance. Your course progress is kept.",
+      "fellowship": "The fellowship pages were frozen and their scheduling backend has been replaced. Ask your programme lead for the current arrangement.",
+      "rapid-review": "The Rapid Review challenges were a separate product embedded in a frame and are not part of Sector.",
+      "referrals": "Referrals were never used and have been removed.",
+      "resources": "The resources page was a placeholder that was never filled.",
+      "notifications": "The in-app notification list has been removed; everything that matters reaches you by email.",
+      "registration": "Accounts are created for you by your organisation or by a group invitation. Sign in with the details you were sent.",
+      "switch-user": "Signing in as another user is done from the internal console, not from here."
+    }
+  },
+  "courses": {
+    "index": {
+      "title": "My Courses",
+      "searchPlaceholder": "Search courses",
+      "statusFilter": {
+        "label": "Status",
+        "all": "All statuses",
+        "not_started": "Not started",
+        "in_progress": "In progress",
+        "completed": "Completed",
+        "active": "Active",
+        "paused": "Paused",
+        "dropped": "Dropped",
+        "expired": "Expired"
+      },
+      "status": {
+        "not_started": "Not started",
+        "in_progress": "In progress",
+        "completed": "Completed"
+      },
+      "action": {
+        "start": "Start",
+        "resume": "Resume",
+        "review": "Review"
+      },
+      "progressLabel": "{{percent}}% complete",
+      "empty": {
+        "title": "No courses yet",
+        "description": "Courses assigned to you, personally or through a group, show up here."
+      },
+      "noMatch": {
+        "title": "No courses match your search",
+        "description": "No course title matches “{{keyword}}”."
+      },
+      "pagePastEnd": {
+        "title": "Nothing on this page",
+        "backToFirstPage": "Go to first page"
+      },
+      "error": {
+        "title": "This list could not be loaded",
+        "retry": "Try again"
+      },
+      "expired": {
+        "title_one": "{{count}} expired enrolment",
+        "title_other": "{{count}} expired enrolments",
+        "description": "Access to these has ended; renewing an assignment is handled by your group leader or administrator.",
+        "badge": "Expired"
+      }
+    },
+    "outline": {
+      "title": "Course outline",
+      "backToCourses": "My Courses",
+      "progress": "{{completed}}/{{total}} completed ({{percent}}%)",
+      "resume": {
+        "start": "Start: {{title}}",
+        "resume": "Resume: {{title}}",
+        "review": "Review: {{title}}"
+      },
+      "completedBanner": "You have completed this course.",
+      "empty": {
+        "title": "This course has no content yet"
+      },
+      "error": {
+        "title": "This outline could not be loaded",
+        "retry": "Try again"
+      },
+      "kind": {
+        "lesson": "Lesson",
+        "topic": "Topic",
+        "quiz": "Quiz"
+      },
+      "itemStatus": {
+        "not_started": "Not started",
+        "in_progress": "In progress",
+        "completed": "Completed"
+      },
+      "blocked": {
+        "quiz_has_no_questions": "This quiz has no questions yet and cannot be opened."
+      },
+      "quiz": {
+        "bestPercentage": "Best: {{percent}}%"
+      }
+    }
   }
 }

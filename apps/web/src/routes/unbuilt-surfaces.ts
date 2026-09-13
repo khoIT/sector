@@ -1,6 +1,4 @@
-import { GraduationCap, Settings2, type LucideIcon } from 'lucide-react';
-
-import { SCAN_VAULT_PERMISSION } from '@/features/scan-list/scan-list-views';
+import type { LucideIcon } from 'lucide-react';
 
 /**
  * Sections that have a place in the rail and a URL, and nothing behind them
@@ -19,16 +17,15 @@ import { SCAN_VAULT_PERMISSION } from '@/features/scan-list/scan-list-views';
  * landed on a blank page.
  *
  * Retiring one of these is a deletion, not a migration: drop the row, mount
- * the real page under the same path, and the rail follows. `question-banks`
- * was the first to go — its real routes live in
- * apps/web/src/features/question-banks/question-bank-routes.tsx now, mounted
- * at the exact path this table used to point at, and its nav entry
- * (id `question-banks`, path `/learn/question-banks`, label key
- * `nav.questionBanks`) is declared directly in shell/nav-config.ts instead of
- * being derived from a row here.
+ * the real page under the same path, and the rail follows. `courses`,
+ * `question-banks` and `group-administration` — every row this table ever
+ * carried — have each graduated that way in turn; their ids, paths and label
+ * keys now live as literal `NavDestination`s in shell/nav-config.ts instead
+ * of being read back out of a row here. The table is empty until the next
+ * section lands in the rail ahead of its surface.
  */
 
-export type UnbuiltSurfaceId = 'courses' | 'group-administration';
+export type UnbuiltSurfaceId = never;
 
 export type UnbuiltSurface = {
   /** Absolute URL, for links; the router mounts it relative. */
@@ -43,29 +40,4 @@ export type UnbuiltSurface = {
   icon: LucideIcon;
 };
 
-export const UNBUILT_SURFACES: Readonly<Record<UnbuiltSurfaceId, UnbuiltSurface>> = {
-  courses: {
-    path: '/learn/courses',
-    permission: null,
-    labelKey: 'nav.courses',
-    icon: GraduationCap,
-  },
-  'group-administration': {
-    path: '/administer/groups',
-    // BORROWED, and only until there is something real behind this route.
-    // The seeded roles carry no `manage:group` string — checked against
-    // POST /api/login for all four demo accounts — so gating on one would hide
-    // the entry from everybody, including the people it is for, and the
-    // widened nav model would go unexercised by the running app. What marks a
-    // group leader in this data is the group queue, so that is what is read
-    // here — by reference, never as a second copy of the literal, because the
-    // scan permissions have exactly one home and a rename there has to reach
-    // every reader. Give group administration its own permission before
-    // putting anything behind this route: the gate is right about WHO today
-    // and wrong about WHY, which stops being harmless the moment the page
-    // shows group data.
-    permission: SCAN_VAULT_PERMISSION.pending,
-    labelKey: 'nav.groupAdministration',
-    icon: Settings2,
-  },
-};
+export const UNBUILT_SURFACES: Readonly<Record<UnbuiltSurfaceId, UnbuiltSurface>> = {};

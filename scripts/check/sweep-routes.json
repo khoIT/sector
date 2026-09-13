@@ -1,0 +1,98 @@
+[
+  {
+    "path": "/login",
+    "role": null,
+    "needs": "sign in"
+  },
+  {
+    "path": "/forgot-password",
+    "role": null
+  },
+  {
+    "path": "/group-invitation-confirmation",
+    "role": null
+  },
+  {
+    "path": "/",
+    "role": "reviewer"
+  },
+  {
+    "path": "/scans/my",
+    "role": "learner"
+  },
+  {
+    "path": "/scans/shared",
+    "role": "learner"
+  },
+  {
+    "path": "/scans/group/unreviewed",
+    "role": "reviewer"
+  },
+  {
+    "path": "/scans/group/reviewed",
+    "role": "reviewer"
+  },
+  {
+    "path": "/scans/expert/unreviewed",
+    "role": "reviewer"
+  },
+  {
+    "path": "/scans/expert/reviewed",
+    "role": "reviewer"
+  },
+  {
+    "path": "/scans/create",
+    "role": "learner"
+  },
+  {
+    "path": "/scans/group/unreviewed/6aa0a7c3d83c1da90fcd5721",
+    "role": "reviewer"
+  },
+  {
+    "path": "/profile",
+    "role": "leader"
+  },
+  {
+    "path": "/administer/groups",
+    "role": "admin"
+  },
+  {
+    "path": "/administer/groups/6a6ae3d759ab84398c7cee4f/members",
+    "role": "reviewer"
+  },
+  {
+    "path": "/learn/courses",
+    "role": "learner"
+  },
+  {
+    "path": "/learn/question-banks",
+    "role": "learner"
+  },
+  {
+    "path": "/dashboard/scans/my-scans",
+    "role": "learner"
+  },
+  {
+    "path": "/dashboard/orders",
+    "role": "learner"
+  },
+  {
+    "path": "/nothing-here",
+    "role": "learner"
+  },
+  {
+    "path": "/learn/courses/681a4b63779a0d9e6c9cc55b",
+    "role": "learner",
+    "needs": "Pediatric Residency|Course outline"
+  },
+  {
+    "path": "/learn/courses/681a4b82779a0d9e6c9cc605",
+    "role": "learner",
+    "needs": "quiz has no questions|Course outline"
+  },
+  {
+    "path": "/learn/courses/681a4b67779a0d9e6c9cc574",
+    "role": "learner",
+    "needs": "completed this course|Course outline"
+  }
+]

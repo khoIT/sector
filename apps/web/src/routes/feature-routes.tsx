@@ -1,7 +1,9 @@
 import type { RouteObject } from 'react-router-dom';
 
 import { accountRoutes } from '@/features/account/account-routes';
+import { coursesRoutes } from '@/features/courses/courses-routes';
 import { createScanRoutes } from '@/features/create-scan/create-scan-routes';
+import { groupsRoutes } from '@/features/groups/groups-routes';
 import { questionBankRoutes } from '@/features/question-banks/question-bank-routes';
 import { scanDetailRoutes } from '@/features/scan-detail';
 
@@ -29,12 +31,14 @@ export const featureRoutes: RouteObject[] = [
   ...scanDetailRoutes,
   ...createScanRoutes,
   ...accountRoutes,
-  // Question banks: the first Learn surface with a real page behind it. Its
-  // placeholder row is gone from ./unbuilt-surfaces.ts, so these two routes
-  // mount at the same path the rail always pointed at.
+  // Question banks, groups administration and courses: real pages behind
+  // what used to be three rows in ./unbuilt-surfaces.ts, each mounted at the
+  // same path the rail always pointed at.
   ...questionBankRoutes,
-  // The rest of Learn and all of Administer. They are in the rail and routed
-  // here before their surfaces exist; each one resolves to the same honest
-  // placeholder until a feature replaces its row in ./unbuilt-surfaces.ts.
+  ...groupsRoutes,
+  ...coursesRoutes,
+  // Whatever is left in Learn/Administer with no surface yet resolves to the
+  // same honest placeholder until a feature replaces its row in
+  // ./unbuilt-surfaces.ts.
   ...unbuiltSurfaceRoutes,
 ];
