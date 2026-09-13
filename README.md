@@ -222,6 +222,18 @@ through the running mirror API for all four accounts when
 `SECTOR_MIRROR_JWT_SECRET` is set to the secret the `:5002` instance was
 started with, minting sessions rather than spending the auth rate limit.
 
+Without it the replay half silently skips, which is easy to mistake for a pass.
+Read it back off the running instance rather than hunting for where it was set:
+
+```bash
+PID=$(lsof -nP -iTCP:5002 -sTCP:LISTEN -t | head -1)
+export SECTOR_MIRROR_JWT_SECRET=$(ps -Eww -p "$PID" | tr ' ' '\n' |
+  grep -m1 '^JWT_SECRET_KEY=' | cut -d= -f2-)
+```
+
+With it set the suite runs 46 tests rather than 21; a run reporting 21 passed
+and 21 skipped has not touched a route.
+
 ## Layout of the app
 
 `apps/web/src`:
