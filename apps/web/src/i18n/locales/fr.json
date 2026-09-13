@@ -34,7 +34,8 @@
     "createScanStudy": "Créer un scan",
     "cancel": "Annuler",
     "save": "Enregistrer",
-    "view": "Afficher"
+    "view": "Afficher",
+    "close": "Fermer"
   },
   "status": {
     "pending": "En attente",
@@ -150,7 +151,138 @@
       "error": {
         "title": "Impossible de charger cette liste",
         "retry": "Réessayer"
+      },
+      "actions": {
+        "changeRole": "Changer le rôle",
+        "remove": "Retirer",
+        "removeConfirmTitle": "Retirer ce membre ?",
+        "removeConfirmDescription": "Il perdra l'accès aux cours et scans de ce groupe.",
+        "removeError": "Ce membre n'a pas pu être retiré.",
+        "removing": "Retrait en cours…"
       }
+    },
+    "tabs": {
+      "members": "Membres",
+      "courses": "Cours",
+      "assignments": "Devoirs",
+      "exports": "Exports",
+      "settings": "Paramètres"
+    },
+    "form": {
+      "createTrigger": "Créer un groupe",
+      "editTrigger": "Modifier le groupe",
+      "createTitle": "Créer un groupe",
+      "editTitle": "Modifier le groupe",
+      "description": "Les groupes organisent les membres autour d'un même ensemble de cours, devoirs et exports.",
+      "nameLabel": "Nom",
+      "slugLabel": "Slug",
+      "slugHint": "Utilisé dans les URL. Minuscules, chiffres et traits d'union uniquement.",
+      "organizationLabel": "Organisation",
+      "organizationPlaceholder": "Choisir une organisation",
+      "descriptionLabel": "Description",
+      "typeLabel": "Type",
+      "typePlaceholder": "Choisir un type",
+      "totalSeatsLabel": "Places totales",
+      "totalSeatsHint": "Laisser vide pour un nombre illimité de places.",
+      "expirationDateLabel": "Date d'expiration",
+      "isFreeTrialLabel": "Ceci est un groupe d'essai gratuit",
+      "error": "Ce groupe n'a pas pu être enregistré.",
+      "saving": "Enregistrement…",
+      "submit": "Enregistrer"
+    },
+    "invite": {
+      "trigger": "Inviter un membre",
+      "title": "Inviter un membre",
+      "description": "Envoyer une invitation par email pour rejoindre ce groupe.",
+      "emailLabel": "Email",
+      "firstNameLabel": "Prénom",
+      "lastNameLabel": "Nom",
+      "roleLabel": "Rôle",
+      "emailInvalid": "Saisissez une adresse email valide.",
+      "success": "L'invitation a été envoyée.",
+      "error": "Cette invitation n'a pas pu être envoyée.",
+      "alreadyExists": "Cet email appartient déjà à un compte actif.",
+      "addExisting": "L'ajouter directement au groupe",
+      "addingExisting": "Ajout en cours…",
+      "sending": "Envoi en cours…",
+      "submit": "Envoyer l'invitation"
+    },
+    "courses": {
+      "addLabel": "ID du cours",
+      "addPlaceholder": "Coller un ID de cours",
+      "add": "Ajouter un cours",
+      "adding": "Ajout en cours…",
+      "addError": "Ce cours n'a pas pu être ajouté.",
+      "idRequired": "Saisissez un ID de cours.",
+      "loadError": "Les cours de ce groupe n'ont pas pu être chargés.",
+      "remove": "Retirer le cours",
+      "empty": {
+        "title": "Aucun cours inscrit",
+        "description": "Ajoutez un cours pour inscrire chaque membre de ce groupe."
+      }
+    },
+    "assignments": {
+      "loadError": "Les devoirs de ce groupe n'ont pas pu être chargés.",
+      "dueDate": "À rendre le {{date}}",
+      "noDueDate": "Aucune échéance",
+      "empty": {
+        "title": "Aucun devoir pour l'instant",
+        "description": "Assignez un cours à des membres précis avec une échéance."
+      },
+      "status": {
+        "draft": "Brouillon",
+        "active": "Actif",
+        "in_progress": "En cours",
+        "completed": "Terminé",
+        "cancelled": "Annulé"
+      },
+      "form": {
+        "trigger": "Nouveau devoir",
+        "title": "Assigner un cours",
+        "description": "Assignez un cours à des membres précis de ce groupe, avec une échéance.",
+        "courseLabel": "Cours",
+        "coursePlaceholder": "Choisir un cours",
+        "dueDateLabel": "Échéance",
+        "learnersLabel": "Apprenants",
+        "noLearners": "Ce groupe n'a pas encore d'apprenants actifs.",
+        "courseRequired": "Choisissez un cours.",
+        "learnersRequired": "Choisissez au moins un apprenant.",
+        "error": "Ce devoir n'a pas pu être créé.",
+        "saving": "Enregistrement…",
+        "submit": "Créer le devoir"
+      }
+    },
+    "exports": {
+      "error": "Cet export n'a pas pu être généré.",
+      "scans": {
+        "title": "Résumé des scans du groupe",
+        "description": "Chaque membre et son nombre de scans par type d'examen."
+      },
+      "userScans": {
+        "title": "Enregistrements individuels des scans",
+        "description": "Une ligne par scan, avec le statut de relecture et les retours."
+      },
+      "courseProgress": {
+        "title": "Progression des cours",
+        "description": "Taux d'achèvement par classe, cours et membre."
+      },
+      "courseData": {
+        "title": "Détail d'achèvement du cours",
+        "description": "Achèvement des modules par membre pour un cours.",
+        "coursePlaceholder": "Coller un ID de cours"
+      },
+      "report": {
+        "title": "Rapport d'achèvement",
+        "description": "Les mêmes données d'achèvement en fichier CSV ou JSON.",
+        "csv": "Télécharger le CSV",
+        "json": "Télécharger le JSON"
+      }
+    },
+    "settings": {
+      "detailsTitle": "Détails du groupe",
+      "detailsDescription": "Nom, slug, description, type, places et expiration.",
+      "loadError": "Les détails de ce groupe n'ont pas pu être chargés.",
+      "notLeaderNotice": "Les préférences de notification de scan ne sont disponibles que pour un responsable de ce groupe."
     }
   },
   "auth": {

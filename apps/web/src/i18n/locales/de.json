@@ -34,7 +34,8 @@
     "createScanStudy": "Scan erstellen",
     "cancel": "Stornieren",
     "save": "Speichern",
-    "view": "Ansicht"
+    "view": "Ansicht",
+    "close": "Schließen"
   },
   "status": {
     "pending": "Ausstehend",
@@ -150,7 +151,138 @@
       "error": {
         "title": "Diese Liste konnte nicht geladen werden",
         "retry": "Erneut versuchen"
+      },
+      "actions": {
+        "changeRole": "Rolle ändern",
+        "remove": "Entfernen",
+        "removeConfirmTitle": "Dieses Mitglied entfernen?",
+        "removeConfirmDescription": "Der Zugriff auf die Kurse und Scans dieser Gruppe geht verloren.",
+        "removeError": "Dieses Mitglied konnte nicht entfernt werden.",
+        "removing": "Wird entfernt…"
       }
+    },
+    "tabs": {
+      "members": "Mitglieder",
+      "courses": "Kurse",
+      "assignments": "Aufgaben",
+      "exports": "Exporte",
+      "settings": "Einstellungen"
+    },
+    "form": {
+      "createTrigger": "Gruppe erstellen",
+      "editTrigger": "Gruppe bearbeiten",
+      "createTitle": "Gruppe erstellen",
+      "editTitle": "Gruppe bearbeiten",
+      "description": "Gruppen fassen Mitglieder unter einem gemeinsamen Satz von Kursen, Aufgaben und Exporten zusammen.",
+      "nameLabel": "Name",
+      "slugLabel": "Slug",
+      "slugHint": "Wird in URLs verwendet. Nur Kleinbuchstaben, Zahlen und Bindestriche.",
+      "organizationLabel": "Organisation",
+      "organizationPlaceholder": "Organisation auswählen",
+      "descriptionLabel": "Beschreibung",
+      "typeLabel": "Typ",
+      "typePlaceholder": "Typ auswählen",
+      "totalSeatsLabel": "Plätze insgesamt",
+      "totalSeatsHint": "Leer lassen für unbegrenzte Plätze.",
+      "expirationDateLabel": "Ablaufdatum",
+      "isFreeTrialLabel": "Dies ist eine kostenlose Testgruppe",
+      "error": "Diese Gruppe konnte nicht gespeichert werden.",
+      "saving": "Wird gespeichert…",
+      "submit": "Speichern"
+    },
+    "invite": {
+      "trigger": "Mitglied einladen",
+      "title": "Mitglied einladen",
+      "description": "Eine Einladung per E-Mail zu dieser Gruppe senden.",
+      "emailLabel": "E-Mail",
+      "firstNameLabel": "Vorname",
+      "lastNameLabel": "Nachname",
+      "roleLabel": "Rolle",
+      "emailInvalid": "Bitte eine gültige E-Mail-Adresse eingeben.",
+      "success": "Die Einladung wurde gesendet.",
+      "error": "Diese Einladung konnte nicht gesendet werden.",
+      "alreadyExists": "Diese E-Mail gehört bereits zu einem aktiven Konto.",
+      "addExisting": "Stattdessen zur Gruppe hinzufügen",
+      "addingExisting": "Wird hinzugefügt…",
+      "sending": "Wird gesendet…",
+      "submit": "Einladung senden"
+    },
+    "courses": {
+      "addLabel": "Kurs-ID",
+      "addPlaceholder": "Kurs-ID einfügen",
+      "add": "Kurs hinzufügen",
+      "adding": "Wird hinzugefügt…",
+      "addError": "Dieser Kurs konnte nicht hinzugefügt werden.",
+      "idRequired": "Bitte eine Kurs-ID eingeben.",
+      "loadError": "Die Kurse dieser Gruppe konnten nicht geladen werden.",
+      "remove": "Kurs entfernen",
+      "empty": {
+        "title": "Keine Kurse zugewiesen",
+        "description": "Einen Kurs hinzufügen, um jedes Mitglied dieser Gruppe einzuschreiben."
+      }
+    },
+    "assignments": {
+      "loadError": "Die Aufgaben dieser Gruppe konnten nicht geladen werden.",
+      "dueDate": "Fällig am {{date}}",
+      "noDueDate": "Kein Fälligkeitsdatum",
+      "empty": {
+        "title": "Noch keine Aufgaben",
+        "description": "Einen Kurs bestimmten Mitgliedern mit einem Fälligkeitsdatum zuweisen."
+      },
+      "status": {
+        "draft": "Entwurf",
+        "active": "Aktiv",
+        "in_progress": "In Bearbeitung",
+        "completed": "Abgeschlossen",
+        "cancelled": "Storniert"
+      },
+      "form": {
+        "trigger": "Neue Aufgabe",
+        "title": "Kurs zuweisen",
+        "description": "Einen Kurs bestimmten Mitgliedern dieser Gruppe mit einem Fälligkeitsdatum zuweisen.",
+        "courseLabel": "Kurs",
+        "coursePlaceholder": "Kurs auswählen",
+        "dueDateLabel": "Fälligkeitsdatum",
+        "learnersLabel": "Lernende",
+        "noLearners": "Diese Gruppe hat noch keine aktiven Lernenden.",
+        "courseRequired": "Bitte einen Kurs auswählen.",
+        "learnersRequired": "Mindestens eine lernende Person auswählen.",
+        "error": "Diese Aufgabe konnte nicht erstellt werden.",
+        "saving": "Wird gespeichert…",
+        "submit": "Aufgabe erstellen"
+      }
+    },
+    "exports": {
+      "error": "Dieser Export konnte nicht erstellt werden.",
+      "scans": {
+        "title": "Gruppen-Scan-Übersicht",
+        "description": "Jedes Mitglied und seine Scan-Anzahl nach Untersuchungsart."
+      },
+      "userScans": {
+        "title": "Einzelne Scan-Datensätze",
+        "description": "Eine Zeile pro Scan, mit Prüfstatus und Feedback."
+      },
+      "courseProgress": {
+        "title": "Kursfortschritt",
+        "description": "Abschlussquote nach Klasse, Kurs und Mitglied."
+      },
+      "courseData": {
+        "title": "Kursabschluss im Detail",
+        "description": "Modulabschluss pro Mitglied für einen Kurs.",
+        "coursePlaceholder": "Kurs-ID einfügen"
+      },
+      "report": {
+        "title": "Abschlussbericht",
+        "description": "Dieselben Abschlussdaten als CSV- oder JSON-Datei.",
+        "csv": "CSV herunterladen",
+        "json": "JSON herunterladen"
+      }
+    },
+    "settings": {
+      "detailsTitle": "Gruppendetails",
+      "detailsDescription": "Name, Slug, Beschreibung, Typ, Plätze und Ablaufdatum.",
+      "loadError": "Die Details dieser Gruppe konnten nicht geladen werden.",
+      "notLeaderNotice": "Scan-Benachrichtigungseinstellungen stehen nur einer Leitung dieser Gruppe zur Verfügung."
     }
   },
   "auth": {
