@@ -59,14 +59,18 @@ type ScanContextPanelProps = {
   scanLogs?: ScanLog[];
   logs?: ScanLog[];
   /**
-   * True when the viewer holds `edit:scan` on a scan that is not their own —
-   * the same guard the server's tag routes apply. Never true on My Scans or
-   * Shared Scans: those are the learner's own view of the study, not a
-   * reviewer's.
+   * True when the viewer holds `edit:scan` AND is looking at the study from a
+   * reviewer surface — the queues and the reviewed lists. `edit:scan` alone
+   * is not a gate: every role in the product holds it. The surface is what
+   * carries the meaning, and it is already permission-gated at the route, so
+   * this is never true on My Scans or Shared Scans. It is not an ownership
+   * check: a reviewer who opens their own study through a queue can mark it.
    */
   canEditCompletion?: boolean;
   onSetCompletion?: (next: CompletionTag) => void;
   settingCompletion?: boolean;
+  /** A completeness write that failed, so the reviewer is not left guessing. */
+  completionError?: string | null;
 };
 
 /** Everything about the study that is not the media itself. */
@@ -78,6 +82,7 @@ export function ScanContextPanel({
   canEditCompletion = false,
   onSetCompletion,
   settingCompletion = false,
+  completionError = null,
 }: ScanContextPanelProps) {
   const { t } = useTranslation();
   // Undefined and empty mean opposite things here: the detail route does not
@@ -194,6 +199,12 @@ export function ScanContextPanel({
                   {t('scanDetail.markIncomplete')}
                 </Button>
               </div>
+            ) : null}
+
+            {completionError ? (
+              <p className="mt-2 rounded-token border border-crit/30 bg-crit-soft p-2 text-[12px] text-crit">
+                {completionError}
+              </p>
             ) : null}
           </Section>
         ) : null}

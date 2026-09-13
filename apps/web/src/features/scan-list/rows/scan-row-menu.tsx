@@ -1,5 +1,5 @@
 import type { AuthUser, MediaFile, ScanStatus } from '@sector/api-client';
-import { hasPermission } from '@sector/api-client';
+import { hasPermission, isApiError } from '@sector/api-client';
 import {
   Button,
   Dialog,
@@ -171,6 +171,9 @@ export function ScanRowMenu({
     else if (action === 'delete') setDialog('delete');
     else if (action === 'reset-upload') setDialog('reset-upload');
     else if (action === 'request-expert-review') setDialog('request-expert-review');
+    // `setCompletion` resolves on failure and reports through
+    // `completionTag.error`, which the dialog below renders — a rejected
+    // promise here would be an unhandled rejection and nothing on screen.
     else if (action === 'mark-complete')
       void completionTag.setCompletion(scanId, tags, COMPLETE_TAG);
     else if (action === 'mark-incomplete') {
@@ -196,7 +199,10 @@ export function ScanRowMenu({
 
           {ordinary.map((action) => {
             const Icon = ACTION_ICON[action];
-            const disabled = isRowActionDisabled(action, { hasFiles: downloadable.length > 0 });
+            const disabled = isRowActionDisabled(action, {
+              hasFiles: downloadable.length > 0,
+              settingCompletion: completionTag.isPending,
+            });
             return (
               <DropdownMenuItem
                 key={action}
@@ -209,7 +215,9 @@ export function ScanRowMenu({
                   : t(ACTION_KEY[action])}
                 {/* A disabled item cannot receive hover, so its reason has to
                     be on screen rather than in a title attribute. */}
-                {disabled ? <DropdownMenuHint>{t('actions.noFiles')}</DropdownMenuHint> : null}
+                {disabled && action === 'download' ? (
+                  <DropdownMenuHint>{t('actions.noFiles')}</DropdownMenuHint>
+                ) : null}
               </DropdownMenuItem>
             );
           })}
@@ -278,6 +286,30 @@ export function ScanRowMenu({
           open
           onOpenChange={(open) => setDialog(open ? 'request-expert-review' : null)}
         />
+      ) : null}
+
+      {/* A tag write that failed. Without this the action simply did nothing
+          and the reviewer had no way to know their mark did not land. */}
+      {completionTag.error ? (
+        <Dialog open onOpenChange={() => completionTag.reset()}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-crit">
+                {t('scanDetail.completionTagErrorTitle')}
+              </DialogTitle>
+              <DialogDescription>
+                {isApiError(completionTag.error)
+                  ? completionTag.error.message
+                  : t('scanDetail.completionTagError')}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="secondary" size="sm" onClick={() => completionTag.reset()}>
+                {t('scanDetail.close')}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       ) : null}
 
       {report ? (

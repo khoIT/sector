@@ -34,6 +34,21 @@ describe('rowActionsFor', () => {
     expect(rowActionsFor({ ...base, status: 'partially_uploaded' })).not.toContain('reset-upload');
   });
 
+  it('withholds reset-upload without edit:scan, which the route requires', () => {
+    const actions = rowActionsFor({ ...base, status: 'failed', canEditScan: false });
+    expect(actions).not.toContain('reset-upload');
+  });
+
+  it('offers request-expert-review only on a submitted study', () => {
+    // A credit spent on a study that holds no files is spent, and the
+    // server's duplicate-purchase check then refuses the request forever —
+    // so the learner cannot re-issue it after recovering the upload.
+    expect(rowActionsFor({ ...base, status: 'submitted' })).toContain('request-expert-review');
+    for (const status of ['pending', 'failed', 'failed_upload', 'partially_uploaded'] as const) {
+      expect(rowActionsFor({ ...base, status })).not.toContain('request-expert-review');
+    }
+  });
+
   it('never offers reset-upload or request-expert-review outside My Scans', () => {
     for (const view of ['pending', 'reviewed', 'expert', 'expert-reviewed'] as const) {
       const actions = rowActionsFor({ ...base, view, isOwnScan: false, status: 'failed' });
@@ -125,5 +140,29 @@ describe('isRowActionDisabled', () => {
     expect(isRowActionDisabled('download', { hasFiles: true })).toBe(false);
     expect(isRowActionDisabled('share', { hasFiles: false })).toBe(false);
     expect(isRowActionDisabled('delete', { hasFiles: false })).toBe(false);
+  });
+});
+
+describe('isRowActionDisabled', () => {
+  it('disables download on a scan with nothing to fetch, and leaves it listed', () => {
+    expect(isRowActionDisabled('download', { hasFiles: false })).toBe(true);
+    expect(isRowActionDisabled('download', { hasFiles: true })).toBe(false);
+  });
+
+  it('disables the completeness actions while one is in flight', () => {
+    // The server writes tags with $push and de-duplicates nothing, and the
+    // row's `tags` are a cached copy that only refreshes on invalidation — so
+    // a second click before then pushes the same tag twice.
+    for (const action of ['mark-complete', 'mark-incomplete'] as const) {
+      expect(isRowActionDisabled(action, { hasFiles: true, settingCompletion: true })).toBe(true);
+      expect(isRowActionDisabled(action, { hasFiles: true, settingCompletion: false })).toBe(false);
+      expect(isRowActionDisabled(action, { hasFiles: true })).toBe(false);
+    }
+  });
+
+  it('leaves every other action enabled', () => {
+    for (const action of ['open', 'share', 'comment', 'delete', 'reset-upload'] as const) {
+      expect(isRowActionDisabled(action, { hasFiles: false, settingCompletion: true })).toBe(false);
+    }
   });
 });

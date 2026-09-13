@@ -7,7 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/auth-context';
-import { RESETTABLE_STATUSES } from '@/features/scan-list/rows/scan-row-actions';
+import {
+  EXPERT_REVIEWABLE_STATUSES,
+  RESETTABLE_STATUSES,
+} from '@/features/scan-list/rows/scan-row-actions';
 import { useSetScanCompletionTag } from '@/features/scan-list/rows/use-scan-completion-tag';
 
 import { RequestExpertReviewDialog } from './components/request-expert-review-dialog';
@@ -54,6 +57,10 @@ export function ScanDetailPage({ view }: { view: ScanListView }) {
   const isReviewQueue = REVIEW_QUEUES.has(view) && can('create:scan:review');
   const isOwner = view === 'my' && Boolean(user) && scan?.user.id === user?.id;
   const canEditCompletion = REVIEWER_VIEWS.has(view) && can('edit:scan');
+  const canRequestExpertReview = Boolean(scan) && EXPERT_REVIEWABLE_STATUSES.has(scan!.status);
+  // `edit:scan` is what PUT /api/scan/:id/reset-upload requires, so the
+  // control is gated on the same thing the row menu gates it on.
+  const canResetUpload = Boolean(scan) && can('edit:scan') && RESETTABLE_STATUSES.has(scan!.status);
 
   const completionTag = useSetScanCompletionTag();
   const [resetOpen, setResetOpen] = useState(false);
@@ -84,14 +91,19 @@ export function ScanDetailPage({ view }: { view: ScanListView }) {
 
         {isOwner && scan ? (
           <div className="flex items-center gap-2">
-            {RESETTABLE_STATUSES.has(scan.status) ? (
+            {canResetUpload ? (
               <Button variant="secondary" size="sm" onClick={() => setResetOpen(true)}>
                 <RotateCcw className="h-3.5 w-3.5" aria-hidden /> {t('actions.resetUpload')}
               </Button>
             ) : null}
-            <Button variant="secondary" size="sm" onClick={() => setExpertReviewOpen(true)}>
-              <Sparkles className="h-3.5 w-3.5" aria-hidden /> {t('actions.requestExpertReview')}
-            </Button>
+            {/* Only on a submitted study. A credit spent on one that holds no
+                files is spent, and the server's duplicate-purchase check then
+                refuses the request forever. */}
+            {canRequestExpertReview ? (
+              <Button variant="secondary" size="sm" onClick={() => setExpertReviewOpen(true)}>
+                <Sparkles className="h-3.5 w-3.5" aria-hidden /> {t('actions.requestExpertReview')}
+              </Button>
+            ) : null}
           </div>
         ) : null}
       </div>
@@ -164,6 +176,15 @@ export function ScanDetailPage({ view }: { view: ScanListView }) {
               logs={scan.logs}
               canEditCompletion={canEditCompletion}
               settingCompletion={completionTag.isPending}
+              // `setCompletion` resolves on failure and reports here, so a
+              // reviewer never sees a mark quietly do nothing.
+              completionError={
+                completionTag.error
+                  ? isApiError(completionTag.error)
+                    ? completionTag.error.message
+                    : t('scanDetail.completionTagError')
+                  : null
+              }
               onSetCompletion={(next) => void completionTag.setCompletion(scan.id, scan.tags, next)}
             />
 
