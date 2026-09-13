@@ -186,6 +186,83 @@ describe('a session written before the rename', () => {
   });
 });
 
+describe('handing off a dashboard session at the same origin', () => {
+  const dashboardUser = {
+    id: 'u1',
+    email: 'learner@scanvault.test',
+    userName: 'sv_learner',
+    firstName: 'Sam',
+    lastName: 'Learner',
+    photo: 'https://example.test/photo.jpg',
+    role: { id: 'r1', name: 'Learner', slug: 'learner', permissions: ['view:scan'] },
+  };
+
+  it("builds a sector.session from the dashboard's bare token + user keys, through the real read path", () => {
+    const storage = fakeStorage({
+      token: 'dashboard-bearer',
+      user: JSON.stringify(dashboardUser),
+    });
+    vi.stubGlobal('window', { localStorage: storage });
+
+    migratePersistedStorage();
+
+    expect(storage.getItem('token')).toBeNull();
+    expect(storage.getItem('user')).toBeNull();
+
+    const restored = createSessionStore();
+    expect(restored.getToken()).toBe('dashboard-bearer');
+    expect(restored.read()?.user.email).toBe('learner@scanvault.test');
+  });
+
+  it('does not overwrite a session already written under the new name', () => {
+    const storage = fakeStorage({
+      'sector.session': JSON.stringify({
+        token: 'newer',
+        user: { ...dashboardUser, id: 'u2' },
+      }),
+      token: 'dashboard-bearer',
+      user: JSON.stringify(dashboardUser),
+    });
+
+    migratePersistedStorage(storage);
+
+    expect(JSON.parse(storage.getItem('sector.session') ?? '{}').token).toBe('newer');
+    // The dashboard's pair is left alone: nothing here decided it was stale.
+    expect(storage.getItem('token')).toBe('dashboard-bearer');
+  });
+
+  it('leaves a token with no matching user alone (nothing to build a session from)', () => {
+    const storage = fakeStorage({ token: 'orphan' });
+
+    migratePersistedStorage(storage);
+
+    expect(storage.getItem('token')).toBe('orphan');
+    expect(storage.getItem('sector.session')).toBeNull();
+  });
+
+  it('leaves the pair alone when the stored user does not parse as JSON', () => {
+    const storage = fakeStorage({ token: 'dashboard-bearer', user: 'not json' });
+
+    migratePersistedStorage(storage);
+
+    expect(storage.getItem('token')).toBe('dashboard-bearer');
+    expect(storage.getItem('user')).toBe('not json');
+    expect(storage.getItem('sector.session')).toBeNull();
+  });
+
+  it('leaves the pair alone when the user object does not match the schema', () => {
+    const storage = fakeStorage({
+      token: 'dashboard-bearer',
+      user: JSON.stringify({ id: 'u1' }), // missing email, userName, role, ...
+    });
+
+    migratePersistedStorage(storage);
+
+    expect(storage.getItem('token')).toBe('dashboard-bearer');
+    expect(storage.getItem('sector.session')).toBeNull();
+  });
+});
+
 /**
  * The guard against the next key being forgotten.
  *
