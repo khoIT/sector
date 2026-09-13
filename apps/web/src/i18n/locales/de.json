@@ -445,8 +445,7 @@
         "completed": "Abgeschlossen",
         "active": "Aktiv",
         "paused": "Pausiert",
-        "dropped": "Abgebrochen",
-        "expired": "Abgelaufen"
+        "dropped": "Abgebrochen"
       },
       "status": {
         "not_started": "Nicht gestartet",
@@ -465,7 +464,8 @@
       },
       "noMatch": {
         "title": "Keine Kurse gefunden",
-        "description": "Kein Kurstitel entspricht „{{keyword}}“."
+        "description": "Kein Kurstitel entspricht „{{keyword}}“.",
+        "descriptionFiltered": "Kein Kurs hat den ausgewählten Status."
       },
       "pagePastEnd": {
         "title": "Nichts auf dieser Seite",
@@ -489,7 +489,9 @@
       "resume": {
         "start": "Starten: {{title}}",
         "resume": "Fortsetzen: {{title}}",
-        "review": "Ansehen: {{title}}"
+        "retry": "Erneut versuchen: {{title}}",
+        "review": "Ansehen: {{title}}",
+        "jumpsOnly": "Springt in der Liste unten dorthin – den Kurs-Player gibt es noch nicht."
       },
       "completedBanner": "Sie haben diesen Kurs abgeschlossen.",
       "empty": {
@@ -507,7 +509,8 @@
       "itemStatus": {
         "not_started": "Nicht gestartet",
         "in_progress": "Im Gange",
-        "completed": "Abgeschlossen"
+        "completed": "Abgeschlossen",
+        "failed": "Nicht bestanden"
       },
       "blocked": {
         "quiz_has_no_questions": "Dieses Quiz hat noch keine Fragen und kann nicht geöffnet werden."

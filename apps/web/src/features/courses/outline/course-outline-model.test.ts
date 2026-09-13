@@ -5,6 +5,8 @@ import {
   blockedReasonLabelKey,
   findOutlineItem,
   groupOutlineItemsForDisplay,
+  isOutlineComplete,
+  resolveResumeTarget,
   resumeActionLabelKey,
 } from './course-outline-model';
 
@@ -93,9 +95,74 @@ describe('resumeActionLabelKey', () => {
   it.each([
     ['not_started', 'courses.outline.resume.start'],
     ['in_progress', 'courses.outline.resume.resume'],
+    ['failed', 'courses.outline.resume.retry'],
     ['completed', 'courses.outline.resume.review'],
   ] as const)('maps item status %j to %j', (status, key) => {
     expect(resumeActionLabelKey(status)).toBe(key);
+  });
+});
+
+/**
+ * The route's own resume rule is "first incomplete leaf" with no test for
+ * `blockedReason` (learners.outline.helper.ts), so every case here is a
+ * pointer it really can send.
+ */
+describe('resolveResumeTarget', () => {
+  const blockedQuiz = item({
+    id: 'q-empty',
+    kind: 'quiz',
+    blockedReason: 'quiz_has_no_questions',
+    quiz: { questionCount: 0, attempts: 0, bestPercentage: null, passed: null },
+  });
+
+  it('honours the pointer when it names something openable', () => {
+    const items = [item({ id: 't1', status: 'completed' }), item({ id: 't2' })];
+    expect(resolveResumeTarget(items, 't2')?.id).toBe('t2');
+  });
+
+  it('skips a blocked quiz the route pointed at, for the next openable item', () => {
+    const items = [item({ id: 't1', status: 'completed' }), blockedQuiz, item({ id: 't2' })];
+    expect(resolveResumeTarget(items, 'q-empty')?.id).toBe('t2');
+  });
+
+  it('offers a failed quiz again — it is unfinished, not unopenable', () => {
+    const items = [item({ id: 'q1', kind: 'quiz', status: 'failed' })];
+    expect(resolveResumeTarget(items, 'q1')?.id).toBe('q1');
+  });
+
+  it('has nothing to resume when the only item left is blocked', () => {
+    const items = [item({ id: 't1', status: 'completed' }), blockedQuiz];
+    expect(resolveResumeTarget(items, 'q-empty')).toBeUndefined();
+  });
+
+  it('falls back to the first openable item when the pointer names nothing', () => {
+    const items = [item({ id: 't1', status: 'completed' }), item({ id: 't2' })];
+    expect(resolveResumeTarget(items, 'gone')?.id).toBe('t2');
+  });
+
+  it('has nothing to resume in an empty outline', () => {
+    expect(resolveResumeTarget([], null)).toBeUndefined();
+  });
+});
+
+describe('isOutlineComplete', () => {
+  it('is complete when every countable item is done', () => {
+    expect(isOutlineComplete({ totalItems: 8, completedItems: 8 })).toBe(true);
+  });
+
+  it('is not complete part way through', () => {
+    expect(isOutlineComplete({ totalItems: 8, completedItems: 7 })).toBe(false);
+  });
+
+  /**
+   * A course whose content is all unpublished or all blocked resolves to an
+   * empty item list. It has nothing to resume, which used to be read as
+   * "finished" and told the learner they had completed a course with no
+   * content in it. GET .../68f04e61fa8359afd6836877/outline on the mirror
+   * returns exactly this.
+   */
+  it('is not complete when there is nothing to complete', () => {
+    expect(isOutlineComplete({ totalItems: 0, completedItems: 0 })).toBe(false);
   });
 });
 

@@ -445,8 +445,7 @@
         "completed": "Nakumpleto",
         "active": "Aktibo",
         "paused": "Naka-pause",
-        "dropped": "Tumigil",
-        "expired": "Nag-expire"
+        "dropped": "Tumigil"
       },
       "status": {
         "not_started": "Hindi Nagsimula",
@@ -465,7 +464,8 @@
       },
       "noMatch": {
         "title": "Walang kursong tumutugma sa iyong paghahanap",
-        "description": "Walang pamagat ng kurso na tumutugma sa “{{keyword}}”."
+        "description": "Walang pamagat ng kurso na tumutugma sa “{{keyword}}”.",
+        "descriptionFiltered": "Walang kursong may piniling katayuan."
       },
       "pagePastEnd": {
         "title": "Walang laman ang pahinang ito",
@@ -489,7 +489,9 @@
       "resume": {
         "start": "Simulan: {{title}}",
         "resume": "Magpatuloy: {{title}}",
-        "review": "Suriin: {{title}}"
+        "retry": "Subukan muli: {{title}}",
+        "review": "Suriin: {{title}}",
+        "jumpsOnly": "Dadalhin ka nito doon sa listahan sa ibaba; wala pa ang course player."
       },
       "completedBanner": "Nakumpleto mo na ang kursong ito.",
       "empty": {
@@ -507,7 +509,8 @@
       "itemStatus": {
         "not_started": "Hindi Nagsimula",
         "in_progress": "Sa Pag-unlad",
-        "completed": "Nakumpleto"
+        "completed": "Nakumpleto",
+        "failed": "Hindi pasado"
       },
       "blocked": {
         "quiz_has_no_questions": "Wala pang mga tanong ang pagsusulit na ito at hindi pa ito maaaring buksan."

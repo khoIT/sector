@@ -523,8 +523,7 @@
         "completed": "Completed",
         "active": "Active",
         "paused": "Paused",
-        "dropped": "Dropped",
-        "expired": "Expired"
+        "dropped": "Dropped"
       },
       "status": {
         "not_started": "Not started",
@@ -543,7 +542,8 @@
       },
       "noMatch": {
         "title": "No courses match your search",
-        "description": "No course title matches “{{keyword}}”."
+        "description": "No course title matches “{{keyword}}”.",
+        "descriptionFiltered": "No courses have the status you selected."
       },
       "pagePastEnd": {
         "title": "Nothing on this page",
@@ -567,7 +567,9 @@
       "resume": {
         "start": "Start: {{title}}",
         "resume": "Resume: {{title}}",
-        "review": "Review: {{title}}"
+        "retry": "Retry: {{title}}",
+        "review": "Review: {{title}}",
+        "jumpsOnly": "Moves you to it in the list below — the course player is not built yet."
       },
       "completedBanner": "You have completed this course.",
       "empty": {
@@ -585,7 +587,8 @@
       "itemStatus": {
         "not_started": "Not started",
         "in_progress": "In progress",
-        "completed": "Completed"
+        "completed": "Completed",
+        "failed": "Not passed"
       },
       "blocked": {
         "quiz_has_no_questions": "This quiz has no questions yet and cannot be opened."
