@@ -157,5 +157,79 @@
     "noScans": "No scans",
     "noScansDescription": "Nothing here yet.",
     "loading": "Loading"
+  },
+  "groups": {
+    "index": {
+      "title": "Groups",
+      "searchPlaceholder": "Search groups",
+      "columns": {
+        "name": "Group",
+        "type": "Type",
+        "members": "Members",
+        "leaders": "Leaders",
+        "seats": "Seats",
+        "expires": "Expires"
+      },
+      "type": {
+        "group": "Group",
+        "class": "Class"
+      },
+      "seatsUsed": "{{used}} / {{total}}",
+      "unlimitedSeats": "Unlimited",
+      "empty": {
+        "title": "No groups yet",
+        "description": "Groups you lead, or every group once you have full access, show up here."
+      },
+      "noMatch": {
+        "title": "No groups match your search",
+        "description": "No group name or slug matches “{{keyword}}”."
+      },
+      "pagePastEnd": {
+        "title": "Nothing on this page",
+        "backToFirstPage": "Go to first page"
+      },
+      "error": {
+        "title": "This list could not be loaded",
+        "retry": "Try again"
+      }
+    },
+    "members": {
+      "title": "Members",
+      "subtitle_one": "{{count}} member",
+      "subtitle_other": "{{count}} members",
+      "backToGroups": "All groups",
+      "searchPlaceholder": "Search members",
+      "columns": {
+        "member": "Member",
+        "role": "Role",
+        "status": "Status",
+        "joined": "Joined",
+        "expires": "Expires",
+        "actions": "Actions"
+      },
+      "role": {
+        "leader": "Leader",
+        "learner": "Learner"
+      },
+      "status": {
+        "active": "Active",
+        "pending": "Pending",
+        "inactive": "Inactive",
+        "expired": "Expired"
+      },
+      "actionsMenu": "More actions for {{name}}",
+      "empty": {
+        "title": "No members yet",
+        "description": "Invite someone to get this group started."
+      },
+      "noMatch": {
+        "title": "No members match your search",
+        "description": "No member name or email matches “{{keyword}}”."
+      },
+      "error": {
+        "title": "This list could not be loaded",
+        "retry": "Try again"
+      }
+    }
   }
 }

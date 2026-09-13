@@ -80,5 +80,79 @@
   },
   "empty": {
     "loading": "Carregando"
+  },
+  "groups": {
+    "index": {
+      "title": "Grupos",
+      "searchPlaceholder": "Pesquisar grupos",
+      "columns": {
+        "name": "Grupo",
+        "type": "Tipo",
+        "members": "Membros",
+        "leaders": "Líderes",
+        "seats": "Vagas",
+        "expires": "Expira"
+      },
+      "type": {
+        "group": "Grupo",
+        "class": "Turma"
+      },
+      "seatsUsed": "{{used}} / {{total}}",
+      "unlimitedSeats": "Ilimitado",
+      "empty": {
+        "title": "Ainda não há grupos",
+        "description": "Os grupos que você lidera, ou todos os grupos com acesso total, aparecem aqui."
+      },
+      "noMatch": {
+        "title": "Nenhum grupo corresponde à sua pesquisa",
+        "description": "Nenhum nome de grupo corresponde a “{{keyword}}”."
+      },
+      "pagePastEnd": {
+        "title": "Nada nesta página",
+        "backToFirstPage": "Ir para a primeira página"
+      },
+      "error": {
+        "title": "Não foi possível carregar esta lista",
+        "retry": "Tentar novamente"
+      }
+    },
+    "members": {
+      "title": "Membros",
+      "subtitle_one": "{{count}} membro",
+      "subtitle_other": "{{count}} membros",
+      "backToGroups": "Todos os grupos",
+      "searchPlaceholder": "Pesquisar membros",
+      "columns": {
+        "member": "Membro",
+        "role": "Função",
+        "status": "Status",
+        "joined": "Entrou em",
+        "expires": "Expira",
+        "actions": "Ações"
+      },
+      "role": {
+        "leader": "Líder",
+        "learner": "Aluno"
+      },
+      "status": {
+        "active": "Ativo",
+        "pending": "Pendente",
+        "inactive": "Inativo",
+        "expired": "Expirado"
+      },
+      "actionsMenu": "Mais ações para {{name}}",
+      "empty": {
+        "title": "Ainda não há membros",
+        "description": "Convide alguém para começar este grupo."
+      },
+      "noMatch": {
+        "title": "Nenhum membro corresponde à sua pesquisa",
+        "description": "Nenhum nome ou e-mail corresponde a “{{keyword}}”."
+      },
+      "error": {
+        "title": "Não foi possível carregar esta lista",
+        "retry": "Tentar novamente"
+      }
+    }
   }
 }

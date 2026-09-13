@@ -80,5 +80,79 @@
   },
   "empty": {
     "loading": "Wird geladen"
+  },
+  "groups": {
+    "index": {
+      "title": "Gruppen",
+      "searchPlaceholder": "Gruppen suchen",
+      "columns": {
+        "name": "Gruppe",
+        "type": "Typ",
+        "members": "Mitglieder",
+        "leaders": "Anführer",
+        "seats": "Plätze",
+        "expires": "Läuft ab"
+      },
+      "type": {
+        "group": "Gruppe",
+        "class": "Klasse"
+      },
+      "seatsUsed": "{{used}} / {{total}}",
+      "unlimitedSeats": "Unbegrenzt",
+      "empty": {
+        "title": "Noch keine Gruppen",
+        "description": "Gruppen, die Sie leiten, oder alle Gruppen bei vollem Zugriff, werden hier angezeigt."
+      },
+      "noMatch": {
+        "title": "Keine Gruppen entsprechen Ihrer Suche",
+        "description": "Kein Gruppenname oder Slug entspricht „{{keyword}}“."
+      },
+      "pagePastEnd": {
+        "title": "Nichts auf dieser Seite",
+        "backToFirstPage": "Zur ersten Seite"
+      },
+      "error": {
+        "title": "Diese Liste konnte nicht geladen werden",
+        "retry": "Erneut versuchen"
+      }
+    },
+    "members": {
+      "title": "Mitglieder",
+      "subtitle_one": "{{count}} Mitglied",
+      "subtitle_other": "{{count}} Mitglieder",
+      "backToGroups": "Alle Gruppen",
+      "searchPlaceholder": "Mitglieder suchen",
+      "columns": {
+        "member": "Mitglied",
+        "role": "Rolle",
+        "status": "Status",
+        "joined": "Beigetreten",
+        "expires": "Läuft ab",
+        "actions": "Aktionen"
+      },
+      "role": {
+        "leader": "Anführer",
+        "learner": "Lernender"
+      },
+      "status": {
+        "active": "Aktiv",
+        "pending": "Ausstehend",
+        "inactive": "Inaktiv",
+        "expired": "Abgelaufen"
+      },
+      "actionsMenu": "Weitere Aktionen für {{name}}",
+      "empty": {
+        "title": "Noch keine Mitglieder",
+        "description": "Laden Sie jemanden ein, um diese Gruppe zu starten."
+      },
+      "noMatch": {
+        "title": "Keine Mitglieder entsprechen Ihrer Suche",
+        "description": "Kein Name oder keine E-Mail entspricht „{{keyword}}“."
+      },
+      "error": {
+        "title": "Diese Liste konnte nicht geladen werden",
+        "retry": "Erneut versuchen"
+      }
+    }
   }
 }
