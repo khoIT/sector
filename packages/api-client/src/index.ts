@@ -76,6 +76,7 @@ export {
   mutationKeys,
   noteKeys,
   groupKeys,
+  questionBankKeys,
   reviewKeys,
   SCAN_LIST_VIEWS,
   scanKeys,
@@ -455,3 +456,47 @@ export {
   type MultipartSession,
   type UploadScanObjectOptions,
 } from './multipart-upload';
+
+// ─── question banks ────────────────────────────────────────────────────────────
+export {
+  checkQuestionBankAnswersPayloadSchema,
+  checkQuestionBankAnswersResultSchema,
+  questionBankAnswerOptionSchema,
+  questionBankAnswerRefSchema,
+  questionBankAnswerTypeSchema,
+  questionBankAttemptInfoSchema,
+  questionBankDetailProgressSchema,
+  questionBankDetailSchema,
+  questionBankProgressResultSchema,
+  questionBankQuestionSchema,
+  questionBankResultQuestionSchema,
+  questionBankRestartInfoSchema,
+  questionBankSummarySchema,
+  saveQuestionBankProgressPayloadSchema,
+  saveQuestionBankProgressResultSchema,
+  type CheckQuestionBankAnswersPayload,
+  type QuestionBankAnswerOption,
+  type QuestionBankAnswerRef,
+  type QuestionBankAnswerType,
+  type QuestionBankAttemptInfo,
+  type QuestionBankDetail,
+  type QuestionBankDetailProgress,
+  type QuestionBankProgressResult,
+  type QuestionBankQuestion,
+  type QuestionBankResult,
+  type QuestionBankResultQuestion,
+  type QuestionBankRestartInfo,
+  type QuestionBankSummary,
+  type SaveQuestionBankProgressPayload,
+  type SaveQuestionBankProgressResult,
+} from './schemas/question-bank';
+
+export {
+  checkQuestionBankAnswers,
+  getQuestionBankBySlug,
+  getQuestionBankProgress,
+  getQuestionBanks,
+  saveQuestionBankProgress,
+} from './endpoints/question-bank';
+
+export { useQuestionBankDetail, useQuestionBankList } from './react/use-question-banks';

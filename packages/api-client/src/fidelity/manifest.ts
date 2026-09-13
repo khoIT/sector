@@ -10,6 +10,10 @@ import {
 } from '../schemas/create-scan-lookups';
 import { groupFilterOptionSchema } from '../schemas/group-filter';
 import {
+  questionBankDetailSchema,
+  questionBankSummarySchema,
+} from '../schemas/question-bank';
+import {
   scanFindingSchema,
   scanNoteSchema,
   scanReviewSchema,
@@ -335,6 +339,88 @@ export const REPLAY_ENTRIES: readonly ReplayEntry[] = [
       return { ...(toWire(rest) as Record<string, unknown>), role: role ? toWire(role) : null };
     },
   },
+  {
+    name: 'v2quizzes → GET /api/v2/question-banks item',
+    collection: 'v2quizzes',
+    schema: questionBankSummarySchema,
+    proves: ['questionBankSummarySchema'],
+    // getQuestionBanks: `{ isQbank: true, status: PUBLISHED, deletedAt: null }`.
+    filter: { isQbank: true, status: 'published', deletedAt: null },
+    prefetch: async (batch, { refs }) =>
+      refs.prefetch(
+        'v2questions',
+        batch.flatMap((quiz) => (Array.isArray(quiz.questions) ? quiz.questions : [])),
+      ),
+    project: (quiz, { refs }) => ({
+      ...(toWire(pick(quiz, ['title', 'slug', 'description', 'isQbank'])) as Record<
+        string,
+        unknown
+      >),
+      // getPresignedUrl is a live S3 call the replay cannot make; a real API
+      // response carries an https URL here instead.
+      photoIcon: null,
+      // populate({ path: 'questions', select: 'id title slug' }) drops any
+      // reference that does not resolve — 28 of 809 references across the
+      // mirror's 18 published banks — the same way a populated ARRAY always
+      // does (see RefCache.many's doc comment in ../wire.ts).
+      questions: refs
+        .many('v2questions', quiz.questions)
+        .map((question) => toWire(pick(question, ['title', 'slug']))),
+    }),
+  },
+  {
+    name: 'v2quizzes → GET /api/v2/question-banks/:slug',
+    collection: 'v2quizzes',
+    schema: questionBankDetailSchema,
+    proves: [
+      'questionBankDetailSchema',
+      'questionBankQuestionSchema',
+      'questionBankAnswerOptionSchema',
+      'questionBankAnswerTypeSchema',
+      'questionBankDetailProgressSchema',
+      'questionBankRestartInfoSchema',
+    ],
+    // getBySlug itself filters by nothing but the slug and the soft-delete
+    // plugin's deletedAt — but the only slugs this client ever requests are
+    // ones the list route surfaced first, so this replays the same set the
+    // list entry above does rather than every quiz in the collection.
+    filter: { isQbank: true, status: 'published', deletedAt: null },
+    prefetch: async (batch, { refs }) =>
+      refs.prefetch(
+        'v2questions',
+        batch.flatMap((quiz) => (Array.isArray(quiz.questions) ? quiz.questions : [])),
+      ),
+    project: (quiz, { refs }) => ({
+      ...(toWire(pick(quiz, ['title', 'slug'])) as Record<string, unknown>),
+      // getQbankBySlug: `content: quiz.description`.
+      content: quiz.description ?? '',
+      photoIcon: null,
+      questions: refs.many('v2questions', quiz.questions).map((question) => ({
+        ...(toWire(
+          pick(question, [
+            'title',
+            'slug',
+            'content',
+            'answerType',
+            'correctMessage',
+            'incorrectMessage',
+            'sort',
+            'points',
+          ]),
+        ) as Record<string, unknown>),
+        answers: (Array.isArray(question.answers) ? question.answers : []).map((answer) =>
+          toWire(pick(answer, ['title', 'mediaUrl', 'allowHtml'])),
+        ),
+        // No dump holds a session, so every replayed caller is the one
+        // getQbankBySlug describes as having no saved answers yet.
+        userAnswers: [],
+        isAnswered: false,
+      })),
+      // No dump holds a qbankprogresses attempt either — the branch every
+      // replayed caller takes is the one with no attempt under way.
+      progress: { canRestart: true, message: 'You can start a new attempt for this quiz' },
+    }),
+  },
 ];
 
 /**
@@ -383,4 +469,18 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   userLogEntrySchema: 'the userlogs collection is in no dump',
   createUserLogsResponseSchema: 'the userlogs collection is in no dump',
   scanFormFieldPayloadSchema: 'request body (form answers as written)',
+  questionBankAttemptInfoSchema:
+    'the in-progress branch of a qbankprogresses attempt; no dump holds a live session, so no replayed caller ever produces this branch of the union — only questionBankRestartInfoSchema is proved',
+  questionBankProgressResultSchema:
+    'response of GET /api/v2/question-banks/progress/:quizId, assembled per caller from a qbankprogresses attempt no dump holds',
+  saveQuestionBankProgressPayloadSchema: 'request body of POST /api/v2/question-banks/save-progress',
+  saveQuestionBankProgressResultSchema:
+    'response of POST /api/v2/question-banks/save-progress — an echo of the request plus a flag, not a stored document',
+  checkQuestionBankAnswersPayloadSchema: 'request body of POST /api/v2/question-banks/check-answers',
+  checkQuestionBankAnswersResultSchema:
+    'a scored attempt computed per request from qbankprogresses and the quiz\'s questions; no dump holds a session to replay',
+  questionBankResultQuestionSchema:
+    'a per-question grade inside checkQuestionBankAnswersResultSchema, computed per request rather than stored',
+  questionBankAnswerRefSchema:
+    'an answer echoed back inside the check-answers result; its stored shape is proved by questionBankAnswerOptionSchema instead',
 };
