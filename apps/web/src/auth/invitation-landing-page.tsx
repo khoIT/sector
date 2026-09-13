@@ -8,9 +8,9 @@ import {
   CardTitle,
   Input,
 } from '@sector/ui';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { AuthPageLayout } from './auth-page-layout';
 import { useAuth } from './auth-context';
@@ -24,8 +24,8 @@ import { classifyConfirmInvitationError, validateInvitationForm } from './invita
  * The token is a JWT carrying only `{ userId, groupMemberId, action }`. There
  * is no unauthenticated route that resolves it to a group name or an
  * inviter, so this page cannot say which group is inviting the visitor —
- * only that one is. Inventing a lookup endpoint for that would be adding
- * server surface this phase does not own.
+ * only that one is. Inventing a lookup endpoint for that would mean adding a
+ * new server route just to answer this page, which is out of scope here.
  */
 export function InvitationLandingPage() {
   const { t } = useTranslation();
@@ -35,7 +35,6 @@ export function InvitationLandingPage() {
   const token = searchParams.get('token');
 
   const confirmInvitation = useConfirmGroupInvitationMutation();
-  const { status: authStatus, signOut } = auth;
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -44,23 +43,36 @@ export function InvitationLandingPage() {
   );
   const [formError, setFormError] = useState<string | null>(null);
 
-  // A session already in this browser must go before the invitation can be
-  // confirmed — the legacy landing page cleared localStorage outright; this
-  // one goes through the auth context so drafts get purged too. Depends on
-  // `authStatus` rather than running once on mount so it still fires once a
-  // boot-time restore (`status: 'restoring'`) settles.
-  useEffect(() => {
-    if (authStatus === 'authenticated') signOut();
-  }, [authStatus, signOut]);
+  // Reached with no token at all — there is nothing to confirm, and the
+  // stale-or-mistyped-link message belongs up front rather than waiting for
+  // a submit the visitor has no reason to expect will fail.
+  if (!token) {
+    return (
+      <AuthPageLayout>
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('invitation.title')}</CardTitle>
+            <CardDescription>{t('invitation.missingToken')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild size="lg" className="w-full">
+              <Link to="/login">{t('recovery.backToLogin')}</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </AuthPageLayout>
+    );
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFormError(null);
 
-    if (!token) {
-      setFormError(t('invitation.missingToken'));
-      return;
-    }
+    // Unreachable in practice — the early return above already sends a
+    // visitor with no token to the missing-token card before this form ever
+    // renders — but `token` is captured by this closure, and TypeScript does
+    // not carry a control-flow narrowing across a nested function boundary.
+    if (!token) return;
 
     const result = validateInvitationForm({ password, confirmPassword });
     if (!result.ok) {
@@ -68,6 +80,16 @@ export function InvitationLandingPage() {
       return;
     }
     setFieldErrors({});
+
+    // A session already in this browser must go before the invitation is
+    // confirmed — otherwise it could attach to whoever last used this
+    // machine rather than the person clicking the emailed link. Done here,
+    // immediately before the request, rather than on mount: signOut also
+    // purges the current draft's files (auth-context signOut ->
+    // clearDraftFiles), and a stale or mistyped link with no token should
+    // not cost an unrelated visitor their in-progress upload just for
+    // loading this page.
+    if (auth.status === 'authenticated') auth.signOut();
 
     try {
       await confirmInvitation.mutateAsync({ token, password: result.value.password });
