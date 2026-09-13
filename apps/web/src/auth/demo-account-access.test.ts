@@ -99,22 +99,26 @@ describe('demo account tab visibility', () => {
   });
 });
 
+/**
+ * The Scan Vault section of the rail.
+ *
+ * Read by section rather than flattened: the rail also carries sections that
+ * are not scan lists, and what these cases are about is which SCAN surfaces a
+ * role gets. The other sections are covered in shell/nav-config.test.ts.
+ */
+function scanVaultItems(user: AuthUser | null) {
+  return visibleNavGroups(user).find((group) => group.id === 'scan-vault')?.items ?? [];
+}
+
 describe('sidebar navigation', () => {
   it('drops the group and expert entries for a learner', () => {
-    const items = visibleNavGroups(LEARNER).flatMap((group) => group.items);
-    expect(items.map((item) => item.id)).toEqual(['my-scans', 'shared-scans']);
+    expect(scanVaultItems(LEARNER).map((item) => item.id)).toEqual(['my-scans', 'shared-scans']);
   });
 
   it('keeps group but not expert for a leader, pointing at the unreviewed queue', () => {
-    const items = visibleNavGroups(LEADER).flatMap((group) => group.items);
-    expect(items.map((item) => item.id)).toEqual([
-      'my-scans',
-      'shared-scans',
-      'group-scans',
-    ]);
-    expect(items.find((item) => item.id === 'group-scans')?.path).toBe(
-      SCAN_VAULT_PATH.pending,
-    );
+    const items = scanVaultItems(LEADER);
+    expect(items.map((item) => item.id)).toEqual(['my-scans', 'shared-scans', 'group-scans']);
+    expect(items.find((item) => item.id === 'group-scans')?.path).toBe(SCAN_VAULT_PATH.pending);
   });
 
   it('lands every account on a surface it is actually allowed to open', () => {

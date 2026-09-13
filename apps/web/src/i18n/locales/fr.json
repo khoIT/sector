@@ -3,7 +3,12 @@
     "myScans": "Mes Scans",
     "sharedScans": "Scans partagés",
     "groupScans": "Scans de groupe",
-    "expertScans": "Scans d'experts"
+    "expertScans": "Scans d'experts",
+    "learn": "Apprentissage",
+    "administer": "Administration",
+    "courses": "Cours",
+    "questionBanks": "Banques de questions",
+    "groupAdministration": "Administration des groupes"
   },
   "tabs": {
     "reviewed": "Révisé"

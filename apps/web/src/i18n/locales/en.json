@@ -8,7 +8,12 @@
     "openNavigation": "Open navigation",
     "closeNavigation": "Close navigation",
     "primary": "Primary",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "learn": "Learn",
+    "administer": "Administer",
+    "courses": "Courses",
+    "questionBanks": "Question Banks",
+    "groupAdministration": "Group Administration"
   },
   "tabs": {
     "unreviewed": "Unreviewed",

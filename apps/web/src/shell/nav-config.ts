@@ -1,8 +1,17 @@
 import type { AuthUser } from '@sector/api-client';
-import { BookOpen, FolderClock, Share2, Users2, type LucideIcon } from 'lucide-react';
+import { BookOpen, FolderClock, Share2, Users2 } from 'lucide-react';
 
-import { SCAN_VAULT_PATH, type ScanVaultView } from '@/features/scan-list/scan-list-views';
-import { canOpenView } from '@/features/scan-list/tabs/scan-tab-model';
+import { UNBUILT_SURFACES, type UnbuiltSurfaceId } from '@/routes/unbuilt-surfaces';
+
+import {
+  isNavItemActive,
+  resolveNavDestination,
+  scanVaultDestination,
+  whenPermitted,
+  type NavDestination,
+  type NavGroup,
+  type ResolvedNavItem,
+} from './nav-destinations';
 
 /**
  * The shell's navigation, as data.
@@ -10,71 +19,58 @@ import { canOpenView } from '@/features/scan-list/tabs/scan-tab-model';
  * Mirrors the legacy `Menu` / `GroupMenu` shape from
  * gusi_web_dashboard/src/config/links.ts — path, label, icon, optional
  * permission, optional numeric badge, grouped under a label that can be
- * hidden — but carries only surfaces that exist here, so there are no dead
- * links.
+ * hidden — but every entry here resolves to a page. Legacy links.ts listed
+ * surfaces whose routes had been removed; the sections that have no feature
+ * behind them yet are routed to a placeholder that says so, not left to 404.
  *
- * URLs and permissions are NOT restated here. They come from
- * features/scan-list/scan-list-views.ts, which is the one place the Scan Vault
- * routes are defined; the sidebar, the in-page tab bar and the router all read
- * the same table, so a path cannot drift between them.
+ * The shape of an ENTRY lives in ./nav-destinations.ts; this file is the
+ * table. Anything that is not a scan list joins it the same way the Scan Vault
+ * entries do, which is the point of the split: the Scan Vault's landing rule
+ * is one constructor there, not a property of navigation itself.
  *
  * The legacy type declared `badge?: number` and NOTHING ever set it. Here the
  * field is live: `useNavBadges()` fills it from the real queue counts.
  */
 
-export type NavItemId = 'my-scans' | 'shared-scans' | 'group-scans' | 'expert-scans';
+/**
+ * A section that is in the rail before its surface exists. Label, icon, URL
+ * and gate all come from the one table the router reads too.
+ */
+function unbuiltDestination<TId extends UnbuiltSurfaceId>(id: TId): NavDestination<TId> {
+  const surface = UNBUILT_SURFACES[id];
 
-export type NavItem = {
-  id: NavItemId;
-  /**
-   * Translation key. The English text lives in `i18n/locales/en.json` with the
-   * rest of the strings rather than here, so a translator has one file to work
-   * from and this table stays a description of structure.
-   */
-  labelKey: string;
-  icon: LucideIcon;
-  /**
-   * The surfaces this entry covers, in order. Visibility is "any of these",
-   * and the first one the role may open becomes the link target — so a user
-   * who can see reviewed group scans but not the unreviewed queue still gets
-   * a working Group Scans entry pointing at the list they can actually read.
-   */
-  views: readonly ScanVaultView[];
-  /** Subtree the entry owns, for active-state matching. */
-  matchPrefix: string;
-  /** What the badge counts, for the screen-reader label. */
-  badgeLabel?: string;
-};
+  return {
+    id,
+    labelKey: surface.labelKey,
+    icon: surface.icon,
+    path: surface.path,
+    matchPrefix: surface.path,
+    visibleWhen: whenPermitted(surface.permission),
+  };
+}
 
-/** A nav item with its destination and live badge resolved for this user. */
-export type ResolvedNavItem = NavItem & {
-  path: string;
-  /** Live count. Populated by useNavBadges(); never hard-coded. */
-  badge?: number;
-};
-
-export type NavGroup<TItem extends NavItem = NavItem> = {
-  id: string;
-  labelKey: string;
-  /** The legacy GroupMenu carried `isVisible` for label-less groups. */
-  showLabel: boolean;
-  items: TItem[];
-};
-
-export const NAV_GROUPS: readonly NavGroup[] = [
+/*
+ * Written without a `satisfies readonly NavGroup[]` clause, and that is load
+ * bearing: the clause contextually types every entry as NavDestination<string>,
+ * which widens each `id` back to `string` and quietly turns NavItemId below
+ * into `string` — no error anywhere, just a badge key nobody checks any more.
+ * The shape is still enforced, by visibleNavGroups() and activeNavItem() using
+ * these entries as NavDestination.
+ */
+export const NAV_GROUPS = [
   {
     id: 'scan-vault',
     labelKey: 'nav.section',
     showLabel: true,
     items: [
-      {
+      scanVaultDestination({
         id: 'my-scans',
         labelKey: 'nav.myScans',
         icon: BookOpen,
         views: ['my'],
         matchPrefix: '/scans/my',
-      },
-      {
+      }),
+      scanVaultDestination({
         // Ungated on purpose, as in the legacy tab bar: a share is granted per
         // scan and the server scopes the list to the caller, so there is no
         // role permission to check.
@@ -83,43 +79,60 @@ export const NAV_GROUPS: readonly NavGroup[] = [
         icon: Share2,
         views: ['shared'],
         matchPrefix: '/scans/shared',
-      },
-      {
+      }),
+      scanVaultDestination({
         id: 'group-scans',
         labelKey: 'nav.groupScans',
         icon: Users2,
         views: ['pending', 'reviewed'],
         matchPrefix: '/scans/group',
         badgeLabel: 'scans waiting for review',
-      },
-      {
+      }),
+      scanVaultDestination({
         id: 'expert-scans',
         labelKey: 'nav.expertScans',
         icon: FolderClock,
         views: ['expert', 'expert-reviewed'],
         matchPrefix: '/scans/expert',
         badgeLabel: 'expert scans waiting for review',
-      },
+      }),
     ],
   },
-];
+  {
+    id: 'learn',
+    labelKey: 'nav.learn',
+    showLabel: true,
+    items: [unbuiltDestination('courses'), unbuiltDestination('question-banks')],
+  },
+  {
+    id: 'administer',
+    labelKey: 'nav.administer',
+    showLabel: true,
+    // One entry, and most roles do not hold its permission — which is exactly
+    // the case visibleNavGroups() has to drop rather than render as a heading
+    // with nothing under it.
+    items: [unbuiltDestination('group-administration')],
+  },
+] as const;
+
+/**
+ * Derived from the table rather than declared beside it.
+ *
+ * It used to be a hand-written union of the four scan ids, so every section
+ * added after the Scan Vault meant editing a type in one place and a table in
+ * another, and forgetting the first was a compile error pointing at the wrong
+ * file. Adding a row now widens the id, and a badge keyed to an entry that no
+ * longer exists still fails to compile.
+ */
+export type NavItemId = (typeof NAV_GROUPS)[number]['items'][number]['id'];
 
 /** Badge counts keyed by nav item id. Missing or 0 renders no pill. */
 export type NavBadges = Partial<Record<NavItemId, number>>;
 
 /**
- * Active when the path is inside the entry's subtree. The boundary check
- * matters: a bare `startsWith` would light up "Group Scans" for a future
- * `/scans/grouped` route.
- */
-export function isNavItemActive(item: NavItem, pathname: string): boolean {
-  return pathname === item.matchPrefix || pathname.startsWith(`${item.matchPrefix}/`);
-}
-
-/**
  * The nav this role may actually use, with destinations and badges resolved.
- * Entries whose every surface is denied are dropped, and so is a group left
- * with no entries, so no empty heading is rendered.
+ * Entries whose predicate fails are dropped, and so is a group left with no
+ * entries, so no empty heading is rendered.
  */
 export function visibleNavGroups(
   user: AuthUser | null,
@@ -128,9 +141,8 @@ export function visibleNavGroups(
   return NAV_GROUPS.map((group) => ({
     ...group,
     items: group.items.flatMap<ResolvedNavItem>((item) => {
-      const landing = item.views.find((view) => canOpenView(user, view));
-      if (!landing) return [];
-      return [{ ...item, path: SCAN_VAULT_PATH[landing], badge: badges[item.id] }];
+      const resolved = resolveNavDestination(item, user, badges[item.id]);
+      return resolved ? [resolved] : [];
     }),
   })).filter((group) => group.items.length > 0);
 }
@@ -141,8 +153,8 @@ export function firstVisibleNavItem(user: AuthUser | null): ResolvedNavItem | un
 }
 
 /** The entry a URL belongs to. */
-export function activeNavItem(pathname: string): NavItem | undefined {
-  return NAV_GROUPS.flatMap((group) => group.items).find((item) =>
+export function activeNavItem(pathname: string): NavDestination | undefined {
+  return NAV_GROUPS.flatMap<NavDestination>((group) => [...group.items]).find((item) =>
     isNavItemActive(item, pathname),
   );
 }

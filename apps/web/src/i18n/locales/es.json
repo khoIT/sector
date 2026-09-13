@@ -3,7 +3,12 @@
     "myScans": "Mis Escaneos",
     "sharedScans": "Escaneos compartidos",
     "groupScans": "Escaneos grupales",
-    "expertScans": "Escaneos de expertos"
+    "expertScans": "Escaneos de expertos",
+    "learn": "Aprendizaje",
+    "administer": "Administración",
+    "courses": "Cursos",
+    "questionBanks": "Bancos de preguntas",
+    "groupAdministration": "Administración de grupos"
   },
   "tabs": {
     "reviewed": "Revisado"

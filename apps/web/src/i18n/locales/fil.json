@@ -3,7 +3,12 @@
     "myScans": "Aking mga Scan",
     "sharedScans": "Ibinahaging Pag-scan",
     "groupScans": "Mga Pag-scan ng Grupo",
-    "expertScans": "Mga Expert Scan"
+    "expertScans": "Mga Expert Scan",
+    "learn": "Pagkatuto",
+    "administer": "Pangangasiwa",
+    "courses": "Mga Kurso",
+    "questionBanks": "Mga Bangko ng Tanong",
+    "groupAdministration": "Pangangasiwa ng Grupo"
   },
   "tabs": {
     "reviewed": "Sinuri"

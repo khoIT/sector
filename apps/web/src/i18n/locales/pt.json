@@ -3,7 +3,12 @@
     "myScans": "Minhas Digitalizações",
     "sharedScans": "Escaneamentos compartilhados",
     "groupScans": "Escaneamentos em grupo",
-    "expertScans": "Escaneamentos especializados"
+    "expertScans": "Escaneamentos especializados",
+    "learn": "Aprendizado",
+    "administer": "Administração",
+    "courses": "Cursos",
+    "questionBanks": "Bancos de questões",
+    "groupAdministration": "Administração de grupos"
   },
   "tabs": {
     "reviewed": "Revisado"

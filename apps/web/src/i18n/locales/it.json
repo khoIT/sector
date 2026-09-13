@@ -3,7 +3,12 @@
     "myScans": "Le Mie Scansioni",
     "sharedScans": "Scansioni condivise",
     "groupScans": "Scansioni di gruppo",
-    "expertScans": "Scansioni da parte di esperti"
+    "expertScans": "Scansioni da parte di esperti",
+    "learn": "Apprendimento",
+    "administer": "Amministrazione",
+    "courses": "Corsi",
+    "questionBanks": "Banche di domande",
+    "groupAdministration": "Amministrazione dei gruppi"
   },
   "tabs": {
     "reviewed": "Recensito"

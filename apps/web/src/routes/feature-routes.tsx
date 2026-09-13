@@ -4,6 +4,8 @@ import { accountRoutes } from '@/features/account/account-routes';
 import { createScanRoutes } from '@/features/create-scan/create-scan-routes';
 import { scanDetailRoutes } from '@/features/scan-detail';
 
+import { unbuiltSurfaceRoutes } from './unbuilt-surface-routes';
+
 /**
  * EXTENSION POINT — the only file feature agents edit to add routes.
  *
@@ -26,4 +28,8 @@ export const featureRoutes: RouteObject[] = [
   ...scanDetailRoutes,
   ...createScanRoutes,
   ...accountRoutes,
+  // The Learn and Administer sections. They are in the rail and routed here
+  // before their surfaces exist; each one resolves to the same honest
+  // placeholder until a feature replaces its row in ./unbuilt-surfaces.ts.
+  ...unbuiltSurfaceRoutes,
 ];

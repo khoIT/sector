@@ -4,12 +4,8 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/auth/auth-context';
 
-import {
-  isNavItemActive,
-  visibleNavGroups,
-  type NavBadges,
-  type ResolvedNavItem,
-} from './nav-config';
+import { visibleNavGroups, type NavBadges } from './nav-config';
+import { isNavItemActive, type ResolvedNavItem } from './nav-destinations';
 
 /** 2 002 pending scans is a real local count. Keep the pill one pill wide. */
 function formatBadge(count: number): string {
