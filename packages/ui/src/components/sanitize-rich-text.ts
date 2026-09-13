@@ -29,11 +29,37 @@ import createDOMPurify, { type WindowLike } from 'dompurify';
  *     content would fight the token scale on every paragraph, and a
  *     `<div style="position:absolute">` is exactly the kind of phishing
  *     overlay a sanitiser exists to stop.
- *   - `<script>`, `<style>`, `<iframe>`, `<object>` and `<embed>` are removed
- *     entirely, contents and all — never converted into a player. Video goes
- *     on to become a first-party GUSI media surface later; it does not come
- *     from re-embedding whatever a WordPress author's `<script src>` pointed
- *     at in 2019.
+ *   - `<script>`, `<style>`, `<object>` and `<embed>` are removed entirely,
+ *     contents and all.
+ *   - `<iframe>` is allowed ONLY from a measured host allow-list
+ *     (ALLOWED_EMBED_HOSTS below) over https. 94 of 781 published
+ *     question-bank questions embed a clip and ask the learner about it
+ *     ("what pathology is seen here?") — stripping the iframe blindly, as an
+ *     earlier version of this policy did, leaves the stem with no image to
+ *     answer from while the server still grades the question. Every iframe
+ *     host actually used by learner content in the mirror was measured
+ *     (`player.vimeo.com` 1,266, `esono.online` 620, `www.youtube.com` 7);
+ *     `www.youtube-nocookie.com` is allowed alongside youtube.com for the
+ *     privacy-enhanced embed URL YouTube itself recommends. Any other host is
+ *     removed, element and all — this is an allow-list, not a filter. A
+ *     surviving iframe keeps only `src`, `title`, `width`, `height` and
+ *     `allowfullscreen`; every other attribute is stripped, and `sandbox`
+ *     is forced to `allow-scripts allow-same-origin allow-presentation`.
+ *     That pair — scripts AND same-origin together, which normally
+ *     reconstitutes the very capability a sandbox exists to remove — is
+ *     defensible ONLY because every host on the allow-list is a distinct
+ *     origin from this app: `allow-same-origin` grants the embedded document
+ *     ITS OWN origin (vimeo's, esono's, YouTube's), never GUSI's, so nothing
+ *     the embedded page does — no matter how it uses `allow-scripts` — can
+ *     read GUSI's cookies, storage or DOM. If this app ever embedded content
+ *     from its OWN origin under this sandbox, the pair would be unsafe.
+ *   - `<video>`, `<source>` and `<track>` are allowed for the 125 published
+ *     bodies that embed native video rather than an iframe player. `src` (on
+ *     `<video>` and `<source>`) must be `https://`; an invalid `<source>` or
+ *     `<track>` is removed entirely, an invalid `<video src>` just loses the
+ *     attribute (its `<source>` children may still be valid). No `autoplay`
+ *     — a video plays on the learner's action via `controls`, never on its
+ *     own.
  *   - Images only render from an `https://` `src`. A `data:`, `http://` or
  *     protocol-relative image is dropped (the whole element, not just the
  *     attribute — a broken-image icon is worse than no image).
@@ -83,11 +109,43 @@ const ALLOWED_TAGS = [
   'hr',
   'sub',
   'sup',
+  'iframe',
+  'video',
+  'source',
+  'track',
 ] as const;
 
-const ALLOWED_ATTR = ['href', 'src', 'alt', 'title', 'colspan', 'rowspan'] as const;
+const ALLOWED_ATTR = [
+  'href',
+  'src',
+  'alt',
+  'title',
+  'colspan',
+  'rowspan',
+  'allowfullscreen',
+  'width',
+  'height',
+  'controls',
+  'poster',
+  'playsinline',
+  'preload',
+  'type',
+  'kind',
+  'srclang',
+  'label',
+  'default',
+] as const;
 
-const FORBID_TAGS = ['script', 'style', 'iframe', 'object', 'embed'] as const;
+const FORBID_TAGS = ['script', 'style', 'object', 'embed'] as const;
+
+/** Measured against the mirror: every host learner content actually embeds
+ *  an iframe from, plus YouTube's privacy-enhanced domain. */
+const ALLOWED_EMBED_HOSTS = new Set([
+  'player.vimeo.com',
+  'esono.online',
+  'www.youtube.com',
+  'www.youtube-nocookie.com',
+]);
 
 /** `https://…` only. Relative, `http://`, `data:` and protocol-relative all fail. */
 function isHttpsUrl(value: string): boolean {
@@ -97,6 +155,23 @@ function isHttpsUrl(value: string): boolean {
 /** An absolute `http(s)://` URL leaves the app; a relative path stays inside it. */
 function isExternalHref(value: string): boolean {
   return /^https?:\/\//i.test(value.trim());
+}
+
+/** The hostname of an absolute URL, or null for anything `new URL()` rejects
+ *  (relative paths included — an embed source is never relative). */
+function hostnameOf(value: string): string | null {
+  try {
+    return new URL(value.trim()).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
+/** https, AND on the measured embed host allow-list. */
+function isAllowedEmbedSrc(value: string): boolean {
+  if (!isHttpsUrl(value)) return false;
+  const host = hostnameOf(value);
+  return host !== null && ALLOWED_EMBED_HOSTS.has(host);
 }
 
 /**
@@ -133,6 +208,39 @@ function purifyFor(window: WindowLike): ReturnType<typeof createDOMPurify> {
         node.removeAttribute('target');
         node.removeAttribute('rel');
       }
+      return;
+    }
+
+    if (node.tagName === 'IFRAME') {
+      const src = node.getAttribute('src');
+      if (!src || !isAllowedEmbedSrc(src)) {
+        node.remove();
+        return;
+      }
+      // See the module doc comment: allow-scripts + allow-same-origin is
+      // defensible ONLY because every ALLOWED_EMBED_HOSTS entry is a distinct
+      // origin from this app.
+      node.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
+      return;
+    }
+
+    // <source> and <track> carry nothing worth keeping without a valid src,
+    // so an invalid one removes the whole element rather than leaving an
+    // inert tag behind — the same call made for <img>.
+    if (node.tagName === 'SOURCE' || node.tagName === 'TRACK') {
+      const src = node.getAttribute('src');
+      if (!src || !isHttpsUrl(src)) node.remove();
+      return;
+    }
+
+    // <video> may carry its own `src`, or rely entirely on `<source>`
+    // children — an insecure `src` here just loses the attribute rather than
+    // taking the whole element (and its still-valid `<source>`s) down with it.
+    if (node.tagName === 'VIDEO') {
+      const src = node.getAttribute('src');
+      if (src && !isHttpsUrl(src)) node.removeAttribute('src');
+      const poster = node.getAttribute('poster');
+      if (poster && !isHttpsUrl(poster)) node.removeAttribute('poster');
     }
   });
 

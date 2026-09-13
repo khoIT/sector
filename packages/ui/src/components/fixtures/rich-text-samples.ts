@@ -81,3 +81,38 @@ export const HAND_BUILT_EVENT_HANDLER_AND_JAVASCRIPT_URL = `<p onclick="alert('x
  *  https-only rule removes exactly the insecure element. */
 export const MIXED_HTTP_AND_HTTPS_IMAGES = `<img src="http://example.com/insecure.png" alt="insecure" />
 <img src="https://example.com/secure.png" alt="secure" />`;
+
+/** db.v2topics.find({content:/esono\.online/i}).limit(1) — GUSI's own scan
+ *  viewer, embedded as an iframe. The second most common embed host in the
+ *  mirror after Vimeo (620 occurrences) and, unlike Vimeo, on GUSI's own
+ *  content — still cross-origin to the app itself (a different domain),
+ *  which is what keeps the sandbox's allow-same-origin safe. */
+export const ESONO_CATALOG_IFRAME_EMBED =
+  '<p><iframe style="position: relative; height: 600px; width: 100%; padding: 0px; margin: 0px;" src="https://esono.online/gusi-catalog/S10eAGNJRQlYORQeCUI+DRc=" frameborder="0"></iframe></p>';
+
+/** db.v2questions.find({content:/<video/i}).limit(1) — one of the 94
+ *  published question-bank questions that ask the learner about an embedded
+ *  clip ("The following image suggests:") using a native `<video>`/`<source>`
+ *  rather than an iframe player. Stripping this element blindly leaves the
+ *  stem unanswerable while the server still grades it — the exact defect
+ *  this policy exists to not repeat. */
+export const QUESTION_WITH_NATIVE_VIDEO_CLIP =
+  '<p><span style="font-size: 12pt;">A 75 year old male with long standing history of smoking is seen in your clinic. The curvilinear probe is placed in the transverse plane in the abdominal midline above the umbilicus. The following image suggests:</span></p>\n' +
+  '<p><video controls="controls" width="720" height="540">\n' +
+  '  <source src="https://legacywp-content.s3.ap-southeast-1.amazonaws.com/wp-content/uploads/2024/01/AAA_with_Thrombus1__Short_Axis__normalized.mp4" type="video/mp4">\n' +
+  '  Your browser does not support the video tag.</video></p>';
+
+/**
+ * Hand-built — the mirror's iframes only ever come from the three measured
+ * hosts (player.vimeo.com, esono.online, www.youtube.com), so an iframe from
+ * anywhere else has to be proved against a fabricated example: the
+ * allow-list is what makes this the ONE fixture that must still lose its
+ * iframe entirely, everything else having just been allowed back in.
+ */
+export const IFRAME_FROM_AN_UNLISTED_HOST =
+  '<p>Before</p><iframe src="https://evil.example.com/widget"></iframe><p>After</p>';
+
+/** Hand-built — an http embed on an otherwise-allowed host, proving the
+ *  allow-list is host-AND-scheme, not host alone. */
+export const IFRAME_ON_ALLOWED_HOST_BUT_HTTP =
+  '<iframe src="http://player.vimeo.com/video/1"></iframe>';

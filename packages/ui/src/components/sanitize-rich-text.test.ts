@@ -3,9 +3,13 @@ import { describe, expect, it } from 'vitest';
 
 import {
   ANSWER_TITLE_IS_AN_IFRAME,
+  ESONO_CATALOG_IFRAME_EMBED,
   HAND_BUILT_EVENT_HANDLER_AND_JAVASCRIPT_URL,
+  IFRAME_FROM_AN_UNLISTED_HOST,
+  IFRAME_ON_ALLOWED_HOST_BUT_HTTP,
   MIXED_HTTP_AND_HTTPS_IMAGES,
   QUESTION_BODY_WITH_INLINE_STYLE_SPAN,
+  QUESTION_WITH_NATIVE_VIDEO_CLIP,
   STYLED_TABLE_WITH_INTERNAL_LINK,
   VIMEO_IFRAME_WITH_SCRIPT,
   WORDPRESS_SHORTCODE_REMNANT,
@@ -27,33 +31,69 @@ function sanitize(html: string): string {
 }
 
 describe('sanitizeRichText against real migrated content', () => {
-  it('drops the <script> tag and its src, keeps the surrounding iframe wrapper only as text', () => {
+  it('keeps a Vimeo iframe (allow-listed host), sandboxed, drops its glued-on <script>', () => {
     const clean = sanitize(VIMEO_IFRAME_WITH_SCRIPT);
 
     expect(clean).not.toContain('<script');
     expect(clean).not.toContain('player.js');
-    expect(clean).not.toContain('<iframe');
-    expect(clean).not.toContain('player.vimeo.com');
+    expect(clean).toContain('<iframe');
+    expect(clean).toContain('src="https://player.vimeo.com/video/698028055');
+    expect(clean).toMatch(/sandbox="allow-scripts allow-same-origin allow-presentation"/);
     // The real teaching content around the embed is not collateral damage.
     expect(clean).toContain('Introduction to US Guided Injections');
     expect(clean).toContain('Anchor probe hand for better control');
   });
 
-  it('strips inline style and class from every element, including the wrapper div', () => {
+  it('strips inline style and class from every element, including the iframe and the wrapper div', () => {
     const clean = sanitize(VIMEO_IFRAME_WITH_SCRIPT);
 
     expect(clean).not.toMatch(/style\s*=/);
     expect(clean).not.toMatch(/class\s*=/);
   });
 
-  it('removes a WordPress block comment and the iframe inside it, keeps the real list content', () => {
+  it('removes a WordPress block comment, keeps the allow-listed YouTube iframe inside it', () => {
     const clean = sanitize(YOUTUBE_IFRAME_IN_WP_BLOCK_COMMENT);
 
-    expect(clean).not.toContain('<iframe');
-    expect(clean).not.toContain('youtube.com');
+    expect(clean).toContain('<iframe');
+    expect(clean).toContain('src="https://www.youtube.com/embed/OvO-VmZ-KIA"');
     expect(clean).not.toContain('wp:html');
     expect(clean).toContain('Hover over the');
     expect(clean).toContain('Estimates');
+  });
+
+  it('keeps GUSI’s own esono.online catalog iframe, sandboxed the same way', () => {
+    const clean = sanitize(ESONO_CATALOG_IFRAME_EMBED);
+
+    expect(clean).toContain('src="https://esono.online/gusi-catalog/');
+    expect(clean).toMatch(/sandbox="allow-scripts allow-same-origin allow-presentation"/);
+    expect(clean).not.toMatch(/style\s*=/);
+  });
+
+  it('keeps a native <video>/<source> clip a question asks the learner about', () => {
+    const clean = sanitize(QUESTION_WITH_NATIVE_VIDEO_CLIP);
+
+    expect(clean).toContain('<video');
+    expect(clean).toContain('controls="controls"');
+    expect(clean).toContain(
+      '<source src="https://legacywp-content.s3.ap-southeast-1.amazonaws.com/wp-content/uploads/2024/01/AAA_with_Thrombus1__Short_Axis__normalized.mp4" type="video/mp4">',
+    );
+    expect(clean).toContain('The following image suggests');
+    expect(clean).not.toContain('autoplay');
+  });
+
+  it('removes an iframe from a host that is not on the allow-list, element and all', () => {
+    const clean = sanitize(IFRAME_FROM_AN_UNLISTED_HOST);
+
+    expect(clean).not.toContain('<iframe');
+    expect(clean).not.toContain('evil.example.com');
+    expect(clean).toContain('Before');
+    expect(clean).toContain('After');
+  });
+
+  it('removes an http (not https) iframe even on an allow-listed host', () => {
+    const clean = sanitize(IFRAME_ON_ALLOWED_HOST_BUT_HTTP);
+    expect(clean).not.toContain('<iframe');
+    expect(clean).not.toContain('player.vimeo.com');
   });
 
   it('leaves an inert WordPress shortcode exactly as authored — it was never a tag', () => {
@@ -85,10 +125,11 @@ describe('sanitizeRichText against real migrated content', () => {
     expect(clean).toContain('What is the best orientation to measure a AAA?');
   });
 
-  it('strips an iframe used as an entire answer title down to nothing renderable', () => {
+  it('keeps an iframe used as an entire answer title — the answer IS the clip', () => {
     const clean = sanitize(ANSWER_TITLE_IS_AN_IFRAME);
-    expect(clean).not.toContain('<iframe');
-    expect(clean).not.toContain('youtube.com');
+    expect(clean).toContain('<iframe');
+    expect(clean).toContain('src="https://www.youtube.com/embed/CHImlpUxg9w"');
+    expect(clean).toMatch(/sandbox="allow-scripts allow-same-origin allow-presentation"/);
   });
 
   it('removes an inline event handler attribute and a javascript: URL, keeps a safe external link', () => {
