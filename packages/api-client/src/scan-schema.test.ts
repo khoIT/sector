@@ -91,3 +91,40 @@ describe('scanSchema groups', () => {
     expect(parsed.groups).toEqual([{ id: 'g1', name: 'Class of 2029' }]);
   });
 });
+
+/**
+ * Shapes found by replaying the production mirror (`pnpm fidelity`) on
+ * 13 Sep 2026. Each was a whole-page failure until the schema learned it.
+ */
+describe('production shapes the replay found', () => {
+  it('keeps a finding whose value was never recorded (191 of 80,905 rows)', () => {
+    const scan = scanSchema.parse({
+      id: 's1',
+      title: 'AAA-APR21-00001',
+      user: { id: 'u1', userName: 'learner', email: 'learner@example.test' },
+      scanType: { id: 't1', key: 'aaa', name: 'AAA' },
+      status: 'submitted',
+      fileTotal: 1,
+      fileCount: 1,
+      findings: [{ id: 'f1', key: 'v2_aaa_long_lvl1', value: null }],
+      createdAt: '2026-04-21T10:00:00.000Z',
+      updatedAt: '2026-04-21T10:00:00.000Z',
+    });
+    expect(scan.findings[0]?.value).toBeNull();
+  });
+
+  it("carries the AI generator's structured reviewFacts opaquely (704 of 15,576 reviews)", () => {
+    const parsed = scanReviewSchema.parse({
+      ...review,
+      reviewFacts: { 'Background Section': { 'Exam Type': 'AAA' }, 'Overall Feedback': {} },
+    });
+    expect(parsed.reviewFacts).toEqual({
+      'Background Section': { 'Exam Type': 'AAA' },
+      'Overall Feedback': {},
+    });
+    expect(scanReviewSchema.parse({ ...review, reviewFacts: 'plain text' }).reviewFacts).toBe(
+      'plain text',
+    );
+    expect(scanReviewSchema.parse({ ...review, reviewFacts: null }).reviewFacts).toBeNull();
+  });
+});

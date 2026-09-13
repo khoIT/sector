@@ -108,7 +108,9 @@ describe.skipIf(!LIVE || !REVIEWER_TOKEN)('live scan-detail shapes', () => {
 
   it.skipIf(!LEARNER_TOKEN || !SHARE_ID)('parses a shared scan detail', async () => {
     const detail = await getSharedScanDetail(clientFor(LEARNER_TOKEN), SHARE_ID);
-    expect(detail.scan.id).toBeTruthy();
+    // Null only when the shared study has since been deleted, which a live
+    // fixture share never is.
+    expect(detail.scan?.id).toBeTruthy();
     expect(['unopened', 'opened']).toContain(detail.status);
   });
 });

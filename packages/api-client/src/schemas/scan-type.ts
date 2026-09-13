@@ -87,7 +87,8 @@ export const scanTypeItemSchema = z.object({
   parent: z.string().nullish(),
   level: z.number().optional(),
   order: z.number().optional(),
-  type: z.string().optional(),
+  /** 12 of 893 production items store an explicit null; the rest input/select/toggle. */
+  type: z.string().nullish(),
   dataType: z.string().optional(),
   source: z.string().nullish(),
   prefixLabel: z.string().nullish(),

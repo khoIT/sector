@@ -47,9 +47,16 @@ export const sharedScanScanSummarySchema = z.object({
 
 export type SharedScanScanSummary = z.infer<typeof sharedScanScanSummarySchema>;
 
+/**
+ * `scan` is NULL when the study a share points at has since been deleted:
+ * 5 of 282 production shares are in that state. The API populates the
+ * reference, gets nothing back, and sends the row anyway — so a recipient
+ * with one dead share used to lose their whole Shared Scans page to a parse
+ * error. The row renders as "no longer available" instead.
+ */
 export const sharedScanListItemSchema = z.object({
   id: z.string(),
-  scan: sharedScanScanSummarySchema,
+  scan: sharedScanScanSummarySchema.nullable(),
   /** Recipient address the share was addressed to. */
   email: z.string(),
   sharedBy: userBasicSchema,

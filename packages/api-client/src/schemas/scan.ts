@@ -42,10 +42,17 @@ export const refIdSchema = z
   .union([z.string(), z.number().transform((value) => String(value))])
   .nullish();
 
+/**
+ * VERIFIED SHAPE (production mirror, 13 Sep 2026): 191 of 80,905 findings
+ * store `value: null` — a row written for an item the learner never answered.
+ * The detail page already renders a missing value as a dash; the schema has to
+ * let the row through for that dash to ever be reached, because one null
+ * would otherwise blank the whole study.
+ */
 export const scanFindingSchema = z.object({
   id: z.string(),
   key: z.string(),
-  value: z.string(),
+  value: z.string().nullable(),
 });
 
 export type ScanFinding = z.infer<typeof scanFindingSchema>;
@@ -212,7 +219,15 @@ export const scanReviewSchema = z.object({
   reviewMD: z.string().nullish(),
   translatedReviewMD: z.string().nullish(),
   translatedLanguage: z.string().nullish(),
-  reviewFacts: z.string().nullish(),
+  /**
+   * VERIFIED SHAPE (production mirror, 13 Sep 2026): 704 of 15,576 reviews
+   * hold an OBJECT here — the structured facts the AI review generator writes,
+   * keyed by section ("Background Section", "Overall Feedback", …) — while the
+   * rest hold null or nothing. Nothing in this client reads it, so it is kept
+   * opaque rather than modelled; typing it as a string rejected every
+   * AI-assisted review on the reviewed lists.
+   */
+  reviewFacts: z.unknown().nullish(),
   refId: refIdSchema,
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -321,12 +336,19 @@ export const scanNoteSchema = z.object({
   id: z.string(),
   note: z.string(),
   user: userBasicSchema,
+  /**
+   * Populated by the notes route, and null when the note's scan has since
+   * been soft-deleted: 729 of 18,923 notes in the production mirror are in
+   * that state. The route itself 404s on a deleted scan, so a client only
+   * meets the null through a stale cache — but a stale cache is exactly when
+   * a schema must not throw.
+   */
   scan: z
     .object({
       id: z.string(),
       title: z.string(),
     })
-    .optional(),
+    .nullish(),
   refId: refIdSchema,
   createdAt: z.string(),
   updatedAt: z.string().optional(),

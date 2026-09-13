@@ -86,7 +86,8 @@ export const sharedScanDetailSchema = z.object({
   status: z.enum(['unopened', 'opened']),
   remarks: z.string().nullish(),
   sharedBy: z.union([z.string(), userBasicSchema]),
-  scan: sharedScanDetailScanSchema,
+  /** Null once the shared study is deleted; see sharedScanListItemSchema. */
+  scan: sharedScanDetailScanSchema.nullable(),
   createdAt: z.string(),
   updatedAt: z.string().optional(),
 });
