@@ -200,7 +200,7 @@
   },
   "invitation": {
     "title": "You have been invited to join a group",
-    "description": "Set a password to activate your account and join the group.",
+    "description": "Confirm the invitation below. If this is a new account, the password you set here becomes your sign-in password.",
     "passwordLabel": "Password",
     "confirmPasswordLabel": "Confirm password",
     "confirmButton": "Confirm invitation",
@@ -226,6 +226,7 @@
   },
   "deleteAccount": {
     "trigger": "Delete account",
+    "cardDescription": "This cannot be undone by you, and there is no other door once you confirm.",
     "title": "Delete your account?",
     "warning": "This cannot be undone. Your account is deactivated and your email is freed up for reuse — but your scans, reviews and group memberships are not removed and stay on record.",
     "confirmLabel": "Type your email to confirm: {{email}}",

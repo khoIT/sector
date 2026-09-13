@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sector/ui';
+import { useTranslation } from 'react-i18next';
 
 import { CreateScanFlowSetting } from './create-scan-flow-setting';
 import { DeleteAccountDialog } from './delete-account-dialog';
@@ -21,6 +22,8 @@ import { ProfilePhoto } from './profile-photo';
  * name, photo and password.
  */
 export function ProfilePage() {
+  const { t } = useTranslation();
+
   return (
     <section aria-labelledby="profile-heading" className="flex max-w-3xl flex-col gap-5">
       <h2 id="profile-heading" className="text-[17px] font-semibold tracking-tight text-ink">
@@ -67,10 +70,8 @@ export function ProfilePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Delete account</CardTitle>
-          <CardDescription>
-            This cannot be undone by you, and there is no other door once you confirm.
-          </CardDescription>
+          <CardTitle>{t('deleteAccount.trigger')}</CardTitle>
+          <CardDescription>{t('deleteAccount.cardDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <DeleteAccountDialog />

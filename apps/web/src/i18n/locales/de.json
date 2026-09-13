@@ -123,7 +123,7 @@
   },
   "invitation": {
     "title": "Sie wurden eingeladen, einer Gruppe beizutreten",
-    "description": "Legen Sie ein Passwort fest, um Ihr Konto zu aktivieren und der Gruppe beizutreten.",
+    "description": "Bestätigen Sie die Einladung unten. Handelt es sich um ein neues Konto, wird das hier festgelegte Passwort Ihr Anmeldepasswort.",
     "passwordLabel": "Passwort",
     "confirmPasswordLabel": "Passwort bestätigen",
     "confirmButton": "Einladung bestätigen",
@@ -149,6 +149,7 @@
   },
   "deleteAccount": {
     "trigger": "Konto löschen",
+    "cardDescription": "Dies können Sie selbst nicht rückgängig machen, und es gibt keinen anderen Weg zurück, sobald Sie bestätigen.",
     "title": "Konto löschen?",
     "warning": "Dies kann nicht rückgängig gemacht werden. Ihr Konto wird deaktiviert und Ihre E-Mail-Adresse wird zur Wiederverwendung freigegeben — Ihre Scans, Überprüfungen und Gruppenmitgliedschaften werden jedoch nicht entfernt und bleiben erhalten.",
     "confirmLabel": "Geben Sie Ihre E-Mail-Adresse ein, um zu bestätigen: {{email}}",

@@ -123,7 +123,7 @@
   },
   "invitation": {
     "title": "Vous avez été invité à rejoindre un groupe",
-    "description": "Définissez un mot de passe pour activer votre compte et rejoindre le groupe.",
+    "description": "Confirmez l'invitation ci-dessous. S'il s'agit d'un nouveau compte, le mot de passe que vous définissez ici devient votre mot de passe de connexion.",
     "passwordLabel": "Mot de passe",
     "confirmPasswordLabel": "Confirmer le mot de passe",
     "confirmButton": "Confirmer l'invitation",
@@ -149,6 +149,7 @@
   },
   "deleteAccount": {
     "trigger": "Supprimer le compte",
+    "cardDescription": "Vous ne pouvez pas annuler ceci vous-même, et il n'y a pas d'autre recours une fois que vous confirmez.",
     "title": "Supprimer votre compte ?",
     "warning": "Cette action est irréversible. Votre compte est désactivé et votre adresse e-mail est libérée pour être réutilisée — mais vos scans, avis et adhésions aux groupes ne sont pas supprimés et restent enregistrés.",
     "confirmLabel": "Saisissez votre e-mail pour confirmer : {{email}}",

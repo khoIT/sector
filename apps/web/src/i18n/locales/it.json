@@ -123,7 +123,7 @@
   },
   "invitation": {
     "title": "Sei stato invitato a far parte di un gruppo",
-    "description": "Imposta una password per attivare il tuo account e unirti al gruppo.",
+    "description": "Conferma l'invito qui sotto. Se si tratta di un account nuovo, la password che imposti qui diventa la tua password di accesso.",
     "passwordLabel": "Password",
     "confirmPasswordLabel": "Conferma la password",
     "confirmButton": "Conferma invito",
@@ -149,6 +149,7 @@
   },
   "deleteAccount": {
     "trigger": "Elimina account",
+    "cardDescription": "Non puoi annullare questa azione da solo, e non c'è un'altra via una volta confermato.",
     "title": "Eliminare il tuo account?",
     "warning": "Questa azione non può essere annullata. Il tuo account viene disattivato e il tuo indirizzo email si libera per un nuovo utilizzo, ma le tue scansioni, revisioni e appartenenze ai gruppi non vengono rimosse e restano registrate.",
     "confirmLabel": "Digita la tua email per confermare: {{email}}",

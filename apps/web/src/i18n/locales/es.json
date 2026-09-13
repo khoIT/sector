@@ -123,7 +123,7 @@
   },
   "invitation": {
     "title": "Se le ha invitado a unirse a un grupo",
-    "description": "Establece una contraseña para activar tu cuenta y unirte al grupo.",
+    "description": "Confirma la invitación a continuación. Si se trata de una cuenta nueva, la contraseña que establezcas aquí será tu contraseña de acceso.",
     "passwordLabel": "Contraseña",
     "confirmPasswordLabel": "Confirmar contraseña",
     "confirmButton": "Confirmar invitación",
@@ -149,6 +149,7 @@
   },
   "deleteAccount": {
     "trigger": "Eliminar cuenta",
+    "cardDescription": "Esto no se puede deshacer por tu cuenta, y no hay otra puerta una vez que confirmes.",
     "title": "¿Eliminar tu cuenta?",
     "warning": "Esto no se puede deshacer. Tu cuenta se desactiva y tu correo electrónico queda libre para reutilizarse, pero tus escaneos, revisiones y membresías de grupo no se eliminan y permanecen registrados.",
     "confirmLabel": "Escribe tu correo electrónico para confirmar: {{email}}",

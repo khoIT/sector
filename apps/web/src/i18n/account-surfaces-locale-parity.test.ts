@@ -19,10 +19,10 @@ import pt from './locales/pt.json';
  * just quietly leave a non-English page speaking English on the one surface
  * where a confused, locked-out user arrives.
  *
- * Scoped to the namespaces THIS phase added rather than the whole file: the
- * rest of the corpus already had known partial-translation gaps before this
- * work (see the doc comment on `i18n/index.ts`), and closing those is not
- * this phase's job.
+ * Scoped to the five namespaces above rather than the whole file: the rest
+ * of the corpus already had known partial-translation gaps before this work
+ * (see the doc comment on `i18n/index.ts`), and closing those is a separate
+ * effort with its own scope.
  */
 const NEW_NAMESPACES = [
   'auth',

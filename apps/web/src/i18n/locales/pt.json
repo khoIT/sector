@@ -123,7 +123,7 @@
   },
   "invitation": {
     "title": "Você foi convidado para participar de um grupo",
-    "description": "Defina uma senha para ativar sua conta e entrar no grupo.",
+    "description": "Confirme o convite abaixo. Se esta for uma conta nova, a senha que você definir aqui se torna sua senha de acesso.",
     "passwordLabel": "Senha",
     "confirmPasswordLabel": "Confirme a senha",
     "confirmButton": "Confirme o convite",
@@ -149,6 +149,7 @@
   },
   "deleteAccount": {
     "trigger": "Excluir conta",
+    "cardDescription": "Você não pode desfazer isso sozinho, e não há outra porta depois que você confirmar.",
     "title": "Excluir sua conta?",
     "warning": "Isso não pode ser desfeito. Sua conta é desativada e seu e-mail fica livre para reutilização — mas suas digitalizações, revisões e associações a grupos não são removidas e permanecem registradas.",
     "confirmLabel": "Digite seu e-mail para confirmar: {{email}}",

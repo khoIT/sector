@@ -123,7 +123,7 @@
   },
   "invitation": {
     "title": "Inanyayahan ka na sumali sa isang grupo",
-    "description": "Magtakda ng password upang i-activate ang iyong account at sumali sa grupo.",
+    "description": "Kumpirmahin ang imbitasyon sa ibaba. Kung bago ang account na ito, ang password na itatakda mo dito ang magiging password mo sa pag-sign in.",
     "passwordLabel": "Password",
     "confirmPasswordLabel": "Kumpirmahin ang Password",
     "confirmButton": "Kumpirmahin ang Imbitasyon",
@@ -149,6 +149,7 @@
   },
   "deleteAccount": {
     "trigger": "Tanggalin ang Account",
+    "cardDescription": "Hindi mo ito maibabalik, at wala nang ibang pinto kapag kumpirmado mo na.",
     "title": "Tanggalin ang iyong account?",
     "warning": "Hindi na ito maibabalik. Nadi-deactivate ang iyong account at malalaya ang iyong email para muling magamit — ngunit ang iyong mga scan, review, at pagiging miyembro sa grupo ay hindi tinatanggal at nananatiling nakatala.",
     "confirmLabel": "I-type ang iyong email upang kumpirmahin: {{email}}",
