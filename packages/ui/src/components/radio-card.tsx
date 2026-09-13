@@ -12,7 +12,14 @@ import { radioCardStateClasses, type RadioCardReveal } from './radio-card-state'
 function CheckGlyph() {
   return (
     <svg viewBox="0 0 16 16" aria-hidden className="h-4 w-4 shrink-0 text-ok">
-      <path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M3 8.5l3 3 7-7"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -20,7 +27,13 @@ function CheckGlyph() {
 function CrossGlyph() {
   return (
     <svg viewBox="0 0 16 16" aria-hidden className="h-4 w-4 shrink-0 text-crit">
-      <path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path
+        d="M4 4l8 8M12 4l-8 8"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

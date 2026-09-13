@@ -80,7 +80,10 @@ export function quizReducer(state: QuizState, action: QuizAction): QuizState {
 
     case 'quiz/select-single': {
       if (state.phase !== 'running') return state;
-      return { ...state, answers: selectSingleAnswer(state.answers, action.questionId, action.answerId) };
+      return {
+        ...state,
+        answers: selectSingleAnswer(state.answers, action.questionId, action.answerId),
+      };
     }
 
     case 'quiz/toggle-multiple': {

@@ -52,7 +52,7 @@ describe('sanitizeRichText against real migrated content', () => {
     expect(clean).not.toContain('<iframe');
     expect(clean).not.toContain('youtube.com');
     expect(clean).not.toContain('wp:html');
-    expect(clean).toContain("Hover over the");
+    expect(clean).toContain('Hover over the');
     expect(clean).toContain('Estimates');
   });
 

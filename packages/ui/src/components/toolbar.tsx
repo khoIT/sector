@@ -14,10 +14,6 @@ export const Toolbar = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>
   ref,
 ) {
   return (
-    <div
-      ref={ref}
-      className={cn('flex flex-wrap items-center gap-2 py-3', className)}
-      {...props}
-    />
+    <div ref={ref} className={cn('flex flex-wrap items-center gap-2 py-3', className)} {...props} />
   );
 });

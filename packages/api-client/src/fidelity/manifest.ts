@@ -9,10 +9,7 @@ import {
   scanTypeSummarySchema,
 } from '../schemas/create-scan-lookups';
 import { groupFilterOptionSchema } from '../schemas/group-filter';
-import {
-  questionBankDetailSchema,
-  questionBankSummarySchema,
-} from '../schemas/question-bank';
+import { questionBankDetailSchema, questionBankSummarySchema } from '../schemas/question-bank';
 import {
   scanFindingSchema,
   scanNoteSchema,
@@ -473,12 +470,14 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
     'the in-progress branch of a qbankprogresses attempt; no dump holds a live session, so no replayed caller ever produces this branch of the union — only questionBankRestartInfoSchema is proved',
   questionBankProgressResultSchema:
     'response of GET /api/v2/question-banks/progress/:quizId, assembled per caller from a qbankprogresses attempt no dump holds',
-  saveQuestionBankProgressPayloadSchema: 'request body of POST /api/v2/question-banks/save-progress',
+  saveQuestionBankProgressPayloadSchema:
+    'request body of POST /api/v2/question-banks/save-progress',
   saveQuestionBankProgressResultSchema:
     'response of POST /api/v2/question-banks/save-progress — an echo of the request plus a flag, not a stored document',
-  checkQuestionBankAnswersPayloadSchema: 'request body of POST /api/v2/question-banks/check-answers',
+  checkQuestionBankAnswersPayloadSchema:
+    'request body of POST /api/v2/question-banks/check-answers',
   checkQuestionBankAnswersResultSchema:
-    'a scored attempt computed per request from qbankprogresses and the quiz\'s questions; no dump holds a session to replay',
+    "a scored attempt computed per request from qbankprogresses and the quiz's questions; no dump holds a session to replay",
   questionBankResultQuestionSchema:
     'a per-question grade inside checkQuestionBankAnswersResultSchema, computed per request rather than stored',
   questionBankAnswerRefSchema:

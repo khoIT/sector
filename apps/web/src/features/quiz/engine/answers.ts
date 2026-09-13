@@ -31,10 +31,7 @@ export function isQuestionAnswered(answers: QuizAnswers, questionId: string): bo
   return (answers[questionId]?.length ?? 0) > 0;
 }
 
-export function answeredCount(
-  answers: QuizAnswers,
-  questions: readonly QuizQuestion[],
-): number {
+export function answeredCount(answers: QuizAnswers, questions: readonly QuizQuestion[]): number {
   return questions.filter((question) => isQuestionAnswered(answers, question.id)).length;
 }
 

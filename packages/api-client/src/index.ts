@@ -499,4 +499,8 @@ export {
   saveQuestionBankProgress,
 } from './endpoints/question-bank';
 
-export { useQuestionBankDetail, useQuestionBankList } from './react/use-question-banks';
+export {
+  useQuestionBankDetail,
+  useQuestionBankList,
+  useQuestionBankProgress,
+} from './react/use-question-banks';

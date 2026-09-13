@@ -1,6 +1,7 @@
 import type { AuthUser } from '@sector/api-client';
-import { BookOpen, FolderClock, Share2, Users2 } from 'lucide-react';
+import { BookOpen, FolderClock, ListChecks, Share2, Users2 } from 'lucide-react';
 
+import { QUESTION_BANK_LIST_PATH } from '@/features/question-banks/question-bank-links';
 import { UNBUILT_SURFACES, type UnbuiltSurfaceId } from '@/routes/unbuilt-surfaces';
 
 import {
@@ -48,6 +49,23 @@ function unbuiltDestination<TId extends UnbuiltSurfaceId>(id: TId): NavDestinati
     visibleWhen: whenPermitted(surface.permission),
   };
 }
+
+/**
+ * Question banks: the first Learn surface with a real page behind it. Its id,
+ * path and label key are unchanged from when this was an `unbuiltDestination`
+ * row — only the surface behind them is new — declared directly here rather
+ * than read from ./unbuilt-surfaces.ts now that the row it used to come from
+ * is gone. `/api/v2/question-banks*` guards on nothing but a signed-in
+ * session, so this is ungated like Shared Scans.
+ */
+const questionBanksDestination: NavDestination<'question-banks'> = {
+  id: 'question-banks',
+  labelKey: 'nav.questionBanks',
+  icon: ListChecks,
+  path: QUESTION_BANK_LIST_PATH,
+  matchPrefix: QUESTION_BANK_LIST_PATH,
+  visibleWhen: whenPermitted(null),
+};
 
 /*
  * Written without a `satisfies readonly NavGroup[]` clause, and that is load
@@ -102,7 +120,7 @@ export const NAV_GROUPS = [
     id: 'learn',
     labelKey: 'nav.learn',
     showLabel: true,
-    items: [unbuiltDestination('courses'), unbuiltDestination('question-banks')],
+    items: [unbuiltDestination('courses'), questionBanksDestination],
   },
   {
     id: 'administer',

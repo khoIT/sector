@@ -1,4 +1,4 @@
-import { GraduationCap, ListChecks, Settings2, type LucideIcon } from 'lucide-react';
+import { GraduationCap, Settings2, type LucideIcon } from 'lucide-react';
 
 import { SCAN_VAULT_PERMISSION } from '@/features/scan-list/scan-list-views';
 
@@ -19,10 +19,16 @@ import { SCAN_VAULT_PERMISSION } from '@/features/scan-list/scan-list-views';
  * landed on a blank page.
  *
  * Retiring one of these is a deletion, not a migration: drop the row, mount
- * the real page under the same path, and the rail follows.
+ * the real page under the same path, and the rail follows. `question-banks`
+ * was the first to go — its real routes live in
+ * apps/web/src/features/question-banks/question-bank-routes.tsx now, mounted
+ * at the exact path this table used to point at, and its nav entry
+ * (id `question-banks`, path `/learn/question-banks`, label key
+ * `nav.questionBanks`) is declared directly in shell/nav-config.ts instead of
+ * being derived from a row here.
  */
 
-export type UnbuiltSurfaceId = 'courses' | 'question-banks' | 'group-administration';
+export type UnbuiltSurfaceId = 'courses' | 'group-administration';
 
 export type UnbuiltSurface = {
   /** Absolute URL, for links; the router mounts it relative. */
@@ -43,12 +49,6 @@ export const UNBUILT_SURFACES: Readonly<Record<UnbuiltSurfaceId, UnbuiltSurface>
     permission: null,
     labelKey: 'nav.courses',
     icon: GraduationCap,
-  },
-  'question-banks': {
-    path: '/learn/question-banks',
-    permission: null,
-    labelKey: 'nav.questionBanks',
-    icon: ListChecks,
   },
   'group-administration': {
     path: '/administer/groups',

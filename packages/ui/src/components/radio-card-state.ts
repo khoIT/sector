@@ -10,5 +10,7 @@ export type RadioCardReveal = 'unrevealed' | 'correct' | 'incorrect';
 export function radioCardStateClasses(selected: boolean, reveal: RadioCardReveal): string {
   if (reveal === 'correct') return 'border-ok bg-ok-soft';
   if (reveal === 'incorrect') return 'border-crit bg-crit-soft';
-  return selected ? 'border-accent-ink bg-accent-soft' : 'border-line bg-surface hover:bg-surface-2';
+  return selected
+    ? 'border-accent-ink bg-accent-soft'
+    : 'border-line bg-surface hover:bg-surface-2';
 }

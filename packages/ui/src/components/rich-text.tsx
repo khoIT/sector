@@ -3,7 +3,10 @@ import { forwardRef, useMemo, type HTMLAttributes } from 'react';
 import { cn } from '../lib/cn';
 import { sanitizeRichText } from './sanitize-rich-text';
 
-export type RichTextProps = Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'dangerouslySetInnerHTML'> & {
+export type RichTextProps = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'children' | 'dangerouslySetInnerHTML'
+> & {
   /** Raw HTML from the content collections (lesson/topic/question bodies). */
   html: string | null | undefined;
 };

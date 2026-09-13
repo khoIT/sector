@@ -3,7 +3,10 @@ import { forwardRef, type HTMLAttributes } from 'react';
 import { cn } from '../lib/cn';
 import { segmentStates } from './segmented-progress-state';
 
-export type SegmentedProgressProps = Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onClick'> & {
+export type SegmentedProgressProps = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'children' | 'onClick'
+> & {
   /** Number of segments — the question count. */
   total: number;
   currentIndex: number;
