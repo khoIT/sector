@@ -39,7 +39,8 @@
     "requestExpertReview": "Humiling ng review ng eksperto",
     "markComplete": "Markahang kumpleto",
     "markIncomplete": "Markahang hindi kumpleto",
-    "remove": "Alisin"
+    "remove": "Alisin",
+    "close": "Isara"
   },
   "status": {
     "pending": "Nagbabantay",
@@ -206,7 +207,138 @@
       "error": {
         "title": "Hindi ma-load ang listahang ito",
         "retry": "Subukan muli"
+      },
+      "actions": {
+        "changeRole": "Baguhin ang tungkulin",
+        "remove": "Alisin",
+        "removeConfirmTitle": "Alisin ang miyembrong ito?",
+        "removeConfirmDescription": "Mawawalan sila ng access sa mga kurso at scan ng grupong ito.",
+        "removeError": "Hindi maalis ang miyembrong ito.",
+        "removing": "Inaalis…"
       }
+    },
+    "tabs": {
+      "members": "Mga Miyembro",
+      "courses": "Mga Kurso",
+      "assignments": "Mga Takdang-Gawain",
+      "exports": "Mga Export",
+      "settings": "Mga Setting"
+    },
+    "form": {
+      "createTrigger": "Gumawa ng grupo",
+      "editTrigger": "I-edit ang grupo",
+      "createTitle": "Gumawa ng grupo",
+      "editTitle": "I-edit ang grupo",
+      "description": "Inaayos ng mga grupo ang mga miyembro sa ilalim ng iisang set ng mga kurso, takdang-gawain, at export.",
+      "nameLabel": "Pangalan",
+      "slugLabel": "Slug",
+      "slugHint": "Ginagamit sa mga URL. Maliit na titik, numero at gitling lamang.",
+      "organizationLabel": "Organisasyon",
+      "organizationPlaceholder": "Pumili ng organisasyon",
+      "descriptionLabel": "Paglalarawan",
+      "typeLabel": "Uri",
+      "typePlaceholder": "Pumili ng uri",
+      "totalSeatsLabel": "Kabuuang upuan",
+      "totalSeatsHint": "Iwanang blangko para walang limitasyon.",
+      "expirationDateLabel": "Petsa ng pag-expire",
+      "isFreeTrialLabel": "Ito ay isang libreng trial na grupo",
+      "error": "Hindi na-save ang grupong ito.",
+      "saving": "Sine-save…",
+      "submit": "I-save"
+    },
+    "invite": {
+      "trigger": "Mag-imbita ng miyembro",
+      "title": "Mag-imbita ng miyembro",
+      "description": "Magpadala ng imbitasyon sa email para sumali sa grupong ito.",
+      "emailLabel": "Email",
+      "firstNameLabel": "Unang pangalan",
+      "lastNameLabel": "Apelyido",
+      "roleLabel": "Tungkulin",
+      "emailInvalid": "Maglagay ng wastong email address.",
+      "success": "Naipadala na ang imbitasyon.",
+      "error": "Hindi naipadala ang imbitasyong ito.",
+      "alreadyExists": "May aktibong account na ang email na ito.",
+      "addExisting": "Idagdag na lang sa grupo",
+      "addingExisting": "Idinaragdag…",
+      "sending": "Ipinapadala…",
+      "submit": "Ipadala ang imbitasyon"
+    },
+    "courses": {
+      "addLabel": "ID ng kurso",
+      "addPlaceholder": "I-paste ang ID ng kurso",
+      "add": "Magdagdag ng kurso",
+      "adding": "Idinaragdag…",
+      "addError": "Hindi naidagdag ang kursong ito.",
+      "idRequired": "Maglagay ng ID ng kurso.",
+      "loadError": "Hindi na-load ang mga kurso ng grupong ito.",
+      "remove": "Alisin ang kurso",
+      "empty": {
+        "title": "Walang naka-enrol na kurso",
+        "description": "Magdagdag ng kurso para ma-enrol ang bawat miyembro ng grupong ito."
+      }
+    },
+    "assignments": {
+      "loadError": "Hindi na-load ang mga takdang-gawain ng grupong ito.",
+      "dueDate": "Deadline: {{date}}",
+      "noDueDate": "Walang deadline",
+      "empty": {
+        "title": "Wala pang takdang-gawain",
+        "description": "Mag-assign ng kurso sa mga partikular na miyembro na may deadline."
+      },
+      "status": {
+        "draft": "Draft",
+        "active": "Aktibo",
+        "in_progress": "Kasalukuyang ginagawa",
+        "completed": "Nakumpleto na",
+        "cancelled": "Kinansela"
+      },
+      "form": {
+        "trigger": "Bagong takdang-gawain",
+        "title": "Mag-assign ng kurso",
+        "description": "Mag-assign ng kurso sa mga partikular na miyembro ng grupong ito, na may deadline.",
+        "courseLabel": "Kurso",
+        "coursePlaceholder": "Pumili ng kurso",
+        "dueDateLabel": "Deadline",
+        "learnersLabel": "Mga mag-aaral",
+        "noLearners": "Wala pang aktibong mag-aaral ang grupong ito.",
+        "courseRequired": "Pumili ng kurso.",
+        "learnersRequired": "Pumili ng kahit isang mag-aaral.",
+        "error": "Hindi nagawa ang takdang-gawaing ito.",
+        "saving": "Sine-save…",
+        "submit": "Gumawa ng takdang-gawain"
+      }
+    },
+    "exports": {
+      "error": "Hindi nagawa ang export na ito.",
+      "scans": {
+        "title": "Buod ng mga scan ng grupo",
+        "description": "Bawat miyembro at ang bilang ng kanilang mga scan ayon sa uri ng eksaminasyon."
+      },
+      "userScans": {
+        "title": "Mga indibidwal na scan record",
+        "description": "Isang hilera bawat scan, kasama ang status ng review at puna."
+      },
+      "courseProgress": {
+        "title": "Progreso sa kurso",
+        "description": "Pagkumpleto ayon sa klase, kurso at miyembro."
+      },
+      "courseData": {
+        "title": "Detalye ng pagkumpleto ng kurso",
+        "description": "Pagkumpleto ng module bawat miyembro para sa isang kurso.",
+        "coursePlaceholder": "I-paste ang ID ng kurso"
+      },
+      "report": {
+        "title": "Ulat ng pagkumpleto",
+        "description": "Ang parehong datos ng pagkumpleto bilang CSV o JSON file.",
+        "csv": "I-download ang CSV",
+        "json": "I-download ang JSON"
+      }
+    },
+    "settings": {
+      "detailsTitle": "Detalye ng grupo",
+      "detailsDescription": "Pangalan, slug, paglalarawan, uri, upuan at petsa ng pag-expire.",
+      "loadError": "Hindi na-load ang mga detalye ng grupong ito.",
+      "notLeaderNotice": "Available lamang ang mga preference sa abiso ng scan sa lider ng grupong ito."
     }
   },
   "auth": {

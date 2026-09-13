@@ -680,3 +680,109 @@ export { useAddScanTag, useRemoveScanTag } from './react/use-scan-tags';
 // ─── reset-upload (recovering a failed or failed-upload scan) ────────────────
 export { resetScanUpload } from './endpoints/scan-reset-upload';
 export { useResetScanUpload } from './react/use-scan-reset-upload';
+// ─── group administration: create/edit group, invite, roles, courses,
+// assignments, exports ────────────────────────────────────────────────────
+export {
+  createGroupPayloadSchema,
+  groupWriteResultSchema,
+  updateGroupPayloadSchema,
+  type CreateGroupPayload,
+  type GroupWriteResult,
+  type UpdateGroupPayload,
+} from './schemas/group-write';
+export { createGroup, getGroupById, updateGroup } from './endpoints/group-write';
+export {
+  useCreateGroupMutation,
+  useGroupById,
+  useUpdateGroupMutation,
+} from './react/use-group-write';
+
+export {
+  addExistingUserToGroupPayloadSchema,
+  inviteGroupMemberPayloadSchema,
+  inviteGroupMemberResultSchema,
+  reInviteGroupMemberPayloadSchema,
+  updateGroupMemberRolePayloadSchema,
+  type AddExistingUserToGroupPayload,
+  type InviteGroupMemberPayload,
+  type InviteGroupMemberResult,
+  type ReInviteGroupMemberPayload,
+  type UpdateGroupMemberRolePayload,
+} from './schemas/group-member-write';
+export {
+  addExistingUserToGroup,
+  inviteGroupMember,
+  reInviteGroupMember,
+  removeGroupMember,
+  updateGroupMemberRole,
+} from './endpoints/group-member-write';
+export {
+  useAddExistingUserToGroupMutation,
+  useInviteGroupMemberMutation,
+  useReInviteGroupMemberMutation,
+  useRemoveGroupMemberMutation,
+  useUpdateGroupMemberRoleMutation,
+} from './react/use-group-member-write';
+
+export { groupCourseSchema, type GroupCourse } from './schemas/group-course';
+export {
+  addCourseToGroup,
+  getGroupCourses,
+  removeCourseFromGroup,
+  type GroupCourseListQuery,
+} from './endpoints/group-course';
+export {
+  useAddCourseToGroupMutation,
+  useGroupCourses,
+  useRemoveCourseFromGroupMutation,
+} from './react/use-group-course';
+
+export {
+  exportFileResultSchema,
+  groupScanReportEntrySchema,
+  type ExportFileResult,
+  type GroupScanReportEntry,
+} from './schemas/group-export';
+export {
+  exportGroupCourseData,
+  exportGroupCourseProgress,
+  exportGroupScans,
+  exportGroupUserScans,
+  getGroupScanReportCsv,
+  getGroupScanReportJson,
+  type ScanExportQuery,
+} from './endpoints/group-export';
+export {
+  useExportGroupCourseDataMutation,
+  useExportGroupCourseProgressMutation,
+  useExportGroupScansMutation,
+  useExportGroupUserScansMutation,
+  useGroupScanReportDownload,
+} from './react/use-group-export';
+export { exportFileToBlob } from './export-download';
+
+export {
+  createGroupAssignmentPayloadSchema,
+  groupAssignmentSchema,
+  groupAssignmentStatusSchema,
+  groupAssignmentTypeSchema,
+  groupCourseOptionSchema,
+  groupLearnerSchema,
+  type CreateGroupAssignmentPayload,
+  type GroupAssignment,
+  type GroupCourseOption,
+  type GroupLearner,
+} from './schemas/group-assignment';
+export {
+  createGroupAssignment,
+  getGroupAssignments,
+  getGroupCourseOptions,
+  getGroupLearners,
+  type GetGroupAssignmentsQuery,
+} from './endpoints/group-assignment';
+export {
+  useCreateGroupAssignmentMutation,
+  useGroupAssignments,
+  useGroupCourseOptions,
+  useGroupLearners,
+} from './react/use-group-assignments';

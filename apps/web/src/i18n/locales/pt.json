@@ -39,7 +39,8 @@
     "requestExpertReview": "Solicitar revisão especializada",
     "markComplete": "Marcar como completo",
     "markIncomplete": "Marcar como incompleto",
-    "remove": "Remover"
+    "remove": "Remover",
+    "close": "Fechar"
   },
   "status": {
     "pending": "Pendente",
@@ -206,7 +207,138 @@
       "error": {
         "title": "Não foi possível carregar esta lista",
         "retry": "Tentar novamente"
+      },
+      "actions": {
+        "changeRole": "Alterar função",
+        "remove": "Remover",
+        "removeConfirmTitle": "Remover este membro?",
+        "removeConfirmDescription": "Ele perderá o acesso aos cursos e exames deste grupo.",
+        "removeError": "Não foi possível remover este membro.",
+        "removing": "Removendo…"
       }
+    },
+    "tabs": {
+      "members": "Membros",
+      "courses": "Cursos",
+      "assignments": "Tarefas",
+      "exports": "Exportações",
+      "settings": "Configurações"
+    },
+    "form": {
+      "createTrigger": "Criar grupo",
+      "editTrigger": "Editar grupo",
+      "createTitle": "Criar um grupo",
+      "editTitle": "Editar grupo",
+      "description": "Os grupos organizam membros sob um mesmo conjunto de cursos, tarefas e exportações.",
+      "nameLabel": "Nome",
+      "slugLabel": "Slug",
+      "slugHint": "Usado em URLs. Apenas minúsculas, números e hífens.",
+      "organizationLabel": "Organização",
+      "organizationPlaceholder": "Escolha uma organização",
+      "descriptionLabel": "Descrição",
+      "typeLabel": "Tipo",
+      "typePlaceholder": "Escolha um tipo",
+      "totalSeatsLabel": "Vagas totais",
+      "totalSeatsHint": "Deixe em branco para vagas ilimitadas.",
+      "expirationDateLabel": "Data de expiração",
+      "isFreeTrialLabel": "Este é um grupo de teste gratuito",
+      "error": "Não foi possível salvar este grupo.",
+      "saving": "Salvando…",
+      "submit": "Salvar"
+    },
+    "invite": {
+      "trigger": "Convidar membro",
+      "title": "Convidar um membro",
+      "description": "Enviar um convite por email para participar deste grupo.",
+      "emailLabel": "Email",
+      "firstNameLabel": "Nome",
+      "lastNameLabel": "Sobrenome",
+      "roleLabel": "Função",
+      "emailInvalid": "Digite um endereço de email válido.",
+      "success": "O convite foi enviado.",
+      "error": "Não foi possível enviar este convite.",
+      "alreadyExists": "Este email já pertence a uma conta ativa.",
+      "addExisting": "Adicionar ao grupo em vez disso",
+      "addingExisting": "Adicionando…",
+      "sending": "Enviando…",
+      "submit": "Enviar convite"
+    },
+    "courses": {
+      "addLabel": "ID do curso",
+      "addPlaceholder": "Cole um ID de curso",
+      "add": "Adicionar curso",
+      "adding": "Adicionando…",
+      "addError": "Não foi possível adicionar este curso.",
+      "idRequired": "Digite um ID de curso.",
+      "loadError": "Não foi possível carregar os cursos deste grupo.",
+      "remove": "Remover curso",
+      "empty": {
+        "title": "Nenhum curso matriculado",
+        "description": "Adicione um curso para matricular todos os membros deste grupo."
+      }
+    },
+    "assignments": {
+      "loadError": "Não foi possível carregar as tarefas deste grupo.",
+      "dueDate": "Prazo em {{date}}",
+      "noDueDate": "Sem prazo definido",
+      "empty": {
+        "title": "Ainda não há tarefas",
+        "description": "Atribua um curso a membros específicos com um prazo."
+      },
+      "status": {
+        "draft": "Rascunho",
+        "active": "Ativa",
+        "in_progress": "Em andamento",
+        "completed": "Concluída",
+        "cancelled": "Cancelada"
+      },
+      "form": {
+        "trigger": "Nova tarefa",
+        "title": "Atribuir um curso",
+        "description": "Atribua um curso a membros específicos deste grupo, com um prazo.",
+        "courseLabel": "Curso",
+        "coursePlaceholder": "Escolha um curso",
+        "dueDateLabel": "Prazo",
+        "learnersLabel": "Alunos",
+        "noLearners": "Este grupo ainda não tem alunos ativos.",
+        "courseRequired": "Escolha um curso.",
+        "learnersRequired": "Escolha pelo menos um aluno.",
+        "error": "Não foi possível criar esta tarefa.",
+        "saving": "Salvando…",
+        "submit": "Criar tarefa"
+      }
+    },
+    "exports": {
+      "error": "Não foi possível gerar esta exportação.",
+      "scans": {
+        "title": "Resumo de exames do grupo",
+        "description": "Cada membro e sua contagem de exames por tipo de exame."
+      },
+      "userScans": {
+        "title": "Registros individuais de exames",
+        "description": "Uma linha por exame, com status de revisão e feedback."
+      },
+      "courseProgress": {
+        "title": "Progresso do curso",
+        "description": "Conclusão por turma, curso e membro."
+      },
+      "courseData": {
+        "title": "Detalhe de conclusão do curso",
+        "description": "Conclusão de módulos por membro para um curso.",
+        "coursePlaceholder": "Cole um ID de curso"
+      },
+      "report": {
+        "title": "Relatório de conclusão",
+        "description": "Os mesmos dados de conclusão como arquivo CSV ou JSON.",
+        "csv": "Baixar CSV",
+        "json": "Baixar JSON"
+      }
+    },
+    "settings": {
+      "detailsTitle": "Detalhes do grupo",
+      "detailsDescription": "Nome, slug, descrição, tipo, vagas e expiração.",
+      "loadError": "Não foi possível carregar os detalhes deste grupo.",
+      "notLeaderNotice": "As preferências de notificação de exames só estão disponíveis para quem lidera este grupo."
     }
   },
   "auth": {

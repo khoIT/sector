@@ -3,7 +3,14 @@ import type { RouteObject } from 'react-router-dom';
 
 import { RequirePermission } from '@/auth/require-auth';
 
-import { GROUP_MEMBERS_ROUTE_PATH, GROUPS_INDEX_ROUTE_PATH } from './groups-links';
+import {
+  GROUP_ASSIGNMENTS_ROUTE_PATH,
+  GROUP_COURSES_ROUTE_PATH,
+  GROUP_EXPORTS_ROUTE_PATH,
+  GROUP_MEMBERS_ROUTE_PATH,
+  GROUP_SETTINGS_ROUTE_PATH,
+  GROUPS_INDEX_ROUTE_PATH,
+} from './groups-links';
 
 /**
  * Routes for the group-administration surfaces, spread into `featureRoutes`.
@@ -19,13 +26,34 @@ import { GROUP_MEMBERS_ROUTE_PATH, GROUPS_INDEX_ROUTE_PATH } from './groups-link
  * the individual endpoints layer their own, different checks on top.
  *
  * Lazily loaded: reached from the "Administer" nav section, not from a list a
- * page depends on at boot.
+ * page depends on at boot. Courses, assignments and exports are permission
+ * gated only by the same `read:group` layout — each PAGE further narrows on
+ * the write permission it needs (`GroupDetailTabs` hides the `settings` tab
+ * without `edit:group`; the invite button hides without `create:group-member`;
+ * and so on), rather than a second `RequirePermission` layer per tab, because
+ * every tab is still a legitimate READ for anyone who can open the group at all.
  */
 const GroupsIndexPage = lazy(() =>
   import('./index/groups-index-page').then((module) => ({ default: module.GroupsIndexPage })),
 );
 const MembersSurface = lazy(() =>
   import('./members/members-surface').then((module) => ({ default: module.MembersSurface })),
+);
+const GroupCoursesPanel = lazy(() =>
+  import('./forms/group-courses-panel').then((module) => ({ default: module.GroupCoursesPanel })),
+);
+const GroupAssignmentsPanel = lazy(() =>
+  import('./forms/group-assignments-panel').then((module) => ({
+    default: module.GroupAssignmentsPanel,
+  })),
+);
+const GroupExportsPanel = lazy(() =>
+  import('./exports/group-exports-panel').then((module) => ({ default: module.GroupExportsPanel })),
+);
+const GroupSettingsPage = lazy(() =>
+  import('./settings/group-settings-page').then((module) => ({
+    default: module.GroupSettingsPage,
+  })),
 );
 
 export const groupsRoutes: RouteObject[] = [
@@ -34,6 +62,10 @@ export const groupsRoutes: RouteObject[] = [
     children: [
       { path: GROUPS_INDEX_ROUTE_PATH, element: <GroupsIndexPage /> },
       { path: GROUP_MEMBERS_ROUTE_PATH, element: <MembersSurface /> },
+      { path: GROUP_COURSES_ROUTE_PATH, element: <GroupCoursesPanel /> },
+      { path: GROUP_ASSIGNMENTS_ROUTE_PATH, element: <GroupAssignmentsPanel /> },
+      { path: GROUP_EXPORTS_ROUTE_PATH, element: <GroupExportsPanel /> },
+      { path: GROUP_SETTINGS_ROUTE_PATH, element: <GroupSettingsPage /> },
     ],
   },
 ];

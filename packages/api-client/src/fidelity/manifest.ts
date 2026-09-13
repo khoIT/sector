@@ -637,4 +637,44 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   courseOutlineSchema:
     'the resolved outline has no single source collection — see the doc comment in schemas/course-outline.ts',
   scanTagPayloadSchema: 'request body of POST/DELETE /api/scan/:id/tags',
+  // ─── group administration: write forms, exports, assignments ────────────
+  createGroupPayloadSchema: 'request body of POST /api/groups',
+  updateGroupPayloadSchema: 'request body of PUT /api/groups/:id',
+  groupWriteResultSchema:
+    'response of POST /api/groups and PUT /api/groups/:id — a Group.toObject() ' +
+    'without the getAll() count-virtual aggregation; the persisted document is ' +
+    'proved by the groupSchema entry, only the echoed id/name/slug are read here',
+  inviteGroupMemberPayloadSchema: 'request body of POST /api/group-members/invite',
+  inviteGroupMemberResultSchema:
+    'isNewUser is computed per request; the created membership is proved by the groupmembers entry',
+  addExistingUserToGroupPayloadSchema: 'request body of POST /api/group-members/add-existing-user',
+  reInviteGroupMemberPayloadSchema: 'request body of POST /api/group-members/re-invite',
+  updateGroupMemberRolePayloadSchema: 'request body of PUT /api/group-members/:id',
+  exportFileResultSchema:
+    'a generated xlsx workbook assembled per request from scans/course-progress ' +
+    'collections; not a document any dump holds',
+  groupScanReportEntrySchema:
+    'a computed, pre-formatted report row (class/course/member completion), aggregated ' +
+    'per request rather than read off one stored document',
+  createGroupAssignmentPayloadSchema: 'request body of POST /api/group-assignment',
+  groupAssignmentTypeSchema:
+    'the assignment-type enum; this client only writes/reads the course value — see ' +
+    'groupAssignmentSchema for why the collection is not replayed',
+  groupAssignmentStatusSchema:
+    'the assignment-status enum — see groupAssignmentSchema for why the collection is not replayed',
+  groupAssignmentSchema:
+    'the groupassignments collection exists in the production mirror, but this ' +
+    "route's populate paths (groupAssignmentService.getAll) are not yet verified " +
+    'closely enough to write a faithful projection; modelled defensively ' +
+    '(user as string | UserBasic) pending that verification rather than guessed at',
+  groupLearnerSchema:
+    'a computed pairing of an active group membership and its user, assembled per ' +
+    'request by GET /group-assignment/learners rather than read off one stored document',
+  groupCourseOptionSchema:
+    'a computed pairing of a group and one of its courses, assembled per request by ' +
+    'GET /group-assignment/group-courses rather than read off one stored document',
+  groupCourseSchema:
+    'the groupcourses collection exists in the mirror, but this route sends the ' +
+    "populated course document directly and the exact populate/projection isn't " +
+    'yet verified; modelled minimally against only the fields this list renders',
 };

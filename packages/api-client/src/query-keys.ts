@@ -96,6 +96,17 @@ export const groupKeys = {
   /** Prefix for every page of one group's member list. */
   membersRoot: (groupId: string) => ['get-group-members', groupId] as const,
   members: (groupId: string, params: unknown) => ['get-group-members', groupId, params] as const,
+  /** One group's course roster (`/api/groups/manage/course/:groupId`). */
+  coursesRoot: (groupId: string) => ['get-group-courses', groupId] as const,
+  courses: (groupId: string, params: unknown) => ['get-group-courses', groupId, params] as const,
+  /** The assignment picker's course-option list (`/group-assignment/group-courses`). */
+  courseOptions: (groupId: string) => ['get-group-course-options', groupId] as const,
+  /** The assignment picker's learner list (`/group-assignment/learners`). */
+  learners: (groupId: string, keyword: string) => ['get-group-learners', groupId, keyword] as const,
+  /** One group's course-level assignments (`/group-assignment/group/:groupId`). */
+  assignmentsRoot: (groupId: string) => ['get-group-assignments', groupId] as const,
+  assignments: (groupId: string, params: unknown) =>
+    ['get-group-assignments', groupId, params] as const,
 } as const;
 
 export const courseKeys = {
@@ -166,4 +177,17 @@ export const mutationKeys = {
   confirmGroupInvitation: () => ['confirm-group-invitation'] as const,
   updateGroupNotificationPreference: () => ['update-group-notification-preference'] as const,
   deleteAccount: () => ['delete-account'] as const,
+  createGroup: () => ['create-group'] as const,
+  updateGroup: () => ['update-group'] as const,
+  inviteGroupMember: () => ['invite-group-member'] as const,
+  addExistingUserToGroup: () => ['add-existing-user-to-group'] as const,
+  reInviteGroupMember: () => ['re-invite-group-member'] as const,
+  updateGroupMemberRole: () => ['update-group-member-role'] as const,
+  removeGroupMember: () => ['remove-group-member'] as const,
+  addCourseToGroup: () => ['add-course-to-group'] as const,
+  removeCourseFromGroup: () => ['remove-course-from-group'] as const,
+  exportGroupScans: () => ['export-group-scans'] as const,
+  exportGroupCourseProgress: () => ['export-group-course-progress'] as const,
+  exportGroupCourseData: () => ['export-group-course-data'] as const,
+  createGroupAssignment: () => ['create-group-assignment'] as const,
 } as const;

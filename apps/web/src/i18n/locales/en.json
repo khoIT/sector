@@ -58,7 +58,8 @@
     "requestExpertReview": "Request expert review",
     "markComplete": "Mark complete",
     "markIncomplete": "Mark incomplete",
-    "remove": "Remove"
+    "remove": "Remove",
+    "close": "Close"
   },
   "status": {
     "pending": "Pending",
@@ -284,7 +285,138 @@
       "error": {
         "title": "This list could not be loaded",
         "retry": "Try again"
+      },
+      "actions": {
+        "changeRole": "Change role",
+        "remove": "Remove",
+        "removeConfirmTitle": "Remove this member?",
+        "removeConfirmDescription": "They will lose access to this group's courses and scans.",
+        "removeError": "This member could not be removed.",
+        "removing": "Removing…"
       }
+    },
+    "tabs": {
+      "members": "Members",
+      "courses": "Courses",
+      "assignments": "Assignments",
+      "exports": "Exports",
+      "settings": "Settings"
+    },
+    "form": {
+      "createTrigger": "Create group",
+      "editTrigger": "Edit group",
+      "createTitle": "Create a group",
+      "editTitle": "Edit group",
+      "description": "Groups organize members under one set of courses, assignments and exports.",
+      "nameLabel": "Name",
+      "slugLabel": "Slug",
+      "slugHint": "Used in URLs. Lowercase letters, numbers and hyphens only.",
+      "organizationLabel": "Organization",
+      "organizationPlaceholder": "Choose an organization",
+      "descriptionLabel": "Description",
+      "typeLabel": "Type",
+      "typePlaceholder": "Choose a type",
+      "totalSeatsLabel": "Total seats",
+      "totalSeatsHint": "Leave blank for unlimited seats.",
+      "expirationDateLabel": "Expiration date",
+      "isFreeTrialLabel": "This is a free trial group",
+      "error": "This group could not be saved.",
+      "saving": "Saving…",
+      "submit": "Save"
+    },
+    "invite": {
+      "trigger": "Invite member",
+      "title": "Invite a member",
+      "description": "Send an email invitation to join this group.",
+      "emailLabel": "Email",
+      "firstNameLabel": "First name",
+      "lastNameLabel": "Last name",
+      "roleLabel": "Role",
+      "emailInvalid": "Enter a valid email address.",
+      "success": "The invitation was sent.",
+      "error": "This invitation could not be sent.",
+      "alreadyExists": "This email already belongs to an active account.",
+      "addExisting": "Add them to the group instead",
+      "addingExisting": "Adding…",
+      "sending": "Sending…",
+      "submit": "Send invitation"
+    },
+    "courses": {
+      "addLabel": "Course ID",
+      "addPlaceholder": "Paste a course ID",
+      "add": "Add course",
+      "adding": "Adding…",
+      "addError": "This course could not be added.",
+      "idRequired": "Enter a course ID.",
+      "loadError": "This group's courses could not be loaded.",
+      "remove": "Remove course",
+      "empty": {
+        "title": "No courses enrolled",
+        "description": "Add a course to enrol every member of this group."
+      }
+    },
+    "assignments": {
+      "loadError": "This group's assignments could not be loaded.",
+      "dueDate": "Due {{date}}",
+      "noDueDate": "No due date",
+      "empty": {
+        "title": "No assignments yet",
+        "description": "Assign a course to specific members with a due date."
+      },
+      "status": {
+        "draft": "Draft",
+        "active": "Active",
+        "in_progress": "In progress",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "form": {
+        "trigger": "New assignment",
+        "title": "Assign a course",
+        "description": "Assign a course to specific members of this group, with a due date.",
+        "courseLabel": "Course",
+        "coursePlaceholder": "Choose a course",
+        "dueDateLabel": "Due date",
+        "learnersLabel": "Learners",
+        "noLearners": "This group has no active learners yet.",
+        "courseRequired": "Choose a course.",
+        "learnersRequired": "Choose at least one learner.",
+        "error": "This assignment could not be created.",
+        "saving": "Saving…",
+        "submit": "Create assignment"
+      }
+    },
+    "exports": {
+      "error": "This export could not be generated.",
+      "scans": {
+        "title": "Group scans summary",
+        "description": "Every member and their scan counts by exam type."
+      },
+      "userScans": {
+        "title": "Individual scan records",
+        "description": "One row per scan, with review status and feedback."
+      },
+      "courseProgress": {
+        "title": "Course progress",
+        "description": "Completion by class, course and member."
+      },
+      "courseData": {
+        "title": "Course completion detail",
+        "description": "Per-member module completion for one course.",
+        "coursePlaceholder": "Paste a course ID"
+      },
+      "report": {
+        "title": "Completion report",
+        "description": "The same completion data as a CSV or JSON file.",
+        "csv": "Download CSV",
+        "json": "Download JSON"
+      }
+    },
+    "settings": {
+      "detailsTitle": "Group details",
+      "detailsDescription": "Name, slug, description, type, seats and expiration.",
+      "loadError": "This group's details could not be loaded.",
+      "notLeaderNotice": "Scan-notification preferences are only available to a leader of this group."
     }
   },
   "auth": {

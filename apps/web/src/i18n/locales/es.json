@@ -39,7 +39,8 @@
     "requestExpertReview": "Solicitar revisión de experto",
     "markComplete": "Marcar como completo",
     "markIncomplete": "Marcar como incompleto",
-    "remove": "Quitar"
+    "remove": "Quitar",
+    "close": "Cerrar"
   },
   "status": {
     "pending": "Pendiente",
@@ -206,7 +207,138 @@
       "error": {
         "title": "No se pudo cargar esta lista",
         "retry": "Intentar de nuevo"
+      },
+      "actions": {
+        "changeRole": "Cambiar rol",
+        "remove": "Eliminar",
+        "removeConfirmTitle": "¿Eliminar a este miembro?",
+        "removeConfirmDescription": "Perderá el acceso a los cursos y escaneos de este grupo.",
+        "removeError": "No se pudo eliminar a este miembro.",
+        "removing": "Eliminando…"
       }
+    },
+    "tabs": {
+      "members": "Miembros",
+      "courses": "Cursos",
+      "assignments": "Tareas",
+      "exports": "Exportaciones",
+      "settings": "Configuración"
+    },
+    "form": {
+      "createTrigger": "Crear grupo",
+      "editTrigger": "Editar grupo",
+      "createTitle": "Crear un grupo",
+      "editTitle": "Editar grupo",
+      "description": "Los grupos organizan a los miembros bajo un mismo conjunto de cursos, tareas y exportaciones.",
+      "nameLabel": "Nombre",
+      "slugLabel": "Slug",
+      "slugHint": "Se usa en las URL. Solo minúsculas, números y guiones.",
+      "organizationLabel": "Organización",
+      "organizationPlaceholder": "Elige una organización",
+      "descriptionLabel": "Descripción",
+      "typeLabel": "Tipo",
+      "typePlaceholder": "Elige un tipo",
+      "totalSeatsLabel": "Plazas totales",
+      "totalSeatsHint": "Déjalo en blanco para plazas ilimitadas.",
+      "expirationDateLabel": "Fecha de vencimiento",
+      "isFreeTrialLabel": "Este es un grupo de prueba gratuita",
+      "error": "No se pudo guardar este grupo.",
+      "saving": "Guardando…",
+      "submit": "Guardar"
+    },
+    "invite": {
+      "trigger": "Invitar miembro",
+      "title": "Invitar a un miembro",
+      "description": "Envía una invitación por correo electrónico para unirse a este grupo.",
+      "emailLabel": "Correo electrónico",
+      "firstNameLabel": "Nombre",
+      "lastNameLabel": "Apellido",
+      "roleLabel": "Rol",
+      "emailInvalid": "Introduce una dirección de correo válida.",
+      "success": "La invitación fue enviada.",
+      "error": "No se pudo enviar esta invitación.",
+      "alreadyExists": "Este correo ya pertenece a una cuenta activa.",
+      "addExisting": "Añadirlo al grupo en su lugar",
+      "addingExisting": "Añadiendo…",
+      "sending": "Enviando…",
+      "submit": "Enviar invitación"
+    },
+    "courses": {
+      "addLabel": "ID del curso",
+      "addPlaceholder": "Pega un ID de curso",
+      "add": "Añadir curso",
+      "adding": "Añadiendo…",
+      "addError": "No se pudo añadir este curso.",
+      "idRequired": "Introduce un ID de curso.",
+      "loadError": "No se pudieron cargar los cursos de este grupo.",
+      "remove": "Quitar curso",
+      "empty": {
+        "title": "Sin cursos inscritos",
+        "description": "Añade un curso para inscribir a todos los miembros de este grupo."
+      }
+    },
+    "assignments": {
+      "loadError": "No se pudieron cargar las tareas de este grupo.",
+      "dueDate": "Vence el {{date}}",
+      "noDueDate": "Sin fecha de vencimiento",
+      "empty": {
+        "title": "Aún no hay tareas",
+        "description": "Asigna un curso a miembros específicos con una fecha de vencimiento."
+      },
+      "status": {
+        "draft": "Borrador",
+        "active": "Activa",
+        "in_progress": "En curso",
+        "completed": "Completada",
+        "cancelled": "Cancelada"
+      },
+      "form": {
+        "trigger": "Nueva tarea",
+        "title": "Asignar un curso",
+        "description": "Asigna un curso a miembros específicos de este grupo, con una fecha de vencimiento.",
+        "courseLabel": "Curso",
+        "coursePlaceholder": "Elige un curso",
+        "dueDateLabel": "Fecha de vencimiento",
+        "learnersLabel": "Estudiantes",
+        "noLearners": "Este grupo aún no tiene estudiantes activos.",
+        "courseRequired": "Elige un curso.",
+        "learnersRequired": "Elige al menos un estudiante.",
+        "error": "No se pudo crear esta tarea.",
+        "saving": "Guardando…",
+        "submit": "Crear tarea"
+      }
+    },
+    "exports": {
+      "error": "No se pudo generar esta exportación.",
+      "scans": {
+        "title": "Resumen de escaneos del grupo",
+        "description": "Cada miembro y su número de escaneos por tipo de examen."
+      },
+      "userScans": {
+        "title": "Registros individuales de escaneos",
+        "description": "Una fila por escaneo, con estado de revisión y comentarios."
+      },
+      "courseProgress": {
+        "title": "Progreso del curso",
+        "description": "Finalización por clase, curso y miembro."
+      },
+      "courseData": {
+        "title": "Detalle de finalización del curso",
+        "description": "Finalización de módulos por miembro para un curso.",
+        "coursePlaceholder": "Pega un ID de curso"
+      },
+      "report": {
+        "title": "Informe de finalización",
+        "description": "Los mismos datos de finalización como archivo CSV o JSON.",
+        "csv": "Descargar CSV",
+        "json": "Descargar JSON"
+      }
+    },
+    "settings": {
+      "detailsTitle": "Detalles del grupo",
+      "detailsDescription": "Nombre, slug, descripción, tipo, plazas y vencimiento.",
+      "loadError": "No se pudieron cargar los detalles de este grupo.",
+      "notLeaderNotice": "Las preferencias de notificación de escaneos solo están disponibles para quien lidera este grupo."
     }
   },
   "auth": {
