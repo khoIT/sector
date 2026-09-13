@@ -1,6 +1,6 @@
-import type { ScanListView } from '@scanvault/api-client';
-import { isApiError, useScan } from '@scanvault/api-client';
-import { Button, EmptyState, Skeleton } from '@scanvault/ui';
+import type { ScanListView } from '@sector/api-client';
+import { isApiError, useScan } from '@sector/api-client';
+import { Button, EmptyState, Skeleton } from '@sector/ui';
 import { ArrowLeft } from 'lucide-react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 

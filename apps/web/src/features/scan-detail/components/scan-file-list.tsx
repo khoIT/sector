@@ -1,6 +1,6 @@
-import type { FileDetail, MediaFile } from '@scanvault/api-client';
-import { isPendingFilePlaceholder } from '@scanvault/api-client';
-import { StatusPill } from '@scanvault/ui';
+import type { FileDetail, MediaFile } from '@sector/api-client';
+import { isPendingFilePlaceholder } from '@sector/api-client';
+import { StatusPill } from '@sector/ui';
 
 import { formatBytes } from '@/lib/format';
 

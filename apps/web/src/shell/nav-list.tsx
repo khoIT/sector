@@ -1,4 +1,4 @@
-import { Badge, cn } from '@scanvault/ui';
+import { Badge, cn } from '@sector/ui';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 

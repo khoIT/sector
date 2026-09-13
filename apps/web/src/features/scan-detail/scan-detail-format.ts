@@ -1,5 +1,5 @@
-import type { EmbeddedScanNote, Scan, UserBasic } from '@scanvault/api-client';
-import { userDisplayName } from '@scanvault/api-client';
+import type { EmbeddedScanNote, Scan, UserBasic } from '@sector/api-client';
+import { userDisplayName } from '@sector/api-client';
 
 /**
  * Small derivations over scan/note shapes, specific to the detail surface.

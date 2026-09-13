@@ -8,7 +8,7 @@ import {
   cn,
   useTheme,
   type ThemePreference,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import {
   Check,
   ChevronDown,

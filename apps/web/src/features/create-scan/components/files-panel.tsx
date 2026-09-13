@@ -1,5 +1,5 @@
-import { useUserOrganizations } from '@scanvault/api-client';
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@scanvault/ui';
+import { useUserOrganizations } from '@sector/api-client';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@sector/ui';
 import { ChevronDown, Paperclip } from 'lucide-react';
 
 import { useAuth } from '@/auth/auth-context';

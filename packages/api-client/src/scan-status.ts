@@ -36,7 +36,7 @@ export const SCAN_STATUS_LABEL: Record<ScanStatus, string> = {
 
 /**
  * Tone for the StatusPill. The union is written out rather than imported from
- * @scanvault/ui so this package stays UI-free; it is assignable to BadgeTone.
+ * @sector/ui so this package stays UI-free; it is assignable to BadgeTone.
  */
 export type StatusTone = 'neutral' | 'accent' | 'ok' | 'warn' | 'crit';
 

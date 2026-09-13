@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   cn,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { Send } from 'lucide-react';
 
 import { InlineNotice } from './inline-notice';

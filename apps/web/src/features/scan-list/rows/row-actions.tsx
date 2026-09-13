@@ -1,4 +1,4 @@
-import { Badge, Button } from '@scanvault/ui';
+import { Badge, Button } from '@sector/ui';
 import { Link } from 'react-router-dom';
 
 /**

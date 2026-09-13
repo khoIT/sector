@@ -1,5 +1,5 @@
-import type { UserBasic } from '@scanvault/api-client';
-import { Card, CardContent, CardHeader, CardTitle } from '@scanvault/ui';
+import type { UserBasic } from '@sector/api-client';
+import { Card, CardContent, CardHeader, CardTitle } from '@sector/ui';
 
 import { formatDateTime } from '@/lib/format';
 

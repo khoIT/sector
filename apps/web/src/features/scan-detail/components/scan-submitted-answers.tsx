@@ -1,6 +1,6 @@
-import type { ScanFinding, ScanFormResponse, ScanTypeItems } from '@scanvault/api-client';
-import { useScanTypeItems } from '@scanvault/api-client';
-import { Skeleton } from '@scanvault/ui';
+import type { ScanFinding, ScanFormResponse, ScanTypeItems } from '@sector/api-client';
+import { useScanTypeItems } from '@sector/api-client';
+import { Skeleton } from '@sector/ui';
 import { useMemo } from 'react';
 
 type ScanSubmittedAnswersProps = {

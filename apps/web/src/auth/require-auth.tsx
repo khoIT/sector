@@ -1,4 +1,4 @@
-import { Skeleton } from '@scanvault/ui';
+import { Skeleton } from '@sector/ui';
 import type { ReactNode } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 

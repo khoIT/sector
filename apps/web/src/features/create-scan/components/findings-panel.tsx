@@ -1,5 +1,5 @@
-import { useFindingDefinitions } from '@scanvault/api-client';
-import { Button, Card, CardContent, CardHeader, CardTitle, Skeleton } from '@scanvault/ui';
+import { useFindingDefinitions } from '@sector/api-client';
+import { Button, Card, CardContent, CardHeader, CardTitle, Skeleton } from '@sector/ui';
 import { HeartPulse, RotateCcw } from 'lucide-react';
 import { useMemo } from 'react';
 

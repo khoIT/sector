@@ -1,4 +1,4 @@
-import type { ScanListView } from '@scanvault/api-client';
+import type { ScanListView } from '@sector/api-client';
 
 /**
  * The six Scan Vault surfaces, as URLs.

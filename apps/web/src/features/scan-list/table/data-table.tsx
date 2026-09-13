@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react';
 import type { ReactNode } from 'react';
 

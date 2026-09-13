@@ -1,4 +1,4 @@
-import { cn } from '@scanvault/ui';
+import { cn } from '@sector/ui';
 import { Check } from 'lucide-react';
 
 import { CLASSIC_STEPS, WIZARD_STEP_LABEL, type WizardStep } from '../model/draft-types';

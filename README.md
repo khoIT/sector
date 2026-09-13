@@ -1,4 +1,4 @@
-# ScanVault
+# Sector
 
 A rebuild of the GUSI Scan Vault as a pnpm + Turborepo monorepo, reading from the
 existing legacy API. Nothing here touches production: the app talks to a local
@@ -33,7 +33,7 @@ corepack enable pnpm
 ## Install and run
 
 The legacy API **must already be running on `http://localhost:5001`** against the
-local `gusi_dev` Mongo replica set. ScanVault has no backend of its own: with the
+local `gusi_dev` Mongo replica set. Sector has no backend of its own: with the
 API down, the login page loads but every sign-in fails with a network error.
 
 ```bash
@@ -94,19 +94,19 @@ pnpm -w build        # production build of apps/web
 Per package:
 
 ```bash
-pnpm --filter @scanvault/ui test          # the WCAG AA token contrast suite
-pnpm --filter @scanvault/web test         # route guards, tab visibility, formatters
-pnpm --filter @scanvault/web dev          # same as `pnpm dev`, without Turbo
+pnpm --filter @sector/ui test          # the WCAG AA token contrast suite
+pnpm --filter @sector/web test         # route guards, tab visibility, formatters
+pnpm --filter @sector/web dev          # same as `pnpm dev`, without Turbo
 ```
 
 ### Checking the API schemas against the real API
 
-`@scanvault/api-client` parses every response with Zod. An opt-in suite verifies
+`@sector/api-client` parses every response with Zod. An opt-in suite verifies
 those schemas against the running API, across all four demo accounts and all five
 scan list views:
 
 ```bash
-SCANVAULT_DEMO_PASSWORD='<demo password>' pnpm --filter @scanvault/api-client test:live
+SECTOR_DEMO_PASSWORD='<demo password>' pnpm --filter @sector/api-client test:live
 ```
 
 Run it after adding or widening a schema. A `parse` ApiError there means the wire

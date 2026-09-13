@@ -1,4 +1,4 @@
-import type { Organization } from '@scanvault/api-client';
+import type { Organization } from '@sector/api-client';
 
 /**
  * ONE gate, in ONE direction, for the scan identifier.

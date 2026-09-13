@@ -5,7 +5,7 @@ import {
   uploadScanObject,
   useApiClient,
   type MultipartSession,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {

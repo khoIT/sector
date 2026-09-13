@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@scanvault/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sector/ui';
 
 import { CreateScanFlowSetting } from './create-scan-flow-setting';
 import { PasswordForm } from './password-form';

@@ -2,8 +2,8 @@ import {
   isApiError,
   useRemoveAccountPhotoMutation,
   useUploadAccountPhotoMutation,
-} from '@scanvault/api-client';
-import { Button, cn } from '@scanvault/ui';
+} from '@sector/api-client';
+import { Button, cn } from '@sector/ui';
 import { useRef, useState, type ChangeEvent } from 'react';
 
 import { useAuth } from '@/auth/auth-context';

@@ -1,4 +1,4 @@
-import type { FindingDefinition } from '@scanvault/api-client';
+import type { FindingDefinition } from '@sector/api-client';
 
 /**
  * How one findings row is captured, and how its answer is encoded on the wire.

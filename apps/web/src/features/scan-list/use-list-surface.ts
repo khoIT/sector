@@ -1,4 +1,4 @@
-import { LIST_SEARCH_DEBOUNCE_MS } from '@scanvault/api-client';
+import { LIST_SEARCH_DEBOUNCE_MS } from '@sector/api-client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 

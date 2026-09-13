@@ -1,6 +1,17 @@
-import type { UserLogEntry } from '@scanvault/api-client';
+import type { UserLogEntry } from '@sector/api-client';
 
 import type { DraftFile } from './draft-types';
+
+/**
+ * What the API's user-log records as the client that wrote the entry.
+ *
+ * Deliberately still "ScanVault" after the rename. Nothing here reads the
+ * field back, but the server renders these entries into the submission email
+ * and anything querying the log by `details.source` would silently stop
+ * matching records written from this client. Changing it is a data decision
+ * for whoever owns those queries, not a consequence of the rebrand.
+ */
+const LOG_SOURCE = 'ScanVault';
 
 /**
  * The activity trail a submitted study is announced with.
@@ -63,7 +74,7 @@ export function submitLogEntries(input: SubmitLogInput): UserLogEntry[] {
           : `${stored.length} files uploaded (${bytes} bytes)`,
       ...about,
       details: {
-        source: 'ScanVault',
+        source: LOG_SOURCE,
         fileCount: stored.length,
         totalSizeBytes: bytes,
         fileNames: stored.map((file) => file.name),
@@ -86,7 +97,7 @@ export function submitLogEntries(input: SubmitLogInput): UserLogEntry[] {
         .join(', ')}`,
       ...about,
       details: {
-        source: 'ScanVault',
+        source: LOG_SOURCE,
         fileNames: leftBehind.map((file) => file.name),
         reasons: leftBehind.map((file) => file.error?.reason ?? file.status),
       },
@@ -101,7 +112,7 @@ export function submitLogEntries(input: SubmitLogInput): UserLogEntry[] {
       severity: 'warning',
       message: `${name} finished uploading but the server did not confirm it`,
       ...about,
-      details: { source: 'ScanVault', filename: name },
+      details: { source: LOG_SOURCE, filename: name },
     });
   }
 
@@ -114,7 +125,7 @@ export function submitLogEntries(input: SubmitLogInput): UserLogEntry[] {
         : `Study submitted with ${confirmed} file${confirmed === 1 ? '' : 's'}`,
     ...about,
     details: {
-      source: 'ScanVault',
+      source: LOG_SOURCE,
       scanType: scanTypeName,
       filesConfirmed: confirmed,
       filesTotal: confirmed + unconfirmed.length,

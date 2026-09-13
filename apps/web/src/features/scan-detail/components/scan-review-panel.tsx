@@ -1,6 +1,6 @@
-import type { ReviewCompetencyMeasure, Scan } from '@scanvault/api-client';
-import { isApiError, useAddScanReviewMutation } from '@scanvault/api-client';
-import { Button, Card, CardContent, CardHeader, CardTitle, Textarea } from '@scanvault/ui';
+import type { ReviewCompetencyMeasure, Scan } from '@sector/api-client';
+import { isApiError, useAddScanReviewMutation } from '@sector/api-client';
+import { Button, Card, CardContent, CardHeader, CardTitle, Textarea } from '@sector/ui';
 import { useEffect, useRef, useState } from 'react';
 
 import {

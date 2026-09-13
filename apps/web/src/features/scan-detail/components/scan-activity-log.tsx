@@ -1,5 +1,5 @@
-import type { ScanLog, UserBasic } from '@scanvault/api-client';
-import { userDisplayName } from '@scanvault/api-client';
+import type { ScanLog, UserBasic } from '@sector/api-client';
+import { userDisplayName } from '@sector/api-client';
 
 import { formatDateTime } from '@/lib/format';
 

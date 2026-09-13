@@ -1,4 +1,4 @@
-import type { ScanTypeSummary, UserGroup } from '@scanvault/api-client';
+import type { ScanTypeSummary, UserGroup } from '@sector/api-client';
 
 /**
  * The two setup controls, as options and as the words on their triggers.

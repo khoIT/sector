@@ -1,5 +1,5 @@
-import { useScanTypes, useScanUserGroups } from '@scanvault/api-client';
-import { Combobox, cn } from '@scanvault/ui';
+import { useScanTypes, useScanUserGroups } from '@sector/api-client';
+import { Combobox, cn } from '@sector/ui';
 import { Stethoscope, Users2 } from 'lucide-react';
 import { useMemo } from 'react';
 

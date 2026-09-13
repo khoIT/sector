@@ -1,5 +1,5 @@
-import { isApiError } from '@scanvault/api-client';
-import { Button, EmptyState } from '@scanvault/ui';
+import { isApiError } from '@sector/api-client';
+import { Button, EmptyState } from '@sector/ui';
 import { ShieldAlert, TriangleAlert } from 'lucide-react';
 
 export type ListErrorStateProps = {

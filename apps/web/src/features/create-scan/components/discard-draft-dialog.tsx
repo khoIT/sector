@@ -6,7 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@scanvault/ui';
+} from '@sector/ui';
 
 export type DiscardDraftDialogProps = {
   open: boolean;

@@ -1,4 +1,4 @@
-import { isPendingFilePlaceholder, mediaFormatLabel, mediaKindFor } from '@scanvault/api-client';
+import { isPendingFilePlaceholder, mediaFormatLabel, mediaKindFor } from '@sector/api-client';
 import { FileWarning, Layers } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 
@@ -13,7 +13,7 @@ import type { StageSource } from './media-source';
  * element re-reads whatever the current source holds.
  *
  * DICOM gets a labelled placeholder and a download link rather than a viewer:
- * ScanVault ships no DICOM renderer, and drawing a frame that is not the study
+ * Sector ships no DICOM renderer, and drawing a frame that is not the study
  * would be worse than saying so.
  */
 export function ScanMediaStage({ file }: { file: StageSource }) {
@@ -43,7 +43,7 @@ export function ScanMediaStage({ file }: { file: StageSource }) {
       <StageMessage
         icon={<Layers className="h-6 w-6" aria-hidden />}
         title="DICOM preview not supported"
-        detail="ScanVault has no DICOM renderer. Download the file and open it in a DICOM viewer."
+        detail="Sector has no DICOM renderer. Download the file and open it in a DICOM viewer."
         action={<OpenOriginal url={file.url} />}
       />
     );

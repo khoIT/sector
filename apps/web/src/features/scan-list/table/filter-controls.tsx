@@ -1,4 +1,4 @@
-import { Input, cn } from '@scanvault/ui';
+import { Input, cn } from '@sector/ui';
 import { useMemo, useState } from 'react';
 
 export type FilterOption = { value: string; label: string };

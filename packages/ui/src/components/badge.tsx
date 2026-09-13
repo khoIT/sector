@@ -5,7 +5,7 @@ import { cn } from '../lib/cn';
 
 /**
  * Tone is deliberately domain-free. Map a scan status to a tone with
- * `scanStatusTone()` from @scanvault/api-client so the mapping lives in one
+ * `scanStatusTone()` from @sector/api-client so the mapping lives in one
  * place and the UI package stays free of scan vocabulary.
  */
 const badgeVariants = cva(

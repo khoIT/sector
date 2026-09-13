@@ -1,5 +1,5 @@
 {
-  "extends": "@scanvault/config/tsconfig.react.json",
+  "extends": "@sector/config/tsconfig.react.json",
   "compilerOptions": {
     "types": [
       "vite/client"

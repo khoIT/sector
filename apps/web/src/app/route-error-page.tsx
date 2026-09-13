@@ -1,5 +1,5 @@
-import { isApiError } from '@scanvault/api-client';
-import { Button, EmptyState } from '@scanvault/ui';
+import { isApiError } from '@sector/api-client';
+import { Button, EmptyState } from '@sector/ui';
 import { TriangleAlert } from 'lucide-react';
 import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
 
@@ -30,7 +30,7 @@ export function RouteErrorPage() {
         action={
           // A full reload, not navigate(): the most common cause is a stale
           // chunk reference, which only a fresh document fixes.
-          <Button onClick={() => window.location.assign('/')}>Reload ScanVault</Button>
+          <Button onClick={() => window.location.assign('/')}>Reload Sector</Button>
         }
       />
     </main>

@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { Columns3 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 

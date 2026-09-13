@@ -10,7 +10,7 @@ import {
   type ApiClient,
   type CreateScanPayload,
   type ScanFilePayload,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 
 import type { DraftFile, DraftState, SubmitOutcome } from './draft-types';
 import { toFindingsPayload } from './finding-controls';

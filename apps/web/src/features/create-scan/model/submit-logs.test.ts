@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { UserLogEntry } from '@scanvault/api-client';
+import type { UserLogEntry } from '@sector/api-client';
 
 import type { DraftFile } from './draft-types';
 import { statusAfterSubmit, submitLogEntries } from './submit-logs';

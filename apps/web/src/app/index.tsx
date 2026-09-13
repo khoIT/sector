@@ -1,5 +1,5 @@
-import { ApiClientProvider } from '@scanvault/api-client';
-import { ThemeProvider } from '@scanvault/ui';
+import { ApiClientProvider } from '@sector/api-client';
+import { ThemeProvider } from '@sector/ui';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { RouterProvider } from 'react-router-dom';

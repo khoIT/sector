@@ -1,4 +1,4 @@
-import type { MediaFile } from '@scanvault/api-client';
+import type { MediaFile } from '@sector/api-client';
 import { describe, expect, it } from 'vitest';
 
 import { mediaParts, summariseMedia } from './scan-media-summary';

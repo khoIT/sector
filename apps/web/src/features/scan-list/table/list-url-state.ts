@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE_SIZE, clampPageSize } from '@scanvault/api-client';
+import { DEFAULT_PAGE_SIZE, clampPageSize } from '@sector/api-client';
 
 /**
  * Parsing and serialising the list's URL state.

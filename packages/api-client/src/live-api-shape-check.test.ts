@@ -12,7 +12,7 @@ import { scanNoteListSchema } from './schemas/scan';
  * Contract check against the RUNNING legacy API. Opt-in, because it needs the
  * API on :5001 and a seeded local gusi_dev:
  *
- *   SCANVAULT_DEMO_PASSWORD='…' pnpm --filter @scanvault/api-client test:live
+ *   SECTOR_DEMO_PASSWORD='…' pnpm --filter @sector/api-client test:live
  *
  * Every schema in this package was derived from real responses rather than from
  * the legacy client's Zod objects, which were never `.parse()`d and had drifted.
@@ -26,9 +26,9 @@ import { scanNoteListSchema } from './schemas/scan';
  * several times in a sitting. Manual browser testing eats the same budget.
  */
 
-const LIVE = process.env.SCANVAULT_LIVE_API === '1';
-const BASE = process.env.SCANVAULT_API_URL ?? 'http://localhost:5001';
-const PASSWORD = process.env.SCANVAULT_DEMO_PASSWORD ?? '';
+const LIVE = process.env.SECTOR_LIVE_API === '1';
+const BASE = process.env.SECTOR_API_URL ?? 'http://localhost:5001';
+const PASSWORD = process.env.SECTOR_DEMO_PASSWORD ?? '';
 
 const ACCOUNTS = [
   'learner@scanvault.test',

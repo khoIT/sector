@@ -1,4 +1,4 @@
-import { Input } from '@scanvault/ui';
+import { Input } from '@sector/ui';
 import { useId } from 'react';
 
 type QuestionSuggestInputProps = {

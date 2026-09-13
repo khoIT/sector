@@ -15,20 +15,20 @@ import { scanReviewResultSchema } from './schemas/scan-review-submit';
  * suite and every manual sign-in, so this one reuses a session instead of
  * spending the budget.
  *
- *   SCANVAULT_LIVE_API=1 \
- *   SCANVAULT_REVIEWER_TOKEN=… SCANVAULT_LEARNER_TOKEN=… \
- *   SCANVAULT_SHARE_ID=… \
- *   pnpm --filter @scanvault/api-client exec vitest run src/live-scan-detail-shapes.test.ts
+ *   SECTOR_LIVE_API=1 \
+ *   SECTOR_REVIEWER_TOKEN=… SECTOR_LEARNER_TOKEN=… \
+ *   SECTOR_SHARE_ID=… \
+ *   pnpm --filter @sector/api-client exec vitest run src/live-scan-detail-shapes.test.ts
  *
  * A `parse` ApiError here means the wire disagrees with a schema — which would
  * blank the detail page at runtime rather than fail in CI.
  */
-const LIVE = process.env.SCANVAULT_LIVE_API === '1';
-const BASE = process.env.SCANVAULT_API_URL ?? 'http://localhost:5001';
-const REVIEWER_TOKEN = process.env.SCANVAULT_REVIEWER_TOKEN ?? '';
-const LEARNER_TOKEN = process.env.SCANVAULT_LEARNER_TOKEN ?? '';
-const SHARE_ID = process.env.SCANVAULT_SHARE_ID ?? '';
-const REVIEWER_ID = process.env.SCANVAULT_REVIEWER_ID ?? '';
+const LIVE = process.env.SECTOR_LIVE_API === '1';
+const BASE = process.env.SECTOR_API_URL ?? 'http://localhost:5001';
+const REVIEWER_TOKEN = process.env.SECTOR_REVIEWER_TOKEN ?? '';
+const LEARNER_TOKEN = process.env.SECTOR_LEARNER_TOKEN ?? '';
+const SHARE_ID = process.env.SECTOR_SHARE_ID ?? '';
+const REVIEWER_ID = process.env.SECTOR_REVIEWER_ID ?? '';
 
 function clientFor(token: string): ApiClient {
   return createClient({ baseUrl: BASE, getToken: () => token });

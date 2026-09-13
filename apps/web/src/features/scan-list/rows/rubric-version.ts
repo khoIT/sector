@@ -1,4 +1,4 @@
-import type { ScanTypeRef } from '@scanvault/api-client';
+import type { ScanTypeRef } from '@sector/api-client';
 
 /**
  * Which generation of the protocol a scan was submitted under.

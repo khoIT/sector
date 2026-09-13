@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle } from '@scanvault/ui';
+import { Dialog, DialogContent, DialogTitle } from '@sector/ui';
 
 import { ScanNotesThread } from './scan-notes-thread';
 

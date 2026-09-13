@@ -1,4 +1,4 @@
-import { Button, EmptyState } from '@scanvault/ui';
+import { Button, EmptyState } from '@sector/ui';
 import { FileQuestion } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -15,7 +15,7 @@ export function NotFoundPage() {
       <EmptyState
         icon={<FileQuestion className="h-5 w-5" aria-hidden />}
         title="Page not found"
-        description={`Nothing in ScanVault is routed at ${pathname}.`}
+        description={`Nothing in Sector is routed at ${pathname}.`}
         action={
           <Button asChild>
             <Link to="/">Back to the vault</Link>

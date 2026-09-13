@@ -1,4 +1,4 @@
-import { Button, EmptyState } from '@scanvault/ui';
+import { Button, EmptyState } from '@sector/ui';
 import { ListRestart } from 'lucide-react';
 
 export type PagePastEndStateProps = {

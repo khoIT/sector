@@ -6,9 +6,9 @@ import {
   useScanUserGroups,
   useUserOrganizations,
   userDisplayName,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 import { useQueryClient } from '@tanstack/react-query';
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@scanvault/ui';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@sector/ui';
 import { ArrowLeft, Send } from 'lucide-react';
 import { useState } from 'react';
 

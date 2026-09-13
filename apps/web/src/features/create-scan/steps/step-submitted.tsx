@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, CardTitle, StatusPill } from '@scanvault/ui';
+import { Button, Card, CardContent, CardHeader, CardTitle, StatusPill } from '@sector/ui';
 import { CheckCircle2, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

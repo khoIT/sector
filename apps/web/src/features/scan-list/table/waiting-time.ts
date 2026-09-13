@@ -1,4 +1,4 @@
-import type { StatusTone } from '@scanvault/api-client';
+import type { StatusTone } from '@sector/api-client';
 
 /**
  * How long a scan has been sitting in a review queue.

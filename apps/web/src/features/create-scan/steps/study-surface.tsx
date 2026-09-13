@@ -1,5 +1,5 @@
-import { useFindingDefinitions, userDisplayName } from '@scanvault/api-client';
-import { cn } from '@scanvault/ui';
+import { useFindingDefinitions, userDisplayName } from '@sector/api-client';
+import { cn } from '@sector/ui';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useAuth } from '@/auth/auth-context';

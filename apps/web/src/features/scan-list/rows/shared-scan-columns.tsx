@@ -2,8 +2,8 @@ import {
   SHARED_SCAN_STATUS_LABEL,
   type AuthUser,
   type SharedScanListItem,
-} from '@scanvault/api-client';
-import { StatusPill } from '@scanvault/ui';
+} from '@sector/api-client';
+import { StatusPill } from '@sector/ui';
 
 import { sharedScanDetailPathFor } from '@/features/scan-detail/scan-detail-links';
 

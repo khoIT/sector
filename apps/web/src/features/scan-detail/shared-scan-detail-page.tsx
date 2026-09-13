@@ -1,5 +1,5 @@
-import { isApiError, useSharedScanDetail, userDisplayName } from '@scanvault/api-client';
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, EmptyState, Skeleton } from '@scanvault/ui';
+import { isApiError, useSharedScanDetail, userDisplayName } from '@sector/api-client';
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, EmptyState, Skeleton } from '@sector/ui';
 import { ArrowLeft } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 

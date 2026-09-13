@@ -5,17 +5,17 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 /**
- * Shared ESLint flat config for every ScanVault workspace package.
+ * Shared ESLint flat config for every Sector workspace package.
  *
  * Usage in a package's `eslint.config.js`:
  *
- *   import { scanvaultConfig } from '@scanvault/config/eslint';
- *   export default scanvaultConfig({ react: true });
+ *   import { sectorConfig } from '@sector/config/eslint';
+ *   export default sectorConfig({ react: true });
  *
  * @param {{ react?: boolean, ignores?: string[] }} [options]
  * @returns {import('eslint').Linter.Config[]}
  */
-export function scanvaultConfig(options = {}) {
+export function sectorConfig(options = {}) {
   const { react = false, ignores = [] } = options;
 
   /** @type {import('eslint').Linter.Config[]} */
@@ -61,4 +61,4 @@ export function scanvaultConfig(options = {}) {
   return config;
 }
 
-export default scanvaultConfig();
+export default sectorConfig();

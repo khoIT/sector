@@ -1,5 +1,5 @@
-import { isApiError, useUpdateProfileMutation } from '@scanvault/api-client';
-import { Button, Input } from '@scanvault/ui';
+import { isApiError, useUpdateProfileMutation } from '@sector/api-client';
+import { Button, Input } from '@sector/ui';
 import { useState, type FormEvent } from 'react';
 
 import { useAuth } from '@/auth/auth-context';

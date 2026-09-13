@@ -1,8 +1,9 @@
-import { isApiError } from '@scanvault/api-client';
-import { Button, Card, CardContent, CardHeader, CardTitle, Input } from '@scanvault/ui';
+import { isApiError } from '@sector/api-client';
+import { Button, Card, CardContent, CardHeader, CardTitle, Input } from '@sector/ui';
 import { useState, type FormEvent } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
+import { SectorMark } from '@/shell/sector-mark';
 import { ThemeSwitcher } from '@/shell/theme-switcher';
 
 import { useAuth } from './auth-context';
@@ -62,14 +63,9 @@ export function LoginPage() {
     <main className="flex min-h-dvh flex-col items-center justify-center bg-bg px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-5 flex flex-col items-center gap-2 text-center">
-          <span
-            aria-hidden
-            className="flex h-9 w-9 items-center justify-center rounded-token bg-accent text-[15px] font-bold text-scan-ground"
-          >
-            SV
-          </span>
+          <SectorMark size={36} />
           <div>
-            <h1 className="text-[20px] font-semibold tracking-tight text-ink">ScanVault</h1>
+            <h1 className="text-[20px] font-semibold tracking-tight text-ink">Sector</h1>
             <p className="mt-0.5 text-body text-ink-dim">Global Ultrasound Institute</p>
           </div>
         </div>

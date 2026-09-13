@@ -1,4 +1,4 @@
-import { Button, EmptyState } from '@scanvault/ui';
+import { Button, EmptyState } from '@sector/ui';
 import { ShieldOff } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 

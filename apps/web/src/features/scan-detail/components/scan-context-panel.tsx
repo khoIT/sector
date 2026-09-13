@@ -8,9 +8,9 @@ import type {
   ScanStatus,
   ScanTypeRef,
   UserBasic,
-} from '@scanvault/api-client';
-import { SCAN_STATUS_LABEL, scanStatusTone, userDisplayName } from '@scanvault/api-client';
-import { Badge, Card, CardContent, CardHeader, CardTitle, StatusPill } from '@scanvault/ui';
+} from '@sector/api-client';
+import { SCAN_STATUS_LABEL, scanStatusTone, userDisplayName } from '@sector/api-client';
+import { Badge, Card, CardContent, CardHeader, CardTitle, StatusPill } from '@sector/ui';
 
 import { formatDateTime } from '@/lib/format';
 import { ScanActivityLog } from './scan-activity-log';

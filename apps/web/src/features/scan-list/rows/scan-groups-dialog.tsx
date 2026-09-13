@@ -1,4 +1,4 @@
-import type { ScanGroupRef } from '@scanvault/api-client';
+import type { ScanGroupRef } from '@sector/api-client';
 import { useTranslation } from 'react-i18next';
 import {
   Dialog,
@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   Input,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { useId, useMemo, useState } from 'react';
 
 import {

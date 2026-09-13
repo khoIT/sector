@@ -6,7 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@scanvault/ui';
+} from '@sector/ui';
 
 import type { LabelledAnswer } from '../model/transfer-findings';
 

@@ -1,4 +1,4 @@
-import { Skeleton } from '@scanvault/ui';
+import { Skeleton } from '@sector/ui';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
 import { Suspense, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
@@ -49,10 +49,10 @@ export function AppShell() {
   const title = t(shellTitleKeyFor(location.pathname));
 
   // The tab, the history entry and the bookmark all read from this. A constant
-  // left a reviewer with six identical "ScanVault" entries and no way to tell
+  // left a reviewer with six identical "Sector" entries and no way to tell
   // which was the queue they wanted back.
   useEffect(() => {
-    document.title = `${title} · ScanVault`;
+    document.title = `${title} · Sector`;
   }, [title]);
 
   return (

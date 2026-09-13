@@ -1,4 +1,4 @@
-import { SCAN_LIST_VIEWS } from '@scanvault/api-client';
+import { SCAN_LIST_VIEWS } from '@sector/api-client';
 import type { RouteObject } from 'react-router-dom';
 
 import { RequirePermission } from '@/auth/require-auth';

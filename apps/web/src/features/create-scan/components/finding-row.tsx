@@ -1,5 +1,5 @@
-import type { FindingDefinition } from '@scanvault/api-client';
-import { Input, cn } from '@scanvault/ui';
+import type { FindingDefinition } from '@sector/api-client';
+import { Input, cn } from '@sector/ui';
 
 import {
   findingControlKind,

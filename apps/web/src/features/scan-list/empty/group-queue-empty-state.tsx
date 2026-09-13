@@ -1,5 +1,5 @@
-import { useScanUserGroups } from '@scanvault/api-client';
-import { Button, Card, CardContent, cn } from '@scanvault/ui';
+import { useScanUserGroups } from '@sector/api-client';
+import { Button, Card, CardContent, cn } from '@sector/ui';
 import { Inbox, RefreshCw, Users2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

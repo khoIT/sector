@@ -1,4 +1,4 @@
-import type { AddScanReviewPayload } from '@scanvault/api-client';
+import type { AddScanReviewPayload } from '@sector/api-client';
 
 /**
  * Per-scan review drafts in localStorage.

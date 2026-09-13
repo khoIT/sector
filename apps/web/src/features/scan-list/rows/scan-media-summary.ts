@@ -1,4 +1,4 @@
-import { isPendingFilePlaceholder, mediaKindFor, type MediaFile } from '@scanvault/api-client';
+import { isPendingFilePlaceholder, mediaKindFor, type MediaFile } from '@sector/api-client';
 
 /**
  * Clips versus stills, because `6/6 files` prices two very different jobs the

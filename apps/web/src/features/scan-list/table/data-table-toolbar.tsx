@@ -1,4 +1,4 @@
-import { Button, Input } from '@scanvault/ui';
+import { Button, Input } from '@sector/ui';
 import { Search, X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';

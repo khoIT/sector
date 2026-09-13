@@ -1,4 +1,4 @@
-import type { AuthUser } from '@scanvault/api-client';
+import type { AuthUser } from '@sector/api-client';
 import { BookOpen, FolderClock, Share2, Users2, type LucideIcon } from 'lucide-react';
 
 import { SCAN_VAULT_PATH, type ScanVaultView } from '@/features/scan-list/scan-list-views';

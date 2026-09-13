@@ -1,5 +1,5 @@
-import { useScanTypes, type ScanTypeSummary } from '@scanvault/api-client';
-import { Button, EmptyState, Input, Skeleton, cn } from '@scanvault/ui';
+import { useScanTypes, type ScanTypeSummary } from '@sector/api-client';
+import { Button, EmptyState, Input, Skeleton, cn } from '@sector/ui';
 import { Check, Loader2, Stethoscope } from 'lucide-react';
 import { useMemo, useState } from 'react';
 

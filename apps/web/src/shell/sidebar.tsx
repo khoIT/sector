@@ -1,8 +1,9 @@
-import { cn } from '@scanvault/ui';
+import { cn } from '@sector/ui';
 import { Link } from 'react-router-dom';
 
 import { AccountMenu } from './account-menu';
 import { NavList } from './nav-list';
+import { SectorMark } from './sector-mark';
 import type { NavBadges } from './nav-config';
 
 export function BrandMark({ className }: { className?: string }) {
@@ -16,15 +17,8 @@ export function BrandMark({ className }: { className?: string }) {
         className,
       )}
     >
-      {/* The one orange fill in the shell. Its label is --scan-ground: --ink
-          would drop to 2.4:1 on the orange once the palette flips to dark. */}
-      <span
-        aria-hidden
-        className="flex h-7 w-7 items-center justify-center rounded-token bg-accent text-[12px] font-bold text-scan-ground"
-      >
-        SV
-      </span>
-      <span className="text-[15px] font-semibold tracking-tight text-ink">ScanVault</span>
+      <SectorMark size={28} />
+      <span className="text-[15px] font-semibold tracking-tight text-ink">Sector</span>
     </Link>
   );
 }

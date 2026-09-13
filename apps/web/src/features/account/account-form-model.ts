@@ -3,7 +3,7 @@ import {
   updateProfilePayloadSchema,
   type UpdatePasswordPayload,
   type UpdateProfilePayload,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 import type { ZodError, ZodSchema } from 'zod';
 
 /**

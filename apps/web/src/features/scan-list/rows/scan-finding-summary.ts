@@ -1,4 +1,4 @@
-import type { ScanFinding } from '@scanvault/api-client';
+import type { ScanFinding } from '@sector/api-client';
 
 /**
  * What the learner declared, and whether they left anything unexamined.

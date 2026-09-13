@@ -1,4 +1,4 @@
-import type { FindingDefinition } from '@scanvault/api-client';
+import type { FindingDefinition } from '@sector/api-client';
 
 import { countStored, countTracked } from './file-counts';
 import { missingRequiredFindings, type FindingAnswers } from './finding-controls';

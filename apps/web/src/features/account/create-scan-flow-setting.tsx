@@ -1,4 +1,4 @@
-import { cn } from '@scanvault/ui';
+import { cn } from '@sector/ui';
 import { useState } from 'react';
 
 import {

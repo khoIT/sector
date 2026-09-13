@@ -21,10 +21,10 @@ import { buildScanFilekey, putToPresignedUrl } from './upload-keys';
 /**
  * Contract check for the create-scan surface against the RUNNING legacy API.
  *
- *   SCANVAULT_LIVE_API=1 SCANVAULT_DEMO_PASSWORD='…' \
- *     pnpm --filter @scanvault/api-client exec vitest run src/create-scan-live-check.test.ts
+ *   SECTOR_LIVE_API=1 SECTOR_DEMO_PASSWORD='…' \
+ *     pnpm --filter @sector/api-client exec vitest run src/create-scan-live-check.test.ts
  *
- * Read-only by default. Setting SCANVAULT_LIVE_WRITE=1 additionally runs the
+ * Read-only by default. Setting SECTOR_LIVE_WRITE=1 additionally runs the
  * whole background-first flow end to end — presign against a client-minted
  * draft id, PUT bytes, create the scan around the resulting key, confirm the
  * file — because that ordering is the central claim of the wizard and the only
@@ -37,16 +37,16 @@ import { buildScanFilekey, putToPresignedUrl } from './upload-keys';
  * /api/me, so this signs in once.
  */
 
-const LIVE = process.env.SCANVAULT_LIVE_API === '1';
-const WRITE = process.env.SCANVAULT_LIVE_WRITE === '1';
-const BASE = process.env.SCANVAULT_API_URL ?? 'http://localhost:5001';
-const PASSWORD = process.env.SCANVAULT_DEMO_PASSWORD ?? '';
+const LIVE = process.env.SECTOR_LIVE_API === '1';
+const WRITE = process.env.SECTOR_LIVE_WRITE === '1';
+const BASE = process.env.SECTOR_API_URL ?? 'http://localhost:5001';
+const PASSWORD = process.env.SECTOR_DEMO_PASSWORD ?? '';
 /**
  * A bearer token from an earlier sign-in. The 20-per-15-minutes auth limit is
  * per IP and shared with every other suite and browser tab on this machine, so
  * reusing a token is the difference between running this and waiting.
  */
-const TOKEN = process.env.SCANVAULT_DEMO_TOKEN ?? '';
+const TOKEN = process.env.SECTOR_DEMO_TOKEN ?? '';
 
 /** A 1x1 PNG. Small enough to PUT in a test, real enough to pass a sniff. */
 const TINY_PNG = Buffer.from(
@@ -84,7 +84,7 @@ describe.skipIf(!LIVE || !(PASSWORD || TOKEN))('create-scan live shapes', () => 
       if (isApiError(error) && error.statusCode === 429) {
         throw new Error(
           'Auth rate limit hit (20 requests / 15 min per IP). Re-run with ' +
-            'SCANVAULT_DEMO_TOKEN=<bearer> to reuse an existing session.',
+            'SECTOR_DEMO_TOKEN=<bearer> to reuse an existing session.',
         );
       }
       throw error;
@@ -164,7 +164,7 @@ describe.skipIf(!LIVE || !(PASSWORD || TOKEN))('create-scan live shapes', () => 
   describe.skipIf(!WRITE)('background-first upload, end to end', () => {
     it('uploads before the scan exists, then creates the scan around the key', async () => {
       const draftId = mintDraftId();
-      const filename = `scanvault-live-${Date.now()}.png`;
+      const filename = `sector-live-${Date.now()}.png`;
 
       // 1. Bytes first — no scan record anywhere yet.
       const presigned = await uploadPresign(client, {
@@ -197,7 +197,7 @@ describe.skipIf(!LIVE || !(PASSWORD || TOKEN))('create-scan live shapes', () => 
         scanTypeId: scanType!.id,
         fileTotal: 1,
         findings: [],
-        note: 'scanvault live contract check',
+        note: 'sector live contract check',
         groupIds: groups.map((group) => group.id),
         notifyUser: false,
         files: [file],

@@ -1,5 +1,5 @@
-import { useSharedScanList } from '@scanvault/api-client';
-import { EmptyState } from '@scanvault/ui';
+import { useSharedScanList } from '@sector/api-client';
+import { EmptyState } from '@sector/ui';
 import { Share2 } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -8,8 +8,8 @@ import {
   type ScanStatus,
   type ScanTypeRef,
   type UserBasic,
-} from '@scanvault/api-client';
-import { Badge, StatusPill, cn } from '@scanvault/ui';
+} from '@sector/api-client';
+import { Badge, StatusPill, cn } from '@sector/ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';

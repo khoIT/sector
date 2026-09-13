@@ -1,4 +1,4 @@
-import { useScanList, type ScanListView } from '@scanvault/api-client';
+import { useScanList, type ScanListView } from '@sector/api-client';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 

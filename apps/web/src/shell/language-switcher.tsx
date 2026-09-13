@@ -4,7 +4,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   cn,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 

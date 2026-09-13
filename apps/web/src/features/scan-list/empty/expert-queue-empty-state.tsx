@@ -1,4 +1,4 @@
-import { Button, Card, CardContent } from '@scanvault/ui';
+import { Button, Card, CardContent } from '@sector/ui';
 import { FolderClock, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

@@ -2,7 +2,7 @@ import {
   useFindingDefinitions,
   useFindingDefinitionsFetcher,
   type ScanTypeSummary,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 import { useState } from 'react';
 
 import { planFindingTransfer, type FindingTransferPlan } from './transfer-findings';

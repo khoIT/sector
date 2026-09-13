@@ -1,4 +1,4 @@
-import type { AuthUser } from '@scanvault/api-client';
+import type { AuthUser } from '@sector/api-client';
 
 /**
  * Two letters standing in for a face.

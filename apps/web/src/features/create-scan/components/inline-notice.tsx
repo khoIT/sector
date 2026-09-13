@@ -1,4 +1,4 @@
-import { cn } from '@scanvault/ui';
+import { cn } from '@sector/ui';
 import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react';
 import type { ReactNode } from 'react';
 

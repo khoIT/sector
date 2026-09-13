@@ -1,10 +1,10 @@
-import type { CreateScanShareResult } from '@scanvault/api-client';
+import type { CreateScanShareResult } from '@sector/api-client';
 import {
   isApiError,
   useCreateScanShareMutation,
   useDeleteScanShareMutation,
   useSharesForScan,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 import {
   Button,
   Card,
@@ -15,7 +15,7 @@ import {
   Skeleton,
   StatusPill,
   Textarea,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { Share2, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -185,7 +185,7 @@ function ShareOutcome({ result }: { result: CreateScanShareResult }) {
       ) : null}
       {result.notFoundEmails.length > 0 ? (
         <p className="text-warn">
-          No ScanVault account, nothing sent: {result.notFoundEmails.join(', ')}
+          No Sector account, nothing sent: {result.notFoundEmails.join(', ')}
         </p>
       ) : null}
     </div>

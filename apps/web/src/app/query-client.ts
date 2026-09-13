@@ -1,4 +1,4 @@
-import { shouldRetryApiError } from '@scanvault/api-client';
+import { shouldRetryApiError } from '@sector/api-client';
 import { QueryClient } from '@tanstack/react-query';
 
 /**

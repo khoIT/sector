@@ -1,4 +1,4 @@
-import { Button } from '@scanvault/ui';
+import { Button } from '@sector/ui';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';

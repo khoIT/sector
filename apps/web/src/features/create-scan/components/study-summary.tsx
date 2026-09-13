@@ -1,5 +1,5 @@
-import { useFindingDefinitions, useScanUserGroups, type FindingDefinition } from '@scanvault/api-client';
-import { Button, Card, CardContent, CardHeader, CardTitle, cn } from '@scanvault/ui';
+import { useFindingDefinitions, useScanUserGroups, type FindingDefinition } from '@sector/api-client';
+import { Button, Card, CardContent, CardHeader, CardTitle, cn } from '@sector/ui';
 import { Pencil } from 'lucide-react';
 import type { ReactNode } from 'react';
 

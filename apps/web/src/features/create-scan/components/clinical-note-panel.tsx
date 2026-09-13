@@ -1,5 +1,5 @@
-import { useUserOrganizations } from '@scanvault/api-client';
-import { Card, CardContent, CardHeader, CardTitle, Input, Textarea } from '@scanvault/ui';
+import { useUserOrganizations } from '@sector/api-client';
+import { Card, CardContent, CardHeader, CardTitle, Input, Textarea } from '@sector/ui';
 import { useMemo } from 'react';
 
 import { useAuth } from '@/auth/auth-context';

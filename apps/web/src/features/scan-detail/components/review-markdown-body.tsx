@@ -1,4 +1,4 @@
-import { cn } from '@scanvault/ui';
+import { cn } from '@sector/ui';
 import { Fragment, useState } from 'react';
 
 import { parseReviewMarkdown, type InlineSpan } from './review-markdown';

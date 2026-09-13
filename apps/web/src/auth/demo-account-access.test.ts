@@ -1,4 +1,4 @@
-import type { AuthUser } from '@scanvault/api-client';
+import type { AuthUser } from '@sector/api-client';
 import { describe, expect, it } from 'vitest';
 
 import { SCAN_VAULT_PATH } from '@/features/scan-list/scan-list-views';

@@ -8,7 +8,7 @@ importers:
 
   .:
     devDependencies:
-      '@scanvault/config':
+      '@sector/config':
         specifier: workspace:*
         version: link:packages/config
       prettier:
@@ -23,10 +23,10 @@ importers:
 
   apps/web:
     dependencies:
-      '@scanvault/api-client':
+      '@sector/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
-      '@scanvault/ui':
+      '@sector/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@tanstack/react-query':
@@ -66,7 +66,7 @@ importers:
         specifier: ^3.24.2
         version: 3.25.76
     devDependencies:
-      '@scanvault/config':
+      '@sector/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@tailwindcss/vite':
@@ -112,7 +112,7 @@ importers:
         specifier: ^3.24.2
         version: 3.25.76
     devDependencies:
-      '@scanvault/config':
+      '@sector/config':
         specifier: workspace:*
         version: link:../config
       '@tanstack/react-query':
@@ -182,7 +182,7 @@ importers:
         specifier: ^3.0.1
         version: 3.6.0
     devDependencies:
-      '@scanvault/config':
+      '@sector/config':
         specifier: workspace:*
         version: link:../config
       '@types/node':

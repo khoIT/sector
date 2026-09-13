@@ -4,11 +4,11 @@
  * The design tokens and the Tailwind @theme bridge that maps them onto
  * utilities (bg-surface, text-ink-dim, border-line, rounded-token, ...).
  */
-@import '@scanvault/ui/styles.css';
+@import '@sector/ui/styles.css';
 
 /*
  * Tailwind's automatic source detection does not walk into node_modules, and
- * @scanvault/ui is a pnpm symlink into ../../packages/ui. Point at the real
+ * @sector/ui is a pnpm symlink into ../../packages/ui. Point at the real
  * path so the utility classes used inside the UI primitives are generated.
  */
 @source '../../../packages/ui/src';

@@ -8,7 +8,7 @@ import {
   type AuthSession,
   type AuthUser,
   type LoginPayload,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   createContext,

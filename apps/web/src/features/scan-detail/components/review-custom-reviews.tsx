@@ -1,4 +1,4 @@
-import { Button, Textarea } from '@scanvault/ui';
+import { Button, Textarea } from '@sector/ui';
 import { Plus, X } from 'lucide-react';
 
 import { QuestionSuggestInput } from './question-suggest-input';

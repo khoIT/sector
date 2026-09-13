@@ -1,4 +1,4 @@
-import type { ScanTypeSummary, UserGroup } from '@scanvault/api-client';
+import type { ScanTypeSummary, UserGroup } from '@sector/api-client';
 import { describe, expect, it } from 'vitest';
 
 import {

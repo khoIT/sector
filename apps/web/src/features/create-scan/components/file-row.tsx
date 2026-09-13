@@ -1,4 +1,4 @@
-import { Badge, Button, Progress, StatusPill, cn } from '@scanvault/ui';
+import { Badge, Button, Progress, StatusPill, cn } from '@sector/ui';
 import { FileVideo, Image as ImageIcon, RotateCcw, Upload, X } from 'lucide-react';
 import { useRef } from 'react';
 

@@ -1,4 +1,4 @@
-import { cn } from '@scanvault/ui';
+import { cn } from '@sector/ui';
 import { BookOpen, FolderClock, Share2, Users2 } from 'lucide-react';
 import type { ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';

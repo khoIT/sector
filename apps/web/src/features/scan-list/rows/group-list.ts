@@ -1,4 +1,4 @@
-import type { ScanGroupRef } from '@scanvault/api-client';
+import type { ScanGroupRef } from '@sector/api-client';
 
 /**
  * Helpers for the group list a row can open.

@@ -1,4 +1,4 @@
-import { Button } from '@scanvault/ui';
+import { Button } from '@sector/ui';
 import { Plus } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';

@@ -1,4 +1,4 @@
-import type { Scan } from '@scanvault/api-client';
+import type { Scan } from '@sector/api-client';
 
 /**
  * What a learner's own scan actually came back as.

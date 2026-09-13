@@ -1,4 +1,4 @@
-import { Button, Card, CardContent } from '@scanvault/ui';
+import { Button, Card, CardContent } from '@sector/ui';
 import { ClipboardList, MessageSquareText, Plus, UploadCloud } from 'lucide-react';
 import type { ComponentType } from 'react';
 import { Link } from 'react-router-dom';

@@ -1,4 +1,4 @@
-import { Button, cn } from '@scanvault/ui';
+import { Button, cn } from '@sector/ui';
 import { UploadCloud } from 'lucide-react';
 import { useCallback, useId, useRef, useState } from 'react';
 

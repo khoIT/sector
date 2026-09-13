@@ -1,5 +1,5 @@
-import type { AuthUser, Scan, ScanListView } from '@scanvault/api-client';
-import { hasPermission } from '@scanvault/api-client';
+import type { AuthUser, Scan, ScanListView } from '@sector/api-client';
+import { hasPermission } from '@sector/api-client';
 
 import { scanDetailPathFor } from '@/features/scan-detail/scan-detail-links';
 

@@ -4,7 +4,7 @@ import {
   usePurchaseScanCredits,
   type CreditOption,
   type ScanReviewCredits,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 import {
   Button,
   Dialog,
@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
   cn,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { useState } from 'react';
 
 import { InlineNotice } from './inline-notice';

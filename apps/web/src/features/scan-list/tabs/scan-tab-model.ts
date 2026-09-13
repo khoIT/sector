@@ -1,4 +1,4 @@
-import { hasPermission, type AuthUser } from '@scanvault/api-client';
+import { hasPermission, type AuthUser } from '@sector/api-client';
 
 import { SCAN_VAULT_PATH, SCAN_VAULT_PERMISSION, type ScanVaultView } from '../scan-list-views';
 

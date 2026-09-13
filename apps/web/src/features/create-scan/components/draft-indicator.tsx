@@ -1,4 +1,4 @@
-import { Badge, cn } from '@scanvault/ui';
+import { Badge, cn } from '@sector/ui';
 import { CloudUpload, HardDriveDownload, Loader2 } from 'lucide-react';
 
 import type { DraftFile } from '../model/draft-types';

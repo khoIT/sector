@@ -1,4 +1,4 @@
-import { Button } from '@scanvault/ui';
+import { Button } from '@sector/ui';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 import { FilesPanel } from '../components/files-panel';

@@ -1,4 +1,4 @@
-import type { MultipartSession } from '@scanvault/api-client';
+import type { MultipartSession } from '@sector/api-client';
 
 /**
  * The bytes of an unfinished upload, and where its multipart transfer got to.

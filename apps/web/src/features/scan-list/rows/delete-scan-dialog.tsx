@@ -1,4 +1,4 @@
-import { isApiError, useDeleteScanMutation } from '@scanvault/api-client';
+import { isApiError, useDeleteScanMutation } from '@sector/api-client';
 import {
   Button,
   Dialog,
@@ -7,7 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { useTranslation } from 'react-i18next';
 
 export type DeleteScanDialogProps = {

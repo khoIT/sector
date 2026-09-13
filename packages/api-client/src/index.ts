@@ -1,5 +1,5 @@
 /**
- * @scanvault/api-client — the typed client over the legacy GUSI API.
+ * @sector/api-client — the typed client over the legacy GUSI API.
  *
  * Conventions that hold everywhere in this package:
  *   - Every failure throws an ApiError. Nothing resolves with `{success:false}`.

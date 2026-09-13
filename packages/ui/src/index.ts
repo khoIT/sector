@@ -1,11 +1,11 @@
 /**
- * @scanvault/ui public surface.
+ * @sector/ui public surface.
  *
  * Import the stylesheet ONCE from the app entry:
- *   import '@scanvault/ui/styles.css';
+ *   import '@sector/ui/styles.css';
  *
  * Everything else comes from the package root:
- *   import { Button, Card, StatusPill } from '@scanvault/ui';
+ *   import { Button, Card, StatusPill } from '@sector/ui';
  */
 
 export { cn } from './lib/cn';

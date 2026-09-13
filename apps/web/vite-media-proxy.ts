@@ -39,7 +39,7 @@ const FORWARDED_RESPONSE_HEADERS = [
 
 export function mediaProxyPlugin(): Plugin {
   return {
-    name: 'scanvault-media-proxy',
+    name: 'sector-media-proxy',
     // Development only. A built bundle has no server here, which is why
     // `mediaFetchUrl` stops rewriting outside dev.
     apply: 'serve',

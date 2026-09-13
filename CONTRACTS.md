@@ -1,4 +1,4 @@
-# ScanVault contracts
+# Sector contracts
 
 The surface four feature areas build on. Everything documented here exists and is
 verified by `pnpm -w typecheck`, `pnpm -w test` and `pnpm -w lint`.
@@ -13,18 +13,18 @@ parallel work produces separable diffs.
 
 | Package              | Import specifier                | What it is                                    |
 | -------------------- | ------------------------------- | --------------------------------------------- |
-| `@scanvault/ui`      | `import { … } from '@scanvault/ui'` | tokens, ThemeProvider, primitives         |
-| `@scanvault/ui`      | `'@scanvault/ui/styles.css'`    | the stylesheet. Imported ONCE, already done   |
-| `@scanvault/api-client` | `import { … } from '@scanvault/api-client'` | transport, schemas, hooks         |
-| `@scanvault/config`  | `'@scanvault/config/tsconfig.react.json'`, `'@scanvault/config/eslint'` | build config |
+| `@sector/ui`      | `import { … } from '@sector/ui'` | tokens, ThemeProvider, primitives         |
+| `@sector/ui`      | `'@sector/ui/styles.css'`    | the stylesheet. Imported ONCE, already done   |
+| `@sector/api-client` | `import { … } from '@sector/api-client'` | transport, schemas, hooks         |
+| `@sector/config`  | `'@sector/config/tsconfig.react.json'`, `'@sector/config/eslint'` | build config |
 
 Inside `apps/web`, `@/` is an alias for `apps/web/src/`.
 
 Both library packages export TypeScript source directly (no build step), so
-`pnpm --filter @scanvault/web dev` picks up edits to `packages/*` with HMR.
+`pnpm --filter @sector/web dev` picks up edits to `packages/*` with HMR.
 
 Add a dependency to `apps/web` with
-`pnpm --filter @scanvault/web add <pkg>`, then re-run `pnpm install` at the root.
+`pnpm --filter @sector/web add <pkg>`, then re-run `pnpm install` at the root.
 
 ---
 
@@ -74,7 +74,7 @@ bare `:root`; dark is redefined in BOTH
 `packages/ui/src/styles/token-contrast.test.ts` parses `tokens.css` (stripping
 comments first — the file's own doc comment names all three selectors) and asserts
 21 foreground/background pairs at 4.5:1 in all three theme states, plus the two
-rules above. Change a hex and run `pnpm --filter @scanvault/ui test`.
+rules above. Change a hex and run `pnpm --filter @sector/ui test`.
 
 ### Tailwind utilities
 
@@ -94,7 +94,7 @@ body size. Arbitrary values (`bg-[var(--surface)]`) also work if you prefer them
 
 Tailwind sources are `apps/web/src/**` plus an explicit
 `@source '../../../packages/ui/src'` in `apps/web/src/styles.css` (auto-detection
-does not walk into `node_modules`, and `@scanvault/ui` is a pnpm symlink). **If you
+does not walk into `node_modules`, and `@sector/ui` is a pnpm symlink). **If you
 add a package whose components use Tailwind classes, add an `@source` line for it.**
 
 ### Typography and numerals
@@ -108,7 +108,7 @@ utility is the class `sv-num`.
 
 ---
 
-## 3. `@scanvault/ui` exports
+## 3. `@sector/ui` exports
 
 ### ThemeProvider
 
@@ -151,18 +151,18 @@ Also exported: `cn`, `buttonVariants`, `badgeVariants`, and the colour math
 status with `scanStatusTone()` from the API client:
 
 ```tsx
-import { SCAN_STATUS_LABEL, scanStatusTone } from '@scanvault/api-client';
-import { StatusPill } from '@scanvault/ui';
+import { SCAN_STATUS_LABEL, scanStatusTone } from '@sector/api-client';
+import { StatusPill } from '@sector/ui';
 
 <StatusPill tone={scanStatusTone(scan.status)} label={SCAN_STATUS_LABEL[scan.status]} />;
 ```
 
-Icons: `lucide-react` is a dependency of `apps/web`, not of `@scanvault/ui`.
+Icons: `lucide-react` is a dependency of `apps/web`, not of `@sector/ui`.
 Size them `h-4 w-4` (or `h-5 w-5` in an EmptyState) and add `aria-hidden`.
 
 ---
 
-## 4. `@scanvault/api-client`
+## 4. `@sector/api-client`
 
 ### Conventions
 
@@ -555,4 +555,4 @@ const {
   call site.
 - Before opening a PR: `pnpm -w typecheck && pnpm -w test && pnpm -w lint`.
 - After adding or changing a response schema, also run
-  `SCANVAULT_DEMO_PASSWORD='…' pnpm --filter @scanvault/api-client test:live`.
+  `SECTOR_DEMO_PASSWORD='…' pnpm --filter @sector/api-client test:live`.

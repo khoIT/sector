@@ -1,5 +1,5 @@
-import { useScanUserGroups, type UserGroup } from '@scanvault/api-client';
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Skeleton, cn } from '@scanvault/ui';
+import { useScanUserGroups, type UserGroup } from '@sector/api-client';
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Skeleton, cn } from '@sector/ui';
 import { Check, Users } from 'lucide-react';
 
 import { defaultGroupCohort, isWiderThanCohort } from '../model/group-cohort';

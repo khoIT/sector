@@ -1,7 +1,7 @@
-import { scanvaultConfig } from '@scanvault/config/eslint';
+import { sectorConfig } from '@sector/config/eslint';
 
 export default [
-  ...scanvaultConfig({ react: true }),
+  ...sectorConfig({ react: true }),
   {
     files: ['**/*.tsx'],
     rules: {

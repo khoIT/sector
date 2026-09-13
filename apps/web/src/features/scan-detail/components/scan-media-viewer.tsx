@@ -1,5 +1,5 @@
-import { mediaFormatLabel, mediaKindFor } from '@scanvault/api-client';
-import { Button, cn, EmptyState } from '@scanvault/ui';
+import { mediaFormatLabel, mediaKindFor } from '@sector/api-client';
+import { Button, cn, EmptyState } from '@sector/ui';
 import { ChevronLeft, ChevronRight, ImageOff } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 

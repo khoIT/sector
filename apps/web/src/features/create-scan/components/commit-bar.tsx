@@ -5,9 +5,9 @@ import {
   useApiClient,
   useFindingDefinitions,
   useScanUserGroups,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 import { useQueryClient } from '@tanstack/react-query';
-import { Button, cn } from '@scanvault/ui';
+import { Button, cn } from '@sector/ui';
 import { ArrowRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
 

@@ -1,5 +1,5 @@
-import { useFindingDefinitions } from '@scanvault/api-client';
-import { Card, CardContent, CardHeader, CardTitle, cn } from '@scanvault/ui';
+import { useFindingDefinitions } from '@sector/api-client';
+import { Card, CardContent, CardHeader, CardTitle, cn } from '@sector/ui';
 import { ChevronDown, Stethoscope } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 

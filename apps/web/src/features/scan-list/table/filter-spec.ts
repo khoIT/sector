@@ -1,4 +1,4 @@
-import { SCAN_STATUS_LABEL, SCAN_STATUSES, SHARED_SCAN_STATUS_LABEL } from '@scanvault/api-client';
+import { SCAN_STATUS_LABEL, SCAN_STATUSES, SHARED_SCAN_STATUS_LABEL } from '@sector/api-client';
 
 import { isReviewedList, type ScanVaultView } from '../scan-list-views';
 import type { FilterOption } from './filter-controls';

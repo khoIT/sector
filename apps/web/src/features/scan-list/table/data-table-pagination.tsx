@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Select, SelectContent, SelectItem, SelectTrigger, cn } from '@scanvault/ui';
+import { Button, Select, SelectContent, SelectItem, SelectTrigger, cn } from '@sector/ui';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 import { PAGE_SIZE_OPTIONS } from './list-url-state';

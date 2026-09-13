@@ -6,7 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 

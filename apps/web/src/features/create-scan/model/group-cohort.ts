@@ -1,4 +1,4 @@
-import type { UserGroup } from '@scanvault/api-client';
+import type { UserGroup } from '@sector/api-client';
 
 /**
  * Which groups a new scan should be routed to by default.

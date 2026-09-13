@@ -2,7 +2,7 @@ import {
   useScanList,
   type ListQueryInput,
   type ScanListFilterKey,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 
 import { useAuth } from '@/auth/auth-context';
 

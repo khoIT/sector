@@ -1,4 +1,4 @@
-import type { ScanListView } from '@scanvault/api-client';
+import type { ScanListView } from '@sector/api-client';
 
 import { SCAN_VAULT_PATH } from '@/features/scan-list/scan-list-views';
 

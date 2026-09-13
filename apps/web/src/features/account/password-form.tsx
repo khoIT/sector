@@ -1,5 +1,5 @@
-import { isApiError, useUpdatePasswordMutation } from '@scanvault/api-client';
-import { Button, Input } from '@scanvault/ui';
+import { isApiError, useUpdatePasswordMutation } from '@sector/api-client';
+import { Button, Input } from '@sector/ui';
 import { useState, type FormEvent } from 'react';
 
 import { AccountField, FormNotice } from './account-form-parts';

@@ -1,4 +1,4 @@
-import { cn, useTheme, type ThemePreference } from '@scanvault/ui';
+import { cn, useTheme, type ThemePreference } from '@sector/ui';
 import { Monitor, Moon, Sun, type LucideIcon } from 'lucide-react';
 
 type Option = { value: ThemePreference; label: string; Icon: LucideIcon };

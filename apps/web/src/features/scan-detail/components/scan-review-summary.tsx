@@ -1,6 +1,6 @@
-import type { CompetencyMeasure, UserBasic } from '@scanvault/api-client';
-import { userDisplayName } from '@scanvault/api-client';
-import { Card, CardContent, CardHeader, CardTitle, StatusPill } from '@scanvault/ui';
+import type { CompetencyMeasure, UserBasic } from '@sector/api-client';
+import { userDisplayName } from '@sector/api-client';
+import { Card, CardContent, CardHeader, CardTitle, StatusPill } from '@sector/ui';
 
 import { formatDateTime } from '@/lib/format';
 

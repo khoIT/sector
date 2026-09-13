@@ -4,7 +4,7 @@ import {
   type ColumnFilter,
   type ScanListFilterKey,
   type SharedScanListFilterKey,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 
 import type { FilterState } from './table/list-url-state';
 

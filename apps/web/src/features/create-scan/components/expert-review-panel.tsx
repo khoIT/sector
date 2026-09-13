@@ -1,4 +1,4 @@
-import { useScanReviewCredits, type ScanReviewCredits } from '@scanvault/api-client';
+import { useScanReviewCredits, type ScanReviewCredits } from '@sector/api-client';
 import {
   Badge,
   Button,
@@ -8,7 +8,7 @@ import {
   CardTitle,
   Skeleton,
   cn,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { CreditCard, Sparkles, X } from 'lucide-react';
 import { useState } from 'react';
 

@@ -1,4 +1,4 @@
-import { isApiError, useAddScanNoteMutation, useScanNotes } from '@scanvault/api-client';
+import { isApiError, useAddScanNoteMutation, useScanNotes } from '@sector/api-client';
 import {
   Button,
   Card,
@@ -8,7 +8,7 @@ import {
   EmptyState,
   Skeleton,
   Textarea,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { MessagesSquare } from 'lucide-react';
 import { useState } from 'react';
 

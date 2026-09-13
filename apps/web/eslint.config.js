@@ -1,7 +1,7 @@
-import { scanvaultConfig } from '@scanvault/config/eslint';
+import { sectorConfig } from '@sector/config/eslint';
 
 export default [
-  ...scanvaultConfig({ react: true }),
+  ...sectorConfig({ react: true }),
   {
     // Build-time tooling, run by node rather than shipped to a browser.
     files: ['scripts/**/*.mjs'],

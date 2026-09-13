@@ -3,7 +3,7 @@ import {
   useScanTypeFilterOptions,
   useScanUsers,
   userDisplayName,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 import {
   Button,
   Dialog,
@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { SlidersHorizontal } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

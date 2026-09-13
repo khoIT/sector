@@ -1,4 +1,4 @@
-import type { Organization } from '@scanvault/api-client';
+import type { Organization } from '@sector/api-client';
 
 /** Below this, a study is unlikely to be a complete POCUS exam. */
 export const MIN_RECOMMENDED_FILE_COUNT = 3;

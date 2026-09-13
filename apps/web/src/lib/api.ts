@@ -3,7 +3,7 @@ import {
   createSessionStore,
   type ApiClient,
   type UnauthorizedContext,
-} from '@scanvault/api-client';
+} from '@sector/api-client';
 
 /**
  * The single ApiClient and the single SessionStore for the whole app.

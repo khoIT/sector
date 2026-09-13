@@ -1,4 +1,4 @@
-import type { FindingDefinition } from '@scanvault/api-client';
+import type { FindingDefinition } from '@sector/api-client';
 import { describe, expect, it } from 'vitest';
 
 import { planFindingTransfer } from './transfer-findings';

@@ -1,4 +1,4 @@
-import type { Scan, ScanReview } from '@scanvault/api-client';
+import type { Scan, ScanReview } from '@sector/api-client';
 import { describe, expect, it } from 'vitest';
 
 import { reviewTurnaroundMs, scanOutcome } from './scan-outcome';

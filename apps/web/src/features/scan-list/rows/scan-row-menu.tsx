@@ -1,5 +1,5 @@
-import type { AuthUser, MediaFile } from '@scanvault/api-client';
-import { hasPermission } from '@scanvault/api-client';
+import type { AuthUser, MediaFile } from '@sector/api-client';
+import { hasPermission } from '@sector/api-client';
 import {
   Button,
   Dialog,
@@ -15,7 +15,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@scanvault/ui';
+} from '@sector/ui';
 import { Download, MessageSquare, MoreVertical, Play, Share2, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
