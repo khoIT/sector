@@ -32,12 +32,14 @@ describe('courseActionLabelKey', () => {
 });
 
 describe('roundedProgress', () => {
-  it('rounds an unrounded float from the live API', () => {
+  it('rounds a float, in case any route ever sends one', () => {
     expect(roundedProgress(28.915662650602407)).toBe(29);
   });
 
-  it('passes a whole percent through unchanged', () => {
+  it('is a no-op on the whole percent the API sends today (no double-rounding)', () => {
+    expect(roundedProgress(29)).toBe(29);
     expect(roundedProgress(100)).toBe(100);
+    expect(roundedProgress(0)).toBe(0);
   });
 
   it('clamps a value below zero', () => {

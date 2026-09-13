@@ -39,10 +39,10 @@ export function courseActionLabelKey(status: CourseProgressStatus): string {
 }
 
 /**
- * The API sends an unrounded float today (e.g. `28.915662650602407`) and a
- * whole percent once the in-flight API fix lands; round for display either
- * way rather than trusting the wire's precision, and clamp so a stray value
- * outside 0–100 cannot overflow a progress bar.
+ * The API now sends a whole percent, but round here regardless of what the
+ * wire holds — rounding an already-integer value is a no-op — rather than
+ * re-coupling display to the exact precision of one route. Also clamps so a
+ * stray value outside 0–100 cannot overflow a progress bar.
  */
 export function roundedProgress(progress: number): number {
   if (!Number.isFinite(progress)) return 0;

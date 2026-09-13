@@ -15,22 +15,21 @@ import { courseProgressStatusSchema } from './course';
  * Checked against several of the seeded learner's own courses on the
  * production mirror (`learner@sector.test`, `:5002`), 14 Sep 2026, including
  * one at 200 items with a zero-question quiz and one completed course with
- * `resume: null`.
+ * `resume: null`. Re-checked after `feat/sector-course-outline` merged into
+ * the branch `:5002` runs, same day: `resume` now names a leaf (a quiz or a
+ * topic, never a lesson) on every in-progress course sampled, `progress`
+ * arrives a whole percent (`29`, not `28.915662650602407`), and `totalItems`
+ * correctly excludes a `blockedReason` item from the denominator — verified
+ * against five different enrolled courses with a blocked item, e.g.
+ * `681a4b82779a0d9e6c9cc605` (9 items, 1 blocked, `totalItems: 8`).
  *
- * Two respects in which the running `:5002` instance still disagrees with
- * this contract, while another branch finishes the fix — both are values
- * this schema already accepts, so nothing here special-cases either one:
- *   - `resume` today points at the enclosing LESSON on every in-progress
- *     course rather than the first leaf beneath it; the contract is a leaf,
- *     `kind` is shared with every other item, and a lesson is a legal `kind`
- *     for the rare case where a lesson genuinely has no leaf under it, so no
- *     narrower type would be honest here anyway.
- *   - `progress` arrives an unrounded float (e.g. `28.915662650602407`); the
- *     contract is a whole percent. `z.number()` accepts both — round for
- *     display, not in the schema.
- *   - `totalItems` on at least one course (`692c752d6c39e6299557e3cb`, 200
- *     items) still counts a `blockedReason` item in the denominator; the
- *     contract excludes it. The count is a plain `z.number()` either way.
+ * `progress` stays a plain `z.number()` rather than tightening to an integer
+ * schema: a number is a number, and the client should keep accepting either
+ * shape rather than re-coupling itself to today's exact wire precision.
+ * `resume.kind` stays the shared `courseOutlineItemKindSchema` (all three
+ * kinds) for the same reason — a lesson is still a legal resume target for
+ * the edge case where a lesson genuinely has no leaf under it, even though
+ * no sampled course exercises that case today.
  */
 
 export const COURSE_OUTLINE_ITEM_KINDS = ['lesson', 'topic', 'quiz'] as const;
