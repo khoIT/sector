@@ -119,3 +119,45 @@ export { EmptyState, type EmptyStateProps } from './components/empty-state';
 export { Textarea, type TextareaProps } from './components/textarea';
 
 export { Progress, type ProgressProps, type ProgressTone } from './components/progress';
+
+// ─── rich text ────────────────────────────────────────────────────────────────
+export { RichText, type RichTextProps } from './components/rich-text';
+export { sanitizeRichText } from './components/sanitize-rich-text';
+
+// ─── quiz / question-bank primitives ──────────────────────────────────────────
+export { ProgressMeter, type ProgressMeterProps } from './components/progress-meter';
+export { progressMeterPercentage } from './components/progress-meter-percentage';
+
+export { SegmentedProgress, type SegmentedProgressProps } from './components/segmented-progress';
+export {
+  segmentState,
+  segmentStates,
+  type SegmentState,
+} from './components/segmented-progress-state';
+
+export { RadioCard, type RadioCardProps } from './components/radio-card';
+export { radioCardStateClasses, type RadioCardReveal } from './components/radio-card-state';
+
+export { Ring, type RingProps } from './components/ring';
+export { clampPercentage, ringArc, type RingArc } from './components/ring-geometry';
+
+export {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from './components/accordion';
+
+export { Toolbar } from './components/toolbar';
+export { Stat, type StatProps } from './components/stat';
+export { EmptyGrid, type EmptyGridProps } from './components/empty-grid';
+
+export {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
+  type DrawerContentProps,
+} from './components/drawer';
+export { drawerContentClass, type DrawerSide } from './components/drawer-position';
