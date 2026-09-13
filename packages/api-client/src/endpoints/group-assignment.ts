@@ -45,7 +45,7 @@ export type GetGroupAssignmentsQuery = {
 };
 
 /** GET /group-assignment/group/:groupId — this group's assignments, course-type only. */
-export async function getGroupAssignments(
+export async function getAssignmentsForGroup(
   client: ApiClient,
   groupId: string,
   query: GetGroupAssignmentsQuery = {},

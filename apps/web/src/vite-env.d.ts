@@ -7,6 +7,11 @@ interface ImportMetaEnv {
    * the client's baseUrl empty and avoids CORS.
    */
   readonly VITE_API_BASE_URL?: string;
+  /**
+   * Sage AI host, per environment (staging vs prod). Falls back to the legacy
+   * default when unset — see `features/sage/sage-frame.tsx`.
+   */
+  readonly VITE_SAGE_URL?: string;
 }
 
 interface ImportMeta {

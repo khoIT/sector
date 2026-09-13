@@ -3,15 +3,19 @@ import {
   BookOpen,
   FolderClock,
   GraduationCap,
+  Images,
   ListChecks,
   Settings2,
   Share2,
+  Sparkles,
   Users2,
 } from 'lucide-react';
 
 import { COURSES_PATH } from '@/features/courses/courses-links';
+import { GALLERY_PATH } from '@/features/gallery/gallery-links';
 import { GROUP_ADMINISTRATION_PATH } from '@/features/groups/groups-links';
 import { QUESTION_BANK_LIST_PATH } from '@/features/question-banks/question-bank-links';
+import { SAGE_PATH } from '@/features/sage/sage-links';
 
 import {
   isNavItemActive,
@@ -144,7 +148,30 @@ export const NAV_GROUPS = [
     id: 'learn',
     labelKey: 'nav.learn',
     showLabel: true,
-    items: [coursesDestination, questionBanksDestination],
+    items: [
+      coursesDestination,
+      {
+        id: 'gallery',
+        labelKey: 'nav.gallery',
+        icon: Images,
+        path: GALLERY_PATH,
+        matchPrefix: GALLERY_PATH,
+        // Ungated, same as the legacy nav entry: all three routes it calls
+        // require only `authUser`.
+        visibleWhen: whenPermitted(null),
+      },
+      {
+        id: 'sage',
+        labelKey: 'nav.sage',
+        icon: Sparkles,
+        path: SAGE_PATH,
+        matchPrefix: SAGE_PATH,
+        // Ungated, same as the legacy nav entry — no permission or feature
+        // flag guarded it there either.
+        visibleWhen: whenPermitted(null),
+      },
+      questionBanksDestination,
+    ],
   },
   {
     id: 'administer',

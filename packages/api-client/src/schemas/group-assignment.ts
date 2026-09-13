@@ -17,14 +17,12 @@ import { userBasicSchema } from './common';
  * assignment is left for the surface that actually browses a course's
  * structure (course authoring, not group administration).
  */
-export const groupAssignmentTypeSchema = z.enum(['course', 'module', 'topic', 'quiz']);
-export const groupAssignmentStatusSchema = z.enum([
-  'draft',
-  'active',
-  'in_progress',
-  'completed',
-  'cancelled',
-]);
+// The assignment type and status vocabularies are declared once, beside the
+// read model in ./assignment, and imported here. They were written twice while
+// the read and write sides were built in parallel; the values were identical,
+// so this keeps the single copy rather than two that can drift apart.
+export { groupAssignmentStatusSchema, groupAssignmentTypeSchema } from './assignment';
+import { groupAssignmentStatusSchema, groupAssignmentTypeSchema } from './assignment';
 
 /** `GET /group-assignment/learners?groupId=` — active learners eligible to be assigned. */
 export const groupLearnerSchema = z.object({

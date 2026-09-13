@@ -68,9 +68,18 @@ Found reviewing the scan surfaces against the API source.
   (`scan.service.ts:1309-1322`). 491 scans in the mirror are in a resettable state
   holding files.
 
-All three are pre-existing. Sector is the first client that makes them reachable from
-a normal learner screen, which is why they surfaced now. The Sector client gates all
-three on ownership; the server does not agree, and the server is the one that matters.
+- `DELETE /api/scan/:id/files` has **no ownership check** either, and it hard-deletes
+  File documents rather than soft-deleting them.
+
+All four are pre-existing. Sector is the first client that makes them reachable from
+a normal learner screen, which is why they surfaced now. The Sector client gates them
+all on ownership; the server does not agree, and the server is the one that matters.
+
+The last one deserves attention because the reset-upload recovery now calls it from a
+learner action. Sector narrows the call to records whose own status says the bytes
+never reached storage, so it deletes nothing that holds data — but a hard-deleting
+route with no ownership check, reachable by any authenticated caller with any scan id,
+should not stay that way.
 
 ## 4. A password hash is written into the audit log
 
@@ -132,7 +141,7 @@ this reaches production:**
 `src/app/auth/auth.route.ts:28`. Gated only by a signed token. Pre-existing and
 unchanged by any Sector work. Flagging, not diagnosing — I have not tested it.
 
-## 8. Five group export routes carry `authUser` only
+## 8. Five group export routes carry `authUser` only — safe today, but only by a flag
 
 `src/app/group/manager/manager.route.ts` — `GET /report/:groupId`,
 `POST /export-scans/:groupId`, `POST /export-user-scans/:groupId`,
@@ -140,9 +149,25 @@ unchanged by any Sector work. Flagging, not diagnosing — I have not tested it.
 `withPermission` on any of them. They return member lists, scan activity and course
 progress, which is real user PII and patient-adjacent data.
 
-The controller may scope results to groups the caller can see. **Unverified** — a
-Sector agent is reading it now and this section will be updated with the answer.
-If it does not scope, any authenticated user can export any group.
+**Answered.** All five do scope, inside the controller body, via `assertLeadsGroup`.
+So they are not exploitable today. But that safety rests entirely on
+`GROUP_LEADER_SCOPED_VISIBILITY` staying hardcoded true. If that kill switch is ever
+flipped, these routes — and the whole `/manage` family — have no second line of
+defence, because none of them carries a permission gate. A route whose only
+protection is a constant nobody thinks of as security is one refactor from being
+open.
+
+**Adjacent, and worse — two of them, both verified:**
+
+- `PUT` and `DELETE /api/group-members/:id` have no `assertLeadsGroup` at all, only a
+  permission gate. Same family, same data, no scoping.
+- `GET /api/group-assignment/learners?groupId=<any>` has **no scoping of any kind** —
+  zero `assertLeadsGroup` in that controller — and it returns learner **email
+  addresses**. The seeded `subscriber` role holds `read:group-assignment`, so the
+  lowest-privileged account in the system can read the roster of any group by id.
+
+That last one is the most directly exploitable item in this document. Group ids are
+not secret; they appear in URLs.
 
 ## 9. The Referrals surface carries an enumerable PII leak
 
@@ -157,6 +182,7 @@ for deletion rather than porting, which also closes the leak.
    accounts that lacked the permission? (finding 1)
 3. How many production users hold a password that is neither bcrypt nor the
    WordPress format? (finding 2)
-4. Do the group export controllers scope by caller? Answer pending. (finding 8)
+4. Answered: the export controllers do scope, but only through a hardcoded flag with
+   no permission gate behind it. Is that flag meant to be flippable? (finding 8)
 5. Is reset-upload meant to be a learner action at all? The API logs it as an
    admin action and checks no ownership. (finding 3)

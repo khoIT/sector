@@ -8,7 +8,9 @@
     "administer": "Administração",
     "courses": "Cursos",
     "questionBanks": "Bancos de questões",
-    "groupAdministration": "Administração de grupos"
+    "groupAdministration": "Administração de grupos",
+    "gallery": "Galeria de Patologia",
+    "sage": "Sage AI"
   },
   "tabs": {
     "reviewed": "Revisado"
@@ -565,5 +567,69 @@
     "close": "Fechar",
     "completionTagErrorTitle": "A marcação não foi guardada",
     "completionTagError": "Não foi possível alterar a completude do exame. Nada foi guardado — tente novamente."
+  },
+  "gallery": {
+    "title": "Galeria de Patologia",
+    "categoriesError": {
+      "title": "Não foi possível carregar as categorias",
+      "retry": "Tentar novamente"
+    },
+    "noCategories": "Nenhuma categoria disponível",
+    "subCategoriesFor": "Subcategorias de {{category}}",
+    "allSubCategories": "Todas as subcategorias",
+    "noVideoAvailable": "Nenhum vídeo disponível para este item",
+    "loadError": {
+      "title": "Não foi possível carregar esta categoria",
+      "retry": "Tentar novamente"
+    },
+    "noItems": "Ainda não há itens nesta categoria",
+    "pageOf": "Página {{current}} de {{total}}"
+  },
+  "sage": {
+    "title": "Sage AI",
+    "description": "Pergunte ao Sage AI qualquer coisa sobre ultrassonografia point-of-care.",
+    "loading": "Carregando o Sage AI…",
+    "signedOut": {
+      "title": "Entre para usar o Sage AI",
+      "description": "O Sage AI precisa de uma conta conectada para abrir."
+    }
+  },
+  "assignments": {
+    "title": "Tarefas",
+    "searchPlaceholder": "Buscar tarefas…",
+    "columns": {
+      "learner": "Aluno(a)",
+      "content": "Conteúdo",
+      "type": "Tipo",
+      "dueDate": "Prazo",
+      "status": "Status"
+    },
+    "type": {
+      "course": "Curso",
+      "module": "Módulo",
+      "topic": "Tópico",
+      "quiz": "Questionário"
+    },
+    "status": {
+      "draft": "Rascunho",
+      "active": "Ativa",
+      "in_progress": "Em andamento",
+      "completed": "Concluída",
+      "cancelled": "Cancelada"
+    },
+    "filters": {
+      "status": "Status",
+      "allStatuses": "Todos os status",
+      "type": "Tipo",
+      "allTypes": "Todos os tipos"
+    },
+    "empty": {
+      "title": "Ainda não há tarefas",
+      "description": "Nada foi atribuído a este grupo ainda."
+    },
+    "error": {
+      "title": "Não foi possível carregar as tarefas",
+      "retry": "Tentar novamente"
+    }
   }
 }

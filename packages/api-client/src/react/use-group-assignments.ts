@@ -2,7 +2,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tansta
 
 import {
   createGroupAssignment,
-  getGroupAssignments,
+  getAssignmentsForGroup,
   getGroupCourseOptions,
   getGroupLearners,
   type GetGroupAssignmentsQuery,
@@ -37,7 +37,7 @@ export function useGroupCourseOptions(groupId: string | undefined) {
   });
 }
 
-export function useGroupAssignments(
+export function useAssignmentsForGroup(
   groupId: string | undefined,
   query: GetGroupAssignmentsQuery = {},
 ) {
@@ -45,7 +45,7 @@ export function useGroupAssignments(
 
   return useQuery({
     queryKey: groupKeys.assignments(groupId ?? '', query),
-    queryFn: () => getGroupAssignments(client, groupId as string, query),
+    queryFn: () => getAssignmentsForGroup(client, groupId as string, query),
     enabled: Boolean(groupId),
     placeholderData: keepPreviousData,
   });

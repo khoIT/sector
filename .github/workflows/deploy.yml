@@ -1,0 +1,153 @@
+name: Deploy
+
+# Same shape as gusi_web_dashboard's ci.yml: lint/typecheck, test, build, then an
+# OIDC-authenticated S3 sync + CloudFront invalidation. One environment (production)
+# for now -- this repo has only a `main` branch. Add `staging`/`dev` to the branch
+# list and a per-branch env-var switch (see the dashboard's workflow) if and when
+# this repo grows those branches; do not add the switch ahead of the branches.
+on:
+  push:
+    branches:
+      - main
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  lint-and-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable pnpm via Corepack
+        run: corepack enable
+
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-store-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable pnpm via Corepack
+        run: corepack enable
+
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-store-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # This is the i18n completeness gate (apps/web/src/i18n/locale-completeness-gate.test.ts)
+      # along with every other suite -- a new key missing a translation fails the build here,
+      # by name, the same run that catches a broken route guard or a type error.
+      - name: Test
+        run: pnpm run test
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [lint-and-typecheck, test]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable pnpm via Corepack
+        run: corepack enable
+
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-store-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # The only build-time env var apps/web reads (apps/web/src/lib/api.ts). Reusing
+      # the dashboard's PROD_VITE_API_URL secret rather than inventing a new one --
+      # both apps point at the same gusi_nodejs_api, so it is the same URL.
+      - name: Build
+        run: pnpm run build
+        env:
+          VITE_API_BASE_URL: ${{ secrets.PROD_VITE_API_URL }}
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: apps/web/dist
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      id-token: write # Required for OIDC authentication
+      contents: read
+    steps:
+      - name: Download build output
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: apps/web/dist
+
+      # Same secret names gusi_web_dashboard's workflow uses for its production
+      # environment (PROD_AWS_ACCOUNT_ID, PROD_AWS_REGION, PROD_AWS_BUCKET_NAME,
+      # PROD_AWS_CLOUDFRONT_DISTRIBUTION_ID) -- whoever provisions this repo's bucket
+      # and distribution should register secrets under these same names so the
+      # convention stays one convention, not two.
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.PROD_AWS_ACCOUNT_ID }}:role/SectorS3GithubRole
+          aws-region: ${{ secrets.PROD_AWS_REGION }}
+
+      - name: Deploy to S3
+        run: aws s3 sync apps/web/dist/ s3://${{ secrets.PROD_AWS_BUCKET_NAME }}/ --delete
+
+      - name: Invalidate CloudFront cache
+        run: |
+          if aws cloudfront create-invalidation --distribution-id ${{ secrets.PROD_AWS_CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"; then
+            echo "Cache invalidation successful."
+          else
+            echo "Cache invalidation failed."
+            exit 1
+          fi

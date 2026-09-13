@@ -1,10 +1,13 @@
 import type { RouteObject } from 'react-router-dom';
 
 import { accountRoutes } from '@/features/account/account-routes';
+import { assignmentsRoutes } from '@/features/assignments/assignments-routes';
 import { coursesRoutes } from '@/features/courses/courses-routes';
 import { createScanRoutes } from '@/features/create-scan/create-scan-routes';
+import { galleryRoutes } from '@/features/gallery/gallery-routes';
 import { groupsRoutes } from '@/features/groups/groups-routes';
 import { questionBankRoutes } from '@/features/question-banks/question-bank-routes';
+import { sageRoutes } from '@/features/sage/sage-routes';
 import { scanDetailRoutes } from '@/features/scan-detail';
 
 import { unbuiltSurfaceRoutes } from './unbuilt-surface-routes';
@@ -37,6 +40,9 @@ export const featureRoutes: RouteObject[] = [
   ...questionBankRoutes,
   ...groupsRoutes,
   ...coursesRoutes,
+  ...galleryRoutes,
+  ...sageRoutes,
+  ...assignmentsRoutes,
   // Whatever is left in Learn/Administer with no surface yet resolves to the
   // same honest placeholder until a feature replaces its row in
   // ./unbuilt-surfaces.ts.
