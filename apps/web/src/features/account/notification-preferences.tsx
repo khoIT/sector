@@ -13,6 +13,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  cn,
   EmptyState,
   Skeleton,
 } from '@sector/ui';
@@ -24,14 +25,13 @@ import { useTranslation } from 'react-i18next';
  * `GET /api/group-notifications` answers one row per group the caller LEADS,
  * which is why this card renders nothing at all for anyone who leads no
  * group: an empty array is not a loading or error state, it is the correct
- * answer for most of the app's users. 916 leaders across 554 groups have a
- * live preference today (2,363 documents); saving one always sends the full
- * shape for that group's row, never a partial patch, so a type nobody just
- * touched cannot be silently dropped by an optimistic write — there is none.
+ * answer for most of the app's users. Verified against `gusi_prod_mirror`:
+ * several hundred leaders across several hundred groups have a live
+ * preference today.
  */
 export function NotificationPreferences() {
   const { t } = useTranslation();
-  const { data, isLoading, isError, refetch } = useGroupNotificationPreferences();
+  const { data, isLoading, isError, isFetching, refetch } = useGroupNotificationPreferences();
 
   if (isLoading) {
     return (
@@ -80,24 +80,45 @@ export function NotificationPreferences() {
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {data.map((group) => (
-          <GroupNotificationRow key={group.id} group={group} />
+          <GroupNotificationRow key={group.id} group={group} listIsRefetching={isFetching} />
         ))}
       </CardContent>
     </Card>
   );
 }
 
-function GroupNotificationRow({ group }: { group: GroupWithNotificationPreference }) {
+function GroupNotificationRow({
+  group,
+  listIsRefetching,
+}: {
+  group: GroupWithNotificationPreference;
+  listIsRefetching: boolean;
+}) {
   const { t } = useTranslation();
   const update = useUpdateGroupNotificationPreferenceMutation();
-  const pending = update.isPending && update.variables?.groupId === group.id;
+  const savingThisRow = update.isPending && update.variables?.groupId === group.id;
+  // Also locked while the list is refetching after ANY row's save: the
+  // `group` prop this row renders comes from that list, and a second toggle
+  // fired before the refetch lands would build its payload off data the
+  // first save already made stale.
+  const locked = savingThisRow || listIsRefetching;
   const saveFailed = update.isError && update.variables?.groupId === group.id ? update.error : null;
 
   function setEnabled(enabled: boolean) {
-    update.mutate({
-      groupId: group.id,
-      payload: { enableNotification: enabled, notificationTypes: group.notificationTypes },
-    });
+    // GET /api/group-notifications only reveals `notificationTypes` for a
+    // currently-ENABLED row — `getGroupsByUserWithNotifications` filters on
+    // `emailNotifications: true` server-side — so a disabled row's `[]` here
+    // is not the real stored list, it is what the route hides. Sending it
+    // back on re-enable would overwrite the real list with nothing, so this
+    // omits `notificationTypes` entirely on exactly that transition and lets
+    // the server keep what it already has. Every other write is trustworthy
+    // and sends the full set shown on screen.
+    const payload =
+      enabled && !group.notificationsEnabled
+        ? { enableNotification: true }
+        : { enableNotification: enabled, notificationTypes: group.notificationTypes };
+
+    update.mutate({ groupId: group.id, payload });
   }
 
   function setType(type: NotificationType, checked: boolean) {
@@ -121,21 +142,32 @@ function GroupNotificationRow({ group }: { group: GroupWithNotificationPreferenc
             type="checkbox"
             className="h-3.5 w-3.5 accent-[var(--accent)]"
             checked={group.notificationsEnabled}
-            disabled={pending}
+            disabled={locked}
             onChange={(event) => setEnabled(event.target.checked)}
           />
           {group.notificationsEnabled ? t('notifications.enabled') : t('notifications.disabled')}
         </label>
       </div>
 
+      {/* The four types only mean anything while the group's notifications
+          are on — disabled here rather than merely inert, so it is visible
+          rather than a click that quietly does nothing. */}
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5">
         {NOTIFICATION_TYPES.map((type) => (
-          <label key={type} className="flex cursor-pointer items-center gap-1.5 text-body text-ink">
+          <label
+            key={type}
+            className={cn(
+              'flex items-center gap-1.5 text-body',
+              group.notificationsEnabled
+                ? 'cursor-pointer text-ink'
+                : 'cursor-not-allowed text-ink-dim',
+            )}
+          >
             <input
               type="checkbox"
               className="h-3.5 w-3.5 accent-[var(--accent)]"
               checked={group.notificationTypes.includes(type)}
-              disabled={pending}
+              disabled={locked || !group.notificationsEnabled}
               onChange={(event) => setType(type, event.target.checked)}
             />
             {t(`notifications.types.${type}`)}
