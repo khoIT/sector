@@ -25,8 +25,6 @@ import type { LucideIcon } from 'lucide-react';
  * section lands in the rail ahead of its surface.
  */
 
-export type UnbuiltSurfaceId = never;
-
 export type UnbuiltSurface = {
   /** Absolute URL, for links; the router mounts it relative. */
   path: string;
@@ -40,4 +38,10 @@ export type UnbuiltSurface = {
   icon: LucideIcon;
 };
 
-export const UNBUILT_SURFACES: Readonly<Record<UnbuiltSurfaceId, UnbuiltSurface>> = {};
+/**
+ * Keyed by section id, same as every row this table has ever carried — but
+ * there is no fixed id union left to key it by now that all three have
+ * graduated, so a plain string index takes over rather than forcing a
+ * `never` key through `Object.values()` at every reader.
+ */
+export const UNBUILT_SURFACES: Readonly<Record<string, UnbuiltSurface>> = {};
