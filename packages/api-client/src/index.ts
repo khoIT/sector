@@ -455,3 +455,13 @@ export {
   type MultipartSession,
   type UploadScanObjectOptions,
 } from './multipart-upload';
+
+// ─── upload retry policy ──────────────────────────────────────────────────────
+export {
+  backoffDelayMs,
+  DEFAULT_UPLOAD_RETRY_POLICY,
+  isRetryableUploadStatus,
+  runWithUploadRetry,
+  type RunWithUploadRetryOptions,
+  type UploadRetryPolicy,
+} from './upload-retry-policy';
