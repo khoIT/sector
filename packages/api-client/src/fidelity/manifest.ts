@@ -1,4 +1,5 @@
 import type { Document } from 'mongodb';
+import { z } from 'zod';
 
 import { accountUserSchema } from '../schemas/account';
 import { authRoleSchema, authUserSchema } from '../schemas/auth';
@@ -8,7 +9,11 @@ import {
   organizationSchema,
   scanTypeSummarySchema,
 } from '../schemas/create-scan-lookups';
-import { learnerCourseSummarySchema } from '../schemas/course';
+import {
+  courseItemProgressStatusSchema,
+  learnerCourseListItemSchema,
+  learnerCourseSummarySchema,
+} from '../schemas/course';
 import { groupSchema } from '../schemas/group';
 import { groupFilterOptionSchema } from '../schemas/group-filter';
 import { groupMemberSchema } from '../schemas/group-member';
@@ -27,6 +32,15 @@ import { scanShareSchema } from '../schemas/shared-scan';
 import { sharedScanDetailSchema } from '../schemas/shared-scan-detail';
 import { sharedScanListItemSchema } from '../schemas/shared-scan-list';
 import { populatedUser } from './projections/common';
+import {
+  groupCourseReachesTheList,
+  learnerCourseSummary,
+  personalCourseReachesTheList,
+  prefetchGroupCourses,
+  prefetchPersonalCourses,
+  projectGroupCourse,
+  projectPersonalCourse,
+} from './projections/course';
 import {
   prefetchScans,
   projectScan,
@@ -499,36 +513,51 @@ export const REPLAY_ENTRIES: readonly ReplayEntry[] = [
     schema: learnerCourseSummarySchema,
     proves: ['learnerCourseSummarySchema', 'learnerCourseAuthorSchema'],
     prefetch: async (_batch, { refs }) => refs.loadAll('users'),
-    project: (course, { refs }) => {
-      const author = refs.get('users', course.author);
-      return {
-        ...(toWire(
-          pick(course, [
-            'title',
-            'slug',
-            'content',
-            'imageUrl',
-            'duration',
-            'cmeCredits',
-            'cmeUrl',
-            'cmeCode',
-            'status',
-          ]),
-        ) as Record<string, unknown>),
-        // getCloudfrontUrl() presigns per request; a dump cannot replay that,
-        // same call as the scan-type and file entries above.
-        imageUrl: null,
-        // resolveCourseAuthor() keys this `_id`, not `id` — see the schema.
-        author: author
-          ? {
-              _id: String(author._id),
-              email: author.email ?? '',
-              firstName: author.firstName ?? '',
-              lastName: author.lastName ?? '',
-            }
-          : { _id: '', email: '', firstName: '', lastName: '' },
-      };
-    },
+    // The same projection the two list entries below embed, so the course
+    // object cannot be proved in one shape here and served in another there.
+    project: (course, { refs }) => learnerCourseSummary(refs, course),
+  },
+  {
+    name: 'usercourses → a personal My Courses row',
+    collection: 'usercourses',
+    schema: learnerCourseListItemSchema,
+    proves: [
+      'learnerCourseListItemSchema',
+      'learnerCourseProgressSchema',
+      'learnerCourseMetaVersionSummarySchema',
+      'assignmentTypeSchema',
+      'enrollmentStatusSchema',
+      'expirationTypeSchema',
+      'courseProgressStatusSchema',
+    ],
+    prefetch: prefetchPersonalCourses,
+    // `if (!course) continue` — an enrolment whose course document is gone is
+    // never serialised.
+    include: personalCourseReachesTheList,
+    project: projectPersonalCourse,
+  },
+  {
+    name: 'groupcourses → a group-assigned My Courses row',
+    collection: 'groupcourses',
+    schema: learnerCourseListItemSchema,
+    proves: ['learnerCourseGroupSchema'],
+    prefetch: prefetchGroupCourses,
+    include: groupCourseReachesTheList,
+    project: projectGroupCourse,
+  },
+  {
+    name: 'usercourseprogresses → the item statuses the outline serves',
+    collection: 'usercourseprogresses',
+    schema: z.array(courseItemProgressStatusSchema),
+    proves: ['courseItemProgressStatusSchema'],
+    // UserCourseProgress has no soft-delete plugin, so every document counts.
+    filter: {},
+    // buildOutlineProgressItems maps items[].status through untouched; the
+    // outline's own status is derived from these and never stored.
+    project: (progress) =>
+      (Array.isArray(progress.items) ? progress.items : []).map(
+        (item: Document) => item.status as unknown,
+      ),
   },
 ];
 
@@ -608,35 +637,41 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
     'request body of PUT /api/group-notifications/:groupId',
   deleteAccountPayloadSchema: 'request body of DELETE /api/account/delete',
 
-  // My Courses and the course outline: both assembled per learner across
-  // UserCourse, UserCourseProgress, GroupMember/GroupCourse and
-  // CourseMetaVersionV2 (or, for the outline, the resolved item traversal) —
-  // no single collection holds either shape. The embedded course document is
-  // the one part that IS replayed; see `learnerCourseSummarySchema` above.
-  courseProgressStatusSchema:
-    'the value of usercourseprogresses.status; proved together with the assembled progress it appears in, below',
-  enrollmentStatusSchema: 'the value of usercourses.status, assembled into the list item below',
-  assignmentTypeSchema:
-    "'personal' | 'group', computed by which branch of getLearnerCourses built the row",
-  expirationTypeSchema: 'computed by normalizeLearnerCourses(), not stored on any document',
-  learnerCourseProgressSchema:
-    'assembled from usercourseprogresses (or its not-started default) per learner-course pair',
-  learnerCourseMetaVersionSummarySchema:
-    'assembled from v2coursemetaversions per learner-course pair',
-  learnerCourseGroupSchema:
-    'assembled from a populated GroupMember + GroupCourse join, group assignments only',
-  learnerCourseListItemSchema:
-    'the full My Courses row: UserCourse/GroupCourse joined with progress, meta version and group in one pass',
-  learnerCoursesPageSchema: 'the paginated envelope around learnerCourseListItemSchema',
-  courseOutlineItemKindSchema:
-    'a resolved outline item kind, computed by the traversal, not stored',
-  courseOutlineBlockedReasonSchema: 'computed by the traversal from the quiz question count',
-  courseOutlineQuizSummarySchema: 'assembled per quiz from quiz attempts, not a stored document',
-  courseOutlineResumeSchema: 'computed by the traversal: the first incomplete leaf',
-  courseOutlineItemSchema: 'one resolved item; see courseOutlineSchema',
-  courseOutlineSchema:
-    'the resolved outline has no single source collection — see the doc comment in schemas/course-outline.ts',
   scanTagPayloadSchema: 'request body of POST/DELETE /api/scan/:id/tags',
+  // The course outline. Every shape below is assembled by
+  // learners.outline.helper.ts's traversal of a course-meta structure, joined
+  // against lesson/topic/quiz documents and the learner's own progress items:
+  // no collection holds a row of it, and emulating the traversal here would
+  // test this package against a second implementation of the thing it is
+  // meant to check. They are covered end to end by the route replay in
+  // ./routes.fidelity.test.ts instead, which asks the running mirror API for
+  // the outline of every course the seeded learner is enrolled in — so what
+  // would have to exist for a COLLECTION replay to prove them is a stored,
+  // resolved outline document, which this API has never had.
+  //
+  // The one piece of the outline that IS stored — the per-item status the
+  // traversal passes straight through — is replayed above from
+  // usercourseprogresses, because that is the field whose fourth value
+  // (`failed`) this client did not model.
+  courseOutlineItemKindSchema:
+    'computed by the traversal from the structure node type; route replay: learner outline responses',
+  courseOutlineBlockedReasonSchema:
+    'computed by the traversal from the non-deleted question count; route replay: learner outline responses',
+  courseOutlineQuizSummarySchema:
+    "assembled per quiz from the learner's own attempts; route replay: learner outline responses",
+  courseOutlineResumeSchema:
+    'computed by the traversal from item order and status; route replay: learner outline responses',
+  courseOutlineItemSchema:
+    "one resolved item: a structure node joined to its content document and the learner's progress; route replay: learner outline responses",
+  courseOutlineSchema:
+    'the whole resolved outline; route replay: GET /api/v2/learners/courses/:courseId/outline for every seeded enrolment',
+  // The envelope, not the row. getLearnersCourses paginates in memory after
+  // normalizeLearnerCourses has merged the two branches and split the expired
+  // rows off, so page/totalPages/items/expired exist only in a response: a
+  // collection replay would have to reimplement that merge to produce one.
+  // The rows inside it are replayed from both branches above.
+  learnerCoursesPageSchema:
+    'assembled by the controller from both branches; route replay: every page of GET /api/v2/learners/courses',
   // ─── group administration: write forms, exports, assignments ────────────
   createGroupPayloadSchema: 'request body of POST /api/groups',
   updateGroupPayloadSchema: 'request body of PUT /api/groups/:id',
