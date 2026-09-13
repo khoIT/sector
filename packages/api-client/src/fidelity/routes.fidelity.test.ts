@@ -6,6 +6,8 @@ import { createClient, type ApiClient } from '../client';
 import { paginatedSchema } from '../envelope';
 import { SCAN_LIST_VIEWS } from '../query-keys';
 import { userGroupSchema } from '../schemas/common';
+import { learnerCoursesPageSchema } from '../schemas/course';
+import { courseOutlineSchema } from '../schemas/course-outline';
 import { scanNoteListSchema, scanSchema, scanUserSchema } from '../schemas/scan';
 import { sharedScanListItemSchema } from '../schemas/shared-scan-list';
 import { scanDetailPath, scanListPath } from '../endpoints/scan';
@@ -35,6 +37,8 @@ import { issueSignature, type ReplayResult, type ShapeFailure } from './replay';
 const API_URL = process.env.SECTOR_MIRROR_API_URL ?? 'http://localhost:5002';
 const SECRET = process.env.SECTOR_MIRROR_JWT_SECRET ?? '';
 const DETAIL_SAMPLE_EVERY = 25;
+/** One outline in five for the courses a learner has never opened. */
+const OUTLINE_SAMPLE_EVERY = 5;
 
 /** The accounts the seed script creates, plus what each one is expected to reach. */
 const ACCOUNTS = [
@@ -178,6 +182,99 @@ describe.skipIf(!enabled)('route replay against the mirror API', () => {
       20 * 60_000,
     );
   });
+
+  /**
+   * My Courses and the outline, for every account that has an enrolment.
+   *
+   * This is the only check that sees the two course routes as a learner
+   * receives them. Both are assembled per caller — the list merges a personal
+   * branch with a group one and splits the expired rows off; the outline
+   * resolves a course-meta structure against the caller's own progress — so
+   * neither has a collection a document replay could walk.
+   *
+   * Every page of the list is parsed, never a sample: the expired array and
+   * the group-assigned rows are exactly what a first page of personal
+   * enrolments hides. The outlines are sampled (see below), because they are
+   * the heaviest read the API has and this gate has to be runnable beside a
+   * developer's own session rather than instead of it.
+   */
+  it.each(ACCOUNTS)(
+    'parses every My Courses page and every outline for %s',
+    async (email) => {
+      const client = clients.get(email)!;
+      const started = Date.now();
+      const pages = tally();
+      const outlines = tally();
+
+      const courseIds = new Set<string>();
+      const expiredCourseIds = new Set<string>();
+      let page = 1;
+      let totalPages = 1;
+      let ordinary = 0;
+      do {
+        const raw = await client.get('/api/v2/learners/courses', {
+          query: { page, limit: 100 },
+        });
+        record(pages, learnerCoursesPageSchema, raw, `page ${page}`);
+        const parsed = learnerCoursesPageSchema.safeParse(raw);
+        if (!parsed.success) break;
+        totalPages = parsed.data.totalPages;
+        for (const row of [...parsed.data.items, ...parsed.data.expired]) {
+          // Resolving an outline is the most expensive read the API serves —
+          // a structure walk plus every lesson, topic, quiz and question in
+          // the course — so this asks for the ones that can differ and a
+          // sample of the rest, the same trade the scan detail sample makes
+          // above. A row the learner has never opened has no progress
+          // document, and every shape that broke this client lives in one:
+          // the failed quiz status, the absent version pin, the counters that
+          // predate their own migration. Group and expired rows are always
+          // included because their row shape differs too.
+          const carriesProgress =
+            row.progress.status !== 'not_started' ||
+            row.assignmentType === 'group' ||
+            row.isExpired;
+          if (carriesProgress || ordinary % OUTLINE_SAMPLE_EVERY === 0) {
+            courseIds.add(row.course.id);
+          }
+          if (row.isExpired) expiredCourseIds.add(row.course.id);
+          if (!carriesProgress) ordinary += 1;
+        }
+        page += 1;
+      } while (page <= totalPages);
+
+      let refused = 0;
+      for (const courseId of courseIds) {
+        try {
+          record(
+            outlines,
+            courseOutlineSchema,
+            await client.get(`/api/v2/learners/courses/${courseId}/outline`),
+            courseId,
+          );
+        } catch (error) {
+          // An expired enrolment still appears in the list — in the `expired`
+          // array, which the UI renders as text rather than as a link — but
+          // the outline route refuses it with "Your account or group is not
+          // enrolled to this course". That is the access rule answering, not
+          // a shape, and it is asserted here rather than swallowed: a 404 for
+          // a row the list did NOT mark expired is a real failure.
+          const notFound = (error as { isNotFound?: boolean }).isNotFound === true;
+          if (notFound && expiredCourseIds.has(courseId)) {
+            refused += 1;
+            continue;
+          }
+          throw error;
+        }
+      }
+
+      const pageResult = finish(`${email} my courses pages`, pages, started);
+      const outlineResult = finish(`${email} course outlines`, outlines, started);
+      outlineResult.skipped = refused;
+      expect(pageResult.shapes.map((shape) => `${shape.count}× ${shape.signature}`)).toEqual([]);
+      expect(outlineResult.shapes.map((shape) => `${shape.count}× ${shape.signature}`)).toEqual([]);
+    },
+    20 * 60_000,
+  );
 
   it(
     'parses the filter sources, the shared list and a notes thread for a reviewer',

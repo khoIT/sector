@@ -9,6 +9,7 @@
     "closeNavigation": "Close navigation",
     "primary": "Primary",
     "skipToContent": "Skip to content",
+    "home": "Home",
     "learn": "Learn",
     "administer": "Administer",
     "courses": "Courses",
@@ -525,8 +526,7 @@
         "completed": "Completed",
         "active": "Active",
         "paused": "Paused",
-        "dropped": "Dropped",
-        "expired": "Expired"
+        "dropped": "Dropped"
       },
       "status": {
         "not_started": "Not started",
@@ -545,7 +545,8 @@
       },
       "noMatch": {
         "title": "No courses match your search",
-        "description": "No course title matches “{{keyword}}”."
+        "description": "No course title matches “{{keyword}}”.",
+        "descriptionFiltered": "No courses have the status you selected."
       },
       "pagePastEnd": {
         "title": "Nothing on this page",
@@ -569,6 +570,7 @@
       "resume": {
         "start": "Start: {{title}}",
         "resume": "Resume: {{title}}",
+        "retry": "Retry: {{title}}",
         "review": "Review: {{title}}"
       },
       "completedBanner": "You have completed this course.",
@@ -587,7 +589,8 @@
       "itemStatus": {
         "not_started": "Not started",
         "in_progress": "In progress",
-        "completed": "Completed"
+        "completed": "Completed",
+        "failed": "Not passed"
       },
       "blocked": {
         "quiz_has_no_questions": "This quiz has no questions yet and cannot be opened."
@@ -713,6 +716,71 @@
     "close": "Close",
     "completionTagErrorTitle": "The mark did not save",
     "completionTagError": "The scan's completeness could not be changed. Nothing was saved — try again."
+  },
+  "home": {
+    "greeting": "Welcome back, {{name}}",
+    "courseStatus": {
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "notStarted": "Not started"
+    },
+    "myLearning": {
+      "title": "My learning",
+      "course": "Course",
+      "selectCourse": "Select a course",
+      "courseProgress": "Course progress",
+      "noCourseProgress": "No course progress yet.",
+      "scanProgress": "My scans",
+      "noScanProgress": "No scans yet.",
+      "qbank": "Question bank attempts",
+      "noQbank": "No question bank attempts yet.",
+      "attempts_one": "{{count}} attempt",
+      "attempts_other": "{{count}} attempts",
+      "timeline": "Progress over time",
+      "noTimeline": "Not enough activity yet to show a trend.",
+      "topCourses": "Top courses",
+      "noTopCourses": "No courses in progress yet.",
+      "topics": "Topics",
+      "noTopics": "No topic progress yet.",
+      "quizzes": "Quizzes",
+      "noQuizzes": "No quiz progress yet."
+    },
+    "leader": {
+      "title": "Group leader dashboard",
+      "group": "Group",
+      "noGroup": "You do not lead any group yet",
+      "noGroupHint": "Once a group names you as a leader, its course and scan snapshot appears here."
+    },
+    "group": {
+      "title": "{{groupName}}",
+      "viewMembers": "View members",
+      "courseProgress": "Course progress",
+      "noCourseProgress": "No course progress yet for this group.",
+      "scanProgress": "Scan progress",
+      "noScanProgress": "No scans yet for this group.",
+      "qbank": "Question bank attempts",
+      "noQbank": "No question bank attempts yet for this group.",
+      "averageScore": "{{score}}% best score"
+    },
+    "reviewer": {
+      "title": "Scan reviewer dashboard",
+      "expertUnreviewed": "Expert scans — unreviewed",
+      "expertReviewed": "Expert scans — reviewed",
+      "groupUnreviewed": "Group scans — unreviewed",
+      "groupReviewed": "Group scans — reviewed",
+      "credits": "Expert review credits",
+      "personalCredits": "Your credits",
+      "creditsUnavailable": "Credit balances could not be loaded.",
+      "loading": "Loading…"
+    },
+    "admin": {
+      "title": "Administrator dashboard",
+      "manageGroups": "Manage groups",
+      "group": "Group",
+      "selectGroup": "Select a group",
+      "noGroups": "No groups yet",
+      "noGroupsHint": "Once a group exists, pick it here to see its course and scan snapshot."
+    }
   },
   "gallery": {
     "title": "Pathology Gallery",

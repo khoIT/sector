@@ -14,7 +14,19 @@
   },
   {
     "path": "/",
+    "role": "learner"
+  },
+  {
+    "path": "/",
+    "role": "leader"
+  },
+  {
+    "path": "/",
     "role": "reviewer"
+  },
+  {
+    "path": "/",
+    "role": "admin"
   },
   {
     "path": "/scans/my",

@@ -30,6 +30,14 @@ import { ExpiredCoursesSection } from './expired-courses-section';
  *  an empty-string item value. */
 const ALL_STATUSES = 'all';
 
+/** A URL filter value, narrowed to one this list actually offers. */
+function asStatusFilter(value: string | string[] | undefined): CourseListStatusFilter | undefined {
+  return typeof value === 'string' &&
+    (COURSE_LIST_STATUS_FILTERS as readonly string[]).includes(value)
+    ? (value as CourseListStatusFilter)
+    : undefined;
+}
+
 /**
  * My Courses: the learner's own enrolments, filtered and paginated by the
  * SERVER's own `keyword`/`status` query params — not the legacy dashboard's
@@ -43,7 +51,11 @@ export function MyCoursesPage() {
 
   const url = useListUrlState([]);
   const debouncedKeyword = useDebouncedValue(url.keyword, LIST_SEARCH_DEBOUNCE_MS);
-  const status = filterValue(url.filters, 'status') as CourseListStatusFilter | undefined;
+  // The URL is user input. A value this menu does not offer — a hand-edited
+  // link, a bookmark from before a filter was renamed — is dropped here
+  // rather than forwarded, because the route answers an unknown one with a
+  // 400 whose validator text then becomes the learner's error message.
+  const status = asStatusFilter(filterValue(url.filters, 'status'));
 
   const query = useCourses({
     query: { keyword: debouncedKeyword, status, page: url.page, limit: url.limit },
@@ -51,6 +63,7 @@ export function MyCoursesPage() {
 
   const items = query.data?.items ?? [];
   const narrowed = hasActiveNarrowing({ keyword: url.keyword, filters: url.filters });
+  const searched = url.keyword.trim().length > 0;
   const pagePastEnd = items.length === 0 && !query.isPending && (query.data?.totalItems ?? 0) > 0;
 
   function setStatus(value: string) {
@@ -140,7 +153,12 @@ export function MyCoursesPage() {
             pagePastEnd
               ? undefined
               : narrowed
-                ? t('courses.index.noMatch.description', { keyword: url.keyword })
+                ? // Only a keyword search can name what it did not match.
+                  // Narrowing by status alone used to render the same
+                  // sentence with an empty pair of quotation marks in it.
+                  searched
+                  ? t('courses.index.noMatch.description', { keyword: url.keyword })
+                  : t('courses.index.noMatch.descriptionFiltered')
                 : t('courses.index.empty.description')
           }
           action={
@@ -175,7 +193,11 @@ export function MyCoursesPage() {
         />
       ) : null}
 
-      <ExpiredCoursesSection items={query.data?.expired ?? []} />
+      {/* The route sends the COMPLETE expired array with every page — it
+          paginates `items` only — so rendering it under page 3 as well would
+          repeat the same list rather than continue it. It belongs to the
+          enrolment set, not to a page of it. */}
+      {url.page === 1 ? <ExpiredCoursesSection items={query.data?.expired ?? []} /> : null}
     </section>
   );
 }

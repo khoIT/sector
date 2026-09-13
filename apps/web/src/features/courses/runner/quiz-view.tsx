@@ -204,7 +204,7 @@ function QuizRunnerSection({
             {t('courses.runner.quiz.questionCount', { count: questions.length })}
           </p>
           <div className="flex flex-wrap items-center gap-2">
-            {isRetakeableQuizStatus(item.status) ? (
+            {item.status === 'completed' || item.status === 'failed' ? (
               <Button disabled={runner.isResuming} onClick={() => void retake()}>
                 {t('courses.runner.quiz.retake')}
               </Button>
@@ -227,16 +227,4 @@ function QuizRunnerSection({
       <CourseItemNav courseId={courseId} prevId={item.prevId} nextId={item.nextId} />
     </div>
   );
-}
-
-/**
- * `CourseOutlineItem['status']` is 3-valued on this branch: `fix/sector-course-shapes`
- * is adding the API's real 4th value (`failed`, for a quiz item scored below
- * the pass mark — B1 in `code-reviewer-260914-0102-sector-course-read-seam-adversarial-review-report.md`)
- * to `schemas/course-outline.ts`. Comparing against `string` rather than the
- * current narrow union means a failed quiz already offers "Retake" today,
- * and this keeps compiling unchanged once that merge lands the literal type.
- */
-function isRetakeableQuizStatus(status: string): boolean {
-  return status === 'completed' || status === 'failed';
 }

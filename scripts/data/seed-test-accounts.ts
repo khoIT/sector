@@ -26,6 +26,17 @@ import { assertLocalMirrorUri } from '../../packages/api-client/src/fidelity/mir
  * course surfaces have a case to prove: a learner with more than a hundred
  * enrolments must still find the hundred-and-first. Pass `--no-enrol` to skip.
  *
+ * That enrolment is a PERSONAL one, and a personal enrolment cannot produce
+ * four shapes the route really serves, each of which broke the client once:
+ * a group-assigned row, a group course whose `expiresAt` key is absent
+ * altogether (1,783 of the mirror's 2,969 live group courses), one whose
+ * assignment has already lapsed under a live group and a live membership
+ * (`expirationType: 'course_assignment'`), a quiz answered below its passing
+ * mark (`status: 'failed'`), and a progress row from before the version pin
+ * and two of the counters existed. So the learner also gets a small group of
+ * its own holding three assignments, and two hand-written progress rows in
+ * exactly the shapes the API writes. Pass `--no-fixtures` to skip those.
+ *
  * Idempotent: re-running updates the password and memberships in place.
  * `--remove` deletes the four accounts and everything this script created for
  * them. Nothing here can reach the production cluster: the URI must be local.
@@ -86,6 +97,10 @@ const dbName = arg('--db', 'gusi_prod_mirror') as string;
 const remove = process.argv.includes('--remove');
 const chosenGroup = arg('--group');
 const enrol = !process.argv.includes('--no-enrol');
+const fixtures = !process.argv.includes('--no-fixtures');
+
+/** The learner's own group, so no production group is ever written to. */
+const FIXTURE_GROUP_SLUG = 'sector-course-fixtures';
 
 assertLocalMirrorUri(uri);
 if (dbName === 'gusi' || dbName === 'gusi_test') {
@@ -149,6 +164,251 @@ async function enrolInPublishedCourses(db: Db, userId: ObjectId, now: Date): Pro
     enrolled += 1;
   }
   return enrolled;
+}
+
+/**
+ * Courses nothing else in this script will touch: no published version means
+ * `enrolInPublishedCourses` skips them, so the group assignment below is the
+ * learner's only route to them and the row cannot be deduplicated away by a
+ * personal enrolment for the same course.
+ */
+async function coursesWithoutAPublishedVersion(db: Db, count: number): Promise<ObjectId[]> {
+  const published = await db
+    .collection('v2coursemetaversions')
+    .distinct('courseId', { status: 'published', deletedAt: null });
+  const publishedIds = published.map((id) => new ObjectId(String(id)));
+  const courses = await db
+    .collection('v2courses')
+    .find({ deletedAt: null, _id: { $nin: publishedIds } })
+    .sort({ _id: 1 })
+    .limit(count)
+    .toArray();
+  return courses.map((course) => course._id as ObjectId);
+}
+
+/**
+ * A group of the learner's own, holding the three group-course shapes.
+ *
+ * `expiresAt` is genuinely ABSENT on the first assignment rather than null:
+ * that is the shape a `.lean()` read hands the API (a Mongoose default is not
+ * applied to a document that never stored the key), and writing null here
+ * instead would seed the one case that never failed.
+ */
+async function seedGroupAssignedCourses(db: Db, userId: ObjectId, now: Date): Promise<number> {
+  // Two shapes are the point of this group — the absent key and the lapsed
+  // assignment. A third, ordinary future expiry, is seeded when the database
+  // has a course spare for it; the mirror has exactly two unpublished courses.
+  const courseIds = await coursesWithoutAPublishedVersion(db, 3);
+  if (courseIds.length < 2) {
+    process.stdout.write(
+      `  group fixtures skipped: ${dbName} holds ${courseIds.length} courses with no published version, needs 2\n`,
+    );
+    return 0;
+  }
+
+  const group = await db.collection('groups').findOneAndUpdate(
+    { slug: FIXTURE_GROUP_SLUG },
+    {
+      $set: {
+        name: 'Sector Course Fixtures',
+        slug: FIXTURE_GROUP_SLUG,
+        description: 'Group-assigned course shapes for local verification.',
+        // One of the two values GROUP_TYPES holds; a fixture must not
+        // invent a shape the fidelity replay would then have to excuse.
+        type: 'group',
+        expirationDate: null,
+        deletedAt: null,
+        updatedAt: now,
+      },
+      $setOnInsert: { createdAt: now },
+    },
+    { upsert: true, returnDocument: 'after' },
+  );
+  const groupId = (group as Document)._id as ObjectId;
+
+  await db.collection('groupmembers').updateOne(
+    { group: groupId, user: userId, role: 'learner' },
+    {
+      $set: { status: 'active', expiresAt: null, metadata: null, deletedAt: null, updatedAt: now },
+      $setOnInsert: { joinedAt: now, createdAt: now },
+    },
+    { upsert: true },
+  );
+
+  const lapsed = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const future = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
+  const assignments: Array<{ course: ObjectId; expiresAt?: Date | null }> = [
+    // No expiresAt key at all — the majority shape, and the one that made the
+    // whole list fail to parse with `Required` rather than with `null`.
+    { course: courseIds[0] as ObjectId },
+    // Lapsed under a live group and a live membership: the only path to
+    // expirationType 'course_assignment'.
+    { course: courseIds[1] as ObjectId, expiresAt: lapsed },
+  ];
+  const spare = courseIds[2];
+  if (spare) assignments.push({ course: spare, expiresAt: future });
+
+  for (const assignment of assignments) {
+    const set: Document = { deletedAt: null, updatedAt: now };
+    if ('expiresAt' in assignment) set.expiresAt = assignment.expiresAt;
+    await db.collection('groupcourses').updateOne(
+      { group: groupId, course: assignment.course },
+      {
+        // $unset, not `expiresAt: null`: re-running must leave the first
+        // assignment without the key, not repair it into a null.
+        ...('expiresAt' in assignment
+          ? { $set: set }
+          : { $set: set, $unset: { expiresAt: '' as const } }),
+        $setOnInsert: { createdAt: now },
+      },
+      { upsert: true },
+    );
+  }
+
+  return assignments.length;
+}
+
+/**
+ * Two progress rows the API's own writers produce and no dump holds.
+ *
+ * The first is a quiz answered in full below its passing mark, which
+ * learners.quiz.track.ts stores as `status: 'failed'` on the item — the value
+ * the outline serves straight through, and the one this client did not model.
+ * The second is the legacy shape: a row written before
+ * `courseMetaVersionNumber` and two of the counters existed, so the outline
+ * reports a null version for it and the list sends a progress block with keys
+ * missing rather than zeroed.
+ *
+ * Both only ever ADD. A progress row the learner already has is real state,
+ * whether a previous run or a browser session wrote it.
+ */
+async function seedProgressFixtures(db: Db, userId: ObjectId, now: Date): Promise<number> {
+  const taken = (
+    await db.collection('usercourseprogresses').distinct('course', { user: userId })
+  ).map((id) => String(id));
+  const enrolments = await db.collection('usercourses').find({ user: userId }).toArray();
+  const enrolled = new Map(enrolments.map((row) => [String(row.course), row]));
+
+  // The quiz has to be one the learner's OWN pinned version carries, or the
+  // outline will not have an item to hang the failed status on.
+  const versions = await db
+    .collection('v2coursemetaversions')
+    .find({ status: 'published', deletedAt: null })
+    .sort({ _id: 1 })
+    .toArray();
+
+  let failedCourseId: ObjectId | null = null;
+  let failedQuizId: ObjectId | null = null;
+  for (const version of versions) {
+    const courseId = String(version.courseId);
+    if (taken.includes(courseId) || !enrolled.has(courseId)) continue;
+
+    const quizIds: ObjectId[] = [];
+    const walk = (nodes: unknown): void => {
+      if (!Array.isArray(nodes)) return;
+      for (const node of nodes as Document[]) {
+        if (node?.type === 'quiz' && node?.itemRef)
+          quizIds.push(new ObjectId(String(node.itemRef)));
+        walk(node?.items);
+      }
+    };
+    walk((version.courseMeta as Document | undefined)?.structure);
+    if (quizIds.length === 0) continue;
+
+    // A quiz with no questions is blocked, not failable.
+    const quiz = await db
+      .collection('v2quizzes')
+      .findOne({ _id: { $in: quizIds }, deletedAt: null, questions: { $exists: true, $ne: [] } });
+    if (!quiz) continue;
+
+    failedCourseId = new ObjectId(courseId);
+    failedQuizId = quiz._id as ObjectId;
+    break;
+  }
+
+  let written = 0;
+  if (failedCourseId && failedQuizId) {
+    const enrolment = enrolled.get(String(failedCourseId));
+    const attemptStarted = new Date(now.getTime() - 20 * 60 * 1000);
+    await db.collection('usercourseprogresses').insertOne({
+      user: userId,
+      course: failedCourseId,
+      courseMetaVersion: enrolment?.courseMetaVersion ?? null,
+      courseMetaVersionNumber: enrolment?.courseMetaVersionNumber ?? 1,
+      status: 'in_progress',
+      progress: 0,
+      totalItems: 0,
+      completedItems: 0,
+      completedLessons: 0,
+      completedTopics: 0,
+      completedQuizzes: 0,
+      totalTimeSpent: 1200,
+      startedAt: attemptStarted,
+      completedAt: null,
+      lastAccessedAt: now,
+      lastItemAccessed: failedQuizId,
+      createdAt: now,
+      updatedAt: now,
+      items: [
+        {
+          _id: new ObjectId(),
+          itemId: failedQuizId,
+          wpId: null,
+          type: 'quiz',
+          status: 'failed',
+          startedAt: attemptStarted,
+          completedAt: null,
+          lastAccessedAt: now,
+          timeSpent: 1200,
+          metadata: null,
+          quizAttempts: [
+            {
+              _id: new ObjectId(),
+              startedAt: attemptStarted,
+              completedAt: now,
+              score: 1,
+              percentageScore: 25,
+              totalPoints: 4,
+              passed: false,
+              timeSpent: 1200,
+              answers: [],
+              createdAt: attemptStarted,
+              updatedAt: now,
+            },
+          ],
+        },
+      ],
+    });
+    taken.push(String(failedCourseId));
+    written += 1;
+  }
+
+  // The pre-migration shape: no version pin, and no key at all for the two
+  // counters that postdate the collection.
+  const legacy = enrolments.find((row) => !taken.includes(String(row.course)));
+  if (legacy) {
+    await db.collection('usercourseprogresses').insertOne({
+      user: userId,
+      course: legacy.course as ObjectId,
+      courseMetaVersion: null,
+      courseMetaVersionNumber: null,
+      status: 'in_progress',
+      progress: 0,
+      totalItems: 0,
+      completedItems: 0,
+      completedLessons: 0,
+      completedQuizzes: 0,
+      startedAt: now,
+      completedAt: null,
+      lastAccessedAt: now,
+      createdAt: now,
+      updatedAt: now,
+      items: [],
+    });
+    written += 1;
+  }
+
+  return written;
 }
 
 async function seed(db: Db, password: string): Promise<void> {
@@ -243,8 +503,15 @@ async function seed(db: Db, password: string): Promise<void> {
     const courses =
       enrol && account.role === 'subscriber' ? await enrolInPublishedCourses(db, userId, now) : 0;
 
+    let assigned = 0;
+    let progressRows = 0;
+    if (fixtures && account.role === 'subscriber') {
+      assigned = await seedGroupAssignedCourses(db, userId, now);
+      progressRows = await seedProgressFixtures(db, userId, now);
+    }
+
     process.stdout.write(
-      `${account.email.padEnd(24)} ${account.role.padEnd(14)} ${String(userId)}  memberships ${groups}  courses ${courses}\n`,
+      `${account.email.padEnd(24)} ${account.role.padEnd(14)} ${String(userId)}  memberships ${groups}  courses ${courses}  group-assigned ${assigned}  progress ${progressRows}\n`,
     );
   }
 }
@@ -262,9 +529,22 @@ async function unseed(db: Db): Promise<void> {
     .deleteMany({ user: { $in: ids } });
   const enrolments = await db.collection('usercourses').deleteMany({ user: { $in: ids } });
   const progress = await db.collection('usercourseprogresses').deleteMany({ user: { $in: ids } });
+
+  // The fixture group and its assignments are this script's own; no
+  // production group is ever touched, so removing by slug cannot reach one.
+  const fixtureGroup = await db.collection('groups').findOne({ slug: FIXTURE_GROUP_SLUG });
+  let assignments = 0;
+  if (fixtureGroup) {
+    assignments = (
+      await db.collection('groupcourses').deleteMany({ group: fixtureGroup._id as ObjectId })
+    ).deletedCount;
+    await db.collection('groupmembers').deleteMany({ group: fixtureGroup._id as ObjectId });
+    await db.collection('groups').deleteOne({ _id: fixtureGroup._id as ObjectId });
+  }
+
   const removed = await db.collection('users').deleteMany({ _id: { $in: ids } });
   process.stdout.write(
-    `removed ${removed.deletedCount} accounts, ${members.deletedCount} memberships, ${notifications.deletedCount} notification preferences, ${enrolments.deletedCount} enrolments, ${progress.deletedCount} progress records\n`,
+    `removed ${removed.deletedCount} accounts, ${members.deletedCount} memberships, ${notifications.deletedCount} notification preferences, ${enrolments.deletedCount} enrolments, ${progress.deletedCount} progress records, ${assignments} group assignments and the fixture group\n`,
   );
 }
 

@@ -178,6 +178,21 @@ export const questionBankKeys = {
   progress: (quizId: string) => ['get-question-bank-progress', quizId] as const,
 } as const;
 
+/** The home-screen dashboards. Every key carries its query object, the same
+ *  pattern as `scanKeys.list`/`courseKeys.list` — none of these routes takes
+ *  enough parameters to warrant a bespoke shape. */
+export const dashboardKeys = {
+  courseProgress: (params: unknown) => ['dashboard-course-progress', params] as const,
+  topCourseProgress: (params: unknown) => ['dashboard-top-course-progress', params] as const,
+  courseCompletionTimeline: (params: unknown) =>
+    ['dashboard-course-completion-timeline', params] as const,
+  groupCharts: (params: unknown) => ['dashboard-group-charts', params] as const,
+  scanProgress: (params: unknown) => ['dashboard-scan-progress', params] as const,
+  qbankStats: (params: unknown) => ['dashboard-qbank-stats', params] as const,
+  topicProgress: (params: unknown) => ['dashboard-topic-progress', params] as const,
+  quizProgress: (params: unknown) => ['dashboard-quiz-progress', params] as const,
+} as const;
+
 /**
  * Mutation keys, for useIsMutating checks and devtools readability. The two
  * legacy mutations that carried no key (updateScanById, deleteScanById) get

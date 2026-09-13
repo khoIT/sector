@@ -9,6 +9,7 @@
     "courses": "Mga Kurso",
     "questionBanks": "Mga Bangko ng Tanong",
     "groupAdministration": "Pangangasiwa ng Grupo",
+    "home": "Home",
     "gallery": "Pathology Gallery",
     "sage": "Sage AI"
   },
@@ -447,8 +448,7 @@
         "completed": "Nakumpleto",
         "active": "Aktibo",
         "paused": "Naka-pause",
-        "dropped": "Tumigil",
-        "expired": "Nag-expire"
+        "dropped": "Tumigil"
       },
       "status": {
         "not_started": "Hindi Nagsimula",
@@ -467,7 +467,8 @@
       },
       "noMatch": {
         "title": "Walang kursong tumutugma sa iyong paghahanap",
-        "description": "Walang pamagat ng kurso na tumutugma sa “{{keyword}}”."
+        "description": "Walang pamagat ng kurso na tumutugma sa “{{keyword}}”.",
+        "descriptionFiltered": "Walang kursong may piniling katayuan."
       },
       "pagePastEnd": {
         "title": "Walang laman ang pahinang ito",
@@ -491,6 +492,7 @@
       "resume": {
         "start": "Simulan: {{title}}",
         "resume": "Magpatuloy: {{title}}",
+        "retry": "Subukan muli: {{title}}",
         "review": "Suriin: {{title}}"
       },
       "completedBanner": "Nakumpleto mo na ang kursong ito.",
@@ -509,7 +511,8 @@
       "itemStatus": {
         "not_started": "Hindi Nagsimula",
         "in_progress": "Sa Pag-unlad",
-        "completed": "Nakumpleto"
+        "completed": "Nakumpleto",
+        "failed": "Hindi pasado"
       },
       "blocked": {
         "quiz_has_no_questions": "Wala pang mga tanong ang pagsusulit na ito at hindi pa ito maaaring buksan."
@@ -635,6 +638,71 @@
     "close": "Isara",
     "completionTagErrorTitle": "Hindi na-save ang marka",
     "completionTagError": "Hindi nabago ang pagkakumpleto ng scan. Walang na-save — subukan muli."
+  },
+  "home": {
+    "greeting": "Maligayang pagbabalik, {{name}}",
+    "courseStatus": {
+      "inProgress": "Kasalukuyang ginagawa",
+      "completed": "Nakumpleto",
+      "notStarted": "Hindi pa nasisimulan"
+    },
+    "myLearning": {
+      "title": "Aking pag-aaral",
+      "course": "Kurso",
+      "selectCourse": "Pumili ng kurso",
+      "courseProgress": "Progreso ng kurso",
+      "noCourseProgress": "Wala pang progreso sa kurso.",
+      "scanProgress": "Aking mga scan",
+      "noScanProgress": "Wala pang scan.",
+      "qbank": "Mga pagsubok sa bangko ng tanong",
+      "noQbank": "Wala pang pagsubok sa bangko ng tanong.",
+      "attempts_one": "{{count}} pagsubok",
+      "attempts_other": "{{count}} na pagsubok",
+      "timeline": "Progreso sa paglipas ng panahon",
+      "noTimeline": "Hindi pa sapat ang aktibidad para magpakita ng trend.",
+      "topCourses": "Nangungunang mga kurso",
+      "noTopCourses": "Wala pang kursong ginagawa.",
+      "topics": "Mga paksa",
+      "noTopics": "Wala pang progreso sa mga paksa.",
+      "quizzes": "Mga pagsusulit",
+      "noQuizzes": "Wala pang progreso sa mga pagsusulit."
+    },
+    "leader": {
+      "title": "Dashboard ng group leader",
+      "group": "Grupo",
+      "noGroup": "Wala ka pang pinamumunuang grupo",
+      "noGroupHint": "Kapag itinalaga kang leader ng isang grupo, lalabas dito ang buod ng kurso at scan nito."
+    },
+    "group": {
+      "title": "{{groupName}}",
+      "viewMembers": "Tingnan ang mga miyembro",
+      "courseProgress": "Progreso ng kurso",
+      "noCourseProgress": "Wala pang progreso ng kurso para sa grupong ito.",
+      "scanProgress": "Progreso ng scan",
+      "noScanProgress": "Wala pang scan para sa grupong ito.",
+      "qbank": "Mga pagsubok sa bangko ng tanong",
+      "noQbank": "Wala pang pagsubok sa bangko ng tanong para sa grupong ito.",
+      "averageScore": "{{score}}% pinakamataas na iskor"
+    },
+    "reviewer": {
+      "title": "Dashboard ng scan reviewer",
+      "expertUnreviewed": "Mga expert scan — hindi pa nasusuri",
+      "expertReviewed": "Mga expert scan — nasuri na",
+      "groupUnreviewed": "Mga scan ng grupo — hindi pa nasusuri",
+      "groupReviewed": "Mga scan ng grupo — nasuri na",
+      "credits": "Mga credit sa expert review",
+      "personalCredits": "Iyong mga credit",
+      "creditsUnavailable": "Hindi na-load ang balanse ng credit.",
+      "loading": "Nilo-load…"
+    },
+    "admin": {
+      "title": "Dashboard ng administrator",
+      "manageGroups": "Pamahalaan ang mga grupo",
+      "group": "Grupo",
+      "selectGroup": "Pumili ng grupo",
+      "noGroups": "Wala pang grupo",
+      "noGroupsHint": "Kapag may grupo na, piliin ito dito para makita ang buod ng kurso at scan nito."
+    }
   },
   "gallery": {
     "title": "Pathology Gallery",
