@@ -1,0 +1,1290 @@
+<title>The Six Surfaces</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* =====================================================================
+   Palette lifted verbatim from scanvault/packages/ui/src/styles/tokens.css.
+   --page / --rule / --shadow are page-level additions for this document;
+   everything else is the product's own token, unchanged.
+   ===================================================================== */
+:root{
+  --bg:#efe7da; --surface:#fdfaf4; --surface-2:#f6f0e5;
+  --ink:#22201c; --ink-dim:#5e574c; --line:#ddd2be;
+  --accent:#ee7625; --accent-ink:#2f6b73; --accent-soft:#fce9d8;
+  --ok:#2e6b41; --ok-soft:#dcede1; --warn:#8a5300; --warn-soft:#faebcd;
+  --crit:#b3261e; --crit-soft:#f9dedb;
+  --radius:8px; --scan-ground:#14120f;
+  --page:#f7f2e8; --rule:#cfc3ab; --shadow:rgba(34,32,28,.22);
+  --sans:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --serif:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme='light']){
+    --bg:#17150f; --surface:#211e17; --surface-2:#2b271d;
+    --ink:#f2eadc; --ink-dim:#b3a996; --line:#3d3729;
+    --accent:#ee7625; --accent-ink:#6ec3cd; --accent-soft:#382718;
+    --ok:#79d09a; --ok-soft:#1b2d22; --warn:#e8b45e; --warn-soft:#33260f;
+    --crit:#f0928a; --crit-soft:#351d1b;
+    --scan-ground:#0b0a08;
+    --page:#131109; --rule:#3d3729; --shadow:rgba(0,0,0,.55);
+  }
+}
+:root[data-theme='dark']{
+  --bg:#17150f; --surface:#211e17; --surface-2:#2b271d;
+  --ink:#f2eadc; --ink-dim:#b3a996; --line:#3d3729;
+  --accent:#ee7625; --accent-ink:#6ec3cd; --accent-soft:#382718;
+  --ok:#79d09a; --ok-soft:#1b2d22; --warn:#e8b45e; --warn-soft:#33260f;
+  --crit:#f0928a; --crit-soft:#351d1b;
+  --scan-ground:#0b0a08;
+  --page:#131109; --rule:#3d3729; --shadow:rgba(0,0,0,.55);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--page);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.page{max-width:1220px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--serif);font-weight:600;text-wrap:balance;margin:0}
+p{margin:0;text-wrap:pretty}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase}
+.mono{font-family:var(--mono)}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- masthead ------------------------------------------------ */
+.mast{background:var(--scan-ground);border-radius:12px;margin-top:24px;overflow:hidden;color:#efe7da}
+.mast .inner{padding:32px 30px 28px;display:flex;flex-direction:column;gap:13px}
+.mast .eyebrow{color:#b3a996}
+.mast h1{font-size:clamp(30px,5.4vw,46px);line-height:1.08;letter-spacing:-.015em;color:#f7f2e8}
+.mast .lede{font-size:17px;color:#cdc2ae;max-width:62ch}
+.mast .meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:11px;color:#9a917f;letter-spacing:.04em}
+.mast .band{height:3px;background:var(--accent)}
+
+/* ---------- step rail ----------------------------------------------- */
+.steps{position:sticky;top:0;z-index:40;margin-top:22px;padding:9px 0 0;
+  background:var(--page);border-bottom:1px solid var(--rule);
+  display:flex;gap:3px;overflow-x:auto;scrollbar-width:thin}
+.stepbtn{display:flex;align-items:baseline;gap:7px;white-space:nowrap;
+  border:1px solid transparent;border-bottom:0;border-radius:7px 7px 0 0;
+  background:transparent;color:var(--ink-dim);padding:7px 12px;transition:color .12s,background .12s}
+.stepbtn:hover{color:var(--ink);background:var(--surface-2)}
+.stepbtn[aria-current='true']{background:var(--surface);border-color:var(--rule);color:var(--accent-ink);font-weight:600;
+  margin-bottom:-1px;padding-bottom:8px}
+.stepbtn .n{font-family:var(--mono);font-size:10px;letter-spacing:.08em;opacity:.7}
+.stepbtn .t{font-size:13.5px}
+
+/* ---------- the app frame ------------------------------------------- */
+.app{position:relative;margin-top:18px;background:var(--bg);border:1px solid var(--rule);border-radius:12px;
+  display:flex;min-height:700px;overflow:hidden;font-size:13px;line-height:1.5;
+  box-shadow:0 18px 40px -28px var(--shadow)}
+.rail{width:218px;flex:none;display:flex;flex-direction:column;gap:14px;padding:14px 10px}
+.brand{display:flex;align-items:center;gap:8px;padding:2px 4px}
+.brand .sq{width:28px;height:28px;border-radius:var(--radius);background:var(--accent);color:var(--scan-ground);
+  display:grid;place-items:center;font-size:12px;font-weight:700}
+.brand .nm{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.navgrp{display:flex;flex-direction:column;gap:2px;margin-bottom:12px}
+.navgrp > .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-dim);padding:6px 8px 3px}
+.navgrp > .lbl .new{color:var(--accent-ink);margin-left:5px;letter-spacing:0;text-transform:none}
+.navitem{display:flex;align-items:center;gap:9px;border:0;background:none;text-align:left;
+  border-radius:var(--radius);padding:7px 8px 7px 0;color:var(--ink-dim);transition:background .12s,color .12s;width:100%}
+.navitem:hover{background:var(--surface-2);color:var(--ink)}
+.navitem[aria-current='true']{background:var(--surface);color:var(--ink);font-weight:500;box-shadow:inset 0 0 0 1px var(--line)}
+.navitem .mark{width:3px;height:16px;border-radius:99px;background:transparent;margin-left:4px;flex:none}
+.navitem[aria-current='true'] .mark{background:var(--accent)}
+.navitem[aria-current='true'] svg{color:var(--accent-ink)}
+.navitem .txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.navitem .pill{font-family:var(--mono);font-size:10px;background:var(--accent-soft);color:var(--accent-ink);
+  border-radius:99px;padding:1px 6px;font-variant-numeric:tabular-nums}
+.railfoot{margin-top:auto;border-top:1px solid var(--line);padding:10px 6px 2px;display:flex;align-items:center;gap:8px;color:var(--ink-dim)}
+.av{width:24px;height:24px;border-radius:99px;background:var(--accent-ink);color:var(--surface);
+  display:grid;place-items:center;font-size:10px;font-weight:700;flex:none}
+
+.col{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;gap:10px;padding:13px 14px 11px}
+.topbar h2{font-family:var(--sans);font-size:15px;font-weight:600}
+.topbar .sp{flex:1}
+.panel{flex:1;min-height:0;background:var(--surface);border-top:1px solid var(--line);border-left:1px solid var(--line);
+  border-top-left-radius:12px;overflow:auto;padding:16px 18px 22px}
+
+/* ---------- shared primitives (mirror packages/ui) ------------------- */
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);
+  border-radius:6px;padding:5px 11px;transition:border-color .12s,background .12s}
+.btn:hover{border-color:var(--accent-ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--scan-ground);font-weight:600}
+.btn.primary:hover{filter:brightness(1.05)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--ink-dim)}
+.btn.ghost:hover{background:var(--surface-2);color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:99px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink-dim);padding:3px 10px;font-size:12px;transition:all .12s}
+.chip:hover{color:var(--ink)}
+.chip[aria-pressed='true']{background:var(--accent-soft);border-color:color-mix(in oklab,var(--accent-ink) 30%,transparent);
+  color:var(--accent-ink);font-weight:600}
+.tag{display:inline-flex;align-items:center;gap:4px;border-radius:99px;padding:1px 8px;font-size:11px;font-weight:500}
+.tag.ok{background:var(--ok-soft);color:var(--ok)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.tag.crit{background:var(--crit-soft);color:var(--crit)}
+.tag.acc{background:var(--accent-soft);color:var(--accent-ink)}
+.tag.flat{background:var(--surface-2);color:var(--ink-dim)}
+.inp{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface-2);
+  border-radius:6px;padding:5px 9px;color:var(--ink-dim);min-width:0}
+.inp input{border:0;background:transparent;color:var(--ink);font:inherit;outline:none;min-width:0;width:100%}
+.inp input::placeholder{color:var(--ink-dim)}
+.dim{color:var(--ink-dim)}
+.hr{height:1px;background:var(--line)}
+.lbl{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-dim)}
+
+/* tabs */
+.tabs{display:flex;flex-direction:column;margin-bottom:14px}
+.tabrow{display:flex;flex-wrap:wrap;gap:2px;align-items:flex-end}
+.tab{display:inline-flex;align-items:center;gap:6px;border:1px solid transparent;border-bottom:0;
+  border-radius:6px 6px 0 0;background:var(--surface-2);color:var(--ink-dim);padding:6px 11px;font-weight:500}
+.tab[aria-current='true']{background:var(--surface);border-color:var(--line);color:var(--accent-ink)}
+.tabs .line{height:1px;background:var(--line)}
+.subrow{display:flex;gap:14px;padding:8px 2px 0}
+.subtab{background:none;border:0;padding:2px 0;color:var(--ink-dim);border-bottom:2px solid transparent}
+.subtab[aria-current='true']{color:var(--ink);border-bottom-color:var(--accent);font-weight:500}
+
+/* table */
+.tblwrap{border:1px solid var(--line);border-radius:var(--radius);overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-dim);font-weight:500;padding:9px 12px;background:var(--surface-2);white-space:nowrap}
+td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:middle}
+tbody tr:hover{background:var(--surface-2)}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
+.pager{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;
+  margin-top:11px;color:var(--ink-dim);font-size:12px}
+.pagenums{display:flex;gap:3px}
+.pagenum{border:1px solid var(--line);background:var(--surface);border-radius:5px;
+  min-width:26px;padding:2px 6px;font-variant-numeric:tabular-nums}
+.pagenum[aria-current='true']{background:var(--accent-soft);border-color:color-mix(in oklab,var(--accent-ink) 30%,transparent);color:var(--accent-ink);font-weight:600}
+
+/* cards */
+.grid{display:grid;gap:11px}
+.card{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);
+  padding:13px;display:flex;flex-direction:column;gap:9px;text-align:left;width:100%;transition:border-color .12s}
+button.card:hover{border-color:var(--accent-ink)}
+.card h3{font-family:var(--sans);font-size:13.5px;font-weight:600;line-height:1.35}
+.meter{height:4px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.meter > i{display:block;height:100%;background:var(--accent)}
+.meter.teal > i{background:var(--accent-ink)}
+
+/* media placeholders — the product's own near-black media backdrop.
+   No stock imagery and no hand-drawn SVG: a scan clip is patient data. */
+.media{background:var(--scan-ground);border-radius:6px;display:grid;place-items:center;position:relative;overflow:hidden}
+.media .ph{font-family:var(--mono);font-size:10px;letter-spacing:.09em;color:#8d8478;text-align:center;padding:8px}
+.media .dur{position:absolute;right:6px;bottom:5px;font-family:var(--mono);font-size:10px;color:#cdc2ae;
+  background:rgba(0,0,0,.5);border-radius:4px;padding:1px 5px}
+.media .playglyph{width:34px;height:34px;border-radius:99px;border:1px solid rgba(239,231,218,.45);
+  display:grid;place-items:center;color:#efe7da}
+
+/* quiz */
+.q-opt{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;border:1px solid var(--line);
+  background:var(--surface);border-radius:var(--radius);padding:10px 12px;transition:border-color .12s,background .12s}
+.q-opt:hover:not(:disabled){border-color:var(--accent-ink)}
+.q-opt[data-state='picked']{border-color:var(--accent-ink);background:var(--accent-soft)}
+.q-opt[data-state='right']{border-color:var(--ok);background:var(--ok-soft)}
+.q-opt[data-state='wrong']{border-color:var(--crit);background:var(--crit-soft)}
+.q-opt .key{font-family:var(--mono);font-size:11px;width:18px;flex:none;color:var(--ink-dim);padding-top:1px}
+.q-opt[data-state='right'] .key{color:var(--ok)} .q-opt[data-state='wrong'] .key{color:var(--crit)}
+.segbar{display:flex;gap:2px}
+.segbar i{flex:1;height:4px;border-radius:99px;background:var(--surface-2)}
+.segbar i[data-s='done']{background:var(--accent-ink)}
+.segbar i[data-s='now']{background:var(--accent)}
+.rationale{border-left:2px solid var(--accent-ink);padding:2px 0 2px 12px;display:flex;flex-direction:column;gap:5px}
+
+/* outline */
+.olrow{display:flex;align-items:center;gap:11px;width:100%;text-align:left;border:0;background:none;
+  border-top:1px solid var(--line);padding:9px 8px;transition:background .12s}
+.olrow:hover:not(:disabled){background:var(--surface-2)}
+.olrow:disabled{opacity:.62;cursor:not-allowed}
+.olrow .ix{font-family:var(--mono);font-size:11px;color:var(--ink-dim);width:22px;flex:none;font-variant-numeric:tabular-nums}
+.olrow .ic{width:24px;height:24px;border-radius:6px;background:var(--surface-2);display:grid;place-items:center;flex:none;color:var(--ink-dim)}
+.olrow[data-cur='true']{background:var(--accent-soft)}
+.olrow[data-cur='true'] .ic{background:var(--accent);color:var(--scan-ground)}
+/* The status tag sits on the accent-soft row, so the soft pill disappears into it. */
+.olrow[data-cur='true'] .tag.acc{background:var(--accent);color:var(--scan-ground);font-weight:600}
+.olrow .ttl{flex:1;min-width:0}
+.ring{--p:0;width:54px;height:54px;border-radius:99px;flex:none;display:grid;place-items:center;
+  background:conic-gradient(var(--accent) calc(var(--p)*1%),var(--surface-2) 0)}
+.ring > span{width:42px;height:42px;border-radius:99px;background:var(--surface);display:grid;place-items:center;
+  font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* dialog */
+.scrim{position:absolute;inset:0;background:rgba(20,18,15,.55);display:grid;place-items:center;padding:24px;z-index:60}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:12px;max-width:620px;width:100%;
+  max-height:100%;overflow:auto;box-shadow:0 24px 60px -20px rgba(0,0,0,.5)}
+
+/* ---------- notes band ---------------------------------------------- */
+.notes{margin-top:16px;border:1px solid var(--rule);border-radius:12px;background:var(--surface);
+  display:grid;gap:0;grid-template-columns:1fr}
+.notecol{padding:16px 18px;border-top:1px solid var(--line)}
+.notecol:first-child{border-top:0}
+.notecol h3{font-size:13px;font-family:var(--sans);letter-spacing:.01em;margin-bottom:8px;
+  display:flex;align-items:center;gap:7px}
+.notecol h3 .dot{width:6px;height:6px;border-radius:99px;flex:none}
+.notecol ul{margin:0;padding-left:17px;display:flex;flex-direction:column;gap:7px;font-size:13.5px;color:var(--ink-dim)}
+.notecol ul b{color:var(--ink);font-weight:600}
+.foot{margin:34px 0 56px;padding-top:14px;border-top:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:11px;color:var(--ink-dim)}
+
+@media (min-width:820px){ .notes{grid-template-columns:1fr 1fr 1fr}
+  .notecol{border-top:0;border-left:1px solid var(--line)} .notecol:first-child{border-left:0} }
+@media (max-width:900px){
+  .app{flex-direction:column;min-height:0}
+  .rail{width:auto;flex-direction:row;align-items:center;gap:6px;overflow-x:auto;padding:10px}
+  .navgrp{flex-direction:row;margin-bottom:0;gap:3px}
+  .navgrp > .lbl,.railfoot,.navitem .pill{display:none}
+  .navitem{width:auto;white-space:nowrap;padding-right:10px}
+  .panel{border-left:0;border-top-left-radius:0;border-top-right-radius:12px;border-radius:12px 12px 0 0;padding:13px}
+}
+</style>
+
+<div class="page">
+  <header class="mast">
+    <div class="inner">
+      <p class="eyebrow">ScanVault · what ships after the port plan</p>
+      <h1>The Six Surfaces</h1>
+      <p class="lede">A clickable read of the modules the 71-day plan brings across — question banks,
+        courses, the course runner, groups and the pathology gallery — drawn in ScanVault's own
+        tokens, so the decisions can be argued from the screen rather than the estimate.</p>
+      <div class="meta">
+        <span>13 Sep 2026</span><span>Mock data throughout</span>
+        <span>Clinical text is placeholder, not guidance</span><span>Everything here is clickable</span>
+      </div>
+    </div>
+    <div class="band"></div>
+  </header>
+  <div id="root"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.4/babel.min.js"></script>
+<script type="text/babel" data-presets="react">
+const { useState, useMemo, useRef, useEffect, Fragment } = React;
+
+/* ===================================================================
+   Icons. Single-path stroke glyphs in lucide's idiom — the product uses
+   lucide-react, and these are UI marks, not drawn imagery.
+   =================================================================== */
+const ICONS = {
+  book:'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z',
+  share:'M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM8.6 13.5l6.8 4M15.4 6.5l-6.8 4',
+  users:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+  folder:'M4 4h5l2 2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z',
+  layers:'M12 2 2 7l10 5 10-5-10-5ZM2 17l10 5 10-5M2 12l10 5 10-5',
+  grid:'M3 3h7v7H3ZM14 3h7v7h-7ZM14 14h7v7h-7ZM3 14h7v7H3Z',
+  help:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01',
+  play:'M7 4l13 8-13 8Z',
+  check:'M20 6 9 17l-5-5',
+  chevR:'M9 18l6-6-6-6',
+  chevL:'M15 18l-6-6 6-6',
+  chevD:'M6 9l6 6 6-6',
+  search:'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM21 21l-4.3-4.3',
+  file:'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8ZM14 2v6h6',
+  alert:'M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z',
+  x:'M18 6 6 18M6 6l12 12',
+  down:'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3',
+  bell:'M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0',
+  film:'M2 3h20v18H2ZM7 3v18M17 3v18M2 9h5M2 15h5M17 9h5M17 15h5',
+  plus:'M12 5v14M5 12h14',
+  filter:'M22 3H2l8 9.5V19l4 2v-8.5Z',
+};
+function I({ n, s = 16, cls, style }) {
+  return (
+    <svg className={cls} style={style} width={s} height={s} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={ICONS[n]} />
+    </svg>
+  );
+}
+
+/* Inline emphasis for the note copy: **bold** and `code`. */
+function md(s) {
+  return s.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).filter(Boolean).map((p, i) =>
+    p.startsWith('**') ? <b key={i}>{p.slice(2, -2)}</b>
+    : p.startsWith('`') ? <code key={i} className="mono" style={{ fontSize: '.9em' }}>{p.slice(1, -1)}</code>
+    : <Fragment key={i}>{p}</Fragment>);
+}
+
+/* ===================================================================
+   Mock data. Shapes follow the API contracts named in the port plan;
+   the values are invented. Clinical text is placeholder for layout.
+   =================================================================== */
+const SCANS = [
+  { id:'AAA-SEP13-00012', type:'AAA / Abdominal aorta', st:'Submitted', files:3, grp:'Northwestern EM Residency', upd:'12 min ago' },
+  { id:'CAR-SEP12-00087', type:'Cardiac — PLAX', st:'Reviewed', files:2, grp:'GUSI Fellowship — Cohort 12', upd:'Yesterday' },
+  { id:'LUN-SEP12-00044', type:'Lung', st:'In review', files:5, grp:'Northwestern EM Residency', upd:'Yesterday' },
+  { id:'FAS-SEP11-00301', type:'FAST', st:'Submitted', files:4, grp:'Rural Health Nepal — 2026', upd:'2 days ago' },
+  { id:'OBS-SEP10-00119', type:'OB — 1st trimester', st:'Draft', files:1, grp:'—', upd:'3 days ago' },
+  { id:'VAS-SEP09-00076', type:'Vascular access', st:'Reviewed', files:2, grp:'Emergency Medicine — Lagos', upd:'4 days ago' },
+];
+const ST_TONE = { Submitted:'acc', Reviewed:'ok', 'In review':'warn', Draft:'flat' };
+
+const BANKS = [
+  { id:'cardiac', n:'Cardiac — Basic Views', q:48, seen:31, best:78, last:'2 days ago' },
+  { id:'lung',    n:'Lung — B-lines & Consolidation', q:36, seen:36, best:92, last:'Last week' },
+  { id:'fast',    n:'FAST Exam', q:24, seen:0, best:null, last:null },
+  { id:'ob',      n:'OB — First Trimester', q:40, seen:12, best:64, last:'3 weeks ago' },
+  { id:'vasc',    n:'Vascular Access', q:18, seen:0, best:null, last:null },
+  { id:'doc',     n:'Documentation & Handover', q:0, seen:0, best:null, last:null },
+];
+
+const QUESTIONS = [
+  { id:'q1', stem:'In the parasternal long-axis view, which structure lies closest to the transducer?',
+    opts:['Right ventricular outflow tract','Left atrium','Descending thoracic aorta','Left ventricular apex'], right:0,
+    why:'PLAX reads front to back: RVOT, septum, LV cavity, posterior wall, and the descending aorta last. The apex is out of plane in a true PLAX.' },
+  { id:'q2', stem:'Which description matches a B-line?',
+    opts:['A horizontal repeat of the pleural line at fixed intervals','A vertical hyperechoic artifact starting at the pleura, running to the bottom of the screen and erasing A-lines','A short comet-tail that fades within 2 cm','A hypoechoic wedge with a ragged deep border'], right:1,
+    why:'One and three describe A-lines and Z-lines; four describes subpleural consolidation. A B-line needs all four properties together — pleural origin, full depth, movement with sliding, and erasure of A-lines.' },
+  { id:'q3', stem:'In a supine trauma patient, which window most often holds the first free fluid?',
+    opts:['Subxiphoid pericardial','Right upper quadrant — hepatorenal recess','Left upper quadrant — splenorenal','Suprapubic'], right:1,
+    why:'Supine, the hepatorenal recess is the most dependent space in the upper abdomen, which is what makes the RUQ the highest-yield single window.' },
+  { id:'q4', stem:'Gain is set correctly on an abdominal scan when:',
+    opts:['The whole image is uniformly bright','Fluid-filled structures read anechoic and tissue detail is still visible at depth','The near field is saturated','Every structure matches the liver in echogenicity'], right:1,
+    why:'Over-gain fills anechoic structures with noise and can invent debris in a clean bladder; under-gain hides the far field. Anechoic fluid plus readable deep tissue is the target.' },
+  { id:'q5', stem:'Which probe suits a difficult peripheral IV in an adult forearm?',
+    opts:['Curvilinear, 2–5 MHz','Phased array, 1–5 MHz','Linear, 5–12 MHz','Endocavitary, 5–9 MHz'], right:2,
+    why:'Forearm veins sit 0.5–1.5 cm deep, so resolution matters more than penetration. Curvilinear and phased arrays trade away the resolution for depth you do not need.' },
+];
+
+const COURSES = [
+  { id:'c1', t:'Point-of-Care Ultrasound Fundamentals', tr:'Core curriculum', tot:12, done:5, s:'in',   last:'Yesterday',  next:'Lesson 6 · Probe selection' },
+  { id:'c2', t:'Cardiac POCUS I — Views & Function',    tr:'Cardiac track',   tot:28, done:28, s:'done', last:'11 Aug 2026', next:null },
+  { id:'c3', t:'Lung Ultrasound in Acute Dyspnoea',     tr:'Critical care',   tot:19, done:4,  s:'in',   last:'6 days ago', next:'Topic 2 · The BLUE protocol' },
+  { id:'c4', t:'Obstetric Ultrasound — First Trimester',tr:'Women’s health',  tot:22, done:0,  s:'new',  last:null, next:'Lesson 1 · Dating a pregnancy' },
+  { id:'c5', t:'Vascular Access Under Ultrasound',      tr:'Procedures',      tot:16, done:16, s:'done', last:'2 Jul 2026', next:null },
+  { id:'c6', t:'MSK POCUS — Shoulder & Knee',           tr:'Musculoskeletal', tot:25, done:9,  s:'in',   last:'3 weeks ago', next:'Quiz · Rotator cuff anatomy' },
+  { id:'c7', t:'Renal & Bladder POCUS',                 tr:'Core curriculum', tot:14, done:0,  s:'new',  last:null, next:'Lesson 1 · The renal window' },
+  { id:'c8', t:'Paediatric POCUS Essentials',           tr:'Paediatrics',     tot:20, done:20, s:'done', last:'19 May 2026', next:null },
+];
+
+/* The resolved outline: ONE ordered list with per-item status, prev/next
+   and the resume pointer already decided by the server. */
+const OUTLINE = [
+  { k:'lesson', t:'What point-of-care ultrasound is for',  d:'6 min',   s:'done' },
+  { k:'lesson', t:'Machine anatomy and the control panel', d:'9 min',   s:'done' },
+  { k:'video',  t:'Knobology walkthrough',                 d:'7:41',    s:'done' },
+  { k:'quiz',   t:'Checkpoint — machine basics',           d:'8 questions', s:'done', score:'7 / 8' },
+  { k:'lesson', t:'Image formation and artefact',          d:'12 min',  s:'done' },
+  { k:'lesson', t:'Probe selection',                       d:'8 min',   s:'now' },
+  { k:'video',  t:'Scanning the RUQ, step by step',        d:'5:12',    s:'todo' },
+  { k:'quiz',   t:'Checkpoint — windows and probes',       d:'10 questions', s:'todo', note:'nested under a topic — no URL in the old app' },
+  { k:'lesson', t:'Documenting a study',                   d:'7 min',   s:'todo' },
+  { k:'quiz',   t:'Checkpoint — documentation',            d:'0 questions published', s:'blocked' },
+  { k:'lesson', t:'Handing a study to a reviewer',         d:'5 min',   s:'todo' },
+  { k:'quiz',   t:'Final assessment',                      d:'24 questions', s:'todo' },
+];
+const OL_ICON = { lesson:'file', video:'film', quiz:'help' };
+
+const GROUPS = [
+  { id:'g1', n:'Northwestern EM Residency',    m:42,  lead:'A. Okafor +2',  notif:true },
+  { id:'g2', n:'GUSI Fellowship — Cohort 12',  m:18,  lead:'M. Reyes',      notif:true },
+  { id:'g3', n:'Rural Health Nepal — 2026',    m:126, lead:'S. Thapa +4',   notif:false },
+  { id:'g4', n:'Midwifery POCUS Programme',    m:31,  lead:'J. Lindqvist',  notif:true },
+  { id:'g5', n:'Emergency Medicine — Lagos',   m:57,  lead:'C. Adeyemi +1', notif:true },
+];
+const MEMBERS = [
+  { n:'Amara Okafor',   e:'a.okafor@nw.edu',    r:'Group leader', c:'6 / 8', s:24, last:'Today' },
+  { n:'Priya Raghavan', e:'p.raghavan@nw.edu',  r:'Learner',      c:'3 / 8', s:11, last:'Today' },
+  { n:'Tom Ferreira',   e:'t.ferreira@nw.edu',  r:'Learner',      c:'8 / 8', s:37, last:'Yesterday' },
+  { n:'Sana Idris',     e:'s.idris@nw.edu',     r:'Scan reviewer',c:'7 / 8', s:52, last:'Yesterday' },
+  { n:'Dan Whitlock',   e:'d.whitlock@nw.edu',  r:'Learner',      c:'1 / 8', s:3,  last:'4 days ago' },
+  { n:'Meg Tan',        e:'m.tan@nw.edu',       r:'Learner',      c:'5 / 8', s:19, last:'6 days ago' },
+  { n:'Yusuf Bakare',   e:'y.bakare@nw.edu',    r:'Group leader', c:'8 / 8', s:44, last:'Last week' },
+  { n:'Elena Duarte',   e:'e.duarte@nw.edu',    r:'Learner',      c:'0 / 8', s:0,  last:'Never' },
+];
+
+const GAL_CATS = [
+  { id:'cardiac', n:'Cardiac',           sub:['Pericardial effusion','LV function','Valve disease','RV strain'] },
+  { id:'lung',    n:'Lung',              sub:['B-lines','Consolidation','Pneumothorax','Pleural effusion'] },
+  { id:'abdo',    n:'Abdominal / FAST',  sub:['Free fluid','Gallbladder','Renal','Aorta'] },
+  { id:'ob',      n:'Obstetrics',        sub:['First trimester','Placenta','Fetal position'] },
+  { id:'vasc',    n:'Vascular',          sub:['DVT','Access','Carotid'] },
+  { id:'msk',     n:'MSK',               sub:['Shoulder','Knee','Joint effusion'] },
+  { id:'ocular',  n:'Ocular',            sub:['Optic nerve sheath','Retinal detachment'], isNew:true },
+];
+const GAL_ITEMS = {
+  cardiac:[['Large circumferential effusion','Pericardial effusion','0:06'],['Tamponade — RV diastolic collapse','Pericardial effusion','0:04'],
+           ['Severely reduced LV function','LV function','0:08'],['Hyperdynamic LV','LV function','0:05'],
+           ['Mitral stenosis, hockey-stick leaflet','Valve disease','0:07'],['Aortic valve vegetation','Valve disease','0:06'],
+           ['D-sign in the short axis','RV strain','0:05'],['Dilated RV, apical four-chamber','RV strain','0:09']],
+  lung:[['Confluent B-lines, anterior zones','B-lines','0:06'],['Focal B-lines with irregular pleura','B-lines','0:05'],
+        ['Hepatisation with air bronchograms','Consolidation','0:08'],['Shred sign','Consolidation','0:04'],
+        ['Absent lung sliding, lung point','Pneumothorax','0:11'],['Barcode sign on M-mode','Pneumothorax','0:03'],
+        ['Large effusion with spine sign','Pleural effusion','0:07'],['Septated effusion','Pleural effusion','0:06']],
+  abdo:[['Free fluid in Morison’s pouch','Free fluid','0:05'],['Pelvic free fluid, suprapubic','Free fluid','0:06'],
+        ['Gallstones with shadowing','Gallbladder','0:04'],['Thickened wall, pericholecystic fluid','Gallbladder','0:07'],
+        ['Hydronephrosis, moderate','Renal','0:05'],['Simple renal cyst','Renal','0:04'],
+        ['Infrarenal AAA, 5.8 cm','Aorta','0:08'],['Aortic dissection flap','Aorta','0:06']],
+  ob:[['Intrauterine gestational sac','First trimester','0:05'],['Yolk sac and fetal pole','First trimester','0:06'],
+      ['Crown-rump length measurement','First trimester','0:04'],['Anterior placenta','Placenta','0:05'],
+      ['Placenta praevia','Placenta','0:07'],['Breech presentation','Fetal position','0:06'],
+      ['Cephalic presentation','Fetal position','0:05'],['Twin gestation, dichorionic','First trimester','0:08']],
+  vasc:[['Non-compressible femoral vein','DVT','0:06'],['Popliteal DVT with echogenic thrombus','DVT','0:07'],
+        ['Short-axis needle tip, basilic vein','Access','0:09'],['Long-axis guidewire in the vessel','Access','0:06'],
+        ['Arterial puncture — pulsatile flow','Access','0:04'],['Carotid plaque','Carotid','0:05'],
+        ['Normal carotid bifurcation','Carotid','0:05'],['Internal jugular, valsalva','Access','0:06']],
+  msk:[['Supraspinatus full-thickness tear','Shoulder','0:07'],['Subacromial bursitis','Shoulder','0:05'],
+       ['Biceps tendon, long head','Shoulder','0:04'],['Suprapatellar effusion','Knee','0:06'],
+       ['Baker’s cyst','Knee','0:05'],['Quadriceps tendon rupture','Knee','0:07'],
+       ['Septic joint — turbid effusion','Joint effusion','0:06'],['Lipohaemarthrosis','Joint effusion','0:05']],
+  ocular:[['Dilated optic nerve sheath, 6.2 mm','Optic nerve sheath','0:05'],['Normal nerve sheath, 4.1 mm','Optic nerve sheath','0:04'],
+          ['Crescent papilloedema sign','Optic nerve sheath','0:06'],['Retinal detachment, tethered flap','Retinal detachment','0:08'],
+          ['Vitreous haemorrhage','Retinal detachment','0:06'],['Posterior vitreous detachment','Retinal detachment','0:05'],
+          ['Lens dislocation','Retinal detachment','0:04'],['Normal globe, sagittal','Optic nerve sheath','0:04']],
+};
+
+/* ===================================================================
+   The walkthrough
+   =================================================================== */
+const STEPS = [
+  { id:'vault',   n:'01', label:'The rail grows',   title:'My Scans',            nav:'my' },
+  { id:'banks',   n:'02', label:'Question banks',   title:'Question Banks',      nav:'banks' },
+  { id:'courses', n:'03', label:'My courses',       title:'My Courses',          nav:'courses' },
+  { id:'outline', n:'04', label:'Course outline',   title:'Course',              nav:'courses' },
+  { id:'item',    n:'05', label:'Lesson & quiz',    title:'Course',              nav:'courses' },
+  { id:'groups',  n:'06', label:'Groups & members', title:'Groups',              nav:'groups' },
+  { id:'gallery', n:'07', label:'Pathology gallery',title:'Pathology Gallery',   nav:'gallery' },
+];
+
+const NAV = [
+  { g:'Scan Vault', isNew:false, items:[
+    { id:'my',     ic:'book',   t:'My Scans',      step:'vault' },
+    { id:'shared', ic:'share',  t:'Shared with me',step:'vault' },
+    { id:'group',  ic:'users',  t:'Group Scans',   step:'vault', badge:12 },
+    { id:'expert', ic:'folder', t:'Expert Scans',  step:'vault', badge:3 },
+  ]},
+  { g:'Learn', isNew:true, items:[
+    { id:'courses', ic:'layers', t:'My Courses',        step:'courses', badge:3 },
+    { id:'banks',   ic:'help',   t:'Question Banks',    step:'banks' },
+    { id:'gallery', ic:'grid',   t:'Pathology Gallery', step:'gallery' },
+  ]},
+  { g:'Administer', isNew:true, items:[
+    { id:'groups', ic:'users', t:'Groups & members', step:'groups' },
+  ]},
+];
+
+function Rail({ nav, go }) {
+  return (
+    <aside className="rail">
+      <div className="brand"><span className="sq">SV</span><span className="nm">ScanVault</span></div>
+      {NAV.map(grp => (
+        <div className="navgrp" key={grp.g}>
+          <div className="lbl">{grp.g}{grp.isNew ? <span className="new">new</span> : null}</div>
+          {grp.items.map(it => (
+            <button key={it.id} className="navitem" aria-current={nav === it.id} onClick={() => go(it.step)}>
+              <span className="mark" aria-hidden="true" />
+              <I n={it.ic} />
+              <span className="txt">{it.t}</span>
+              {it.badge ? <span className="pill">{it.badge}</span> : null}
+            </button>
+          ))}
+        </div>
+      ))}
+      <div className="railfoot"><span className="av">KT</span><span className="txt">Khoi Tran</span><I n="chevD" s={14} /></div>
+    </aside>
+  );
+}
+
+function Topbar({ title, crumb }) {
+  return (
+    <div className="topbar">
+      <div style={{ minWidth:0 }}>
+        {crumb ? <div className="lbl" style={{ marginBottom:2 }}>{crumb}</div> : null}
+        <h2>{title}</h2>
+      </div>
+      <div className="sp" />
+      <div className="inp" style={{ width:180 }}><I n="search" s={14} /><input placeholder="Search" aria-label="Search" /></div>
+      <span className="av">KT</span>
+    </div>
+  );
+}
+
+/* A scan clip is patient data. These frames are the product's own media
+   backdrop with an honest label — never stock photography, never a drawn
+   approximation of an ultrasound image. */
+function Media({ h = 108, label = 'clip', dur, play }) {
+  return (
+    <div className="media" style={{ height:h }}>
+      {play ? <span className="playglyph"><I n="play" s={14} /></span> : <span className="ph">{label}</span>}
+      {dur ? <span className="dur">{dur}</span> : null}
+    </div>
+  );
+}
+
+/* ===================================================================
+   One quiz engine. Both live surfaces mount THIS component; the only
+   difference is the adapter — three behaviours, not two engines.
+   =================================================================== */
+const ADAPTERS = {
+  bank: { name:'Question-bank adapter', save:'Autosaved · graded in one batch', immediate:false,
+          resume:'Resumes at the last question you answered.' },
+  course:{ name:'Course-quiz adapter', save:'Submitted per question · recorded on the course item', immediate:true,
+          resume:'Resumes from the outline pointer.' },
+};
+
+function QuizRunner({ title, crumb, mode, questions, onExit, exitLabel }) {
+  const a = ADAPTERS[mode];
+  const [i, setI] = useState(0);
+  const [ans, setAns] = useState({});
+  const [sent, setSent] = useState({});
+  const [done, setDone] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const q = questions[i];
+  const picked = ans[q.id];
+  const revealed = a.immediate && sent[q.id];
+  const answered = Object.keys(ans).length;
+  const correct = questions.filter(x => ans[x.id] === x.right).length;
+
+  function pick(ix) {
+    if (revealed) return;
+    setAns(p => ({ ...p, [q.id]: ix }));
+    if (!a.immediate) { setSaved(true); setTimeout(() => setSaved(false), 1200); }
+  }
+  function state(ix) {
+    if (revealed) return ix === q.right ? 'right' : (ix === picked ? 'wrong' : '');
+    return ix === picked ? 'picked' : '';
+  }
+
+  if (done) {
+    const pct = Math.round((correct / questions.length) * 100);
+    return (
+      <div style={{ display:'flex', flexDirection:'column', gap:14, maxWidth:660 }}>
+        <div className="lbl">{crumb}</div>
+        <h3 style={{ fontFamily:'var(--sans)', fontSize:15 }}>{title} — finished</h3>
+        <div className="card" style={{ gap:12 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:16 }}>
+            <div className="ring" style={{ '--p':pct }}><span>{pct}%</span></div>
+            <div style={{ display:'flex', flexDirection:'column', gap:3 }}>
+              <div style={{ fontSize:15, fontWeight:600 }} className="num">{correct} of {questions.length} correct</div>
+              <div className="dim">correct ÷ answered — the same arithmetic the server stores.</div>
+              <div className="dim">04:12 on task · clock read once at submit, not re-sent per question.</div>
+            </div>
+          </div>
+        </div>
+        <div className="lbl">Review</div>
+        <div style={{ display:'flex', flexDirection:'column', gap:9 }}>
+          {questions.map((x, ix) => {
+            const ok = ans[x.id] === x.right;
+            return (
+              <div key={x.id} className="card" style={{ gap:7 }}>
+                <div style={{ display:'flex', gap:9, alignItems:'flex-start' }}>
+                  <span className="mono dim" style={{ paddingTop:2 }}>{String(ix + 1).padStart(2,'0')}</span>
+                  <div style={{ flex:1 }}>{x.stem}</div>
+                  <span className={'tag ' + (ok ? 'ok' : 'crit')}>{ok ? 'Correct' : 'Incorrect'}</span>
+                </div>
+                <div className="rationale">
+                  <div className="lbl">Why</div>
+                  <div className="dim">{x.why}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ display:'flex', gap:8 }}>
+          <button className="btn" onClick={onExit}><I n="chevL" s={14} />{exitLabel}</button>
+          <button className="btn" onClick={() => { setDone(false); setI(0); setAns({}); setSent({}); }}>Take it again</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:13, maxWidth:660 }}>
+      <div style={{ display:'flex', alignItems:'center', gap:9, flexWrap:'wrap' }}>
+        <button className="btn ghost" onClick={onExit}><I n="chevL" s={14} />{exitLabel}</button>
+        <span className="tag acc">{a.name}</span>
+        <span className="dim" style={{ fontSize:12 }}>{a.save}</span>
+        {saved ? <span className="tag ok"><I n="check" s={11} />Saved</span> : null}
+      </div>
+
+      <div>
+        <div style={{ display:'flex', justifyContent:'space-between', marginBottom:5 }}>
+          <span className="lbl">{crumb}</span>
+          <span className="lbl num">Question {i + 1} of {questions.length}</span>
+        </div>
+        <div className="segbar">
+          {questions.map((x, ix) => <i key={x.id} data-s={ix === i ? 'now' : (ans[x.id] !== undefined ? 'done' : '')} />)}
+        </div>
+      </div>
+
+      <h3 style={{ fontFamily:'var(--sans)', fontSize:14.5, lineHeight:1.45 }}>{q.stem}</h3>
+
+      <div style={{ display:'flex', flexDirection:'column', gap:7 }}>
+        {q.opts.map((o, ix) => (
+          <button key={ix} className="q-opt" data-state={state(ix)} disabled={revealed} onClick={() => pick(ix)}>
+            <span className="key">{'ABCD'[ix]}</span>
+            <span style={{ flex:1 }}>{o}</span>
+            {revealed && ix === q.right ? <I n="check" s={15} /> : null}
+            {revealed && ix === picked && ix !== q.right ? <I n="x" s={15} /> : null}
+          </button>
+        ))}
+      </div>
+
+      {revealed ? (
+        <div className="rationale">
+          <div className="lbl">{picked === q.right ? 'Why this is right' : 'Why this is wrong'}</div>
+          <div className="dim">{q.why}</div>
+          <div className="dim" style={{ fontSize:12 }}>
+            Authored per question as <code className="mono">incorrectMessage</code>. In the old app it is fetched,
+            typed, carried into state — and never rendered.
+          </div>
+        </div>
+      ) : null}
+
+      <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
+        <button className="btn" disabled={i === 0} onClick={() => setI(i - 1)}><I n="chevL" s={14} />Previous</button>
+        {a.immediate && !revealed ? (
+          <button className="btn primary" disabled={picked === undefined} onClick={() => setSent(p => ({ ...p, [q.id]:true }))}>
+            Submit answer
+          </button>
+        ) : i === questions.length - 1 ? (
+          <button className="btn primary" disabled={answered < questions.length} onClick={() => setDone(true)}>
+            Finish{answered < questions.length ? ` · ${questions.length - answered} unanswered` : ''}
+          </button>
+        ) : (
+          <button className="btn primary" disabled={picked === undefined} onClick={() => setI(i + 1)}>Next<I n="chevR" s={14} /></button>
+        )}
+        {a.immediate && revealed ? (
+          i === questions.length - 1
+            ? <button className="btn primary" onClick={() => setDone(true)}>Finish</button>
+            : <button className="btn primary" onClick={() => setI(i + 1)}>Next<I n="chevR" s={14} /></button>
+        ) : null}
+        <span className="sp" style={{ flex:1 }} />
+        <span className="dim" style={{ fontSize:12 }}>{a.resume}</span>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- 01 · the baseline surface ------------------------------- */
+function VaultScreen() {
+  const [tab, setTab] = useState('my');
+  return (
+    <div>
+      <div className="tabs">
+        <div className="tabrow">
+          {[['my','book','My Scans'],['shared','share','Shared with me'],['group','users','Group Scans'],['expert','folder','Expert Scans']].map(([id,ic,t]) => (
+            <button key={id} className="tab" aria-current={tab === id} onClick={() => setTab(id)}><I n={ic} s={14} />{t}</button>
+          ))}
+        </div>
+        <div className="line" />
+        {tab === 'group' || tab === 'expert' ? (
+          <div className="subrow">
+            <button className="subtab" aria-current="true">Waiting for review</button>
+            <button className="subtab">Reviewed</button>
+          </div>
+        ) : null}
+      </div>
+
+      <div className="toolbar">
+        <div className="inp" style={{ flex:'1 1 200px', maxWidth:280 }}><I n="search" s={14} /><input placeholder="Search scans" aria-label="Search scans" /></div>
+        <button className="btn"><I n="filter" s={14} />Filters<span className="tag acc">2</span></button>
+        <span style={{ flex:1 }} />
+        <button className="btn primary"><I n="plus" s={14} />Interpret a scan</button>
+      </div>
+
+      <div className="tblwrap">
+        <table>
+          <thead><tr><th>Scan</th><th>Type</th><th>Status</th><th>Files</th><th>Shared with</th><th>Updated</th></tr></thead>
+          <tbody>
+            {SCANS.map(s => (
+              <tr key={s.id}>
+                <td className="mono num" style={{ whiteSpace:'nowrap' }}>{s.id}</td>
+                <td>{s.type}</td>
+                <td><span className={'tag ' + ST_TONE[s.st]}>{s.st}</span></td>
+                <td className="num">{s.files}</td>
+                <td className="dim" style={{ maxWidth:190, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{s.grp}</td>
+                <td className="dim" style={{ whiteSpace:'nowrap' }}>{s.upd}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="pager">
+        <span className="num">Showing 1–6 of 218</span>
+        <div className="pagenums">
+          <button className="pagenum" aria-current="true">1</button><button className="pagenum">2</button>
+          <button className="pagenum">3</button><button className="pagenum">›</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- 02 · question banks ------------------------------------- */
+function BanksScreen() {
+  const [open, setOpen] = useState(null);
+  const bank = BANKS.find(b => b.id === open);
+  if (bank) return (
+    <QuizRunner title={bank.n} crumb={'Question Banks · ' + bank.n} mode="bank" questions={QUESTIONS}
+      onExit={() => setOpen(null)} exitLabel="All banks" />
+  );
+  return (
+    <div>
+      <div className="toolbar">
+        <div className="inp" style={{ flex:'1 1 200px', maxWidth:280 }}><I n="search" s={14} /><input placeholder="Search banks" aria-label="Search banks" /></div>
+        <button className="chip" aria-pressed="true">All</button>
+        <button className="chip">Started</button>
+        <button className="chip">Not started</button>
+      </div>
+      <div className="grid" style={{ gridTemplateColumns:'repeat(auto-fill,minmax(232px,1fr))' }}>
+        {BANKS.map(b => {
+          const empty = b.q === 0;
+          const pct = b.q ? Math.round((b.seen / b.q) * 100) : 0;
+          const Tag = empty ? 'div' : 'button';
+          return (
+            <Tag key={b.id} className="card" onClick={empty ? undefined : () => setOpen(b.id)}>
+              <div style={{ display:'flex', alignItems:'flex-start', gap:8 }}>
+                <h3 style={{ flex:1 }}>{b.n}</h3>
+                {empty ? <span className="tag warn"><I n="alert" s={11} />Unavailable</span>
+                  : b.best !== null ? <span className="tag ok num">{b.best}%</span> : <span className="tag flat">New</span>}
+              </div>
+              {empty ? (
+                <p className="dim">No questions published yet, so it cannot be started. The author has been told.</p>
+              ) : (
+                <>
+                  <div className="meter teal"><i style={{ width:pct + '%' }} /></div>
+                  <div className="dim num" style={{ display:'flex', justifyContent:'space-between' }}>
+                    <span>{b.seen} of {b.q} seen</span><span>{b.last || 'Not started'}</span>
+                  </div>
+                </>
+              )}
+            </Tag>
+          );
+        })}
+      </div>
+      <p className="dim" style={{ marginTop:14, fontSize:12, maxWidth:'64ch' }}>
+        Banks and course quizzes are the same engine. The only thing a bank changes is when grading
+        happens — one batch at the end instead of per question.
+      </p>
+    </div>
+  );
+}
+
+/* ---------- 03 · my courses ----------------------------------------- */
+const C_STATUS = { in:['warn','In progress'], done:['ok','Completed'], new:['flat','Not started'] };
+function CoursesScreen({ go }) {
+  const [q, setQ] = useState('');
+  const [filter, setFilter] = useState('all');
+  const rows = useMemo(() => COURSES.filter(c =>
+    (filter === 'all' || c.s === filter) &&
+    (q.trim() === '' || (c.t + ' ' + c.tr).toLowerCase().includes(q.trim().toLowerCase()))
+  ), [q, filter]);
+
+  return (
+    <div>
+      <div className="toolbar">
+        <div className="inp" style={{ flex:'1 1 200px', maxWidth:300 }}>
+          <I n="search" s={14} />
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search your courses" aria-label="Search your courses" />
+        </div>
+        {[['all','All'],['in','In progress'],['done','Completed'],['new','Not started']].map(([id,t]) => (
+          <button key={id} className="chip" aria-pressed={filter === id} onClick={() => setFilter(id)}>{t}</button>
+        ))}
+        <span style={{ flex:1 }} />
+        <span className="dim" style={{ fontSize:12 }}>Filtered by the API, not the browser</span>
+      </div>
+
+      <div style={{ display:'flex', flexDirection:'column', gap:9 }}>
+        {rows.map(c => {
+          const [tone, label] = C_STATUS[c.s];
+          const pct = Math.round((c.done / c.tot) * 100);
+          return (
+            <button key={c.id} className="card" style={{ flexDirection:'row', alignItems:'center', gap:14 }} onClick={() => go('outline', { course:c })}>
+              <div style={{ flex:1, minWidth:0, display:'flex', flexDirection:'column', gap:6 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
+                  <h3>{c.t}</h3><span className={'tag ' + tone}>{label}</span>
+                </div>
+                <div className="dim">{c.tr}{c.last ? ' · last opened ' + c.last : ''}</div>
+                <div className="meter" style={{ maxWidth:300 }}><i style={{ width:pct + '%' }} /></div>
+                <div className="dim num" style={{ fontSize:12 }}>{c.done} of {c.tot} items{c.next ? ' · next: ' + c.next : ''}</div>
+              </div>
+              <span className="btn" style={{ pointerEvents:'none' }}>{c.s === 'new' ? 'Start' : c.s === 'done' ? 'Review' : 'Resume'}<I n="chevR" s={14} /></span>
+            </button>
+          );
+        })}
+        {rows.length === 0 ? <p className="dim" style={{ padding:'20px 2px' }}>No enrolment matches that.</p> : null}
+      </div>
+
+      <div className="pager">
+        <span className="num">Showing {rows.length} of 47 enrolments</span>
+        <div className="pagenums">
+          <button className="pagenum" aria-current="true">1</button><button className="pagenum">2</button>
+          <button className="pagenum">3</button><button className="pagenum">4</button><button className="pagenum">›</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- 04 · the resolved outline -------------------------------- */
+function OutlineScreen({ course, go }) {
+  const c = course || COURSES[0];
+  const cur = OUTLINE.findIndex(o => o.s === 'now');
+  const done = OUTLINE.filter(o => o.s === 'done').length;
+  const pct = Math.round((done / OUTLINE.length) * 100);
+
+  return (
+    <div style={{ display:'flex', gap:20, flexWrap:'wrap', alignItems:'flex-start' }}>
+      <div style={{ flex:'1 1 380px', minWidth:0 }}>
+        <button className="btn ghost" style={{ marginBottom:8 }} onClick={() => go('courses')}><I n="chevL" s={14} />My Courses</button>
+        <h3 style={{ fontSize:17, marginBottom:5 }}>{c.t}</h3>
+        <p className="dim" style={{ marginBottom:13 }}>{c.tr} · 12 items · one ordered list, resolved by the server</p>
+
+        <div style={{ border:'1px solid var(--line)', borderRadius:'var(--radius)', overflow:'hidden' }}>
+          {OUTLINE.map((o, ix) => {
+            const blocked = o.s === 'blocked';
+            return (
+              <button key={ix} className="olrow" data-cur={o.s === 'now'} disabled={blocked}
+                style={ix === 0 ? { borderTop:0 } : undefined}
+                onClick={() => go('item', { course:c, idx:ix })}>
+                <span className="ix">{String(ix + 1).padStart(2,'0')}</span>
+                <span className="ic">
+                  {o.s === 'done' ? <I n="check" s={14} /> : <I n={OL_ICON[o.k]} s={14} />}
+                </span>
+                <span className="ttl">
+                  <div style={{ fontWeight: o.s === 'now' ? 600 : 400 }}>{o.t}</div>
+                  <div className="dim" style={{ fontSize:12 }}>
+                    {o.d}{o.score ? ' · scored ' + o.score : ''}{o.note ? ' · ' + o.note : ''}
+                  </div>
+                </span>
+                {o.s === 'done' ? <span className="tag ok">Done</span>
+                  : o.s === 'now' ? <span className="tag acc">Continue</span>
+                  : blocked ? <span className="tag warn"><I n="alert" s={11} />Unavailable</span>
+                  : <span className="tag flat">Not started</span>}
+              </button>
+            );
+          })}
+        </div>
+        <p className="dim" style={{ fontSize:12, marginTop:10, maxWidth:'66ch' }}>
+          Item 08 is a quiz nested under a topic. The old client had no route for that shape, so nine live
+          quizzes had no URL, appeared in no sidebar and were skipped by prev/next — while still counting
+          toward completion. Here the server names the route, so the shape does not exist.
+        </p>
+      </div>
+
+      <aside style={{ flex:'0 1 240px', minWidth:210, display:'flex', flexDirection:'column', gap:11 }}>
+        <div className="card" style={{ gap:11 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+            <div className="ring" style={{ '--p':pct }}><span>{pct}%</span></div>
+            <div className="num dim">{done} of {OUTLINE.length}<br />items complete</div>
+          </div>
+          <button className="btn primary" style={{ justifyContent:'center' }} onClick={() => go('item', { course:c, idx:cur })}>
+            Resume · {OUTLINE[cur].t}
+          </button>
+          <p className="dim" style={{ fontSize:12 }}>
+            Resume, the breadcrumb and the sidebar highlight all read this one list — so they cannot disagree.
+          </p>
+        </div>
+        <div className="card" style={{ gap:6 }}>
+          <div className="lbl">Certificate</div>
+          <p className="dim">Issued on completion. <span className="tag warn">Paused</span></p>
+          <p className="dim" style={{ fontSize:12 }}>Switched off by a constant today. Worth knowing before the course track is funded.</p>
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+/* ---------- 05 · taking the course ---------------------------------- */
+function ItemScreen({ course, idx, go }) {
+  const c = course || COURSES[0];
+  const [i, setI] = useState(typeof idx === 'number' ? idx : 5);
+  const o = OUTLINE[i];
+  const prev = OUTLINE[i - 1], next = OUTLINE[i + 1];
+
+  return (
+    <div style={{ display:'flex', gap:18, alignItems:'flex-start', flexWrap:'wrap' }}>
+      <aside style={{ flex:'0 0 216px', minWidth:190, maxWidth:'100%' }}>
+        <button className="btn ghost" style={{ marginBottom:7 }} onClick={() => go('outline', { course:c })}><I n="chevL" s={14} />Outline</button>
+        <div className="lbl" style={{ padding:'0 2px 6px' }}>{c.t}</div>
+        <div style={{ border:'1px solid var(--line)', borderRadius:'var(--radius)', overflow:'hidden' }}>
+          {OUTLINE.map((x, ix) => (
+            <button key={ix} className="olrow" data-cur={ix === i} disabled={x.s === 'blocked'}
+              style={Object.assign({ padding:'7px 8px' }, ix === 0 ? { borderTop:0 } : null)}
+              onClick={() => setI(ix)}>
+              <span className="ix">{String(ix + 1).padStart(2,'0')}</span>
+              <span className="ttl" style={{ fontSize:12.5, lineHeight:1.35 }}>{x.t}</span>
+              {x.s === 'done' ? <I n="check" s={13} /> : null}
+            </button>
+          ))}
+        </div>
+      </aside>
+
+      <div style={{ flex:'1 1 360px', minWidth:0, display:'flex', flexDirection:'column', gap:13 }}>
+        {o.k === 'quiz' ? (
+          <QuizRunner title={o.t} crumb={c.t + ' · item ' + String(i + 1).padStart(2,'0')} mode="course"
+            questions={QUESTIONS} onExit={() => go('outline', { course:c })} exitLabel="Outline" />
+        ) : (
+          <>
+            <div>
+              <div className="lbl" style={{ marginBottom:3 }}>Item {String(i + 1).padStart(2,'0')} of 12 · {o.k === 'video' ? 'Video' : 'Lesson'}</div>
+              <h3 style={{ fontSize:17 }}>{o.t}</h3>
+            </div>
+
+            {o.k === 'video' ? (
+              <>
+                <Media h={230} play dur={o.d} />
+                <p className="dim" style={{ fontSize:12 }}>Vimeo player · position is written back as you watch, so the outline knows where you stopped.</p>
+              </>
+            ) : (
+              <div style={{ display:'flex', flexDirection:'column', gap:12, maxWidth:'66ch', fontSize:13.5, lineHeight:1.65 }}>
+                <p>Probe choice is a trade between resolution and penetration, and the trade is decided by
+                  how deep the structure you want actually sits. Everything else follows from that.</p>
+                <ul style={{ margin:0, paddingLeft:18, display:'flex', flexDirection:'column', gap:7 }}>
+                  <li><b>Linear, 5–12 MHz.</b> Vessels, nerves, soft tissue, lung pleura. Best resolution, poorest depth.</li>
+                  <li><b>Curvilinear, 2–5 MHz.</b> Abdomen, FAST, obstetrics. A wide far field at the cost of detail.</li>
+                  <li><b>Phased array, 1–5 MHz.</b> A small footprint that fits between ribs — the cardiac probe.</li>
+                </ul>
+                <figure style={{ margin:0, display:'flex', flexDirection:'column', gap:6 }}>
+                  <Media h={150} label="figure · probe footprints" />
+                  <figcaption className="dim" style={{ fontSize:12 }}>Fig. 6.1 — footprint against intercostal space.</figcaption>
+                </figure>
+                <div className="rationale">
+                  <div className="lbl">Rendered, not repaired</div>
+                  <div className="dim">Lesson bodies come through one sanitizing renderer. The old app carried 677 lines
+                    of render-time WordPress HTML repair between the database and the learner.</div>
+                </div>
+              </div>
+            )}
+
+            <div className="hr" />
+            <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
+              <button className="btn" disabled={!prev} onClick={() => setI(i - 1)}><I n="chevL" s={14} />{prev ? prev.t : 'Start of course'}</button>
+              <span style={{ flex:1 }} />
+              <button className="btn primary" disabled={!next} onClick={() => setI(i + 1)}>
+                {next ? 'Mark done · ' + next.t : 'Finish course'}<I n="chevR" s={14} />
+              </button>
+            </div>
+            <p className="dim" style={{ fontSize:12 }}>Previous and next come from the server's outline. The client does not walk the tree.</p>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- 06 · groups and members ---------------------------------- */
+function GroupsScreen() {
+  const [open, setOpen] = useState(null);
+  const [role, setRole] = useState('leader');
+  const [notif, setNotif] = useState({ email:true, push:false });
+  const [exp, setExp] = useState(false);
+  const g = GROUPS.find(x => x.id === open);
+
+  if (!g) return (
+    <div>
+      <div className="toolbar">
+        <div className="inp" style={{ flex:'1 1 200px', maxWidth:280 }}><I n="search" s={14} /><input placeholder="Search groups" aria-label="Search groups" /></div>
+        <span style={{ flex:1 }} />
+        <button className="btn"><I n="plus" s={14} />New group</button>
+      </div>
+      <div className="tblwrap">
+        <table>
+          <thead><tr><th>Group</th><th>Members</th><th>Leaders</th><th>Scan notifications</th><th /></tr></thead>
+          <tbody>
+            {GROUPS.map(x => (
+              <tr key={x.id} style={{ cursor:'pointer' }} onClick={() => setOpen(x.id)}>
+                <td style={{ fontWeight:500 }}>{x.n}</td>
+                <td className="num">{x.m}</td>
+                <td className="dim">{x.lead}</td>
+                <td>{x.notif ? <span className="tag ok"><I n="bell" s={11} />Email on</span> : <span className="tag flat">Off</span>}</td>
+                <td style={{ textAlign:'right' }}><I n="chevR" s={15} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="dim" style={{ marginTop:12, fontSize:12, maxWidth:'66ch' }}>
+        916 group leaders across 554 groups have live scan-notification settings today — 2,363 documents
+        the new app can currently neither read nor write.
+      </p>
+    </div>
+  );
+
+  const cols = role === 'leader'
+    ? ['Member','Role','Courses','Scans','Last active']
+    : ['Member','Role','Courses','Scans','Last active','Group'];
+
+  return (
+    <div>
+      <button className="btn ghost" style={{ marginBottom:9 }} onClick={() => setOpen(null)}><I n="chevL" s={14} />All groups</button>
+      <div style={{ display:'flex', alignItems:'baseline', gap:10, flexWrap:'wrap', marginBottom:12 }}>
+        <h3 style={{ fontSize:17 }}>{g.n}</h3><span className="dim num">{g.m} members</span>
+      </div>
+
+      <div className="toolbar">
+        <div className="inp" style={{ flex:'1 1 180px', maxWidth:250 }}><I n="search" s={14} /><input placeholder="Search members" aria-label="Search members" /></div>
+        <span className="lbl">Viewing as</span>
+        <button className="chip" aria-pressed={role === 'leader'} onClick={() => setRole('leader')}>Group leader</button>
+        <button className="chip" aria-pressed={role === 'admin'} onClick={() => setRole('admin')}>Admin</button>
+        <span style={{ flex:1 }} />
+        <div style={{ position:'relative' }}>
+          <button className="btn" onClick={() => setExp(!exp)}><I n="down" s={14} />Export<I n="chevD" s={13} /></button>
+          {exp ? (
+            <div style={{ position:'absolute', right:0, top:'calc(100% + 4px)', zIndex:20, background:'var(--surface)',
+              border:'1px solid var(--line)', borderRadius:'var(--radius)', boxShadow:'0 10px 26px -12px var(--shadow)',
+              minWidth:190, padding:4, display:'flex', flexDirection:'column' }}>
+              {['Members','Course progress','Scan activity','CME hours'].map(x => (
+                <button key={x} className="btn ghost" style={{ justifyContent:'flex-start' }} onClick={() => setExp(false)}>{x} · CSV</button>
+              ))}
+            </div>
+          ) : null}
+        </div>
+        <button className="btn primary"><I n="plus" s={14} />Invite</button>
+      </div>
+
+      <div className="tblwrap">
+        <table>
+          <thead><tr>{cols.map(c => <th key={c}>{c}</th>)}</tr></thead>
+          <tbody>
+            {MEMBERS.map(m => (
+              <tr key={m.e}>
+                <td><div style={{ fontWeight:500 }}>{m.n}</div><div className="dim" style={{ fontSize:12 }}>{m.e}</div></td>
+                <td><span className={'tag ' + (m.r === 'Learner' ? 'flat' : 'acc')}>{m.r}</span></td>
+                <td className="num">{m.c}</td>
+                <td className="num">{m.s}</td>
+                <td className="dim" style={{ whiteSpace:'nowrap' }}>{m.last}</td>
+                {role === 'admin' ? <td className="dim">{g.n}</td> : null}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="pager">
+        <span className="num">Showing 1–8 of {g.m}</span>
+        <div className="pagenums">
+          <button className="pagenum" aria-current="true">1</button><button className="pagenum">2</button>
+          <button className="pagenum">3</button><button className="pagenum">›</button>
+        </div>
+      </div>
+
+      <div className="card" style={{ marginTop:14, maxWidth:460 }}>
+        <div className="lbl">Scan notifications for this group</div>
+        {[['email','Email me when a member submits a scan'],['push','Push notification on my phone']].map(([k, t]) => (
+          <label key={k} style={{ display:'flex', alignItems:'center', gap:9, cursor:'pointer' }}>
+            <input type="checkbox" checked={notif[k]} onChange={e => setNotif(p => ({ ...p, [k]:e.target.checked }))}
+              style={{ width:15, height:15, accentColor:'var(--accent)' }} />
+            <span>{t}</span>
+          </label>
+        ))}
+        <p className="dim" style={{ fontSize:12 }}>Settings are per group, not per account — which is what the 2,363 existing documents already assume.</p>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- 07 · pathology gallery ----------------------------------- */
+function GalleryScreen() {
+  const [cat, setCat] = useState('cardiac');
+  const [sub, setSub] = useState('All');
+  const [pick, setPick] = useState(null);
+  const c = GAL_CATS.find(x => x.id === cat);
+  const items = GAL_ITEMS[cat].filter(x => sub === 'All' || x[1] === sub);
+
+  return (
+    <div>
+      <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:10 }}>
+        {GAL_CATS.map(x => (
+          <button key={x.id} className="chip" aria-pressed={cat === x.id} onClick={() => { setCat(x.id); setSub('All'); }}>
+            {x.n}{x.isNew ? <span className="tag acc" style={{ fontSize:10 }}>new</span> : null}
+          </button>
+        ))}
+      </div>
+      <div style={{ display:'flex', gap:14, flexWrap:'wrap', borderTop:'1px solid var(--line)', paddingTop:8, marginBottom:13 }}>
+        {['All', ...c.sub].map(s => (
+          <button key={s} className="subtab" aria-current={sub === s} onClick={() => setSub(s)}>{s}</button>
+        ))}
+      </div>
+
+      <div className="grid" style={{ gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))' }}>
+        {items.map((it, ix) => (
+          <button key={ix} className="card" style={{ gap:8, padding:9 }} onClick={() => setPick(it)}>
+            <Media h={112} play dur={it[2]} />
+            <div style={{ fontWeight:500, lineHeight:1.35 }}>{it[0]}</div>
+            <span className="tag flat" style={{ alignSelf:'flex-start' }}>{it[1]}</span>
+          </button>
+        ))}
+      </div>
+      <div className="pager"><span className="num">Showing {items.length} of 20 in {c.n}</span>
+        <div className="pagenums"><button className="pagenum" aria-current="true">1</button><button className="pagenum">2</button><button className="pagenum">›</button></div>
+      </div>
+
+      {pick ? (
+        <div className="scrim" onClick={() => setPick(null)}>
+          <div className="modal" role="dialog" aria-modal="true" aria-label={pick[0]} onClick={e => e.stopPropagation()}>
+            <Media h={280} play dur={pick[2]} />
+            <div style={{ padding:'14px 16px 16px', display:'flex', flexDirection:'column', gap:9 }}>
+              <div style={{ display:'flex', alignItems:'flex-start', gap:10 }}>
+                <h3 style={{ flex:1, fontSize:15, fontFamily:'var(--sans)' }}>{pick[0]}</h3>
+                <button className="btn ghost" onClick={() => setPick(null)} aria-label="Close"><I n="x" s={15} /></button>
+              </div>
+              <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+                <span className="tag acc">{c.n}</span><span className="tag flat">{pick[1]}</span>
+              </div>
+              <p className="dim">Placeholder teaching text for layout review. The real record carries the finding,
+                the acquisition notes and the contributor.</p>
+              <div className="hr" />
+              <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                <button className="btn">Add to a course</button>
+                <button className="btn ghost">Copy link</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/* ===================================================================
+   The notes under each step
+   =================================================================== */
+const NOTES = {
+  vault: {
+    is:['The chrome is untouched — same rail, same topbar, same single inset panel. Everything under the first divider is new.',
+        'Two groups appear: **Learn** and **Administer**. The badges are live queue counts, which is what the `badge` field was always typed for and never given.'],
+    rep:['`NavItemId` is a **closed union of four scan ids** today, and every destination resolves through `SCAN_VAULT_PATH`. Adding a module means widening that model, not appending a row.',
+         'Half a day of work — and it has to land before any of the five surfaces below can be reached at all.'],
+    go:['Click anything in the rail; it drives this walkthrough.',
+        'The scan list itself is unchanged. It is here as the baseline the new groups sit under.'],
+  },
+  banks: {
+    is:['**One** quiz engine. This screen and the course quiz in step 05 mount the same component; only the adapter differs.',
+        'Every question carries its rationale. Authors write it today as `incorrectMessage`, and no learner has ever seen it rendered.',
+        'A bank with nothing published says so and refuses to start.'],
+    rep:['Four quiz implementations, two of them unreachable — about 1,850 lines and a whole `finalize` endpoint nothing calls.',
+         '146 published course quizzes have zero questions. Today Start lands on “Question data not found” and the attempt can never complete.',
+         'Six answer types are declared; production holds three, and the server hard-codes the other three to wrong.'],
+    go:['Open a bank, answer the five questions, press Finish — grading happens in one batch, which is what a bank does.',
+        '“Documentation & Handover” is the empty-quiz case.'],
+  },
+  courses: {
+    is:['Search and the status chips are the API’s own filters, so the page count is the real one.',
+        'Each row names the next item, not only a percentage.'],
+    rep:['My Courses pulls 100 courses and filters them in the browser. The API’s keyword and status filters go unused, so a learner with more than 100 enrolments **silently cannot see them all**.'],
+    go:['Type “lung” or “cardiac”.','Switch between In progress and Completed.','Open Fundamentals to reach step 04.'],
+  },
+  outline: {
+    is:['**One ordered list** with per-item status, prev/next and the resume pointer, all resolved server-side.',
+        'Item 08 is a quiz nested under a topic — a shape the old client has no route for.',
+        'Item 10 has nothing published, so it is marked unavailable instead of trapping the learner.'],
+    rep:['Four parallel arrays joined by `itemRef`, progress typed `z.any()`, and navigation re-derived **four times** on the client — about 420 lines, each copy with its own edge cases.',
+         'That is the class of bug where Resume, the breadcrumb and the sidebar highlight disagree.',
+         'Cost: ~2 API days. It makes the port 4–5 days **cheaper**, and starting the course UI before it lands is the one irreversible mistake in the plan.'],
+    go:['Press Resume — it names the item.','Open item 08: the quiz that had no URL now has one.'],
+  },
+  item: {
+    is:['The sidebar, the breadcrumb and prev/next all read the same resolved outline.',
+        'Lesson bodies come through one sanitizing renderer.',
+        'Open a quiz item and the engine from step 02 mounts again — this time with the course adapter: submit per question, immediate feedback, resume from the outline pointer.'],
+    rep:['Three React Router patterns wrapping one quiz component, and **677 lines** of render-time WordPress HTML repair between the database and the learner.',
+         'Client and server score by different formulas, masked only because every production question is worth one point. The on-screen timer also freezes after the first answer, and time on task accumulates quadratically — a 10-minute quiz records about 55.'],
+    go:['Click item 08 or 12 in the sidebar to move from lesson to quiz without leaving the page.',
+        'Answer, submit, read the rationale.'],
+  },
+  groups: {
+    is:['**One** members surface, parameterised by role. Flip “Viewing as” and the columns change; the screen does not.',
+        'Per-group scan notification settings, readable and writable.',
+        'Four exports behind one control.'],
+    rep:['Two separate members screens inside ~7,800 lines of group administration, about 2,300 of which are dead routes.',
+         '916 group leaders across 554 groups have live notification settings — 2,363 documents the new app can neither read nor write today.'],
+    go:['Open a group, flip Viewing as, open Export.'],
+  },
+  gallery: {
+    is:['The category bar is served from a real `scanTypeId` relation. **Ocular** is new and appears without a code change.',
+        'Sub-categories come from the same relation, so a rename cannot orphan them.',
+        'The default category comes from the same endpoint as the bar, so a first visit cannot land on an empty grid.'],
+    rep:['`category` and `subCategory` are free text with no reference to ScanType. The server guesses the scan type by lowercasing names, and the client then discards anything outside a **hardcoded 13-name array** — so content people cannot publish a new category and never find out why.',
+         'Corrections ship as one-off scripts. The current one is **775 lines** of re-filing.',
+         '~13 serial S3 presigns plus a full collection scan on every page load, uncached, gating the whole screen.'],
+    go:['Pick Ocular — under today’s whitelist it would not be on screen at all.','Open a tile.'],
+  },
+};
+
+function Notes({ step }) {
+  const n = NOTES[step];
+  const cols = [
+    ['What you are looking at', 'var(--accent)', n.is],
+    ['What it replaces', 'var(--crit)', n.rep],
+    ['Try it', 'var(--accent-ink)', n.go],
+  ];
+  return (
+    <div className="notes">
+      {cols.map(([t, c, list]) => (
+        <div className="notecol" key={t}>
+          <h3><span className="dot" style={{ background:c }} />{t}</h3>
+          <ul>{list.map((x, i) => <li key={i}>{md(x)}</li>)}</ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ===================================================================
+   App
+   =================================================================== */
+function App() {
+  const [step, setStep] = useState('vault');
+  const [ctx, setCtx] = useState({});
+  const panel = useRef(null);
+
+  function go(next, extra) {
+    if (extra) setCtx(c => ({ ...c, ...extra }));
+    setStep(next);
+  }
+  useEffect(() => { if (panel.current) panel.current.scrollTop = 0; }, [step]);
+
+  const meta = STEPS.find(s => s.id === step);
+  const course = ctx.course || COURSES[0];
+  const crumb = (step === 'outline' || step === 'item') ? 'My Courses' : null;
+  const title = (step === 'outline' || step === 'item') ? course.t : meta.title;
+
+  const screen =
+    step === 'vault'   ? <VaultScreen /> :
+    step === 'banks'   ? <BanksScreen /> :
+    step === 'courses' ? <CoursesScreen go={go} /> :
+    step === 'outline' ? <OutlineScreen course={course} go={go} /> :
+    step === 'item'    ? <ItemScreen key={ctx.idx} course={course} idx={ctx.idx} go={go} /> :
+    step === 'groups'  ? <GroupsScreen /> : <GalleryScreen />;
+
+  return (
+    <>
+      <nav className="steps" aria-label="Walkthrough">
+        {STEPS.map(s => (
+          <button key={s.id} className="stepbtn" aria-current={step === s.id} onClick={() => go(s.id)}>
+            <span className="n">{s.n}</span><span className="t">{s.label}</span>
+          </button>
+        ))}
+      </nav>
+
+      <div className="app">
+        <Rail nav={meta.nav} go={go} />
+        <div className="col">
+          <Topbar title={title} crumb={crumb} />
+          <div className="panel" ref={panel}>{screen}</div>
+        </div>
+      </div>
+
+      <Notes step={step} />
+
+      <footer className="foot">
+        <span>Palette + geometry: packages/ui/src/styles/tokens.css</span>
+        <span>Source: plans/reports/…rest-of-scanhub-into-scanvault-report.md</span>
+        <span>Mock data · clinical text is placeholder</span>
+      </footer>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>

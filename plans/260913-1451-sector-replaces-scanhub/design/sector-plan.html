@@ -1,0 +1,380 @@
+<title>Becoming Sector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Palette lifted from scanvault/packages/ui/src/styles/tokens.css.
+   page / rule / shadow are page-level additions for this document. */
+:root{
+  --bg:#efe7da; --surface:#fdfaf4; --surface-2:#f6f0e5;
+  --ink:#22201c; --ink-dim:#5e574c; --line:#ddd2be;
+  --accent:#ee7625; --accent-ink:#2f6b73; --accent-soft:#fce9d8;
+  --ok:#2e6b41; --ok-soft:#dcede1; --warn:#8a5300; --warn-soft:#faebcd;
+  --crit:#b3261e; --crit-soft:#f9dedb;
+  --radius:8px; --scan-ground:#14120f;
+  --page:#f7f2e8; --rule:#cfc3ab; --shadow:rgba(34,32,28,.22);
+  --sans:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --serif:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme='light']){
+  --bg:#17150f; --surface:#211e17; --surface-2:#2b271d;
+  --ink:#f2eadc; --ink-dim:#b3a996; --line:#3d3729;
+  --accent:#ee7625; --accent-ink:#6ec3cd; --accent-soft:#382718;
+  --ok:#79d09a; --ok-soft:#1b2d22; --warn:#e8b45e; --warn-soft:#33260f;
+  --crit:#f0928a; --crit-soft:#351d1b; --scan-ground:#0b0a08;
+  --page:#131109; --rule:#3d3729; --shadow:rgba(0,0,0,.55);
+}}
+:root[data-theme='dark']{
+  --bg:#17150f; --surface:#211e17; --surface-2:#2b271d;
+  --ink:#f2eadc; --ink-dim:#b3a996; --line:#3d3729;
+  --accent:#ee7625; --accent-ink:#6ec3cd; --accent-soft:#382718;
+  --ok:#79d09a; --ok-soft:#1b2d22; --warn:#e8b45e; --warn-soft:#33260f;
+  --crit:#f0928a; --crit-soft:#351d1b; --scan-ground:#0b0a08;
+  --page:#131109; --rule:#3d3729; --shadow:rgba(0,0,0,.55);
+}
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--page);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.62;margin:0}
+.page{max-width:940px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--serif);font-weight:600;text-wrap:balance;margin:0}
+h2{font-size:clamp(21px,3vw,27px);line-height:1.18;letter-spacing:-.005em}
+h3{font-size:16px}
+p{margin:0;text-wrap:pretty}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase}
+.mono{font-family:var(--mono)}
+code{font-family:var(--mono);font-size:.88em;background:var(--surface-2);border-radius:4px;padding:1px 4px}
+a{color:var(--accent-ink)}
+
+.mast{background:var(--scan-ground);border-radius:12px;margin-top:24px;overflow:hidden;color:#efe7da}
+.mast .inner{padding:32px 30px 28px;display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}
+.mast .txt{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.mast .eyebrow{color:#b3a996}
+.mast h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5.4vw,46px);line-height:1.07;letter-spacing:-.015em;color:#f7f2e8}
+.mast .lede{font-size:17px;color:#cdc2ae;max-width:58ch}
+.mast .meta{display:flex;flex-wrap:wrap;gap:7px 18px;font-family:var(--mono);font-size:11px;color:#9a917f;letter-spacing:.04em}
+.mast .band{height:3px;background:var(--accent)}
+.mast .glyph{flex:0 0 auto;color:var(--accent);margin-top:4px}
+
+section{margin-top:46px}
+.head{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
+.head::after{content:'';height:1px;background:var(--rule);margin-top:9px}
+.lede2{font-size:16px;color:var(--ink-dim);max-width:66ch}
+.prose{display:flex;flex-direction:column;gap:13px;max-width:68ch}
+.dim{color:var(--ink-dim)}
+ul.list,ol.list{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:9px;max-width:68ch}
+
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:4px}
+th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-dim);font-weight:500;padding:8px 11px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tw{overflow-x:auto}
+tr.total td{border-bottom:0;font-weight:600;padding-top:11px}
+
+.flag{border-left:2px solid var(--crit);padding:3px 0 3px 16px;display:flex;flex-direction:column;gap:9px;max-width:68ch}
+.flag .t{font-weight:600}
+.note{border-left:2px solid var(--accent-ink);padding:3px 0 3px 16px;display:flex;flex-direction:column;gap:8px;max-width:68ch}
+.tag{display:inline-flex;align-items:center;border-radius:99px;padding:1px 9px;font-size:11.5px;font-weight:500;white-space:nowrap}
+.tag.ok{background:var(--ok-soft);color:var(--ok)}
+.tag.crit{background:var(--crit-soft);color:var(--crit)}
+.tag.acc{background:var(--accent-soft);color:var(--accent-ink)}
+.tag.flat{background:var(--surface-2);color:var(--ink-dim)}
+
+.marks{display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-top:6px}
+.mk{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--accent)}
+.mk .cap{font-family:var(--mono);font-size:10px;letter-spacing:.07em;color:var(--ink-dim)}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);
+  border-radius:99px;padding:3px 11px;font-size:12.5px;color:var(--ink-dim)}
+.foot{margin:44px 0 60px;padding-top:14px;border-top:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:11px;color:var(--ink-dim)}
+@media (max-width:560px){ .mast .inner{padding:26px 20px 22px} }
+</style>
+
+<div class="page">
+
+<header class="mast">
+  <div class="inner">
+    <span class="glyph" aria-hidden="true">
+      <svg viewBox="0 0 32 32" width="72" height="72" fill="currentColor"><path d="M14.41 6.12 L17.59 6.12 L28.26 27.06 A27 27 0 0 1 3.74 27.06 Z"/></svg>
+    </span>
+    <div class="txt">
+      <p class="eyebrow">ScanVault becomes the whole product</p>
+      <h1>Becoming Sector</h1>
+      <p class="lede">What it takes to replace the ScanHub dashboard outright — the name,
+        the data decision, and 126 engineer-days in eleven phases.</p>
+      <div class="meta"><span>13 Sep 2026</span><span>11 phases</span><span>126 engineer-days</span><span>13 weeks at two engineers</span></div>
+    </div>
+  </div>
+  <div class="band"></div>
+</header>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">Three decisions</p>
+    <h2>Taken before a line of this was written</h2>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>Question</th><th>Chosen</th><th>Consequence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>Data layer</b></td>
+        <td>One API, one authorization model. <code>gusi_nodejs_api</code> stays the only thing that touches Mongo and S3; Sector gets a thin read seam there and a harness that replays real production shapes through every schema.</td>
+        <td>No second authorization model. Phase 2 exists because of this.</td>
+      </tr>
+      <tr>
+        <td><b>Home screen</b></td>
+        <td>Port it properly — four role dashboards, including the two that are dead today.</td>
+        <td>22 days. <b>+18</b> over the light alternative, and the largest line in the plan.</td>
+      </tr>
+      <tr>
+        <td><b>Name</b></td>
+        <td><b>Sector</b>, after the phased-array wedge.</td>
+        <td>Phase 1. Cheapest now; it gets more expensive every week.</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="prose" style="margin-top:18px">
+    <p>Choosing to <i>replace</i> the dashboard rather than sit beside it also settled a question
+      the parity audit had left open. Six items that were arguable scope are now must-builds:
+      mark a study complete or incomplete, correct a submitted expert review, request expert
+      review on an existing scan, the AI Review Generator, reset-upload recovery, and adding or
+      deleting files after submit. There is no other app for a reviewer to go to.</p>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">Before anything</p>
+    <h2>Eight authorization guards are commented out on main</h2>
+  </div>
+  <div class="flag">
+    <p class="t"><code>gusi_nodejs_api/src/app/course-meta-version/course-meta-version.route.ts</code></p>
+    <p>Verified by hand, present on <code>main</code>, introduced 2025-09-09.
+      <code>publish</code>, <code>archive</code>, <code>restore</code>, <code>addApproval</code>,
+      <code>getVersionsForUserGroup</code>, <code>assign/user-course</code>, <code>assign/users</code>
+      and <code>migrate/:userCourseId</code> are all <code>authUser</code> only. Any authenticated
+      account — a learner included — can publish or archive a course version, approve one, or
+      reassign learners between versions.</p>
+    <p>This is live today, and Sector makes it worse by adding a second client that reaches course
+      versions. Triage before Phase 5 starts. Two more from the same sweep, unverified but specific:
+      any signed-in user can read another user's referral list including email addresses, and an
+      unauthenticated-tier write endpoint ships in the production route table.</p>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">The name</p>
+    <h2>Why Sector, and the one I had to kill</h2>
+  </div>
+  <div class="prose">
+    <p>ScanVault was outgrowing itself. The app is about to hold courses, quizzes, a gallery and
+      group administration — and <b>Scan Vault is already a module name inside ScanHub</b>, as well
+      as an unreachable tab in the old dashboard. One word, three referents, in every conversation.</p>
+  </div>
+  <div class="tw" style="margin-top:16px"><table>
+    <thead><tr><th>Candidate</th><th>Strategy</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td><b>Sector</b></td><td>Name the artefact — a sector scan is the phased-array wedge</td>
+        <td><span class="tag ok">Chosen</span> Best mark by a distance. The icon is the product.</td></tr>
+      <tr><td>Bedside</td><td>Name the practice; POCUS <i>is</i> bedside ultrasound</td>
+        <td>Warmest, weakest as a mark — Core Ultrasound and SonoSim already use the word as descriptive copy.</td></tr>
+      <tr><td>Sono</td><td>Name the field; the <i>sono</i> root survives all seven locales</td>
+        <td>Legible everywhere, but generic and thin on trademark.</td></tr>
+      <tr><td>Gain</td><td>Name the mission twice: the instrument control, and learning gain</td>
+        <td>Strongest meaning, worst icon, unsearchable.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose" style="margin-top:18px">
+    <p><b>Killed after a search: Caliper.</b> It was the favourite — the on-screen measurement marks,
+      instantly legible to anyone who has held a probe. But
+      <a href="https://www.imsglobal.org/activity/caliper">1EdTech Caliper Analytics</a> is a widely
+      adopted learning-analytics standard, carried by Blackboard, D2L, Instructure and McGraw-Hill.
+      Naming an LMS after it is a collision you live with forever.</p>
+    <p class="dim">No trademark or domain search has been run. That is a real step before the name
+      goes public, and not one this analysis can perform.</p>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">The mark</p>
+    <h2>The shape of the image itself</h2>
+  </div>
+  <div class="prose">
+    <p>Apex at the footprint, 27 degrees each side, opening to a depth arc — taller than wide, the
+      way a real sector scan is. GUSI orange on the near-black media backdrop: the only two colours
+      in the token file that hold their meaning in both themes, so the mark needs no light and dark
+      variant.</p>
+  </div>
+  <div class="marks">
+    <div class="mk"><svg viewBox="0 0 32 32" width="16" height="16" fill="currentColor" role="img" aria-label="Sector mark at 16 pixels"><path d="M14.41 6.12 L17.59 6.12 L28.26 27.06 A27 27 0 0 1 3.74 27.06 Z"/></svg><span class="cap">16</span></div>
+    <div class="mk"><svg viewBox="0 0 32 32" width="24" height="24" fill="currentColor" role="img" aria-label="Sector mark at 24 pixels"><path d="M14.41 6.12 L17.59 6.12 L28.26 27.06 A27 27 0 0 1 3.74 27.06 Z"/></svg><span class="cap">24</span></div>
+    <div class="mk"><svg viewBox="0 0 32 32" width="48" height="48" fill="currentColor" role="img" aria-label="Sector mark at 48 pixels"><path d="M14.41 6.12 L17.59 6.12 L28.26 27.06 A27 27 0 0 1 3.74 27.06 Z"/></svg><span class="cap">48</span></div>
+    <div class="mk"><svg viewBox="0 0 512 512" width="84" height="84" role="img" aria-label="Sector app icon"><rect width="512" height="512" rx="112" fill="#14120F"/><g transform="translate(256 256) scale(13) translate(-16 -16.5)"><path fill="#EE7625" d="M14.41 6.12 L17.59 6.12 L28.26 27.06 A27 27 0 0 1 3.74 27.06 Z"/></g></svg><span class="cap">app icon</span></div>
+    <div class="mk" style="color:var(--ink)"><svg viewBox="0 0 148 32" width="148" height="32" role="img" aria-label="Sector lockup"><rect width="32" height="32" rx="7" fill="#EE7625"/><g transform="translate(16 16) scale(0.6) translate(-16 -16.5)"><path fill="#14120F" d="M14.41 6.12 L17.59 6.12 L28.26 27.06 A27 27 0 0 1 3.74 27.06 Z"/></g><text x="42" y="22" font-family="ui-sans-serif,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-0.3" fill="currentColor">Sector</text></svg><span class="cap">rail lockup</span></div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <p class="dim">One trap, recorded because it cost a render: <b>XML forbids a double hyphen inside
+      a comment.</b> Writing a CSS custom property name into an SVG comment silently breaks the whole
+      file — it broke two of these three the first time.</p>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">The plan</p>
+    <h2>Eleven phases, 126 engineer-days</h2>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th class="num">#</th><th>Phase</th><th>What ships</th><th class="num">Days</th><th class="num">Needs</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td><b>Name, mark and the nav model</b></td><td>Rename to Sector with a storage migration so nobody loses a draft; widen <code>NavItemId</code> from a closed union of four scan ids so a non-scan destination can exist at all</td><td class="num">3</td><td class="num">—</td></tr>
+      <tr><td class="num">2</td><td><b>Real data, proven</b></td><td>Restore the production dumps into a local mirror, seed object storage, replay every real shape through every schema in CI</td><td class="num">6</td><td class="num">—</td></tr>
+      <tr><td class="num">3</td><td><b>Close the lockout</b></td><td>Password recovery, invitation landing, per-group scan notifications, account deletion</td><td class="num">7</td><td class="num">1</td></tr>
+      <tr><td class="num">4</td><td><b>Scan surfaces to parity</b></td><td>The 54 open audit items, including the six the replace decision just made mandatory</td><td class="num">16</td><td class="num">2</td></tr>
+      <tr><td class="num">5</td><td><b>Foundations and question banks</b></td><td>Sanitizing renderer, <b>one</b> quiz engine, nine UI primitives, question banks end to end</td><td class="num">17</td><td class="num">1, 2</td></tr>
+      <tr><td class="num">6</td><td><b>The course read seam</b></td><td>Server-resolved ordered outline; My Courses; course outline</td><td class="num">11</td><td class="num">1, 5</td></tr>
+      <tr><td class="num">7</td><td><b>Taking a course</b></td><td>Layout, sidebar, lesson, video topic, the course-quiz adapter</td><td class="num">12</td><td class="num">5, 6</td></tr>
+      <tr><td class="num">8</td><td><b>Group administration</b></td><td>Groups index, <b>one</b> role-parameterised members surface, four exports, forms</td><td class="num">15</td><td class="num">1</td></tr>
+      <tr><td class="num">9</td><td><b>Assignments, gallery and Sage</b></td><td>Gallery on a real scan-type relation instead of a hardcoded whitelist; assignments; the Sage frame</td><td class="num">9</td><td class="num">5, 8</td></tr>
+      <tr><td class="num">10</td><td><b>The home screen</b></td><td>Four role dashboards, charts, 242 keys across seven locales</td><td class="num">22</td><td class="num">6, 7, 8</td></tr>
+      <tr><td class="num">11</td><td><b>Cutover</b></td><td>Route map, sessions, flags, deploy, decommission</td><td class="num">8</td><td class="num">all</td></tr>
+      <tr class="total"><td></td><td></td><td class="dim">Two engineers with the parallelism the phases allow: 13 calendar weeks. One: about 25.</td><td class="num">126</td><td></td></tr>
+    </tbody>
+  </table></div>
+  <div class="note" style="margin-top:20px">
+    <p class="t"><b>The one irreversible mistake: starting course UI before the read seam lands.</b></p>
+    <p>Port against today's four-parallel-arrays shape and Sector permanently inherits 553 lines of
+      <code>util.ts</code>, four client-side traversals of one graph, three React Router patterns for
+      one quiz component, and blindness to a fourth nesting shape. None of it is removable later
+      without a second port. It is a scheduling risk, not a technical one — which makes it the easy
+      one to lose to pressure.</p>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">The data question</p>
+    <h2>Why "all the real data" is a test, not an architecture</h2>
+  </div>
+  <div class="prose">
+    <p>Three things settled it against a second data layer.</p>
+  </div>
+  <ul class="list" style="margin-top:14px">
+    <li><b>The client cannot reach S3 at all.</b> <code>src/lib/s3.ts</code> signs media with a
+      <b>CloudFront key pair</b> and presigns objects for ten minutes. The private key is a server
+      secret; direct-to-S3 means moving it into a second service.</li>
+    <li><b>Authorization is granular permission strings plus wildcards</b>, and the port already
+      mishandles <code>full-access</code>. A second reader is a second place for an authz bug to
+      hide — and there are eight commented-out guards on <code>main</code> showing what that costs.</li>
+    <li><b>Transactions and the notification side effects live in the API.</b> The scan-notify defect
+      proved that calling a different endpoint silently drops the email, the push and the activity log.</li>
+  </ul>
+  <div class="prose" style="margin-top:18px">
+    <p>So fidelity becomes something that can fail in CI. The material is already on disk — no step
+      in this plan connects to the production cluster, and refreshing a dump is a read.</p>
+  </div>
+  <div class="tw" style="margin-top:12px"><table>
+    <thead><tr><th>Dump</th><th class="num">Size</th><th>Holds</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">dump-prod-content</td><td class="num">12M</td><td>courses, the whole v2 LMS, pathology, scan types, forms, organizations, roles</td></tr>
+      <tr><td class="mono">dump-prod-scans</td><td class="num">158M</td><td>scans, files, findings, notes, reviews, groups, shares, purchases</td></tr>
+      <tr><td class="mono">dump-prod-scan-owners</td><td class="num">476K</td><td>users (scan owners)</td></tr>
+      <tr><td class="mono">dump-staging-scans</td><td class="num">54M</td><td>the scan domain from staging</td></tr>
+    </tbody>
+  </table></div>
+  <div class="flag" style="margin-top:18px">
+    <p class="t">The limit, stated rather than glossed</p>
+    <p>The dumps carry file <i>records</i>, not S3 <i>objects</i>. Media bytes are not reproducible
+      from them. Metadata fidelity is testable today; real-object playback needs staging S3 access,
+      which is an ask, not a task.</p>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">Scope</p>
+    <h2>What gets dropped, and the evidence</h2>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>Dropped</th><th>Why it is safe</th></tr></thead>
+    <tbody>
+      <tr><td><b>Commerce</b><br><span class="dim mono">~13,000 LOC · 35 endpoints</span></td>
+        <td>Every flag false, storefront routes commented out, checkout submit handler commented out, zero rows in orders, subscriptions and payment methods. Money flows through scan-review credits — 3,111 purchases locally — and that path is already ported.</td></tr>
+      <tr><td><b>Fellowship V1</b><br><span class="dim mono">2,347 LOC</span></td>
+        <td>Frozen since 2 Jul 2025, superseded by 57 v2 endpoints no React calls, and <code>/api/schedule-slots</code> is not mounted — so scheduling 404s today.</td></tr>
+      <tr><td><b>Rapid Review ×2</b><br><span class="dim mono">251 LOC</span></td>
+        <td>Sandboxed iframes onto a third-party Reflex app, both flags false, identity asserted by an unsigned URL query string. Not GUSI code.</td></tr>
+      <tr><td><b>Resources</b><br><span class="dim mono">3 LOC</span></td>
+        <td>A <code>ComingSoon</code> stub with no nav entry and no inbound link.</td></tr>
+      <tr><td><b>Referrals</b></td><td>Zero documents against 3,152 users, plus an enumerable PII leak.</td></tr>
+      <tr><td><b>Push notification settings</b></td><td>Four documents against 3,152 users.</td></tr>
+      <tr><td><b>Dead v1 and v2 forks</b><br><span class="dim mono">~9,250 LOC</span></td>
+        <td>Not flag-gated alternatives — the route files hardcode the V3 import and the flags are read by nothing. Counting them would inflate every estimate by about 150%.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="flag" style="margin-top:20px">
+    <p class="t">Separately urgent, and nothing to do with this port</p>
+    <p>The broken checkout is live and linked from the expired-course banner. A learner enters a full
+      card number, presses Pay, and gets no order, no error and no navigation. Fix or unlink it in the
+      old app today.</p>
+  </div>
+  <div class="prose" style="margin-top:20px">
+    <p>What 126 days buys is not a copy of the dashboard. It is a <b>smaller</b> product: one quiz
+      engine instead of four, one members surface instead of two, one server-resolved outline instead
+      of four client-side traversals, one group schema across the read and write sides. Three of those
+      consolidations are cost-negative inside the port itself.</p>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">Risk</p>
+    <h2>Five things that can break the schedule</h2>
+  </div>
+  <ol class="list">
+    <li><b>API capacity is not committed.</b> The two-to-three-day read seam gates roughly 27 of the
+      126 days. Without an API engineer, phases 6, 7 and 9 have no safe start. Raise this in week one,
+      not week six.</li>
+    <li><b>The untyped progress blobs.</b> The contract here is parse-not-cast, and the source schema
+      punts on exactly the two shapes the quiz runner needs. Add 30% to the course-quiz work if they
+      cannot be pinned against the mirror.</li>
+    <li><b>GrowthBook is the runtime authority and nobody in this study could read it.</b> Every
+      flag-default drop above rests on code defaults. Ten minutes of dashboard access can falsify
+      several — do that before deleting anything.</li>
+    <li><b>Starting course UI before the read seam.</b> The scheduling risk above, which is the easy
+      one to lose to pressure.</li>
+    <li><b>Two auth defects that get worse when Sector is the only door.</b> One refresh token per
+      user globally, so a second device signs the first one out; and <code>GET /api/me</code> sits
+      inside the twenty-per-fifteen-minutes-per-IP limiter while the app calls it on every cold boot —
+      so a classroom behind one NAT can exhaust the sign-in budget in twenty page loads.</li>
+  </ol>
+</section>
+
+<section>
+  <div class="head">
+    <p class="eyebrow">Still open</p>
+    <h2>Questions the plan does not answer</h2>
+  </div>
+  <ol class="list">
+    <li>Is the immutable-snapshot <b>write</b> fix funded, and is it CTP-1016? The read seam does not
+      fix it, and learner progress keeps corrupting until someone does.</li>
+    <li>What is the production GrowthBook state for the nine flags the drop decisions rest on?</li>
+    <li>Which of the seven locales have real users? Three surfaces need translating, and only the
+      locales with learners are worth it.</li>
+    <li>Who owns the certificate maintenance switch? Until it lifts, course completion has no payoff
+      anywhere — worth knowing before phases 6 and 7 spend 23 days.</li>
+    <li>Where does <code>gusi_scanhub_console</code> live? Every authoring claim in the source reports
+      is inferred from the API contract, never observed.</li>
+    <li>Is Sector the public name or the internal one? Trademark and domain search still pending.</li>
+  </ol>
+</section>
+
+<footer class="foot">
+  <span>plans/260913-1451-sector-replaces-scanhub/</span>
+  <span>Palette: packages/ui/src/styles/tokens.css</span>
+  <span>Evidence: the port plan and parity audit under plans/reports/</span>
+</footer>
+</div>
