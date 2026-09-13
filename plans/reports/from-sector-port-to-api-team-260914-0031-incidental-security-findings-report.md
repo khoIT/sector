@@ -96,7 +96,7 @@ Moving the token to a header belongs in the next API version.
 Rotation limits each logged token to a single use — except for the legacy tokens in
 finding 5, which stay valid.
 
-## 6. A legacy refresh token survives every revocation path
+## 6. A legacy refresh token survived every revocation path — FIXED, needs sign-off
 
 Found reviewing the new per-device session work. `refreshTokenService` deletes
 session rows on password reset, but nothing clears the old `users.refreshToken`
@@ -106,7 +106,26 @@ So: token leaks (see finding 4) → user resets their password → reset revokes
 rows because no session document exists yet → attacker replays the leaked legacy
 token and holds a new 30-day session.
 
-Deterministic, no race needed. Fix in flight on `feat/sector-auth-sessions`.
+Deterministic, no race needed.
+
+Fixed. Revocation now clears the legacy field as well as the session rows, and the
+migration upserts so two tabs presenting the same legacy token both succeed instead
+of one getting a 500 carrying the raw database error. Both regression tests were run
+against the pre-fix source and fail there with exactly these symptoms, so they are
+not phantom tests. 176 of 176 tests pass on the merged branch.
+
+**Two customer-visible behaviour changes ride with it and want a decision before
+this reaches production:**
+
+1. `/api/me` can now return 401 where it returned 200, but only when a session is
+   revoked between the lookup and the rotation — that is, a password reset, password
+   change or account deletion lands mid-request. That is the fix working. Sector
+   already drops its session on any 401, so it is safe there. The deployed mobile
+   client's behaviour is unknown and is not in any repository cloned here.
+2. `PUT /api/users/:id` now signs a user out when an admin edits their password or
+   moves them off active status. Previously it did not, while the dedicated password
+   route did — so the same capability had opposite outcomes depending on which route
+   an admin used.
 
 ## 7. `POST /api/switch-user` has neither `authUser` nor a rate limit
 
