@@ -72,9 +72,11 @@ export function ScanDetailPage({ view }: { view: ScanListView }) {
       ) : scanQuery.isError ? (
         <EmptyState
           tone="crit"
-          title={isApiError(scanQuery.error) && scanQuery.error.isNotFound
-            ? 'Scan not found'
-            : 'Could not load this scan'}
+          title={
+            isApiError(scanQuery.error) && scanQuery.error.isNotFound
+              ? 'Scan not found'
+              : 'Could not load this scan'
+          }
           description={
             isApiError(scanQuery.error)
               ? scanQuery.error.message
@@ -128,7 +130,6 @@ export function ScanDetailPage({ view }: { view: ScanListView }) {
     </div>
   );
 }
-
 
 function DetailSkeleton() {
   return (

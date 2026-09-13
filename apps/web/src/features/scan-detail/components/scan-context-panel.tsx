@@ -119,7 +119,9 @@ export function ScanContextPanel({
           <dl className="mt-2 space-y-1">
             <Row label="Submitted" value={formatDateTime(scan.createdAt)} />
             <Row label="Last updated" value={formatDateTime(scan.updatedAt)} />
-            {scan.reviewedAt ? <Row label="Reviewed" value={formatDateTime(scan.reviewedAt)} /> : null}
+            {scan.reviewedAt ? (
+              <Row label="Reviewed" value={formatDateTime(scan.reviewedAt)} />
+            ) : null}
           </dl>
         </Section>
 

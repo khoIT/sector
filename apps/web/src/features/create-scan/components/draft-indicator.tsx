@@ -22,7 +22,9 @@ export type DraftIndicatorProps = {
 export function DraftIndicator({ files, className }: DraftIndicatorProps) {
   const total = countTracked(files);
   const stored = countStored(files);
-  const moving = files.filter((file) => file.status === 'uploading' || file.status === 'queued').length;
+  const moving = files.filter(
+    (file) => file.status === 'uploading' || file.status === 'queued',
+  ).length;
   const detached = files.filter((file) => file.status === 'detached').length;
 
   if (total === 0) return null;

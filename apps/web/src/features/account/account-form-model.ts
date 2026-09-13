@@ -21,8 +21,7 @@ import type { ZodError, ZodSchema } from 'zod';
 export type FieldErrors<TField extends string> = Partial<Record<TField, string>>;
 
 export type ValidationResult<TValue, TField extends string> =
-  | { ok: true; value: TValue }
-  | { ok: false; errors: FieldErrors<TField> };
+  { ok: true; value: TValue } | { ok: false; errors: FieldErrors<TField> };
 
 /** First message per field, in the order zod reported them. */
 function fieldErrorsOf<TField extends string>(error: ZodError): FieldErrors<TField> {
@@ -92,10 +91,7 @@ export const ACCEPTED_PHOTO_TYPES = 'image/png,image/jpeg,image/webp';
  */
 export const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 
-export function photoRejectionReason(file: {
-  type: string;
-  size: number;
-}): string | null {
+export function photoRejectionReason(file: { type: string; size: number }): string | null {
   if (!file.type.startsWith('image/')) return 'Choose an image file.';
   if (file.size > MAX_PHOTO_BYTES) return 'Choose an image under 5 MB.';
   return null;

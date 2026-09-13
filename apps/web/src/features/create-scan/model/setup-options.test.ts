@@ -1,12 +1,7 @@
 import type { ScanTypeSummary, UserGroup } from '@sector/api-client';
 import { describe, expect, it } from 'vitest';
 
-import {
-  groupOptions,
-  groupTriggerLabel,
-  scanTypeOptions,
-  toggleGroup,
-} from './setup-options';
+import { groupOptions, groupTriggerLabel, scanTypeOptions, toggleGroup } from './setup-options';
 
 function group(id: string, name: string, parent?: { id: string; name: string }): UserGroup {
   return {
@@ -39,9 +34,9 @@ describe('scanTypeOptions', () => {
 
 describe('groupOptions', () => {
   it('names the parent underneath, which is what tells two cohorts apart', () => {
-    expect(groupOptions([group('g1', 'Class of 2029', { id: 'p', name: 'William Carey' })])).toEqual([
-      { value: 'g1', label: 'Class of 2029', description: 'in William Carey' },
-    ]);
+    expect(
+      groupOptions([group('g1', 'Class of 2029', { id: 'p', name: 'William Carey' })]),
+    ).toEqual([{ value: 'g1', label: 'Class of 2029', description: 'in William Carey' }]);
   });
 
   it('omits the line for a top-level group', () => {

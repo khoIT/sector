@@ -1,10 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import {
-  createScan,
-  updateFileDetailsStatus,
-  updateScanFileStatus,
-} from '../endpoints/scan-write';
+import { createScan, updateFileDetailsStatus, updateScanFileStatus } from '../endpoints/scan-write';
 import { mutationKeys, scanKeys } from '../query-keys';
 import type {
   CreateScanPayload,

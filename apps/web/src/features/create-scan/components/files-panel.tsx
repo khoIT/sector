@@ -171,7 +171,6 @@ export function FilesPanel({ draft, collapsed = false, onToggle }: FilesPanelPro
           ) : null}
         </CardContent>
       </Card>
-
     </div>
   );
 }

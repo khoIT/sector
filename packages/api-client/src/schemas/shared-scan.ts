@@ -21,10 +21,7 @@ import { userBasicSchema } from './common';
 /** Share lifecycle, distinct from the underlying scan's own status. */
 const shareStatusSchema = z.enum(['unopened', 'opened']);
 
-const shareScanRefSchema = z.union([
-  z.string(),
-  z.object({ id: z.string() }).passthrough(),
-]);
+const shareScanRefSchema = z.union([z.string(), z.object({ id: z.string() }).passthrough()]);
 
 export const scanShareSchema = z.object({
   id: z.string(),

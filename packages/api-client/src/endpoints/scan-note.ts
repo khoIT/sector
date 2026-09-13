@@ -1,5 +1,10 @@
 import type { ApiClient } from '../client';
-import { scanNoteListSchema, scanNoteSchema, type ScanNote, type ScanNoteList } from '../schemas/scan';
+import {
+  scanNoteListSchema,
+  scanNoteSchema,
+  type ScanNote,
+  type ScanNoteList,
+} from '../schemas/scan';
 
 /**
  * Scan notes — the conversation thread between the learner and the reviewer.

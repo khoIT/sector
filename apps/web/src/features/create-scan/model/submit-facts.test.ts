@@ -80,7 +80,10 @@ describe('submitFacts', () => {
 
     it('names required rows left blank, and flags them', () => {
       expect(
-        valueOf(submitFacts(input({ answered: 3, definitions: 5, missingRequired: 2 })), 'Findings'),
+        valueOf(
+          submitFacts(input({ answered: 3, definitions: 5, missingRequired: 2 })),
+          'Findings',
+        ),
       ).toEqual({
         label: 'Findings',
         value: '3 of 5 answered · 2 required still blank',
@@ -129,7 +132,10 @@ describe('submitFacts', () => {
   describe('expert review', () => {
     it('names the credit source when one was chosen', () => {
       expect(
-        valueOf(submitFacts(input({ expertReviewLabel: 'Demo Learner · 2 credits' })), 'Expert review'),
+        valueOf(
+          submitFacts(input({ expertReviewLabel: 'Demo Learner · 2 credits' })),
+          'Expert review',
+        ),
       ).toEqual({ label: 'Expert review', value: 'Demo Learner · 2 credits' });
     });
 

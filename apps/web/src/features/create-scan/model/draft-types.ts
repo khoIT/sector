@@ -1,4 +1,7 @@
-import type { MediaValidationConfidence, MediaValidationFailureReason } from './validate-media-file';
+import type {
+  MediaValidationConfidence,
+  MediaValidationFailureReason,
+} from './validate-media-file';
 
 /**
  * The steps a study can be parked on, across both flows.

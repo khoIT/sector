@@ -48,10 +48,7 @@ describe.skipIf(!LIVE || !PASSWORD)('live API shapes', () => {
       try {
         const session = await login(anon, { userEmail, password: PASSWORD });
         sessions.set(userEmail, session);
-        clients.set(
-          userEmail,
-          createClient({ baseUrl: BASE, getToken: () => session.token }),
-        );
+        clients.set(userEmail, createClient({ baseUrl: BASE, getToken: () => session.token }));
       } catch (error) {
         if (isApiError(error) && error.statusCode === 429) {
           throw new Error(

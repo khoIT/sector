@@ -25,10 +25,7 @@ export function ScanSubmittedAnswers({ scanTypeId, findings, form }: ScanSubmitt
   const hasAnswers = findings.length > 0 || form.length > 0;
   const { data: definitions, isPending } = useScanTypeItems(scanTypeId, hasAnswers);
 
-  const rows = useMemo(
-    () => buildRows(findings, form, definitions),
-    [findings, form, definitions],
-  );
+  const rows = useMemo(() => buildRows(findings, form, definitions), [findings, form, definitions]);
 
   if (!hasAnswers) {
     return (

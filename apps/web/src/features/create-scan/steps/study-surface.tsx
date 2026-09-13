@@ -102,10 +102,7 @@ export function StudySurface({ draft, onSubmitted }: StudySurfaceProps) {
       {/* Media left, work right. Stacks media-first below xl, where a 450px
           findings column would be worse than a full-width one. */}
       <div
-        className={cn(
-          'grid gap-4 xl:items-start',
-          'xl:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]',
-        )}
+        className={cn('grid gap-4 xl:items-start', 'xl:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]')}
       >
         <StudyRail
           draft={draft}

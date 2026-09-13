@@ -38,8 +38,8 @@ export function ClinicalNotePanel({ draft, rows = 6 }: ClinicalNotePanelProps) {
       <CardHeader>
         <CardTitle>Clinical note</CardTitle>
         <p className="mt-0.5 text-[12px] text-ink-dim">
-          Context a reviewer needs: presentation, the question the scan was answering, anything
-          the findings list cannot hold.
+          Context a reviewer needs: presentation, the question the scan was answering, anything the
+          findings list cannot hold.
         </p>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">

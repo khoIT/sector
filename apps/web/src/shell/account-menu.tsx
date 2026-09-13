@@ -92,9 +92,7 @@ export function AccountMenu({ placement = 'topbar' }: { placement?: AccountMenuP
             rail ? 'w-full px-2 py-2 text-left' : 'shrink-0 px-1 py-1',
           )}
           aria-label={
-            role
-              ? t('account.menuLabelWithRole', { name, role })
-              : t('account.menuLabel', { name })
+            role ? t('account.menuLabelWithRole', { name, role }) : t('account.menuLabel', { name })
           }
         >
           <Avatar user={user} />
@@ -129,10 +127,7 @@ export function AccountMenu({ placement = 'topbar' }: { placement?: AccountMenuP
           </span>
 
           <Chevron
-            className={cn(
-              'h-3.5 w-3.5 shrink-0 text-ink-dim',
-              rail ? 'block' : 'hidden md:block',
-            )}
+            className={cn('h-3.5 w-3.5 shrink-0 text-ink-dim', rail ? 'block' : 'hidden md:block')}
             aria-hidden
           />
         </DropdownMenuTrigger>

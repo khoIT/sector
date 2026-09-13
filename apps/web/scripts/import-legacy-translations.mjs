@@ -75,7 +75,10 @@ function nest(flat) {
  * differences are real differences.
  */
 function normalise(text) {
-  return text.trim().toLowerCase().replace(/\{\{\s*\w+\s*\}\}/g, '{}');
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/\{\{\s*\w+\s*\}\}/g, '{}');
 }
 
 function readJson(path) {

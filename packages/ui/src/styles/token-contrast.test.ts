@@ -136,7 +136,6 @@ const PAIRS: Array<{ fg: TokenName; on: TokenName; why: string }> = [
   { fg: 'crit', on: 'crit-soft', why: 'crit pill' },
   { fg: 'crit', on: 'surface', why: 'inline crit text' },
   { fg: 'crit', on: 'bg', why: 'inline crit text on the shell' },
-
 ];
 
 /**
@@ -193,9 +192,9 @@ describe('design tokens', () => {
 
   it('keeps white legible on the media backdrop in every theme', () => {
     for (const { palette } of THEMES) {
-      expect(
-        contrastRatio(MEDIA_OVERLAY_COLOR, palette['scan-ground']),
-      ).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
+      expect(contrastRatio(MEDIA_OVERLAY_COLOR, palette['scan-ground'])).toBeGreaterThanOrEqual(
+        AA_NORMAL_TEXT,
+      );
     }
   });
 });

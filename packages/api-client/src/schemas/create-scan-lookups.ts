@@ -42,9 +42,7 @@ const findingParentRefSchema = z.object({
 export type FindingParentRef = z.infer<typeof findingParentRefSchema>;
 
 /** The grouping header's label, or null when the row stands on its own. */
-export function findingParentLabel(
-  parent: FindingDefinition['parent'],
-): string | null {
+export function findingParentLabel(parent: FindingDefinition['parent']): string | null {
   if (!parent || typeof parent === 'string') return null;
   return parent.name;
 }

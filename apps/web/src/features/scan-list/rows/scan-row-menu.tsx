@@ -125,10 +125,7 @@ export function ScanRowMenu({
     } catch (error) {
       setReport({
         tone: 'crit',
-        message:
-          error instanceof ScanDownloadError
-            ? error.message
-            : t('actions.downloadFailed'),
+        message: error instanceof ScanDownloadError ? error.message : t('actions.downloadFailed'),
         failed: error instanceof ScanDownloadError ? error.failed : [],
       });
     } finally {
@@ -170,7 +167,9 @@ export function ScanRowMenu({
                 onSelect={() => run(action)}
               >
                 <Icon className="h-4 w-4 shrink-0 opacity-70" aria-hidden />
-                {action === 'download' && downloading ? t('actions.downloading') : t(ACTION_KEY[action])}
+                {action === 'download' && downloading
+                  ? t('actions.downloading')
+                  : t(ACTION_KEY[action])}
                 {/* A disabled item cannot receive hover, so its reason has to
                     be on screen rather than in a title attribute. */}
                 {disabled ? <DropdownMenuHint>{t('actions.noFiles')}</DropdownMenuHint> : null}

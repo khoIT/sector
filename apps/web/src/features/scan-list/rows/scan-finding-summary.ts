@@ -82,4 +82,3 @@ export function summariseFindings(
 
   return { count: findings?.length ?? 0, gaps };
 }
-

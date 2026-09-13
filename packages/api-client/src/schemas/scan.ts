@@ -1,11 +1,7 @@
 import { z } from 'zod';
 
 import { SCAN_STATUSES } from '../scan-status';
-import {
-  mediaFileSchema,
-  scanGroupRefSchema,
-  userBasicSchema,
-} from './common';
+import { mediaFileSchema, scanGroupRefSchema, userBasicSchema } from './common';
 
 /**
  * Scan shapes, checked field-by-field against live responses from
@@ -188,8 +184,7 @@ export type CompetencyMeasure = z.infer<typeof competencyMeasureSchema>;
  * values, only survive the ones already stored.
  */
 const storedCompetencyMeasureSchema = z.preprocess(
-  (value) =>
-    value === 'achieved' || value === 'not_achieved' || value === '' ? value : null,
+  (value) => (value === 'achieved' || value === 'not_achieved' || value === '' ? value : null),
   competencyMeasureSchema.nullable(),
 );
 

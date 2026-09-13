@@ -76,28 +76,37 @@ describe('validatePassword', () => {
 describe('profileChanged', () => {
   it('ignores whitespace-only edits, which the payload trims away anyway', () => {
     expect(
-      profileChanged({ firstName: 'Demo', lastName: 'Learner' }, {
-        firstName: ' Demo ',
-        lastName: 'Learner',
-      }),
+      profileChanged(
+        { firstName: 'Demo', lastName: 'Learner' },
+        {
+          firstName: ' Demo ',
+          lastName: 'Learner',
+        },
+      ),
     ).toBe(false);
   });
 
   it('sees a real edit', () => {
     expect(
-      profileChanged({ firstName: 'Demo', lastName: 'Learner' }, {
-        firstName: 'Dema',
-        lastName: 'Learner',
-      }),
+      profileChanged(
+        { firstName: 'Demo', lastName: 'Learner' },
+        {
+          firstName: 'Dema',
+          lastName: 'Learner',
+        },
+      ),
     ).toBe(true);
   });
 
   it('treats filling in a missing name as a change', () => {
     expect(
-      profileChanged({ firstName: null, lastName: null }, {
-        firstName: 'Demo',
-        lastName: '',
-      }),
+      profileChanged(
+        { firstName: null, lastName: null },
+        {
+          firstName: 'Demo',
+          lastName: '',
+        },
+      ),
     ).toBe(true);
   });
 });

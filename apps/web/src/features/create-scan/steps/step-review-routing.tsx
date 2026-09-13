@@ -107,11 +107,7 @@ export function StepReviewRouting({
 
   return (
     <div className="flex flex-col gap-4">
-      <StudySummary
-        state={state}
-        onEdit={onBack}
-        collectsScanIdentifier={collectsScanIdentifier}
-      />
+      <StudySummary state={state} onEdit={onBack} collectsScanIdentifier={collectsScanIdentifier} />
 
       {showGroupRouting ? (
         <GroupRoutingPanel
@@ -139,7 +135,6 @@ export function StepReviewRouting({
         </CardHeader>
 
         <CardContent className="flex flex-col gap-3">
-
           {stillMoving > 0 ? (
             <InlineNotice
               tone="warn"

@@ -1,4 +1,8 @@
-import { useFindingDefinitions, useScanUserGroups, type FindingDefinition } from '@sector/api-client';
+import {
+  useFindingDefinitions,
+  useScanUserGroups,
+  type FindingDefinition,
+} from '@sector/api-client';
 import { Button, Card, CardContent, CardHeader, CardTitle, cn } from '@sector/ui';
 import { Pencil } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -50,8 +54,8 @@ export function StudySummary({ state, onEdit, collectsScanIdentifier }: StudySum
         <div>
           <CardTitle>What will be sent</CardTitle>
           <p className="mt-0.5 text-[12px] text-ink-dim">
-            Everything below is recorded against the files already in storage. Group routing
-            cannot be changed afterwards.
+            Everything below is recorded against the files already in storage. Group routing cannot
+            be changed afterwards.
           </p>
         </div>
         <Button variant="ghost" size="sm" onClick={onEdit}>

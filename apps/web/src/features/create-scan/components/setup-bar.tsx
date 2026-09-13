@@ -82,7 +82,6 @@ export function SetupBar({ draft, switcher }: SetupBarProps) {
         icon={<Users2 className="h-4 w-4 shrink-0 text-ink-dim" aria-hidden />}
         onSelect={(id) => update({ groupIds: toggleGroup(selectedGroups, id) })}
       />
-
     </div>
   );
 }

@@ -43,9 +43,7 @@ export function EmptyState({
         {title}
       </p>
 
-      {description ? (
-        <p className="max-w-prose text-body text-ink-dim">{description}</p>
-      ) : null}
+      {description ? <p className="max-w-prose text-body text-ink-dim">{description}</p> : null}
 
       {action ? <div className="mt-2">{action}</div> : null}
     </div>

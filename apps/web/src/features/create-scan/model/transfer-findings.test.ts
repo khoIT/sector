@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 
 import { planFindingTransfer } from './transfer-findings';
 
-function definition(partial: Partial<FindingDefinition> & { key: string; name: string }): FindingDefinition {
+function definition(
+  partial: Partial<FindingDefinition> & { key: string; name: string },
+): FindingDefinition {
   return {
     id: partial.key,
     required: false,

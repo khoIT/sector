@@ -62,7 +62,9 @@ export function scanStatusTone(status: ScanStatus): StatusTone {
  * refetchInterval on the scan lists: rendering/de-identification finishes
  * seconds AFTER the bytes land, so a list can go stale without any user action.
  */
-export function hasProcessingScan(items: ReadonlyArray<{ status: ScanStatus }> | undefined): boolean {
+export function hasProcessingScan(
+  items: ReadonlyArray<{ status: ScanStatus }> | undefined,
+): boolean {
   return Boolean(items?.some((item) => item.status === 'processing'));
 }
 

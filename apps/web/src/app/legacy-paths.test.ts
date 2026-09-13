@@ -16,9 +16,7 @@ describe('legacyScanPath', () => {
     expect(legacyScanPath('/dashboard/scans/pending-scans')).toBe('/scans/group/unreviewed');
     expect(legacyScanPath('/dashboard/scans/reviewed-scans')).toBe('/scans/group/reviewed');
     expect(legacyScanPath('/dashboard/scans/expert-scans')).toBe('/scans/expert/unreviewed');
-    expect(legacyScanPath('/dashboard/scans/expert-reviewed-scans')).toBe(
-      '/scans/expert/reviewed',
-    );
+    expect(legacyScanPath('/dashboard/scans/expert-reviewed-scans')).toBe('/scans/expert/reviewed');
   });
 
   // Otherwise "create" is read as a scan id and the wizard link opens a detail

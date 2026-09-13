@@ -31,10 +31,7 @@ export function sortGroupsByName(groups: readonly ScanGroupRef[]): ScanGroupRef[
 }
 
 /** Case-insensitive substring match on the display name. Blank keyword matches all. */
-export function filterGroups(
-  groups: readonly ScanGroupRef[],
-  keyword: string,
-): ScanGroupRef[] {
+export function filterGroups(groups: readonly ScanGroupRef[], keyword: string): ScanGroupRef[] {
   const needle = keyword.trim().toLowerCase();
   if (!needle) return [...groups];
   return groups.filter((group) => groupDisplayName(group).toLowerCase().includes(needle));

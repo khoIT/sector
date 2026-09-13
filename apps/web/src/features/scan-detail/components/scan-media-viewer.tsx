@@ -139,8 +139,8 @@ export function ScanMediaViewer({
       {withoutBytes > 0 ? (
         <p className="text-[12px] text-warn">
           {withoutBytes} more {withoutBytes === 1 ? 'file' : 'files'} cannot be previewed here. The
-          list below names {withoutBytes === 1 ? 'it' : 'them'} and {withoutBytes === 1 ? 'its' : 'their'}{' '}
-          status.
+          list below names {withoutBytes === 1 ? 'it' : 'them'} and{' '}
+          {withoutBytes === 1 ? 'its' : 'their'} status.
         </p>
       ) : null}
 

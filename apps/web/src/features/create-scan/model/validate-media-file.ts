@@ -48,10 +48,7 @@ export const ALLOWED_MEDIA_TYPES: readonly string[] = [
 export type MediaValidationConfidence = 'verified' | 'structure-only';
 
 export type MediaValidationFailureReason =
-  | 'corrupted'
-  | 'invalid-type'
-  | 'timeout'
-  | 'unsupported-in-browser';
+  'corrupted' | 'invalid-type' | 'timeout' | 'unsupported-in-browser';
 
 export type MediaValidationResult =
   | { ok: true; confidence: MediaValidationConfidence }
@@ -60,7 +57,10 @@ export type MediaValidationResult =
 export type ImageContainerKind = 'jpeg' | 'png' | 'gif' | 'webp' | 'bmp' | 'unknown' | 'mismatch';
 export type VideoContainerKind = 'mp4' | 'webm' | 'avi' | 'mkv' | 'unknown' | 'mismatch';
 
-export async function readFileHeader(file: File, maxBytes = HEADER_SNIFF_BYTES): Promise<Uint8Array> {
+export async function readFileHeader(
+  file: File,
+  maxBytes = HEADER_SNIFF_BYTES,
+): Promise<Uint8Array> {
   const buffer = await file.slice(0, maxBytes).arrayBuffer();
   return new Uint8Array(buffer);
 }
@@ -215,7 +215,9 @@ export function blocksMediaUpload(
   result: MediaValidationResult,
 ): result is FailedMediaValidationResult {
   if (result.ok) return false;
-  return result.reason === 'corrupted' || result.reason === 'invalid-type' || result.reason === 'timeout';
+  return (
+    result.reason === 'corrupted' || result.reason === 'invalid-type' || result.reason === 'timeout'
+  );
 }
 
 /**

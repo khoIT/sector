@@ -15,11 +15,7 @@ import {
   putDraftSession,
   readDraftFiles,
 } from './draft-blob-store';
-import {
-  DEFAULT_CREATE_SCAN_FLOW,
-  stepForFlow,
-  type CreateScanFlow,
-} from './create-scan-flow';
+import { DEFAULT_CREATE_SCAN_FLOW, stepForFlow, type CreateScanFlow } from './create-scan-flow';
 import { mintDraftId } from './draft-id';
 import { useAuth } from '@/auth/auth-context';
 
@@ -115,10 +111,7 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
       // A restored draft never lands on the confirmation step: it was either
       // finished (and cleared) or it was not. Then map it into the flow doing
       // the rendering, which may not be the one that saved it.
-      step: stepForFlow(
-        restoredDraft.step === 'submitted' ? 'submit' : restoredDraft.step,
-        flow,
-      ),
+      step: stepForFlow(restoredDraft.step === 'submitted' ? 'submit' : restoredDraft.step, flow),
       files: restoreFiles(restoredDraft),
       scanTypeId: restoredDraft.scanTypeId,
       scanTypeName: restoredDraft.scanTypeName,
@@ -357,61 +350,58 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
 
   // ─── file actions ──────────────────────────────────────────────────────────
 
-  const addFiles = useCallback(
-    async (incoming: File[]) => {
-      if (incoming.length === 0) return;
+  const addFiles = useCallback(async (incoming: File[]) => {
+    if (incoming.length === 0) return;
 
-      const failures: ValidationFailure[] = [];
-      const existingNames = new Set(
-        filesRef.current
-          .filter((file) => file.status !== 'rejected' && file.status !== 'cancelled')
-          .map((file) => file.name),
-      );
+    const failures: ValidationFailure[] = [];
+    const existingNames = new Set(
+      filesRef.current
+        .filter((file) => file.status !== 'rejected' && file.status !== 'cancelled')
+        .map((file) => file.name),
+    );
 
-      // Each file is added to state the instant IT validates, not after the
-      // whole batch does: the first clip starts transferring while the rest
-      // are still being probed, which is the entire point of the flow.
-      for (const file of incoming) {
-        // PATCH /api/scan/:id/file-details/status matches an entry by FILENAME,
-        // so two files with the same name in one study cannot be told apart.
-        if (existingNames.has(file.name)) {
-          failures.push({ name: file.name, reason: 'duplicate-name' });
-          continue;
-        }
-        existingNames.add(file.name);
+    // Each file is added to state the instant IT validates, not after the
+    // whole batch does: the first clip starts transferring while the rest
+    // are still being probed, which is the entire point of the flow.
+    for (const file of incoming) {
+      // PATCH /api/scan/:id/file-details/status matches an entry by FILENAME,
+      // so two files with the same name in one study cannot be told apart.
+      if (existingNames.has(file.name)) {
+        failures.push({ name: file.name, reason: 'duplicate-name' });
+        continue;
+      }
+      existingNames.add(file.name);
 
-        const result = await validateMediaFile(file);
+      const result = await validateMediaFile(file);
 
-        if (blocksMediaUpload(result)) {
-          failures.push({ name: file.name, reason: result.reason });
-          continue;
-        }
-
-        const accepted: DraftFile = {
-          id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          status: 'queued',
-          progress: 0,
-          storageKey: null,
-          // A structure-only file is a real scan the browser cannot decode.
-          // It uploads exactly like any other; the badge only sets expectations.
-          confidence: result.ok ? result.confidence : null,
-          error: null,
-          blob: file,
-        };
-
-        setState((previous) => ({ ...previous, files: [...previous.files, accepted] }));
-        // Durable from the moment it is accepted, so a reload two seconds later
-        // still has the bytes. Dropped again as soon as the upload completes.
-        void putDraftFile(draftIdRef.current, accepted.id, file);
+      if (blocksMediaUpload(result)) {
+        failures.push({ name: file.name, reason: result.reason });
+        continue;
       }
 
-      setValidationFailures(failures);
-    },
-    [],
-  );
+      const accepted: DraftFile = {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        status: 'queued',
+        progress: 0,
+        storageKey: null,
+        // A structure-only file is a real scan the browser cannot decode.
+        // It uploads exactly like any other; the badge only sets expectations.
+        confidence: result.ok ? result.confidence : null,
+        error: null,
+        blob: file,
+      };
+
+      setState((previous) => ({ ...previous, files: [...previous.files, accepted] }));
+      // Durable from the moment it is accepted, so a reload two seconds later
+      // still has the bytes. Dropped again as soon as the upload completes.
+      void putDraftFile(draftIdRef.current, accepted.id, file);
+    }
+
+    setValidationFailures(failures);
+  }, []);
 
   const cancelFile = useCallback((id: string) => {
     controllersRef.current.get(id)?.abort();
@@ -445,20 +435,17 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
     }));
   }, []);
 
-  const removeFile = useCallback(
-    (id: string) => {
-      controllersRef.current.get(id)?.abort();
-      // The file is gone, so its part ETags are worth nothing. The multipart
-      // upload itself is left for the bucket's incomplete-upload lifecycle
-      // rule: the legacy API exposes no abort-multipart route to call.
-      sessionsRef.current.delete(id);
-      setState((previous) => ({
-        ...previous,
-        files: previous.files.filter((file) => file.id !== id),
-      }));
-    },
-    [],
-  );
+  const removeFile = useCallback((id: string) => {
+    controllersRef.current.get(id)?.abort();
+    // The file is gone, so its part ETags are worth nothing. The multipart
+    // upload itself is left for the bucket's incomplete-upload lifecycle
+    // rule: the legacy API exposes no abort-multipart route to call.
+    sessionsRef.current.delete(id);
+    setState((previous) => ({
+      ...previous,
+      files: previous.files.filter((file) => file.id !== id),
+    }));
+  }, []);
 
   /** Re-attach bytes to an entry restored from a saved draft. */
   const reattachFile = useCallback((id: string, blob: File) => {

@@ -54,9 +54,7 @@ export function ProfilePage() {
       <Card>
         <CardHeader>
           <CardTitle>Password</CardTitle>
-          <CardDescription>
-            You will need your current password to set a new one.
-          </CardDescription>
+          <CardDescription>You will need your current password to set a new one.</CardDescription>
         </CardHeader>
         <CardContent>
           <PasswordForm />

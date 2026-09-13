@@ -6,7 +6,6 @@ import { formatBytes } from '@/lib/format';
 
 import type { DraftFile, DraftFileStatus } from '../model/draft-types';
 
-
 type StatusPresentation = {
   tone: 'neutral' | 'accent' | 'ok' | 'warn' | 'crit';
   label: string;

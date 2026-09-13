@@ -1,5 +1,14 @@
 import { isApiError, useSharedScanDetail, userDisplayName } from '@sector/api-client';
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, EmptyState, Skeleton } from '@sector/ui';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  EmptyState,
+  Skeleton,
+} from '@sector/ui';
 import { ArrowLeft } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
@@ -94,10 +103,7 @@ export function SharedScanDetailPage() {
 
             <ScanReviewSummary review={scan.review} reviewedAt={scan.reviewedAt} />
 
-            <ScanContextPanel
-              scan={scan}
-              clinicalNote={clinicalNoteFor(scan)}
-            />
+            <ScanContextPanel scan={scan} clinicalNote={clinicalNoteFor(scan)} />
 
             <ScanNotesReadonly notes={scan.notes} />
           </div>
@@ -106,4 +112,3 @@ export function SharedScanDetailPage() {
     </div>
   );
 }
-

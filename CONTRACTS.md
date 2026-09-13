@@ -11,12 +11,12 @@ parallel work produces separable diffs.
 
 ## 1. Packages and import paths
 
-| Package              | Import specifier                | What it is                                    |
-| -------------------- | ------------------------------- | --------------------------------------------- |
-| `@sector/ui`      | `import { … } from '@sector/ui'` | tokens, ThemeProvider, primitives         |
-| `@sector/ui`      | `'@sector/ui/styles.css'`    | the stylesheet. Imported ONCE, already done   |
-| `@sector/api-client` | `import { … } from '@sector/api-client'` | transport, schemas, hooks         |
-| `@sector/config`  | `'@sector/config/tsconfig.react.json'`, `'@sector/config/eslint'` | build config |
+| Package              | Import specifier                                                  | What it is                                  |
+| -------------------- | ----------------------------------------------------------------- | ------------------------------------------- |
+| `@sector/ui`         | `import { … } from '@sector/ui'`                                  | tokens, ThemeProvider, primitives           |
+| `@sector/ui`         | `'@sector/ui/styles.css'`                                         | the stylesheet. Imported ONCE, already done |
+| `@sector/api-client` | `import { … } from '@sector/api-client'`                          | transport, schemas, hooks                   |
+| `@sector/config`     | `'@sector/config/tsconfig.react.json'`, `'@sector/config/eslint'` | build config                                |
 
 Inside `apps/web`, `@/` is an alias for `apps/web/src/`.
 
@@ -35,31 +35,31 @@ bare `:root`; dark is redefined in BOTH
 `@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { } }` and
 `:root[data-theme="dark"] { }`.
 
-| Token            | Light     | Dark      | Use                                                     |
-| ---------------- | --------- | --------- | ------------------------------------------------------- |
-| `--bg`           | `#efe7da` | `#17150f` | the parchment shell behind everything                   |
-| `--surface`      | `#fdfaf4` | `#211e17` | the inset content panel (`<Card>`)                      |
-| `--surface-2`    | `#f6f0e5` | `#2b271d` | table headers, zebra rows, chips, secondary buttons     |
-| `--ink`          | `#22201c` | `#f2eadc` | body text                                               |
-| `--ink-dim`      | `#5e574c` | `#b3a996` | metadata, labels, column headers                        |
-| `--line`         | `#ddd2be` | `#3d3729` | hairline borders and dividers                           |
-| `--accent`       | `#ee7625` | `#ee7625` | **GUSI orange. FILLS ONLY.**                            |
-| `--accent-ink`   | `#2f6b73` | `#6ec3cd` | **the text-level accent**: links, active tab labels     |
-| `--accent-soft`  | `#fce9d8` | `#382718` | accent chip / selected-row background                   |
-| `--ok`           | `#2e6b41` | `#79d09a` | success text                                            |
-| `--ok-soft`      | `#dcede1` | `#1b2d22` | success pill background                                 |
-| `--warn`         | `#8a5300` | `#e8b45e` | warning text                                            |
-| `--warn-soft`    | `#faebcd` | `#33260f` | warning pill background                                 |
-| `--crit`         | `#b3261e` | `#f0928a` | error text                                              |
-| `--crit-soft`    | `#f9dedb` | `#351d1b` | error pill background                                   |
-| `--radius`       | `8px`     | `8px`     | corner radius                                           |
-| `--scan-ground`  | `#14120f` | `#0b0a08` | ultrasound media backdrop, AND the label on an `--accent` fill |
+| Token           | Light     | Dark      | Use                                                            |
+| --------------- | --------- | --------- | -------------------------------------------------------------- |
+| `--bg`          | `#efe7da` | `#17150f` | the parchment shell behind everything                          |
+| `--surface`     | `#fdfaf4` | `#211e17` | the inset content panel (`<Card>`)                             |
+| `--surface-2`   | `#f6f0e5` | `#2b271d` | table headers, zebra rows, chips, secondary buttons            |
+| `--ink`         | `#22201c` | `#f2eadc` | body text                                                      |
+| `--ink-dim`     | `#5e574c` | `#b3a996` | metadata, labels, column headers                               |
+| `--line`        | `#ddd2be` | `#3d3729` | hairline borders and dividers                                  |
+| `--accent`      | `#ee7625` | `#ee7625` | **GUSI orange. FILLS ONLY.**                                   |
+| `--accent-ink`  | `#2f6b73` | `#6ec3cd` | **the text-level accent**: links, active tab labels            |
+| `--accent-soft` | `#fce9d8` | `#382718` | accent chip / selected-row background                          |
+| `--ok`          | `#2e6b41` | `#79d09a` | success text                                                   |
+| `--ok-soft`     | `#dcede1` | `#1b2d22` | success pill background                                        |
+| `--warn`        | `#8a5300` | `#e8b45e` | warning text                                                   |
+| `--warn-soft`   | `#faebcd` | `#33260f` | warning pill background                                        |
+| `--crit`        | `#b3261e` | `#f0928a` | error text                                                     |
+| `--crit-soft`   | `#f9dedb` | `#351d1b` | error pill background                                          |
+| `--radius`      | `8px`     | `8px`     | corner radius                                                  |
+| `--scan-ground` | `#14120f` | `#0b0a08` | ultrasound media backdrop, AND the label on an `--accent` fill |
 
 ### Three rules the contrast test enforces
 
 1. **Never put the orange on text.** `--accent` is 2.78:1 on the light `--surface`
    and 2.36:1 on `--bg` — both fail AA. Use `--accent-ink` (teal) for any accented
-   text. It happens to clear AA against the *dark* surface, which is exactly the
+   text. It happens to clear AA against the _dark_ surface, which is exactly the
    trap: the rule stays fills-only so a component cannot look correct in one theme
    and be illegible in the other. The test asserts the light-palette failure so
    nobody "simplifies" the two accent tokens into one.
@@ -129,19 +129,19 @@ choice stamps it. Persisted under `localStorage['sector.theme']`, guarded.
 All are `forwardRef` and spread the rest of their native props. All take
 `className`, merged with `cn()` (clsx + tailwind-merge) so your utilities win.
 
-| Component | Props beyond the native element |
-| --- | --- |
-| `Button` | `variant?: 'primary' \| 'secondary' \| 'ghost' \| 'link' \| 'danger'` (default `primary`), `size?: 'sm' \| 'md' \| 'lg' \| 'icon'` (default `md`), `asChild?: boolean`. Defaults `type="button"` unless `asChild`. |
-| `Input` | `label?: ReactNode`, `error?: string`, `hint?: ReactNode`, `numeric?: boolean`. Renders its own `<label>`, wires `aria-invalid` / `aria-describedby`, and shows `error` (in `--crit`) or `hint`. |
-| `Badge` | `tone?: 'neutral' \| 'accent' \| 'ok' \| 'warn' \| 'crit'` (default `neutral`) |
-| `StatusPill` | `label: ReactNode`, `dot?: boolean` (default `true`), plus `tone`. A Badge with a leading tone dot. |
-| `Card` … | `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter` — plain divs, no extra props. |
-| `Table` … | `Table` (wraps itself in an `overflow-x-auto` div), `TableHead`, `TableBody`, `TableRow` (`interactive?`, `selected?`), `TableHeaderCell` (`numeric?`), `TableCell` (`numeric?`), `TableCaption`. |
-| `Dialog` … | Radix re-exports: `Dialog`, `DialogTrigger`, `DialogClose`, `DialogPortal`, `DialogOverlay`, `DialogContent` (`hideCloseButton?`), `DialogHeader`, `DialogFooter`, `DialogTitle`, `DialogDescription`. Every dialog needs a `DialogTitle`. |
-| `Tabs` … | Radix re-exports: `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`. Underline active state in `--accent-ink`. |
-| `Select` … | Radix re-exports: `Select`, `SelectTrigger` (adds `placeholder?`), `SelectValue`, `SelectContent`, `SelectItem`, `SelectGroup`, `SelectLabel`, `SelectSeparator`. |
-| `Skeleton` | plain div; give it size classes. `SkeletonTable` takes `rows?` (6), `columns?` (5), `className?`. |
-| `EmptyState` | `title: ReactNode`, `description?`, `icon?`, `action?`, `tone?: 'neutral' \| 'crit'`, `className?`. Covers nothing-yet, nothing-matched and request-failed (use `tone="crit"` + a retry button). |
+| Component    | Props beyond the native element                                                                                                                                                                                                            |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Button`     | `variant?: 'primary' \| 'secondary' \| 'ghost' \| 'link' \| 'danger'` (default `primary`), `size?: 'sm' \| 'md' \| 'lg' \| 'icon'` (default `md`), `asChild?: boolean`. Defaults `type="button"` unless `asChild`.                         |
+| `Input`      | `label?: ReactNode`, `error?: string`, `hint?: ReactNode`, `numeric?: boolean`. Renders its own `<label>`, wires `aria-invalid` / `aria-describedby`, and shows `error` (in `--crit`) or `hint`.                                           |
+| `Badge`      | `tone?: 'neutral' \| 'accent' \| 'ok' \| 'warn' \| 'crit'` (default `neutral`)                                                                                                                                                             |
+| `StatusPill` | `label: ReactNode`, `dot?: boolean` (default `true`), plus `tone`. A Badge with a leading tone dot.                                                                                                                                        |
+| `Card` …     | `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter` — plain divs, no extra props.                                                                                                                            |
+| `Table` …    | `Table` (wraps itself in an `overflow-x-auto` div), `TableHead`, `TableBody`, `TableRow` (`interactive?`, `selected?`), `TableHeaderCell` (`numeric?`), `TableCell` (`numeric?`), `TableCaption`.                                          |
+| `Dialog` …   | Radix re-exports: `Dialog`, `DialogTrigger`, `DialogClose`, `DialogPortal`, `DialogOverlay`, `DialogContent` (`hideCloseButton?`), `DialogHeader`, `DialogFooter`, `DialogTitle`, `DialogDescription`. Every dialog needs a `DialogTitle`. |
+| `Tabs` …     | Radix re-exports: `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`. Underline active state in `--accent-ink`.                                                                                                                              |
+| `Select` …   | Radix re-exports: `Select`, `SelectTrigger` (adds `placeholder?`), `SelectValue`, `SelectContent`, `SelectItem`, `SelectGroup`, `SelectLabel`, `SelectSeparator`.                                                                          |
+| `Skeleton`   | plain div; give it size classes. `SkeletonTable` takes `rows?` (6), `columns?` (5), `className?`.                                                                                                                                          |
+| `EmptyState` | `title: ReactNode`, `description?`, `icon?`, `action?`, `tone?: 'neutral' \| 'crit'`, `className?`. Covers nothing-yet, nothing-matched and request-failed (use `tone="crit"` + a retry button).                                           |
 
 Also exported: `cn`, `buttonVariants`, `badgeVariants`, and the colour math
 (`contrastRatio`, `relativeLuminance`, `meetsAA`, `parseHex`, `AA_NORMAL_TEXT`,
@@ -188,10 +188,10 @@ const scan = await client.get('/api/scan/x/get', { schema: scanSchema, signal })
 ```ts
 type RequestOptions<TOut> = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  body?: unknown;              // object -> JSON; FormData -> browser sets the boundary
-  query?: QueryInput;          // URLSearchParams-encoded; arrays become `a,b`
+  body?: unknown; // object -> JSON; FormData -> browser sets the boundary
+  query?: QueryInput; // URLSearchParams-encoded; arrays become `a,b`
   schema?: ResponseSchema<TOut>; // Zod schema for the envelope's `data`
-  requireAuth?: boolean;       // default true
+  requireAuth?: boolean; // default true
   signal?: AbortSignal;
   headers?: Record<string, string>;
 };
@@ -244,8 +244,8 @@ Constants: `DEFAULT_PAGE_SIZE` (20), `MAX_PAGE_SIZE` (100), `LIST_SEARCH_DEBOUNC
 Filter-key unions — **do not mix them up**, they are a real trap:
 
 ```ts
-ScanListFilterKey       = 'keyword' | 'status' | 'tags' | 'scanTypeKeys' | 'groupIds' | 'userIds'
-SharedScanListFilterKey = 'keyword' | 'sharedBy' | 'scanTypeIds' | 'status'
+ScanListFilterKey = 'keyword' | 'status' | 'tags' | 'scanTypeKeys' | 'groupIds' | 'userIds';
+SharedScanListFilterKey = 'keyword' | 'sharedBy' | 'scanTypeIds' | 'status';
 //                                                  ^ ids on shared scans, keys on scan routes
 ```
 
@@ -315,12 +315,12 @@ Endpoint functions (usable directly if you need them outside a hook):
 **Route paths per view** (note the missing `/get` on the expert details — that is
 the server's shape, not a typo):
 
-| view | list | detail |
-| --- | --- | --- |
-| `my` | `/api/scan/list` | `/api/scan/:id/get` |
-| `pending` | `/api/scan/pending/list` | `/api/scan/pending/:id/get` |
-| `reviewed` | `/api/scan/reviewed/list` | `/api/scan/reviewed/:id/get` |
-| `expert` | `/api/scan/expert/list` | `/api/scan/expert/:id` |
+| view              | list                             | detail                          |
+| ----------------- | -------------------------------- | ------------------------------- |
+| `my`              | `/api/scan/list`                 | `/api/scan/:id/get`             |
+| `pending`         | `/api/scan/pending/list`         | `/api/scan/pending/:id/get`     |
+| `reviewed`        | `/api/scan/reviewed/list`        | `/api/scan/reviewed/:id/get`    |
+| `expert`          | `/api/scan/expert/list`          | `/api/scan/expert/:id`          |
 | `expert-reviewed` | `/api/scan/expert/reviewed/list` | `/api/scan/expert/reviewed/:id` |
 
 ### Types and schemas
@@ -399,15 +399,15 @@ against live responses. Each one would throw on first render with parsing on.
 All of the surfaces below are implemented; the barrel
 `packages/api-client/src/index.ts` is the authoritative list of exports.
 
-| File family | Covers |
-| --- | --- |
-| `schemas/scan.ts`, `endpoints/scan.ts`, `react/use-scans.ts` | the five scan list views + detail |
-| `schemas/shared-scan*.ts`, `endpoints/shared-scan-list.ts`, `endpoints/scan-share.ts` | shared scans: list, detail, create/delete share |
-| `schemas/scan-review-submit.ts`, `endpoints/scan-review-submit.ts` | POST /api/scan/:id/review |
-| `schemas/scan-review-credits.ts`, `endpoints/scan-review-credits.ts` | the expert-review credit economy (/api/scan-review/*) |
-| `endpoints/scan-note.ts`, `react/use-scan-notes.ts` | scan notes (read + add; DELETE is not wired) |
-| `schemas/scan-type.ts`, `schemas/scan-type-filter.ts`, `endpoints/scan-type*.ts` | scan types, findings, filter options |
-| `schemas/scan-payloads.ts`, `endpoints/scan-write.ts`, `endpoints/scan-upload.ts` | create scan, file status, presign + multipart |
+| File family                                                                           | Covers                                                |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `schemas/scan.ts`, `endpoints/scan.ts`, `react/use-scans.ts`                          | the five scan list views + detail                     |
+| `schemas/shared-scan*.ts`, `endpoints/shared-scan-list.ts`, `endpoints/scan-share.ts` | shared scans: list, detail, create/delete share       |
+| `schemas/scan-review-submit.ts`, `endpoints/scan-review-submit.ts`                    | POST /api/scan/:id/review                             |
+| `schemas/scan-review-credits.ts`, `endpoints/scan-review-credits.ts`                  | the expert-review credit economy (/api/scan-review/*) |
+| `endpoints/scan-note.ts`, `react/use-scan-notes.ts`                                   | scan notes (read + add; DELETE is not wired)          |
+| `schemas/scan-type.ts`, `schemas/scan-type-filter.ts`, `endpoints/scan-type*.ts`      | scan types, findings, filter options                  |
+| `schemas/scan-payloads.ts`, `endpoints/scan-write.ts`, `endpoints/scan-upload.ts`     | create scan, file status, presign + multipart         |
 
 To add a domain: one schema file, one endpoint file, one hooks file, one export
 block in the barrel. **Do not widen a file that models a different route
@@ -476,7 +476,7 @@ The registered URLs are:
 ```
 
 Note there is no `/scans/pending`, `/scans/reviewed` or `/scans/expert-reviewed`:
-those are view *ids*, not paths. Build links from `SCAN_VAULT_PATH` and the
+those are view _ids_, not paths. Build links from `SCAN_VAULT_PATH` and the
 builders in `features/scan-detail/scan-detail-links.ts` rather than by hand.
 
 ### Adding a route
@@ -521,13 +521,13 @@ when sorting changes. `@tanstack/react-table` is installed too.
 
 ```tsx
 const {
-  status,   // 'restoring' | 'authenticated' | 'anonymous'
-  user,     // AuthUser | null
-  token,    // string | null — the client reads this itself, you rarely need it
-  signIn,   // (payload: LoginPayload) => Promise<AuthUser>; throws ApiError
-  signOut,  // () => void — clears storage and the query cache
-  can,      // (permission: string | string[]) => boolean, ALL must match
-  canAny,   // (permissions: string[]) => boolean, ANY matches
+  status, // 'restoring' | 'authenticated' | 'anonymous'
+  user, // AuthUser | null
+  token, // string | null — the client reads this itself, you rarely need it
+  signIn, // (payload: LoginPayload) => Promise<AuthUser>; throws ApiError
+  signOut, // () => void — clears storage and the query cache
+  can, // (permission: string | string[]) => boolean, ALL must match
+  canAny, // (permissions: string[]) => boolean, ANY matches
 } = useAuth();
 ```
 

@@ -17,10 +17,7 @@ export type UseSharedScanListOptions = {
 };
 
 /** Scans shared WITH the signed-in user, matched on their email server-side. */
-export function useSharedScanList({
-  filters = {},
-  enabled = true,
-}: UseSharedScanListOptions = {}) {
+export function useSharedScanList({ filters = {}, enabled = true }: UseSharedScanListOptions = {}) {
   const client = useApiClient();
 
   return useQuery<Paginated<SharedScanListItem>>({

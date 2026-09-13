@@ -1,8 +1,4 @@
-import {
-  useScanList,
-  type ListQueryInput,
-  type ScanListFilterKey,
-} from '@sector/api-client';
+import { useScanList, type ListQueryInput, type ScanListFilterKey } from '@sector/api-client';
 
 import { useAuth } from '@/auth/auth-context';
 

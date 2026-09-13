@@ -1,10 +1,6 @@
 import { z } from 'zod';
 
-import {
-  mediaFileSchema,
-  scanGroupRefSchema,
-  userBasicSchema,
-} from './common';
+import { mediaFileSchema, scanGroupRefSchema, userBasicSchema } from './common';
 import {
   fileDetailSchema,
   scanFindingSchema,

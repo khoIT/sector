@@ -34,7 +34,10 @@ export const OUTCOME_KEY: Readonly<Record<'achieved' | 'not-achieved' | 'no-outc
   'no-outcome': 'outcome.noOutcome',
 };
 
-type OutcomeInput = Pick<Scan, 'status' | 'review' | 'reviewedAt' | 'createdAt' | 'processingError'>;
+type OutcomeInput = Pick<
+  Scan,
+  'status' | 'review' | 'reviewedAt' | 'createdAt' | 'processingError'
+>;
 
 /**
  * How long the learner waited for the review.

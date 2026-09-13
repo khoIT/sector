@@ -1,5 +1,10 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { forwardRef, type ComponentPropsWithoutRef, type ElementRef, type HTMLAttributes } from 'react';
+import {
+  forwardRef,
+  type ComponentPropsWithoutRef,
+  type ElementRef,
+  type HTMLAttributes,
+} from 'react';
 
 import { cn } from '../lib/cn';
 

@@ -35,11 +35,7 @@ export const SCAN_VIEW_PERMISSION: Record<ScanListView, string> = {
  * restores the exact page, filters and sort the user left rather than dropping
  * them on page 1 of an unfiltered queue.
  */
-export function scanDetailPathFor(
-  view: ScanListView,
-  scanId: string,
-  returnUrl?: string,
-): string {
+export function scanDetailPathFor(view: ScanListView, scanId: string, returnUrl?: string): string {
   return withReturnUrl(`${SCAN_VAULT_PATH[view]}/${scanId}`, returnUrl);
 }
 

@@ -1,9 +1,6 @@
 import type { ApiClient } from '../client';
 import { paginatedSchema, type Paginated } from '../envelope';
-import {
-  sharedScanDetailSchema,
-  type SharedScanDetail,
-} from '../schemas/shared-scan-detail';
+import { sharedScanDetailSchema, type SharedScanDetail } from '../schemas/shared-scan-detail';
 import {
   createScanShareResultSchema,
   scanShareSchema,

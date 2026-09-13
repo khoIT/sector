@@ -119,7 +119,9 @@ describe.skipIf(!LIVE || !(PASSWORD || TOKEN))('create-scan live shapes', () => 
     // them. Parsing them here is what proves that, rather than asserting the
     // v5 route emits something it does not.
     const full = await client.get('/api/scan-type/list/full', {
-      schema: z.array(z.object({ items: z.array(findingDefinitionSchema).default([]) }).passthrough()),
+      schema: z.array(
+        z.object({ items: z.array(findingDefinitionSchema).default([]) }).passthrough(),
+      ),
     });
 
     const all = full.flatMap((type) => type.items);

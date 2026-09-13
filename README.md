@@ -52,17 +52,17 @@ if you need to point at an API on another origin.
 
 Sign in with a demo account (password is in the team's local setup notes):
 
-| Account                        | Role          | Surfaces | Sees                                                |
-| ------------------------------ | ------------- | -------- | --------------------------------------------------- |
-| `learner@scanvault.test`       | subscriber    | 2        | My Scans, Shared Scans                              |
-| `leader@scanvault.test`        | group_leader  | 4        | + Group Scans (unreviewed / reviewed)               |
-| `reviewer@scanvault.test`      | scan_reviewer | 6        | + Expert Scans; leads a group, so both queues fill   |
-| `reviewer-solo@scanvault.test` | scan_reviewer | 6        | same tabs, but leads no group → group queues empty   |
+| Account                        | Role          | Surfaces | Sees                                               |
+| ------------------------------ | ------------- | -------- | -------------------------------------------------- |
+| `learner@scanvault.test`       | subscriber    | 2        | My Scans, Shared Scans                             |
+| `leader@scanvault.test`        | group_leader  | 4        | + Group Scans (unreviewed / reviewed)              |
+| `reviewer@scanvault.test`      | scan_reviewer | 6        | + Expert Scans; leads a group, so both queues fill |
+| `reviewer-solo@scanvault.test` | scan_reviewer | 6        | same tabs, but leads no group → group queues empty |
 
 "Surfaces" counts the leaf lists, which is what the in-page tab bar navigates.
 Group Scans and Expert Scans are each ONE top-level tab carrying two sub-tabs, so
 a leader sees 3 top-level tabs over 4 surfaces and a reviewer 4 over 6. Each leaf
-is gated on its own permission — the legacy tab bar left the two *reviewed*
+is gated on its own permission — the legacy tab bar left the two _reviewed_
 sub-tabs ungated, which let a role holding only `view:scan:pending` open a list
 the server would 403.
 

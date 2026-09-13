@@ -1,11 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
-import {
-  getScanById,
-  getScanList,
-  getScanUserGroups,
-  getScanUsers,
-} from '../endpoints/scan';
+import { getScanById, getScanList, getScanUserGroups, getScanUsers } from '../endpoints/scan';
 import type { Paginated } from '../envelope';
 import type { ListQueryInput, ScanListFilterKey } from '../list-query';
 import { scanKeys, type ScanListView } from '../query-keys';

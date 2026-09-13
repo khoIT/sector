@@ -41,11 +41,7 @@ export function filterComboboxOptions(
  * so the first Down on a fresh popover lands on the first option rather than
  * the second.
  */
-export function nextHighlight(
-  current: number,
-  count: number,
-  direction: 1 | -1,
-): number {
+export function nextHighlight(current: number, count: number, direction: 1 | -1): number {
   if (count <= 0) return -1;
   if (current < 0) return direction === 1 ? 0 : count - 1;
   return (current + direction + count) % count;

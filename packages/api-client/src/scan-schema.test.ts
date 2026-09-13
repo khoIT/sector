@@ -86,7 +86,7 @@ describe('scanSchema groups', () => {
     expect(scanSchema.parse({ ...scan, groups: [] }).groups).toEqual([]);
   });
 
-  it('normalises the list route\'s _id key', () => {
+  it("normalises the list route's _id key", () => {
     const parsed = scanSchema.parse({ ...scan, groups: [{ _id: 'g1', name: 'Class of 2029' }] });
     expect(parsed.groups).toEqual([{ id: 'g1', name: 'Class of 2029' }]);
   });

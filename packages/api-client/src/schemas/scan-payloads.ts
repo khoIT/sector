@@ -192,7 +192,17 @@ export type UpdateFilePayload = z.infer<typeof updateFilePayloadSchema>;
  * `scanLogs` is MERGED with what the scan already holds, never replaced.
  */
 export const updateScanPayloadSchema = z.object({
-  status: z.enum(['pending', 'processing', 'submitted', 'failed', 'failed_upload', 'partially_uploaded', 'reviewed']).optional(),
+  status: z
+    .enum([
+      'pending',
+      'processing',
+      'submitted',
+      'failed',
+      'failed_upload',
+      'partially_uploaded',
+      'reviewed',
+    ])
+    .optional(),
   scanIdentifier: z.string().nullish(),
   externalPatientId: z.string().max(100).nullish(),
   scanLogs: z.array(z.string()).optional(),

@@ -1,5 +1,10 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import { forwardRef, type ComponentPropsWithoutRef, type ElementRef, type HTMLAttributes } from 'react';
+import {
+  forwardRef,
+  type ComponentPropsWithoutRef,
+  type ElementRef,
+  type HTMLAttributes,
+} from 'react';
 
 import { cn } from '../lib/cn';
 
@@ -43,9 +48,7 @@ export const DropdownMenuContent = forwardRef<
   );
 });
 
-export type DropdownMenuItemProps = ComponentPropsWithoutRef<
-  typeof DropdownMenuPrimitive.Item
-> & {
+export type DropdownMenuItemProps = ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
   /** Destructive items render in the critical tone and sit below a separator. */
   tone?: 'default' | 'crit';
 };

@@ -104,10 +104,7 @@ export function ScanTypePicker({ value, onChange, pendingTypeId }: ScanTypePicke
                       {type.name}
                     </span>
                     {pending ? (
-                      <Loader2
-                        className="h-4 w-4 shrink-0 animate-spin text-ink-dim"
-                        aria-hidden
-                      />
+                      <Loader2 className="h-4 w-4 shrink-0 animate-spin text-ink-dim" aria-hidden />
                     ) : selected ? (
                       <Check className="h-4 w-4 shrink-0 text-accent-ink" aria-hidden />
                     ) : null}

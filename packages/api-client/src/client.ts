@@ -1,11 +1,6 @@
 import type { ZodType, ZodTypeDef } from 'zod';
 
-import {
-  envelopeData,
-  envelopeDetails,
-  envelopeMessage,
-  isErrorEnvelope,
-} from './envelope';
+import { envelopeData, envelopeDetails, envelopeMessage, isErrorEnvelope } from './envelope';
 import { ApiError, isAbortError } from './errors';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -72,7 +67,10 @@ export interface ApiClient {
   get<TOut = unknown>(path: string, options?: Omit<RequestOptions<TOut>, 'method'>): Promise<TOut>;
   post<TOut = unknown>(path: string, options?: Omit<RequestOptions<TOut>, 'method'>): Promise<TOut>;
   put<TOut = unknown>(path: string, options?: Omit<RequestOptions<TOut>, 'method'>): Promise<TOut>;
-  patch<TOut = unknown>(path: string, options?: Omit<RequestOptions<TOut>, 'method'>): Promise<TOut>;
+  patch<TOut = unknown>(
+    path: string,
+    options?: Omit<RequestOptions<TOut>, 'method'>,
+  ): Promise<TOut>;
   del<TOut = unknown>(path: string, options?: Omit<RequestOptions<TOut>, 'method'>): Promise<TOut>;
 }
 
@@ -141,7 +139,8 @@ export function createClient(options: CreateClientOptions = {}): ApiClient {
         method,
         headers: finalHeaders,
         signal,
-        body: body === undefined ? undefined : isFormData ? (body as FormData) : JSON.stringify(body),
+        body:
+          body === undefined ? undefined : isFormData ? (body as FormData) : JSON.stringify(body),
       });
     } catch (error) {
       // A cancelled request is not a failure. Re-throw untouched so React Query

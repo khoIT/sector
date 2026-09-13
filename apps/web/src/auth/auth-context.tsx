@@ -30,9 +30,7 @@ import { sessionStore, setUnauthorizedHandler } from '@/lib/api';
 
 export type AuthStatus =
   /** Boot-time session restore is in flight. Render nothing route-dependent. */
-  | 'restoring'
-  | 'authenticated'
-  | 'anonymous';
+  'restoring' | 'authenticated' | 'anonymous';
 
 export type AuthContextValue = {
   status: AuthStatus;

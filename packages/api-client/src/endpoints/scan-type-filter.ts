@@ -1,10 +1,7 @@
 import { z } from 'zod';
 
 import type { ApiClient } from '../client';
-import {
-  scanTypeFilterOptionSchema,
-  type ScanTypeFilterOption,
-} from '../schemas/scan-type-filter';
+import { scanTypeFilterOptionSchema, type ScanTypeFilterOption } from '../schemas/scan-type-filter';
 
 const scanTypeFilterOptionsSchema = z.array(scanTypeFilterOptionSchema);
 

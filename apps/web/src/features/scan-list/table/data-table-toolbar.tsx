@@ -75,7 +75,10 @@ export function DataTableToolbar<TRow>({
 
       {typeof totalItems === 'number' ? (
         <span className="hidden text-body text-ink-dim sm:inline">
-          {t('toolbar.scanCount', { count: totalItems, formattedCount: totalItems.toLocaleString() })}
+          {t('toolbar.scanCount', {
+            count: totalItems,
+            formattedCount: totalItems.toLocaleString(),
+          })}
         </span>
       ) : null}
 

@@ -35,9 +35,7 @@ export function ThemeSwitcher({ className }: { className?: string }) {
             type="button"
             onClick={() => setTheme(value)}
             aria-pressed={active}
-            title={
-              value === 'system' ? `System (currently ${resolvedTheme})` : `${label} theme`
-            }
+            title={value === 'system' ? `System (currently ${resolvedTheme})` : `${label} theme`}
             className={cn(
               'flex h-6 w-7 items-center justify-center rounded-[5px] transition-colors outline-none',
               'focus-visible:ring-2 focus-visible:ring-accent-ink focus-visible:ring-offset-1',

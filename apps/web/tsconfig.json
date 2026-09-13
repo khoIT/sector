@@ -1,20 +1,12 @@
 {
   "extends": "@sector/config/tsconfig.react.json",
   "compilerOptions": {
-    "types": [
-      "vite/client"
-    ],
+    "types": ["vite/client"],
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "src/**/*",
-    "vite.config.ts",
-    "vitest.config.ts"
-  ]
+  "include": ["src/**/*", "vite.config.ts", "vitest.config.ts"]
 }

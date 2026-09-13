@@ -25,12 +25,7 @@ export type DeleteScanDialogProps = {
  * lets the user do it, and telling someone their work is recoverable when they
  * have no way to recover it is worse than telling them nothing.
  */
-export function DeleteScanDialog({
-  scanId,
-  scanTitle,
-  open,
-  onOpenChange,
-}: DeleteScanDialogProps) {
+export function DeleteScanDialog({ scanId, scanTitle, open, onOpenChange }: DeleteScanDialogProps) {
   const { t } = useTranslation();
   const deleteScan = useDeleteScanMutation();
 
@@ -61,9 +56,7 @@ export function DeleteScanDialog({
 
         {deleteScan.isError ? (
           <p className="rounded-token border border-crit/25 bg-crit-soft px-3 py-2 text-body text-crit">
-            {isApiError(deleteScan.error)
-              ? deleteScan.error.message
-              : t('deleteDialog.error')}
+            {isApiError(deleteScan.error) ? deleteScan.error.message : t('deleteDialog.error')}
           </p>
         ) : null}
 

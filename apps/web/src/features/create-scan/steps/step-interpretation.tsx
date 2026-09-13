@@ -178,7 +178,6 @@ export function StepInterpretation({
           them, but a reviewer will not know whether they were normal or not assessed.
         </InlineNotice>
       ) : null}
-
     </div>
   );
 }

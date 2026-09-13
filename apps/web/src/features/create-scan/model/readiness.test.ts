@@ -43,9 +43,9 @@ describe('readinessFor — files', () => {
   });
 
   it('is done only when every tracked file is in storage', () => {
-    expect(itemFor({ ...EMPTY, files: [file('stored', 'a'), file('stored', 'b')] }, 'files')).toMatchObject(
-      { state: 'done', detail: '2' },
-    );
+    expect(
+      itemFor({ ...EMPTY, files: [file('stored', 'a'), file('stored', 'b')] }, 'files'),
+    ).toMatchObject({ state: 'done', detail: '2' });
   });
 
   it('is partial while a file is still moving', () => {
@@ -55,9 +55,9 @@ describe('readinessFor — files', () => {
   });
 
   it('counts a failed or detached file as not yet safe to submit', () => {
-    expect(itemFor({ ...EMPTY, files: [file('stored', 'a'), file('failed', 'b')] }, 'files')).toMatchObject(
-      { state: 'partial' },
-    );
+    expect(
+      itemFor({ ...EMPTY, files: [file('stored', 'a'), file('failed', 'b')] }, 'files'),
+    ).toMatchObject({ state: 'partial' });
     expect(
       itemFor({ ...EMPTY, files: [file('stored', 'a'), file('detached', 'b')] }, 'files'),
     ).toMatchObject({ state: 'partial' });
@@ -113,7 +113,12 @@ describe('readinessFor — findings', () => {
   it('is done on a type whose rows are all optional once any is answered', () => {
     expect(
       itemFor(
-        { ...EMPTY, scanTypeId: 't', definitions: [definition({ key: 'c' })], findings: { c: 'X' } },
+        {
+          ...EMPTY,
+          scanTypeId: 't',
+          definitions: [definition({ key: 'c' })],
+          findings: { c: 'X' },
+        },
         'findings',
       ),
     ).toMatchObject({ state: 'done', detail: '1' });

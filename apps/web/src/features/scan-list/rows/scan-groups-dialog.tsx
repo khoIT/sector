@@ -36,12 +36,7 @@ export type ScanGroupsDialogProps = {
  * the server's batch loader applies no limit — so this is a pure expansion of
  * data the table already has.
  */
-export function ScanGroupsDialog({
-  groups,
-  scanTitle,
-  open,
-  onOpenChange,
-}: ScanGroupsDialogProps) {
+export function ScanGroupsDialog({ groups, scanTitle, open, onOpenChange }: ScanGroupsDialogProps) {
   const { t } = useTranslation();
   const [keyword, setKeyword] = useState('');
   const filterId = useId();

@@ -4,7 +4,12 @@ import { useState, type FormEvent } from 'react';
 
 import { useAuth } from '@/auth/auth-context';
 
-import { profileChanged, validateProfile, type FieldErrors, type ProfileField } from './account-form-model';
+import {
+  profileChanged,
+  validateProfile,
+  type FieldErrors,
+  type ProfileField,
+} from './account-form-model';
 import { AccountField, FormNotice } from './account-form-parts';
 
 /**

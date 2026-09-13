@@ -1,11 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import {
-  fetchScanFiles,
-  safeFilename,
-  uniqueFilenames,
-  zipFilename,
-} from './download-scan-files';
+import { fetchScanFiles, safeFilename, uniqueFilenames, zipFilename } from './download-scan-files';
 import { proxiedMediaUrl } from './media-proxy-url';
 
 describe('uniqueFilenames', () => {
@@ -68,9 +63,7 @@ describe('fetchScanFiles', () => {
   });
 
   it('keeps the files that worked and names the ones that did not', async () => {
-    const fetchImpl = vi.fn(async (url: string) =>
-      url.endsWith('2') ? forbidden : ok('bytes'),
-    );
+    const fetchImpl = vi.fn(async (url: string) => (url.endsWith('2') ? forbidden : ok('bytes')));
     const result = await fetchScanFiles(
       [
         { url: 'https://cdn/1', filename: 'a.png' },

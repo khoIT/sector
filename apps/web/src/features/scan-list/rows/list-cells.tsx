@@ -116,10 +116,7 @@ export function TitleCell({
         {hasNotes ? <Badge tone="accent">{t('row.asked')}</Badge> : null}
 
         {findingSummary.gaps > 0 ? (
-          <Badge
-            tone="warn"
-            title={t('row.notExaminedTitle', { count: findingSummary.gaps })}
-          >
+          <Badge tone="warn" title={t('row.notExaminedTitle', { count: findingSummary.gaps })}>
             {t('row.notExamined', { count: findingSummary.gaps })}
           </Badge>
         ) : null}
@@ -192,10 +189,7 @@ export function StatusCell({ status }: { status: ScanStatus }) {
   const key = STATUS_KEY[status];
 
   return (
-    <StatusPill
-      tone={scanStatusTone(status)}
-      label={key ? t(key) : SCAN_STATUS_LABEL[status]}
-    />
+    <StatusPill tone={scanStatusTone(status)} label={key ? t(key) : SCAN_STATUS_LABEL[status]} />
   );
 }
 
@@ -317,12 +311,7 @@ export function GroupsCell({ groups, scanTitle }: { groups: ScanGroupRef[]; scan
         the next refetch would reopen it over the table on its own.
       */}
       {open ? (
-        <ScanGroupsDialog
-          groups={groups}
-          scanTitle={scanTitle}
-          open
-          onOpenChange={setOpen}
-        />
+        <ScanGroupsDialog groups={groups} scanTitle={scanTitle} open onOpenChange={setOpen} />
       ) : null}
     </>
   );

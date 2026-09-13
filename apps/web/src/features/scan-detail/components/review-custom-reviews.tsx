@@ -50,7 +50,10 @@ export function ReviewCustomReviews({
           {entries.map((entry, index) => (
             // Index-keyed on purpose: these rows have no id and are identified
             // only by position, which is also how the server stores them.
-            <li key={index} className="space-y-2 rounded-token border border-line bg-surface-2 p-2.5">
+            <li
+              key={index}
+              className="space-y-2 rounded-token border border-line bg-surface-2 p-2.5"
+            >
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-medium uppercase tracking-wide text-ink-dim">
                   Question {index + 1}

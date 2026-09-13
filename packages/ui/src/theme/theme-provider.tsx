@@ -41,8 +41,7 @@ function readStoredTheme(): ThemePreference {
 }
 
 function systemTheme(): ResolvedTheme {
-  return typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches
+  return typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches
     ? 'dark'
     : 'light';
 }

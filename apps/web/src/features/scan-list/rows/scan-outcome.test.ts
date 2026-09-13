@@ -18,7 +18,10 @@ function review(partial: Partial<ScanReview> = {}): ScanReview {
   };
 }
 
-type OutcomeInput = Pick<Scan, 'status' | 'review' | 'reviewedAt' | 'createdAt' | 'processingError'>;
+type OutcomeInput = Pick<
+  Scan,
+  'status' | 'review' | 'reviewedAt' | 'createdAt' | 'processingError'
+>;
 
 function scan(partial: Partial<OutcomeInput> = {}): OutcomeInput {
   return {
@@ -34,9 +37,9 @@ function scan(partial: Partial<OutcomeInput> = {}): OutcomeInput {
 describe('scanOutcome', () => {
   it('says whether the learner passed, not merely that someone looked', () => {
     expect(scanOutcome(scan()).kind).toBe('achieved');
-    expect(
-      scanOutcome(scan({ review: review({ competencyMeasure: 'not_achieved' }) })).kind,
-    ).toBe('not-achieved');
+    expect(scanOutcome(scan({ review: review({ competencyMeasure: 'not_achieved' }) })).kind).toBe(
+      'not-achieved',
+    );
   });
 
   it('reports no outcome rather than a failure when the field is unreadable', () => {
@@ -65,9 +68,9 @@ describe('scanOutcome', () => {
   });
 
   it('surfaces why an upload failed, when the ingest worker recorded it', () => {
-    expect(scanOutcome(scan({ status: 'failed', processingError: 'De-identification failed' }))).toEqual(
-      { kind: 'failed', error: 'De-identification failed' },
-    );
+    expect(
+      scanOutcome(scan({ status: 'failed', processingError: 'De-identification failed' })),
+    ).toEqual({ kind: 'failed', error: 'De-identification failed' });
   });
 
   it('leaves a pre-existing failure as a bare pill rather than an empty line', () => {
@@ -91,7 +94,9 @@ describe('scanOutcome', () => {
 
 describe('reviewTurnaroundMs', () => {
   it('measures submission to review', () => {
-    expect(reviewTurnaroundMs('2026-01-01T00:00:00.000Z', '2026-01-08T00:00:00.000Z')).toBe(7 * DAY);
+    expect(reviewTurnaroundMs('2026-01-01T00:00:00.000Z', '2026-01-08T00:00:00.000Z')).toBe(
+      7 * DAY,
+    );
   });
 
   it('clamps the three rows reviewed before they were created', () => {

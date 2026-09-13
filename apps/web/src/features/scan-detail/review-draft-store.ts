@@ -46,7 +46,10 @@ export function readReviewDraft(scanId: string): ReviewDraft | null {
   }
 }
 
-export function writeReviewDraft(scanId: string, draft: Omit<ReviewDraft, 'savedAt'>): number | null {
+export function writeReviewDraft(
+  scanId: string,
+  draft: Omit<ReviewDraft, 'savedAt'>,
+): number | null {
   const savedAt = Date.now();
   try {
     window.localStorage.setItem(keyFor(scanId), JSON.stringify({ ...draft, savedAt }));
@@ -73,5 +76,7 @@ export function draftHasContent(draft: Omit<ReviewDraft, 'savedAt'>): boolean {
   if (draft.teachingPoints?.trim()) return true;
   if (draft.teachingContent?.trim()) return true;
   if (draft.note?.trim()) return true;
-  return Boolean(draft.customReviews?.some((entry) => entry.question.trim() || entry.answer.trim()));
+  return Boolean(
+    draft.customReviews?.some((entry) => entry.question.trim() || entry.answer.trim()),
+  );
 }

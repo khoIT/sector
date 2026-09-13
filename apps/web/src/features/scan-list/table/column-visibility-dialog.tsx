@@ -57,7 +57,9 @@ export function ColumnVisibilityDialog<TRow>({
           <Columns3 className="h-4 w-4" aria-hidden />
           {t('toolbar.columns')}
           {hiddenCount > 0 ? (
-            <span className="sv-num text-ink-dim">{t('toolbar.columnsHidden', { count: hiddenCount })}</span>
+            <span className="sv-num text-ink-dim">
+              {t('toolbar.columnsHidden', { count: hiddenCount })}
+            </span>
           ) : null}
         </Button>
       </DialogTrigger>

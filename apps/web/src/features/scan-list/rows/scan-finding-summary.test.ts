@@ -54,7 +54,11 @@ describe('isGapFinding', () => {
 describe('summariseFindings', () => {
   it('counts every finding and the gaps among them', () => {
     expect(
-      summariseFindings([finding('Normal', 'a'), finding('Not Examined', 'b'), finding('Present', 'c')]),
+      summariseFindings([
+        finding('Normal', 'a'),
+        finding('Not Examined', 'b'),
+        finding('Present', 'c'),
+      ]),
     ).toEqual({ count: 3, gaps: 1 });
   });
 

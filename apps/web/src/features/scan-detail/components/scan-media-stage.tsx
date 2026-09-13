@@ -84,7 +84,11 @@ export function ScanMediaStage({ file }: { file: StageSource }) {
   return (
     <StageMessage
       icon={<FileWarning className="h-6 w-6" aria-hidden />}
-      title={failed ? `This browser cannot play ${format || 'this file'}` : `Cannot preview ${format || 'this file type'}`}
+      title={
+        failed
+          ? `This browser cannot play ${format || 'this file'}`
+          : `Cannot preview ${format || 'this file type'}`
+      }
       detail="The file is stored and can be downloaded, but the browser cannot display it inline."
       action={<OpenOriginal url={file.url} />}
     />

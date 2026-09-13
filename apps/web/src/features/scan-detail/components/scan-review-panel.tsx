@@ -56,7 +56,8 @@ export function ScanReviewPanel({ scan, isExpertScan, onSubmitted }: ScanReviewP
       technicalFeed: draft.technicalFeed ?? '',
       teachingPoints: draft.teachingPoints ?? '',
       note: draft.note ?? '',
-      customReviews: draft.customReviews?.map((entry) => ({ ...entry })) ?? emptyForm(scan).customReviews,
+      customReviews:
+        draft.customReviews?.map((entry) => ({ ...entry })) ?? emptyForm(scan).customReviews,
     };
   });
   const [restoredAt] = useState(() => readReviewDraft(scan.id)?.savedAt ?? null);
@@ -123,12 +124,15 @@ export function ScanReviewPanel({ scan, isExpertScan, onSubmitted }: ScanReviewP
     <Card>
       <CardHeader>
         <CardTitle>{isExpertScan ? 'Expert review' : 'Review'}</CardTitle>
-        <DraftStatus savedAt={savedAt} onDiscard={() => {
-          clearReviewDraft(scan.id);
-          setForm(emptyForm(scan));
-          setSavedAt(null);
-          setShowErrors(false);
-        }} />
+        <DraftStatus
+          savedAt={savedAt}
+          onDiscard={() => {
+            clearReviewDraft(scan.id);
+            setForm(emptyForm(scan));
+            setSavedAt(null);
+            setShowErrors(false);
+          }}
+        />
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -230,7 +234,8 @@ function DraftStatus({ savedAt, onDiscard }: { savedAt: number | null; onDiscard
 
   return (
     <span className="flex items-center gap-2 text-[11px] text-ink-dim">
-      Draft saved {new Date(savedAt).toLocaleTimeString(undefined, {
+      Draft saved{' '}
+      {new Date(savedAt).toLocaleTimeString(undefined, {
         hour: '2-digit',
         minute: '2-digit',
       })}

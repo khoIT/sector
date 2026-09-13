@@ -77,6 +77,8 @@ describe('parsePersistedDraft — the step a draft was saved on', () => {
   it('still rejects a payload that is genuinely not a draft', () => {
     expect(parsePersistedDraft({ version: 1 })).toBeNull();
     expect(parsePersistedDraft(null)).toBeNull();
-    expect(parsePersistedDraft({ ...preMigrationDraft('study'), draftId: 'not-a-draft-id' })).toBeNull();
+    expect(
+      parsePersistedDraft({ ...preMigrationDraft('study'), draftId: 'not-a-draft-id' }),
+    ).toBeNull();
   });
 });

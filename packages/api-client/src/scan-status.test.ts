@@ -11,7 +11,11 @@ describe('hasProcessingScan', () => {
 
   it('is true when any row is processing', () => {
     expect(
-      hasProcessingScan([{ status: 'submitted' }, { status: 'processing' }, { status: 'reviewed' }]),
+      hasProcessingScan([
+        { status: 'submitted' },
+        { status: 'processing' },
+        { status: 'reviewed' },
+      ]),
     ).toBe(true);
   });
 

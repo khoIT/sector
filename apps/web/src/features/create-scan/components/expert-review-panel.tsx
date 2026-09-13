@@ -1,14 +1,5 @@
 import { useScanReviewCredits, type ScanReviewCredits } from '@sector/api-client';
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Skeleton,
-  cn,
-} from '@sector/ui';
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Skeleton, cn } from '@sector/ui';
 import { CreditCard, Sparkles, X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -31,7 +22,11 @@ type CreditSource = {
   credits: number;
 };
 
-function creditSources(userId: string, userName: string, credits: ScanReviewCredits): CreditSource[] {
+function creditSources(
+  userId: string,
+  userName: string,
+  credits: ScanReviewCredits,
+): CreditSource[] {
   return [
     {
       key: `user:${userId}`,
@@ -74,8 +69,8 @@ export function ExpertReviewPanel({ userId, userName, value, onChange }: ExpertR
         <div>
           <CardTitle>Expert review</CardTitle>
           <p className="mt-0.5 text-[12px] text-ink-dim">
-            Optional. A GUSI expert reviews the study in addition to any group reviewers. One
-            credit per review.
+            Optional. A GUSI expert reviews the study in addition to any group reviewers. One credit
+            per review.
           </p>
         </div>
         <Button variant="secondary" size="sm" onClick={() => setPurchaseOpen(true)}>

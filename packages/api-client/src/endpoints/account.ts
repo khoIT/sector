@@ -81,9 +81,6 @@ export async function uploadAccountPhoto(
  * Restores the shared default avatar rather than clearing the field, so the
  * response's `url` is the placeholder every account without a photo gets.
  */
-export async function removeAccountPhoto(
-  client: ApiClient,
-  signal?: AbortSignal,
-): Promise<void> {
+export async function removeAccountPhoto(client: ApiClient, signal?: AbortSignal): Promise<void> {
   await client.del('/api/account/photo', { signal });
 }

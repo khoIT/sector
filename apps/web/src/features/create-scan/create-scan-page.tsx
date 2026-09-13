@@ -66,9 +66,7 @@ export function CreateScanPage() {
       <header className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h1 className="text-[18px] font-semibold tracking-tight text-ink">
-              Create scan study
-            </h1>
+            <h1 className="text-[18px] font-semibold tracking-tight text-ink">Create scan study</h1>
             <p className="mt-0.5 text-[12px] text-ink-dim">
               Files upload while you work. Submitting records the details against them.
             </p>
@@ -119,8 +117,8 @@ export function CreateScanPage() {
           }
         >
           A saved draft was found in this browser. Files that finished uploading are already in
-          storage, and anything that was still transferring picks up where it stopped. Only a
-          file this browser no longer holds has to be chosen again — those are listed as such.
+          storage, and anything that was still transferring picks up where it stopped. Only a file
+          this browser no longer holds has to be chosen again — those are listed as such.
         </InlineNotice>
       ) : null}
 

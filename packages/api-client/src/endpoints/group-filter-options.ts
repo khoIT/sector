@@ -1,8 +1,5 @@
 import type { ApiClient } from '../client';
-import {
-  groupFilterOptionsPageSchema,
-  type GroupFilterOptionsPage,
-} from '../schemas/group-filter';
+import { groupFilterOptionsPageSchema, type GroupFilterOptionsPage } from '../schemas/group-filter';
 
 export type GroupFilterOptionsQuery = {
   /** Matched against the group name, case-insensitively, on the server. */

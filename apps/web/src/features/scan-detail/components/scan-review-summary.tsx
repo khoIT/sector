@@ -126,9 +126,7 @@ function Block({
       <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-dim">
         {label}
       </h3>
-      <p className="whitespace-pre-wrap break-words text-body text-ink">
-        {value?.trim() || '—'}
-      </p>
+      <p className="whitespace-pre-wrap break-words text-body text-ink">{value?.trim() || '—'}</p>
     </section>
   );
 }

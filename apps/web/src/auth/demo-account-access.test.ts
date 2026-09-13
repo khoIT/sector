@@ -69,10 +69,7 @@ describe('demo account tab visibility', () => {
     expect(visibleScanViews(LEADER)).toEqual(['my', 'shared', 'pending', 'reviewed']);
 
     const group = visibleScanTabs(LEADER).find((tab) => tab.id === 'group');
-    expect(group?.subTabs.map((sub) => sub.labelKey)).toEqual([
-      'tabs.unreviewed',
-      'tabs.reviewed',
-    ]);
+    expect(group?.subTabs.map((sub) => sub.labelKey)).toEqual(['tabs.unreviewed', 'tabs.reviewed']);
     // No expert permission, so the tab must not exist at all.
     expect(visibleScanTabs(LEADER).some((tab) => tab.id === 'expert')).toBe(false);
   });

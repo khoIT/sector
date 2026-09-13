@@ -116,9 +116,7 @@ export function missingRequiredFindings(
 }
 
 /** Answers as the create payload wants them: blank rows dropped. */
-export function toFindingsPayload(
-  answers: FindingAnswers,
-): Array<{ key: string; value: string }> {
+export function toFindingsPayload(answers: FindingAnswers): Array<{ key: string; value: string }> {
   return Object.entries(answers)
     .filter(([, value]) => value !== undefined && value !== '')
     .map(([key, value]) => ({ key, value }));

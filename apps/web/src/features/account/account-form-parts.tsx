@@ -51,13 +51,7 @@ export function AccountField({
   );
 }
 
-export function FormNotice({
-  tone,
-  children,
-}: {
-  tone: 'ok' | 'crit';
-  children: ReactNode;
-}) {
+export function FormNotice({ tone, children }: { tone: 'ok' | 'crit'; children: ReactNode }) {
   return (
     <p
       role={tone === 'crit' ? 'alert' : 'status'}

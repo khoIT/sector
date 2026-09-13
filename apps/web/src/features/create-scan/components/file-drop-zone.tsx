@@ -66,7 +66,12 @@ export function FileDropZone({ onFiles, disabled, className }: FileDropZoneProps
           event.target.value = '';
         }}
       />
-      <Button variant="secondary" size="sm" disabled={disabled} onClick={() => inputRef.current?.click()}>
+      <Button
+        variant="secondary"
+        size="sm"
+        disabled={disabled}
+        onClick={() => inputRef.current?.click()}
+      >
         Browse files
       </Button>
     </div>

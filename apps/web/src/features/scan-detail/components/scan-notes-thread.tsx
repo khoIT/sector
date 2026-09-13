@@ -61,9 +61,7 @@ export function ScanNotesThread({ scanId, canRead, canAdd }: ScanNotesThreadProp
 
       <CardContent className="space-y-3">
         {!canRead ? (
-          <p className="text-body text-ink-dim">
-            Your role cannot read the notes on this scan.
-          </p>
+          <p className="text-body text-ink-dim">Your role cannot read the notes on this scan.</p>
         ) : notesQuery.isPending ? (
           <div className="space-y-2">
             <Skeleton className="h-12 w-full" />
@@ -116,7 +114,11 @@ export function ScanNotesThread({ scanId, canRead, canAdd }: ScanNotesThreadProp
               }
             />
             <div className="flex items-center justify-end gap-2">
-              <Button size="sm" disabled={!draft.trim() || addNote.isPending} onClick={() => void submit()}>
+              <Button
+                size="sm"
+                disabled={!draft.trim() || addNote.isPending}
+                onClick={() => void submit()}
+              >
                 <MessagesSquare className="h-4 w-4" aria-hidden />
                 {addNote.isPending ? 'Adding…' : 'Add note'}
               </Button>

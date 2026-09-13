@@ -115,7 +115,9 @@ export function ScanSharePanel({ scanId, currentUserId }: ScanSharePanelProps) {
                     disabled={deleteShare.isPending}
                     // The failure is rendered from deleteShare.error below;
                     // the catch only keeps the rejection from going unhandled.
-                    onClick={() => void deleteShare.mutateAsync({ shareId: share.id }).catch(() => {})}
+                    onClick={() =>
+                      void deleteShare.mutateAsync({ shareId: share.id }).catch(() => {})
+                    }
                   >
                     <Trash2 className="h-4 w-4 text-crit" aria-hidden />
                   </Button>
@@ -179,9 +181,7 @@ function ShareOutcome({ result }: { result: CreateScanShareResult }) {
         <p className="text-ok">Shared with {result.sharedScans.length} recipient(s).</p>
       ) : null}
       {result.duplicateEmails.length > 0 ? (
-        <p className="text-warn">
-          Already had access: {result.duplicateEmails.join(', ')}
-        </p>
+        <p className="text-warn">Already had access: {result.duplicateEmails.join(', ')}</p>
       ) : null}
       {result.notFoundEmails.length > 0 ? (
         <p className="text-warn">

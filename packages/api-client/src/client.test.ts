@@ -33,7 +33,9 @@ describe('envelope unwrapping', () => {
     // POST /api/scan-review/request answers `{message}` with no `status` on the
     // group-leader branch. The legacy client derived success from
     // status === 'success' and so reported a successful request as a failure.
-    const fetchImpl = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ message: 'Review requested' }));
+    const fetchImpl = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) =>
+      jsonResponse({ message: 'Review requested' }),
+    );
     const client = clientWith(fetchImpl as unknown as typeof fetch);
 
     await expect(client.post('/api/scan-review/request')).resolves.toBeUndefined();
@@ -87,9 +89,7 @@ describe('error handling', () => {
           statusCode: 400,
           status: 'error',
           message: 'Refresh Token is required',
-          details: [
-            { code: 'invalid_type', path: ['query', 'refreshToken'], message: 'Required' },
-          ],
+          details: [{ code: 'invalid_type', path: ['query', 'refreshToken'], message: 'Required' }],
         },
         400,
       ),
@@ -164,7 +164,9 @@ describe('error handling', () => {
 
 describe('request construction', () => {
   it('sends the bearer token and JSON content type', async () => {
-    const fetchImpl = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ status: 'success', data: null }));
+    const fetchImpl = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) =>
+      jsonResponse({ status: 'success', data: null }),
+    );
     const client = clientWith(fetchImpl as unknown as typeof fetch, { getToken: () => 'jwt-123' });
 
     await client.post('/api/login', { body: { userEmail: 'a@b.c' } });
@@ -178,7 +180,9 @@ describe('request construction', () => {
   });
 
   it('omits Content-Type for FormData so the browser sets the boundary', async () => {
-    const fetchImpl = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ status: 'success', data: null }));
+    const fetchImpl = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) =>
+      jsonResponse({ status: 'success', data: null }),
+    );
     const client = clientWith(fetchImpl as unknown as typeof fetch);
 
     await client.post('/api/scan/upload', { body: new FormData() });
@@ -188,7 +192,9 @@ describe('request construction', () => {
   });
 
   it('prefixes baseUrl and appends the encoded query', async () => {
-    const fetchImpl = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ status: 'success', data: null }));
+    const fetchImpl = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) =>
+      jsonResponse({ status: 'success', data: null }),
+    );
     const client = clientWith(fetchImpl as unknown as typeof fetch, {
       baseUrl: 'http://localhost:5001',
     });

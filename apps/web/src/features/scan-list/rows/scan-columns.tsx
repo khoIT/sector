@@ -168,7 +168,10 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
               isOwnScan={Boolean(user) && scan.user.id === user?.id}
             />
           ) : (
-            <OpenScanAction to={to} label={reviewed ? t('actions.openReview') : t('actions.open')} />
+            <OpenScanAction
+              to={to}
+              label={reviewed ? t('actions.openReview') : t('actions.open')}
+            />
           )}
 
           <ScanRowMenu

@@ -1,14 +1,7 @@
 import type { ApiClient } from '../client';
 import { paginatedSchema, type Paginated } from '../envelope';
-import {
-  buildListQuery,
-  type ListQueryInput,
-  type SharedScanListFilterKey,
-} from '../list-query';
-import {
-  sharedScanListItemSchema,
-  type SharedScanListItem,
-} from '../schemas/shared-scan-list';
+import { buildListQuery, type ListQueryInput, type SharedScanListFilterKey } from '../list-query';
+import { sharedScanListItemSchema, type SharedScanListItem } from '../schemas/shared-scan-list';
 
 const paginatedSharedScanSchema = paginatedSchema(sharedScanListItemSchema);
 

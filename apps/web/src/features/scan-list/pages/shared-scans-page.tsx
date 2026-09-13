@@ -42,10 +42,7 @@ export function SharedScansPage() {
   const surface = useListSurface('shared', DEFAULT_SORT, defaultHidden);
   const { url, debouncedKeyword, hiddenColumns, returnUrl } = surface;
 
-  const columns = useMemo(
-    () => sharedScanColumns({ returnUrl, user, t }),
-    [returnUrl, user, t],
-  );
+  const columns = useMemo(() => sharedScanColumns({ returnUrl, user, t }), [returnUrl, user, t]);
   const shown = useMemo(() => visibleColumns(columns, hiddenColumns), [columns, hiddenColumns]);
 
   const query = useSharedScanList({

@@ -110,7 +110,10 @@ export function GroupRoutingPanel({ selected, onChange }: GroupRoutingPanelProps
                     </span>
 
                     {wide ? (
-                      <Badge tone="neutral" title="A parent group — selecting it shares with everyone below it.">
+                      <Badge
+                        tone="neutral"
+                        title="A parent group — selecting it shares with everyone below it."
+                      >
                         <Users className="h-3 w-3" aria-hidden /> wider group
                       </Badge>
                     ) : null}

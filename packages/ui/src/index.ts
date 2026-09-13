@@ -108,10 +108,14 @@ export {
 
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './components/tabs';
 
-export { Skeleton, SkeletonTable, type SkeletonProps, type SkeletonTableProps } from './components/skeleton';
+export {
+  Skeleton,
+  SkeletonTable,
+  type SkeletonProps,
+  type SkeletonTableProps,
+} from './components/skeleton';
 
 export { EmptyState, type EmptyStateProps } from './components/empty-state';
 export { Textarea, type TextareaProps } from './components/textarea';
 
 export { Progress, type ProgressProps, type ProgressTone } from './components/progress';
-

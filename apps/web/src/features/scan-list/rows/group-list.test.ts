@@ -22,11 +22,7 @@ describe('groupDisplayName', () => {
 
 describe('sortGroupsByName', () => {
   it('sorts alphabetically without regard to case', () => {
-    const sorted = sortGroupsByName([
-      group('c', 'zebra'),
-      group('a', 'Alpha'),
-      group('b', 'beta'),
-    ]);
+    const sorted = sortGroupsByName([group('c', 'zebra'), group('a', 'Alpha'), group('b', 'beta')]);
     expect(sorted.map((g) => g.id)).toEqual(['a', 'b', 'c']);
   });
 

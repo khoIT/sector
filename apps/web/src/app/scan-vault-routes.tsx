@@ -79,7 +79,9 @@ function routeFor(view: ScanVaultView): RouteObject {
 
   // The gate is a pathless layout route rather than a check inside the page,
   // so it is visible in the route table and cannot be forgotten on a new tab.
-  return permission ? { element: <RequirePermission required={permission} />, children: [leaf] } : leaf;
+  return permission
+    ? { element: <RequirePermission required={permission} />, children: [leaf] }
+    : leaf;
 }
 
 export const scanVaultRoutes: RouteObject[] = [

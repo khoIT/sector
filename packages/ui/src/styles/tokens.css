@@ -139,8 +139,7 @@
   --radius-token: var(--radius);
 
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
   --text-body: 0.8125rem;
   --text-body--line-height: 1.5;
@@ -156,7 +155,13 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family:
-    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
     sans-serif;
   font-size: 13px;
   line-height: 1.5;

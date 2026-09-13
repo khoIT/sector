@@ -112,7 +112,9 @@ export function Combobox({
   function onKeyDown(event: React.KeyboardEvent) {
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
-      setHighlight((current) => nextHighlight(current, visible.length, event.key === 'ArrowDown' ? 1 : -1));
+      setHighlight((current) =>
+        nextHighlight(current, visible.length, event.key === 'ArrowDown' ? 1 : -1),
+      );
       return;
     }
     if (event.key === 'Enter') {
@@ -156,14 +158,20 @@ export function Combobox({
             {label}
           </span>
           <span
-            className={cn('block truncate text-body', isEmpty ? 'text-ink-dim' : 'font-medium text-ink')}
+            className={cn(
+              'block truncate text-body',
+              isEmpty ? 'text-ink-dim' : 'font-medium text-ink',
+            )}
             title={triggerText}
           >
             {triggerText}
           </span>
         </span>
         <Chevron
-          className={cn('h-3.5 w-3.5 shrink-0 text-ink-dim transition-transform', open && 'rotate-180')}
+          className={cn(
+            'h-3.5 w-3.5 shrink-0 text-ink-dim transition-transform',
+            open && 'rotate-180',
+          )}
         />
       </button>
 
@@ -225,7 +233,10 @@ export function Combobox({
                         ) : null}
                       </span>
                       <Tick
-                        className={cn('h-3.5 w-3.5 shrink-0', isSelected ? 'opacity-100' : 'opacity-0')}
+                        className={cn(
+                          'h-3.5 w-3.5 shrink-0',
+                          isSelected ? 'opacity-100' : 'opacity-0',
+                        )}
                       />
                     </button>
                   </li>
