@@ -1,6 +1,7 @@
 import type { AuthUser } from '@sector/api-client';
-import { BookOpen, FolderClock, Settings2, Share2, Users2 } from 'lucide-react';
+import { BookOpen, FolderClock, GraduationCap, Settings2, Share2, Users2 } from 'lucide-react';
 
+import { COURSES_PATH } from '@/features/courses/courses-links';
 import { GROUP_ADMINISTRATION_PATH } from '@/features/groups/groups-links';
 import { UNBUILT_SURFACES, type UnbuiltSurfaceId } from '@/routes/unbuilt-surfaces';
 
@@ -103,7 +104,24 @@ export const NAV_GROUPS = [
     id: 'learn',
     labelKey: 'nav.learn',
     showLabel: true,
-    items: [unbuiltDestination('courses'), unbuiltDestination('question-banks')],
+    items: [
+      {
+        // Graduated out of unbuilt-surfaces.ts now that My Courses and the
+        // outline are real pages (features/courses/**). Id, path and label
+        // key are pinned identically to what that table carried, so this
+        // entry and this test file cannot disagree with a bookmark or a
+        // saved deep link minted before the surface existed.
+        id: 'courses',
+        labelKey: 'nav.courses',
+        icon: GraduationCap,
+        path: COURSES_PATH,
+        matchPrefix: COURSES_PATH,
+        // Ungated: the API scopes My Courses to the caller's own enrolment,
+        // not to a role permission — there is nothing to check here.
+        visibleWhen: whenPermitted(null),
+      },
+      unbuiltDestination('question-banks'),
+    ],
   },
   {
     id: 'administer',
