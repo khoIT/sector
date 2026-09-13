@@ -1,5 +1,11 @@
-import { questionBankKeys, useApiClient, useQuestionBankDetail } from '@sector/api-client';
-import { Button, EmptyState, ProgressMeter, RichText, Skeleton } from '@sector/ui';
+import {
+  questionBankKeys,
+  useApiClient,
+  useQuestionBankDetail,
+  useQuestionBankList,
+  type QuestionBankDetail,
+} from '@sector/api-client';
+import { Badge, Button, EmptyState, ProgressMeter, RichText, Skeleton } from '@sector/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { AlertTriangle } from 'lucide-react';
 import { useMemo } from 'react';
@@ -15,21 +21,30 @@ import { QUESTION_BANK_LIST_PATH } from '../question-bank-links';
 import { toQuizQuestions } from '../to-quiz-questions';
 import { useQuizRunner } from '../use-quiz-runner';
 
-/** `/learn/question-banks/:slug`. */
+/**
+ * `/learn/question-banks/:slug`.
+ *
+ * This top-level component only ever decides which of three states to show
+ * (loading / not found / loaded) — it never calls `useQuizRunner` itself.
+ * That split is load-bearing: `useReducer`'s init function runs exactly once,
+ * on mount, so if the runner hook were called up here — above the pending
+ * check — the FIRST render (before `bank` exists) would seed the reducer
+ * with an empty question list forever, and every Start button would silently
+ * hit the reducer's own zero-question refusal. `<QuestionBankRunnerSection>`
+ * only ever mounts once `bank` is real, and remounts (via `key={bank.id}`)
+ * if the slug changes to a different bank.
+ */
 export function QuestionBankDetailPage() {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
-  const query = useQuestionBankDetail(slug);
-  const client = useApiClient();
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const detail = useQuestionBankDetail(slug);
+  // The detail route filters nothing by slug server-side — it will happily
+  // return a well-formed response for a quiz that is not a question bank.
+  // The list route DOES filter to isQbank, so cross-referencing it is the
+  // only way to tell "not a question bank" apart from "failed to load".
+  const list = useQuestionBankList();
 
-  const bank = query.data;
-  const questions = useMemo(() => toQuizQuestions(bank?.questions ?? []), [bank?.questions]);
-  const adapter = useMemo(() => createBankAdapter(client, bank?.id ?? ''), [client, bank?.id]);
-  const runner = useQuizRunner(questions, adapter);
-
-  if (query.isPending) {
+  if (detail.isPending) {
     return (
       <div className="flex max-w-[42rem] flex-col gap-3">
         <Skeleton className="h-6 w-2/3" />
@@ -39,21 +54,53 @@ export function QuestionBankDetailPage() {
     );
   }
 
-  if (query.isError || !bank) {
+  const notAQuestionBank =
+    list.isSuccess && Boolean(slug) && !list.data.some((bank) => bank.slug === slug);
+
+  if (notAQuestionBank) {
+    return (
+      <EmptyState
+        tone="crit"
+        icon={<AlertTriangle className="h-5 w-5" aria-hidden />}
+        title={t('questionBanks.notAQuestionBank')}
+        description={t('questionBanks.notAQuestionBankDescription')}
+        action={
+          <Button variant="secondary" asChild>
+            <Link to={QUESTION_BANK_LIST_PATH}>{t('questionBanks.backToBanks')}</Link>
+          </Button>
+        }
+      />
+    );
+  }
+
+  if (detail.isError || !detail.data) {
     return (
       <EmptyState
         tone="crit"
         icon={<AlertTriangle className="h-5 w-5" aria-hidden />}
         title={t('questionBanks.detailLoadErrorTitle')}
-        description={query.error instanceof Error ? query.error.message : undefined}
+        description={detail.error instanceof Error ? detail.error.message : undefined}
         action={
-          <Button variant="secondary" onClick={() => void query.refetch()}>
+          <Button variant="secondary" onClick={() => void detail.refetch()}>
             {t('questionBanks.retry')}
           </Button>
         }
       />
     );
   }
+
+  return <QuestionBankRunnerSection key={detail.data.id} bank={detail.data} slug={slug ?? ''} />;
+}
+
+function QuestionBankRunnerSection({ bank, slug }: { bank: QuestionBankDetail; slug: string }) {
+  const { t } = useTranslation();
+  const client = useApiClient();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const questions = useMemo(() => toQuizQuestions(bank.questions), [bank.questions]);
+  const adapter = useMemo(() => createBankAdapter(client, bank.id), [client, bank.id]);
+  const runner = useQuizRunner(questions, adapter);
 
   const startable = canStartQuiz(questions.length);
   const hasActiveAttempt = Boolean(bank.progress && 'attemptId' in bank.progress);
@@ -62,8 +109,8 @@ export function QuestionBankDetailPage() {
   // a new attempt starts; refetching is what lets "Continue" vs "Start a new
   // attempt" be right the next time this page loads.
   async function refreshBankProgress() {
-    await queryClient.invalidateQueries({ queryKey: questionBankKeys.detail(slug ?? '') });
-    if (bank) await queryClient.invalidateQueries({ queryKey: questionBankKeys.progress(bank.id) });
+    await queryClient.invalidateQueries({ queryKey: questionBankKeys.detail(slug) });
+    await queryClient.invalidateQueries({ queryKey: questionBankKeys.progress(bank.id) });
   }
 
   async function takeAgain() {
@@ -84,6 +131,17 @@ export function QuestionBankDetailPage() {
       >
         {t('questionBanks.backToBanks')}
       </Link>
+
+      {runner.resumeError ? (
+        <Badge tone="crit" className="w-fit">
+          {t('questionBanks.resumeError')}
+        </Badge>
+      ) : null}
+      {runner.saveError ? (
+        <Badge tone="warn" className="w-fit">
+          {t('questionBanks.saveError')}
+        </Badge>
+      ) : null}
 
       {runner.state.phase === 'running' || runner.state.phase === 'finishing' ? (
         <QuizRunner

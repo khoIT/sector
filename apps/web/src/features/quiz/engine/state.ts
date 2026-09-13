@@ -5,13 +5,15 @@ import type { QuizAnswers, QuizQuestion, QuizResult } from './types';
 
 /**
  * idle -> running -> finishing -> finished
- *                            \-> failed
- *      \-> failed (zero questions, refused before it ever starts)
+ *                            \-> failed (submit-error) -> finishing (retry)
+ *      \-> failed (no-questions, refused before it ever starts)
  *
  * `failed` is reachable two ways, told apart by `failureKind`: a quiz that
  * was never startable at all (nothing to retry — go back), and a submit that
- * the server rejected or a network call that never landed (retryable —
- * `quiz/finish-start` can be dispatched again from here).
+ * the server rejected or a network call that never landed. The second is
+ * retryable: `quiz/finish-start` is accepted from `running` (the first
+ * attempt) AND from `failed`/`submit-error` (every attempt after), which is
+ * what actually makes the Retry button on that screen do something.
  */
 export type QuizPhase = 'idle' | 'running' | 'finishing' | 'finished' | 'failed';
 export type QuizFailureKind = 'no-questions' | 'submit-error';
@@ -44,7 +46,14 @@ export function createIdleQuizState(questions: readonly QuizQuestion[]): QuizSta
 }
 
 export type QuizAction =
-  | { type: 'quiz/start'; startedAt: string; answers?: QuizAnswers }
+  | {
+      type: 'quiz/start';
+      startedAt: string;
+      answers?: QuizAnswers;
+      /** A question id to seed `currentIndex` from, resolved against
+       *  `state.questions` — see `QuizAdapter.loadProgress`'s doc comment. */
+      resumeQuestionId?: string | null;
+    }
   | { type: 'quiz/select-single'; questionId: string; answerId: string }
   | { type: 'quiz/toggle-multiple'; questionId: string; answerId: string }
   | { type: 'quiz/go-to'; index: number }
@@ -66,12 +75,19 @@ export function quizReducer(state: QuizState, action: QuizAction): QuizState {
           error: 'This question bank has no questions yet.',
         };
       }
+      // Resolve the adapter's question-id pointer against OUR ordered list,
+      // so the adapter never has to know that ordering. Not found (a stale
+      // pointer to a question that no longer exists in this bank) falls back
+      // to the first question exactly like "no pointer at all" does.
+      const resumeIndex = action.resumeQuestionId
+        ? state.questions.findIndex((question) => question.id === action.resumeQuestionId)
+        : -1;
       return {
         ...state,
         phase: 'running',
         startedAt: action.startedAt,
         answers: action.answers ?? state.answers,
-        currentIndex: 0,
+        currentIndex: resumeIndex >= 0 ? resumeIndex : 0,
         result: null,
         error: null,
         failureKind: null,
@@ -109,8 +125,11 @@ export function quizReducer(state: QuizState, action: QuizAction): QuizState {
       return { ...state, currentIndex: clampIndex(state.currentIndex - 1, state.questions.length) };
     }
 
-    case 'quiz/finish-start':
-      return state.phase === 'running' ? { ...state, phase: 'finishing', error: null } : state;
+    case 'quiz/finish-start': {
+      const canRetry = state.phase === 'failed' && state.failureKind === 'submit-error';
+      if (state.phase !== 'running' && !canRetry) return state;
+      return { ...state, phase: 'finishing', error: null, failureKind: null };
+    }
 
     case 'quiz/finish-success':
       return { ...state, phase: 'finished', result: action.result, error: null, failureKind: null };

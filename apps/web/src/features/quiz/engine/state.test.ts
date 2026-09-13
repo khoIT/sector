@@ -52,6 +52,72 @@ describe('idle -> running', () => {
     });
     expect(state.answers).toEqual({ q1: ['a'] });
   });
+
+  it("positions currentIndex at the adapter's resume pointer, resolved by question id", () => {
+    const state = quizReducer(createIdleQuizState(TWO_QUESTIONS), {
+      type: 'quiz/start',
+      startedAt: '2026-01-01T00:00:00.000Z',
+      answers: { q1: ['a'] },
+      resumeQuestionId: 'q2',
+    });
+    expect(state.currentIndex).toBe(1);
+  });
+
+  it('falls back to the first question when there is no pointer or it does not resolve', () => {
+    expect(
+      quizReducer(createIdleQuizState(TWO_QUESTIONS), {
+        type: 'quiz/start',
+        startedAt: '2026-01-01T00:00:00.000Z',
+        resumeQuestionId: null,
+      }).currentIndex,
+    ).toBe(0);
+
+    expect(
+      quizReducer(createIdleQuizState(TWO_QUESTIONS), {
+        type: 'quiz/start',
+        startedAt: '2026-01-01T00:00:00.000Z',
+        resumeQuestionId: 'not-a-real-question-id',
+      }).currentIndex,
+    ).toBe(0);
+  });
+});
+
+describe('regression: the question list a hook was first mounted with must never be reused once loaded', () => {
+  // The bug this guards: `useQuizRunner` used to call `useReducer(reducer,
+  // questions, createIdleQuizState)` in a component rendered BEFORE its data
+  // had arrived, so `createIdleQuizState` ran once with `questions === []`
+  // and `quiz/start` refused every quiz forever — a warm query cache masked
+  // it on a second visit, but a first visit, a hard reload or a typed URL hit
+  // it every time. The fix is structural (mount the runner only once the
+  // real question list is known — see question-bank-detail-page.tsx), not
+  // something the reducer can defend itself against; this test documents the
+  // invariant the fix depends on: state built from an empty list and state
+  // built from the real one are two independent values, not one state that
+  // "fills in" later.
+  it('a state built from [] stays refused even after the real list exists elsewhere', () => {
+    const staleState = createIdleQuizState([]);
+    const startedStale = quizReducer(staleState, {
+      type: 'quiz/start',
+      startedAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(startedStale.phase).toBe('failed');
+    expect(startedStale.failureKind).toBe('no-questions');
+
+    // The real list, known by the time the caller actually has data, has to
+    // come from a FRESH createIdleQuizState call — nothing rehydrates the
+    // stale one in place.
+    const freshState = createIdleQuizState(TWO_QUESTIONS);
+    const startedFresh = quizReducer(freshState, {
+      type: 'quiz/start',
+      startedAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(startedFresh.phase).toBe('running');
+    expect(startedFresh.questions).toBe(TWO_QUESTIONS);
+
+    // The two are independent: starting the fresh one never touched the
+    // stale one, which is still refused.
+    expect(staleState.phase).toBe('idle');
+  });
 });
 
 describe('the clock: started once, never reset by answering', () => {
@@ -124,21 +190,12 @@ describe('navigation', () => {
 
 describe('finishing', () => {
   const RESULT: QuizResult = {
-    attemptId: 'attempt-1',
-    quizId: 'quiz-1',
-    slug: 'bank',
-    title: 'Bank',
     score: 1,
     totalScore: 2,
     percentageScore: 50,
     passed: false,
     timeSpent: 42,
-    startedAt: '2026-01-01T00:00:00.000Z',
-    completedAt: '2026-01-01T00:00:42.000Z',
     questions: [],
-    totalAttempts: 1,
-    bestScore: 50,
-    averageScore: 50,
   };
 
   it('moves to finishing, then finished, storing the result exactly as given', () => {
@@ -159,6 +216,29 @@ describe('finishing', () => {
     expect(state.phase).toBe('failed');
     expect(state.failureKind).toBe('submit-error');
     expect(state.error).toBe('network error');
+  });
+
+  it('the Retry button works: finish-start is accepted again from failed/submit-error', () => {
+    let state = running();
+    state = quizReducer(state, { type: 'quiz/finish-start' });
+    state = quizReducer(state, { type: 'quiz/finish-failure', error: 'network error' });
+    expect(state.phase).toBe('failed');
+
+    state = quizReducer(state, { type: 'quiz/finish-start' });
+    expect(state.phase).toBe('finishing');
+
+    state = quizReducer(state, { type: 'quiz/finish-success', result: RESULT });
+    expect(state.phase).toBe('finished');
+  });
+
+  it('does not accept finish-start from a no-questions failure — there is nothing to retry', () => {
+    const refused = quizReducer(createIdleQuizState([]), {
+      type: 'quiz/start',
+      startedAt: '2026-01-01T00:00:00.000Z',
+    });
+    const state = quizReducer(refused, { type: 'quiz/finish-start' });
+    expect(state.phase).toBe('failed');
+    expect(state.failureKind).toBe('no-questions');
   });
 
   it('restart returns to a fresh idle state with the same questions', () => {

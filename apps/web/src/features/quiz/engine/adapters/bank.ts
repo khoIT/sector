@@ -12,15 +12,26 @@ import type { QuizAdapter } from '../types';
  * the end. `loadProgress` reads GET /progress/:quizId rather than the
  * `userAnswers` already embedded on each question from the bank detail route,
  * because only the progress route also carries the attempt's `startedAt` —
- * without it, resuming would have no way to keep the "started once" clock
- * from Phase 5's engine honest.
+ * without it, resuming would have no way to keep the engine's "started once"
+ * clock honest.
  */
 export function createBankAdapter(client: ApiClient, quizId: string): QuizAdapter {
   return {
     async loadProgress() {
       const { attemptInfo, progress } = await getQuestionBankProgress(client, quizId);
-      if (!attemptInfo) return { answers: {}, startedAt: null };
-      return { answers: progress ?? {}, startedAt: attemptInfo.startedAt };
+      if (!attemptInfo || !progress)
+        return { answers: {}, startedAt: null, resumeQuestionId: null };
+
+      // `progress` is a plain object keyed by question id, built server-side
+      // by iterating the attempt's answers in the order they were saved
+      // (qbank-progress.service.ts's getCurrentAttemptInfo) — a JS/JSON
+      // object preserves string-key insertion order, so its LAST key is
+      // genuinely "the last question this caller answered", with no need to
+      // know the bank's own question ordering to say so.
+      const answeredIds = Object.keys(progress);
+      const resumeQuestionId = answeredIds.length > 0 ? (answeredIds.at(-1) ?? null) : null;
+
+      return { answers: progress, startedAt: attemptInfo.startedAt, resumeQuestionId };
     },
 
     async saveAnswer(questionId, answers) {

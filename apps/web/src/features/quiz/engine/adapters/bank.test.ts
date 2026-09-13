@@ -27,14 +27,18 @@ describe('createBankAdapter — loadProgress', () => {
     const client = createFakeApiClient(() => ({ progress: null, attemptInfo: null }));
     const adapter = createBankAdapter(client, 'quiz-1');
 
-    await expect(adapter.loadProgress()).resolves.toEqual({ answers: {}, startedAt: null });
+    await expect(adapter.loadProgress()).resolves.toEqual({
+      answers: {},
+      startedAt: null,
+      resumeQuestionId: null,
+    });
     expect(client.requests[0]).toMatchObject({
       method: 'GET',
       path: '/api/v2/question-banks/progress/quiz-1',
     });
   });
 
-  it('surfaces the saved answers and the attempt start time to resume from', async () => {
+  it('surfaces the saved answers, the attempt start time, and the last-answered question id', async () => {
     const client = createFakeApiClient(() => ({
       progress: { q1: ['a'] },
       attemptInfo: {
@@ -50,7 +54,28 @@ describe('createBankAdapter — loadProgress', () => {
     await expect(adapter.loadProgress()).resolves.toEqual({
       answers: { q1: ['a'] },
       startedAt: '2026-01-01T00:00:00.000Z',
+      resumeQuestionId: 'q1',
     });
+  });
+
+  it('resumes at the LAST answered question when several are saved, not the first', () => {
+    // `progress` is a plain object whose key order is the order the server
+    // saved each answer in (see bank.ts's comment on this). Bank-specific:
+    // nothing about "pick the last key" is part of the generic adapter
+    // contract, which only ever exercises a single saved answer.
+    const client = createFakeApiClient(() => ({
+      progress: { q1: ['a'], q2: ['b'], q3: ['c'] },
+      attemptInfo: {
+        attemptId: 'attempt-1',
+        startedAt: '2026-01-01T00:00:00.000Z',
+        totalQuestions: 3,
+        answeredQuestions: 3,
+        progressPercentage: 100,
+      },
+    }));
+    const adapter = createBankAdapter(client, 'quiz-1');
+
+    return expect(adapter.loadProgress()).resolves.toMatchObject({ resumeQuestionId: 'q3' });
   });
 });
 
@@ -112,7 +137,13 @@ describe('createBankAdapter — finish', () => {
     });
   });
 
-  it('never computes a score — it returns exactly what the server sent back', async () => {
+  it('passes through bank-specific fields the narrow QuizResult contract does not name', async () => {
+    // adapter-contract.ts's shared suite already proves "finish never
+    // computes a score" against the narrow QuizResult subset every adapter
+    // shares; this is the complementary bank-specific check that the FULL
+    // check-answers response — attemptId, totalAttempts, bestScore,
+    // averageScore, none of which QuizResult knows about — survives intact
+    // too, since the question-bank surfaces are free to use them later.
     const client = createFakeApiClient(() => RESULT);
     const adapter = createBankAdapter(client, 'quiz-1');
 
