@@ -51,14 +51,11 @@ export function ExpertReviewPanel({ userId, userName, value, onChange }: ExpertR
     <Card>
       <CardHeader className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <CardTitle>Expert review</CardTitle>
-          <p className="mt-0.5 text-[12px] text-ink-dim">
-            Optional. A GUSI expert reviews the study in addition to any group reviewers. One credit
-            per review.
-          </p>
+          <CardTitle>{t('createScan.expertReviewTitle')}</CardTitle>
+          <p className="mt-0.5 text-[12px] text-ink-dim">{t('createScan.expertReviewBlurb')}</p>
         </div>
         <Button variant="secondary" size="sm" onClick={() => setPurchaseOpen(true)}>
-          <CreditCard className="h-3.5 w-3.5" aria-hidden /> Buy credits
+          <CreditCard className="h-3.5 w-3.5" aria-hidden /> {t('createScan.buyCredits')}
         </Button>
       </CardHeader>
 
@@ -68,31 +65,29 @@ export function ExpertReviewPanel({ userId, userName, value, onChange }: ExpertR
         ) : isError ? (
           <InlineNotice
             tone="crit"
-            title="Credit balances could not be loaded"
+            title={t('createScan.creditsLoadFailedTitle')}
             action={
               <Button size="sm" variant="secondary" onClick={() => void refetch()}>
-                Try again
+                {t('createScan.tryAgain')}
               </Button>
             }
           >
-            {error instanceof Error ? error.message : 'The request failed.'} You can submit the
-            study without an expert review and request one later from the scan.
+            {error instanceof Error ? error.message : t('createScan.creditsLoadFailedFallback')}{' '}
+            {t('createScan.creditsLoadFailedBody')}
           </InlineNotice>
         ) : (
           <>
             {total === 0 ? (
               <InlineNotice
                 tone="warn"
-                title="No expert review credits available"
+                title={t('createScan.noCreditsTitle')}
                 action={
                   <Button size="sm" onClick={() => setPurchaseOpen(true)}>
-                    Buy credits
+                    {t('createScan.buyCredits')}
                   </Button>
                 }
               >
-                Neither your balance nor any of your groups has a credit left. The study will be
-                submitted to your groups as usual — expert review can be requested later once
-                credits are topped up.
+                {t('createScan.noCreditsBody')}
               </InlineNotice>
             ) : null}
 
@@ -142,8 +137,7 @@ export function ExpertReviewPanel({ userId, userName, value, onChange }: ExpertR
                         </span>
                       </span>
                       <Badge tone={empty ? 'neutral' : 'ok'}>
-                        <span className="sv-num">{source.credits}</span>
-                        {source.credits === 1 ? ' credit' : ' credits'}
+                        {t('createScan.creditCount', { count: source.credits })}
                       </Badge>
                     </button>
                   </li>
@@ -154,15 +148,14 @@ export function ExpertReviewPanel({ userId, userName, value, onChange }: ExpertR
             {value ? (
               <InlineNotice
                 tone="ok"
-                title={`One credit from ${value.label} will be spent on submit`}
+                title={t('createScan.creditWillBeSpent', { label: value.label })}
                 action={
                   <Button variant="ghost" size="sm" onClick={() => onChange(null)}>
-                    <X className="h-3.5 w-3.5" aria-hidden /> Remove
+                    <X className="h-3.5 w-3.5" aria-hidden /> {t('actions.remove')}
                   </Button>
                 }
               >
-                The credit is only spent once the study is submitted. If the request fails you will
-                be told, and the study is saved either way.
+                {t('createScan.creditSpentOnSubmit')}
               </InlineNotice>
             ) : null}
           </>

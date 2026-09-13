@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { clearDraftFiles } from './draft-blob-store';
 import { isWizardStep, WIZARD_STEPS, type DraftFile, type DraftState } from './draft-types';
 import { isDraftId } from './draft-id';
 
@@ -131,11 +132,30 @@ export function writeDraft(state: DraftState, ownerId?: string): void {
 }
 
 export function clearDraft(): void {
+  expiredThisLoad = false;
   try {
     window.localStorage.removeItem(DRAFT_STORAGE_KEY);
   } catch {
     /* see writeDraft */
   }
+}
+
+/**
+ * Whether `readDraft` has retired an expired draft during this page load.
+ *
+ * Set-only, and read as many times as anyone likes: a StrictMode double mount
+ * asks twice and must get the same answer both times, which rules out the
+ * obvious one-shot consumer.
+ *
+ * It exists because expiry stopped being a housekeeping detail. A draft is now
+ * the only route back to a study whose submit landed short — the scan id lives
+ * on it, and a retry resumes against that scan instead of creating a second
+ * one — so a draft going silently is a recovery route going silently.
+ */
+let expiredThisLoad = false;
+
+export function draftExpiredThisLoad(): boolean {
+  return expiredThisLoad;
 }
 
 /** Returns null when there is no draft, it is unreadable, or it has expired. */
@@ -164,6 +184,14 @@ export function readDraft(): PersistedDraft | null {
 
   if (Date.now() - draft.savedAt > EXPIRY_MS) {
     clearDraft();
+    // The manifest is what points at the blobs, so dropping it without them
+    // strands every unfinished file's bytes in IndexedDB for good: nothing
+    // knows the draft id any more, and `clearDraftFiles` is keyed by it.
+    // Fire-and-forget because this function has to stay synchronous — it runs
+    // inside a useState initialiser — and because a failed delete costs quota,
+    // not correctness.
+    void clearDraftFiles(draft.draftId);
+    expiredThisLoad = true;
     return null;
   }
 

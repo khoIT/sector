@@ -1,6 +1,8 @@
 import {
+  addScanFiles,
   createScan,
   createUserLogs,
+  deleteScanFiles,
   getScanById,
   isApiError,
   requestExpertScanReview,
@@ -9,6 +11,7 @@ import {
   updateScanFileStatus,
   type ApiClient,
   type CreateScanPayload,
+  type Scan,
   type ScanFilePayload,
 } from '@sector/api-client';
 
@@ -160,9 +163,9 @@ export async function submitDraft({
   // server holds rather than creating a second study.
   if (state.scanId) {
     const scan = await getScanById(client, 'my', state.scanId);
-    const fileIds = new Map(scan.files.map((file) => [file.filename, file.id]));
+    const reconciled = await reconcileScanFiles(client, state.scanId, state.draftId, scan, ready);
 
-    const confirmation = await confirmFiles(client, state.scanId, ready, fileIds);
+    const confirmation = await confirmFiles(client, state.scanId, ready, reconciled.fileIds);
     const review = await requestReview(client, state.scanId, state, scan.tags);
     await announce(
       client,
@@ -172,17 +175,17 @@ export async function submitDraft({
       userId,
       confirmation.confirmed,
       confirmation.unconfirmed.map((file) => file.name),
-      // The total this study was created with, not this attempt's ready
-      // count: a resumed submit can hold fewer (or more) stored files than
-      // the original one did.
-      scan.fileTotal,
+      // The study's own total AFTER reconciliation, not this attempt's ready
+      // count and not the total it was created with: both routes above move
+      // `fileTotal`, and the decision to destroy this draft hangs on it.
+      reconciled.fileTotal,
     );
 
     return {
       scanId: state.scanId,
       scanTitle: scan.title,
       filesConfirmed: confirmation.confirmed,
-      filesTotal: scan.fileTotal,
+      filesTotal: reconciled.fileTotal,
       unconfirmed: confirmation.unconfirmed,
       expertReview: review.status,
       expertReviewError: review.error,
@@ -237,6 +240,70 @@ export async function submitDraft({
     expertReview: review.status,
     expertReviewError: review.error,
   };
+}
+
+/**
+ * Make the scan's File records describe the bytes THIS attempt actually
+ * uploaded, and hand back the ids to confirm.
+ *
+ * A record is identified by `filepath`, not by filename. Filename is what the
+ * first version matched on, and it is wrong on exactly the path that matters:
+ * after a study is reset for re-upload it still holds a record per file of the
+ * failed attempt, under that attempt's key. Matching by name finds one of
+ * those, and confirming it makes the server verify a path nothing was ever
+ * written to — `updateFileById` checks `objectExists(file.filepath)` and 400s.
+ * Every file then reports "uploaded but not attached" and the recovery cannot
+ * finish. Matching by key asks the only question that matters: does a record
+ * already point at these bytes?
+ *
+ *   points at our bytes          confirm it, nothing else to do
+ *   points elsewhere, not landed drop it — its object was never written
+ *   points elsewhere, landed     leave it; it is a file the learner still has
+ *   no record at all             register it with add-files
+ *
+ * Nothing here runs on the ordinary resume of a failed confirmation: those
+ * records were stored verbatim by `create` and already point at the right
+ * key, so both lists come out empty and this is one `getScanById` and no
+ * writes.
+ */
+async function reconcileScanFiles(
+  client: ApiClient,
+  scanId: string,
+  draftId: string,
+  scan: Scan,
+  ready: DraftFile[],
+): Promise<{ fileIds: Map<string, string>; fileTotal: number }> {
+  const ourKeys = new Set(ready.map((file) => file.storageKey));
+
+  const matched = scan.files.filter((record) => ourKeys.has(record.filepath));
+  const orphaned = scan.files.filter(
+    (record) => !ourKeys.has(record.filepath) && record.status !== 'completed',
+  );
+
+  const fileIds = new Map(matched.map((record) => [record.filename, record.id]));
+  let fileTotal = scan.fileTotal;
+
+  if (orphaned.length > 0) {
+    const after = await deleteScanFiles(
+      client,
+      scanId,
+      orphaned.map((record) => record.id),
+    );
+    fileTotal = after.fileTotal;
+  }
+
+  const unregistered = ready.filter((file) => !fileIds.has(file.name));
+  if (unregistered.length > 0) {
+    const after = await addScanFiles(
+      client,
+      scanId,
+      unregistered.map((file) => toFilePayload(draftId, file)),
+    );
+    fileTotal = after.fileTotal;
+    for (const record of after.files) fileIds.set(record.filename, record.id);
+  }
+
+  return { fileIds, fileTotal };
 }
 
 /**

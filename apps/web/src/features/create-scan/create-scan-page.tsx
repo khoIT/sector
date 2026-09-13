@@ -1,7 +1,7 @@
 import { useScan } from '@sector/api-client';
 import { Button } from '@sector/ui';
 import { Trash2 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 
@@ -68,11 +68,15 @@ export function CreateScanPage() {
   // ─── entering from "Reset for re-upload" ──────────────────────────────────
   //
   // The row action resets the scan server-side (status -> pending, fileCount
-  // -> 0) and lands here with `?resetScanId=`. The scan's own File records and
-  // fileTotal survive the reset, so what this page needs is a FRESH draft
-  // carrying that scan id and its scan type — submitDraft's existing resume
-  // branch does the rest, matching re-added files to the records already
-  // there by filename.
+  // -> 0) and lands here with `?resetScanId=`. What this page needs is a FRESH
+  // draft carrying that scan id and its scan type; submitDraft's resume branch
+  // then reconciles the scan's File records against the re-uploaded keys.
+  //
+  // Seeding REPLACES whatever draft is open, and there is only one draft slot,
+  // so arriving here can destroy a study in progress — files included. That is
+  // the same irreversible loss "Discard draft" is guarded for, reached by a
+  // different door, so it goes through the same confirm rather than happening
+  // on navigation.
   const [searchParams] = useSearchParams();
   const resetScanId = searchParams.get('resetScanId');
   const resetScan = useScan({
@@ -81,13 +85,11 @@ export function CreateScanPage() {
     enabled: Boolean(resetScanId),
   });
   const seededResetId = useRef<string | null>(null);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
 
-  useEffect(() => {
+  const seedFromReset = useCallback(() => {
     if (!resetScanId || !resetScan.data) return;
-    if (state.scanId === resetScanId) return;
-    if (seededResetId.current === resetScanId) return;
     seededResetId.current = resetScanId;
-
     draft.reset();
     draft.update({
       scanId: resetScanId,
@@ -98,7 +100,20 @@ export function CreateScanPage() {
     // draft.reset / draft.update are stable (useCallback with fixed deps);
     // `draft` itself is a fresh object every render and must not be a dep.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resetScanId, resetScan.data, state.scanId, draft.reset, draft.update]);
+  }, [resetScanId, resetScan.data, draft.reset, draft.update]);
+
+  useEffect(() => {
+    if (!resetScanId || !resetScan.data) return;
+    if (state.scanId === resetScanId) return;
+    if (seededResetId.current === resetScanId) return;
+
+    // An empty draft has nothing to lose, so it is seeded straight away.
+    if (holdings.length === 0) {
+      seedFromReset();
+      return;
+    }
+    setResetConfirmOpen(true);
+  }, [resetScanId, resetScan.data, state.scanId, holdings.length, seedFromReset]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -161,6 +176,12 @@ export function CreateScanPage() {
         </InlineNotice>
       ) : null}
 
+      {!submitted && draft.draftExpired ? (
+        <InlineNotice tone="warn" title={draft.draftExpiredMessage.title}>
+          {draft.draftExpiredMessage.body}
+        </InlineNotice>
+      ) : null}
+
       {!submitted && draft.blobStorageDegraded ? (
         <InlineNotice tone="warn" title={draft.storageDegradedMessage.title}>
           {draft.storageDegradedMessage.body}
@@ -178,6 +199,18 @@ export function CreateScanPage() {
         onOpenChange={setDiscardOpen}
         holdings={holdings}
         onConfirm={draft.reset}
+      />
+
+      {/* Same dialog, same holdings, same irreversibility — the only
+          difference is that confirming here hands the emptied draft to the
+          study being recovered instead of leaving it blank. Declining leaves
+          the open draft exactly as it was; the reset itself already happened
+          server-side, so the study stays recoverable from My Scans. */}
+      <DiscardDraftDialog
+        open={resetConfirmOpen}
+        onOpenChange={setResetConfirmOpen}
+        holdings={holdings}
+        onConfirm={seedFromReset}
       />
 
       {submitted && state.submitOutcome ? (

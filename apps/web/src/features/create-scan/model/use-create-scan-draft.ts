@@ -20,7 +20,13 @@ import { DEFAULT_CREATE_SCAN_FLOW, stepForFlow, type CreateScanFlow } from './cr
 import { mintDraftId } from './draft-id';
 import { useAuth } from '@/auth/auth-context';
 
-import { clearDraft, readDraft, restoreFiles, writeDraft } from './draft-storage';
+import {
+  clearDraft,
+  draftExpiredThisLoad,
+  readDraft,
+  restoreFiles,
+  writeDraft,
+} from './draft-storage';
 import { draftHoldings } from './draft-holdings';
 import type {
   DraftFile,
@@ -123,6 +129,10 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
   const { t } = useTranslation();
 
   const [restoredDraft] = useState(() => readDraft());
+  // Read after `readDraft`, which is what sets it. A draft that aged out took
+  // the only route back to any study it had already created with it, so the
+  // learner is told rather than left to find an untouchable `pending` scan.
+  const [draftExpired] = useState(() => draftExpiredThisLoad());
   const [state, setState] = useState<DraftState>(() => {
     if (!restoredDraft) return emptyDraft(mintDraftId(), flow);
     return {
@@ -247,6 +257,10 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
   filesRef.current = state.files;
   const draftIdRef = useRef(state.draftId);
   draftIdRef.current = state.draftId;
+  // The scan this draft is already writing into, once one exists — a submit
+  // that landed short, or a study reset for re-upload. See `uploadPrefixId`.
+  const scanIdRef = useRef(state.scanId);
+  scanIdRef.current = state.scanId;
   const runningRef = useRef(false);
 
   const patchFile = useCallback((id: string, patch: Partial<DraftFile>) => {
@@ -269,16 +283,28 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
       patchFile(file.id, { status: 'uploading', progress: 0, error: null });
 
       try {
-        // The draft id is only a valid ObjectId, not a real scan: the presign
-        // and init routes check the format and never look it up. That is what
-        // lets the transfer start before the study exists.
+        // Where the bytes go: the real scan id once this draft has one, and
+        // the draft id before that.
+        //
+        // The presign builds `storage/{userId}/scan/{scanId}/{key}` from
+        // whatever id it is handed, and never looks it up — the draft id is a
+        // valid ObjectId and that is all the route checks, which is what lets
+        // a transfer start before the study exists. But `create` is the only
+        // route that stores a filepath verbatim: `add-files`, the only way to
+        // attach media afterwards, REBUILDS the key around the scan id. So a
+        // file uploaded under the draft prefix after the scan row already
+        // exists can never be attached to it, and every recovery path — a
+        // short submit retried, a study reset for re-upload — is made of
+        // exactly those files. Uploading under the scan's own prefix once it
+        // is known is what makes them attachable.
         //
         // A fresh key is minted per attempt; a resumed multipart upload ignores
         // it and keeps writing to the object its session already opened.
+        const uploadPrefixId = scanIdRef.current ?? draftIdRef.current;
         const stored = await uploadScanObject(
           client,
           {
-            scanId: draftIdRef.current,
+            scanId: uploadPrefixId,
             key: nextFilekey(file.name),
             blob,
             contentType: blob.type,
@@ -670,6 +696,7 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
     validationFailures,
     dismissValidationFailures,
     blobStorageDegraded,
+    draftExpired,
     addFiles,
     cancelFile,
     cancelAll,
@@ -694,6 +721,10 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
     storageDegradedMessage: {
       title: t('createScan.storageDegradedTitle'),
       body: t('createScan.storageDegradedBody'),
+    },
+    draftExpiredMessage: {
+      title: t('createScan.draftExpiredTitle'),
+      body: t('createScan.draftExpiredBody'),
     },
   };
 }
