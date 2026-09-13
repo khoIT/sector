@@ -12,6 +12,7 @@ import { WizardStepper } from './components/wizard-stepper';
 import { canEnterClassicStep } from './model/classic-steps';
 import { draftHoldings } from './model/draft-holdings';
 import { readCreateScanFlow } from './model/create-scan-flow';
+import { isFullySubmitted } from './model/submit-outcome';
 import { useCreateScanDraft } from './model/use-create-scan-draft';
 import { ClassicSteps } from './steps/classic-steps';
 import { StepSubmitted } from './steps/step-submitted';
@@ -122,6 +123,12 @@ export function CreateScanPage() {
         </InlineNotice>
       ) : null}
 
+      {!submitted && draft.blobStorageDegraded ? (
+        <InlineNotice tone="warn" title={draft.storageDegradedMessage.title}>
+          {draft.storageDegradedMessage.body}
+        </InlineNotice>
+      ) : null}
+
       <DiscardDraftDialog
         open={discardOpen}
         onOpenChange={setDiscardOpen}
@@ -130,7 +137,14 @@ export function CreateScanPage() {
       />
 
       {submitted && state.submitOutcome ? (
-        <StepSubmitted outcome={state.submitOutcome} onCreateAnother={draft.reset} />
+        <StepSubmitted
+          outcome={state.submitOutcome}
+          onCreateAnother={draft.reset}
+          // Only offered when the submit landed short: a fully-confirmed
+          // study has nothing left to retry, and the draft that would back
+          // a retry has already been cleared by `finish()`.
+          onTryAgain={isFullySubmitted(state.submitOutcome) ? undefined : draft.resumeSubmit}
+        />
       ) : classic ? (
         <ClassicSteps draft={draft} onSubmitted={draft.finish} />
       ) : (

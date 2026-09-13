@@ -1,5 +1,5 @@
 import { Button, Card, CardContent, CardHeader, CardTitle, StatusPill } from '@sector/ui';
-import { CheckCircle2, Plus } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { scanDetailPathFor } from '@/features/scan-detail/scan-detail-links';
@@ -7,10 +7,18 @@ import { SCAN_VAULT_PATH } from '@/features/scan-list/scan-list-views';
 
 import { InlineNotice } from '../components/inline-notice';
 import type { SubmitOutcome } from '../model/draft-types';
+import { isFullySubmitted } from '../model/submit-outcome';
 
 export type StepSubmittedProps = {
   outcome: SubmitOutcome;
   onCreateAnother: () => void;
+  /**
+   * Present only when the submit landed short of every intended file. Goes
+   * back to the working surface with the draft and its blobs intact, so the
+   * next submit resumes against the SAME scan (`state.scanId`) instead of
+   * creating a second one.
+   */
+  onTryAgain?: () => void;
 };
 
 /**
@@ -21,24 +29,32 @@ export type StepSubmittedProps = {
  * that into one "Success!" is the lie this flow is trying to stop telling, so
  * each outcome gets its own line and its own next action.
  */
-export function StepSubmitted({ outcome, onCreateAnother }: StepSubmittedProps) {
-  const allConfirmed = outcome.unconfirmed.length === 0;
+export function StepSubmitted({ outcome, onCreateAnother, onTryAgain }: StepSubmittedProps) {
+  const complete = isFullySubmitted(outcome);
 
   return (
     <div className="flex flex-col gap-4">
       <Card>
         <CardHeader className="flex flex-wrap items-start justify-between gap-2">
           <div className="flex items-start gap-2">
-            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-ok" aria-hidden />
+            {complete ? (
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-ok" aria-hidden />
+            ) : (
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warn" aria-hidden />
+            )}
             <div>
               <CardTitle>{outcome.scanTitle ?? 'Study submitted'}</CardTitle>
               <p className="mt-0.5 text-[12px] text-ink-dim">
-                The study is in your vault. Processing and de-identification finish on the server a
-                few seconds from now; the list updates itself.
+                {complete
+                  ? 'The study is in your vault. Processing and de-identification finish on the server a few seconds from now; the list updates itself.'
+                  : 'The study was created, but it does not yet hold every file this draft intended.'}
               </p>
             </div>
           </div>
-          <StatusPill tone="ok" label="Submitted" />
+          <StatusPill
+            tone={complete ? 'ok' : 'warn'}
+            label={complete ? 'Submitted' : 'Incomplete'}
+          />
         </CardHeader>
 
         <CardContent className="flex flex-col gap-3">
@@ -61,12 +77,16 @@ export function StepSubmitted({ outcome, onCreateAnother }: StepSubmittedProps) 
             </div>
           </dl>
 
-          {!allConfirmed ? (
+          {!complete ? (
             <InlineNotice
               tone="warn"
-              title={`${outcome.unconfirmed.length} ${outcome.unconfirmed.length === 1 ? 'file was' : 'files were'} uploaded but not attached`}
+              title={`${outcome.filesConfirmed} of ${outcome.filesTotal} files attached — the study was not fully submitted`}
               action={
-                outcome.scanId ? (
+                onTryAgain ? (
+                  <Button variant="secondary" size="sm" onClick={onTryAgain}>
+                    Try again
+                  </Button>
+                ) : outcome.scanId ? (
                   <Button asChild variant="secondary" size="sm">
                     <Link to={scanDetailPathFor('my', outcome.scanId)}>Open the study</Link>
                   </Button>
@@ -80,8 +100,8 @@ export function StepSubmitted({ outcome, onCreateAnother }: StepSubmittedProps) 
                   </li>
                 ))}
               </ul>
-              The bytes are in storage, but the study does not reference them and nothing here can
-              attach them to it afterwards. Submit those files as their own study.
+              The draft and every uploaded file are still here — nothing was thrown away. Try again
+              to resume this same study, or open it to see exactly what landed.
             </InlineNotice>
           ) : null}
 

@@ -158,5 +158,11 @@
     "noScans": "No scans",
     "noScansDescription": "Nothing here yet.",
     "loading": "Loading"
+  },
+  "createScan": {
+    "storageDegradedTitle": "This browser could not save your progress",
+    "storageDegradedBody": "Files already uploaded are safe in storage, but this draft will not survive closing or reloading this tab. Keep it open until you submit.",
+    "validationFileTooLarge": "\"{{name}}\" is larger than the {{limit}} study limit on its own, so it cannot be added.",
+    "validationStudyTooLarge": "Adding \"{{name}}\" would take this study past the {{limit}} limit. Remove another file first, or add it to a new study."
   }
 }

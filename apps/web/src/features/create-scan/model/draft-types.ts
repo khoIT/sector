@@ -157,5 +157,11 @@ export type DraftState = {
 
 export type ValidationFailure = {
   name: string;
-  reason: MediaValidationFailureReason | 'duplicate-name';
+  reason:
+    | MediaValidationFailureReason
+    | 'duplicate-name'
+    /** The file alone is bigger than the whole study is allowed to be. */
+    | 'file-too-large'
+    /** The file would fit on its own, but not alongside what is already here. */
+    | 'study-too-large';
 };

@@ -24,6 +24,10 @@ beforeEach(() => {
 });
 
 describe('draft blob store', () => {
+  it('reports success when the bytes are actually stored', async () => {
+    await expect(putDraftFile('draft-1', 'file-a', blob('aaa'))).resolves.toBe(true);
+  });
+
   it('round-trips the bytes of an unfinished file', async () => {
     await putDraftFile('draft-1', 'file-a', blob('aaa'));
 
@@ -88,26 +92,28 @@ describe('draft blob store', () => {
     expect(await readDraftFiles('draft-2')).toHaveLength(1);
   });
 
-  it('degrades to a no-op when IndexedDB is unavailable', async () => {
+  it('degrades to a no-op when IndexedDB is unavailable, and says so', async () => {
     // Private modes genuinely refuse it, and a refusal is not a reason to
-    // break the page — the app falls back to asking for the file again.
+    // break the page — the app falls back to asking for the file again, but
+    // it needs to KNOW the write failed, which is why this resolves `false`
+    // rather than swallowing the failure into the same `undefined` as before.
     // @ts-expect-error deliberately removing the global under test
     globalThis.indexedDB = undefined;
 
-    await expect(putDraftFile('draft-1', 'file-a', blob('a'))).resolves.toBeUndefined();
+    await expect(putDraftFile('draft-1', 'file-a', blob('a'))).resolves.toBe(false);
     await expect(readDraftFiles('draft-1')).resolves.toEqual([]);
     await expect(dropDraftFile('draft-1', 'file-a')).resolves.toBeUndefined();
     await expect(clearDraftFiles('draft-1')).resolves.toBeUndefined();
   });
 
-  it('degrades to a no-op when opening the database throws', async () => {
+  it('degrades to a no-op when opening the database throws, and says so', async () => {
     globalThis.indexedDB = {
       open: () => {
         throw new Error('SecurityError');
       },
     } as unknown as IDBFactory;
 
-    await expect(putDraftFile('draft-1', 'file-a', blob('a'))).resolves.toBeUndefined();
+    await expect(putDraftFile('draft-1', 'file-a', blob('a'))).resolves.toBe(false);
     await expect(readDraftFiles('draft-1')).resolves.toEqual([]);
   });
 });

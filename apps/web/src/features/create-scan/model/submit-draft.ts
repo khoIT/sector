@@ -12,7 +12,10 @@ import {
   type ScanFilePayload,
 } from '@sector/api-client';
 
+import { EXPERT_REVIEW_TAG } from '@/features/scan-list/rows/scan-tags';
+
 import type { DraftFile, DraftState, SubmitOutcome } from './draft-types';
+import { countTracked } from './file-counts';
 import { toFindingsPayload } from './finding-controls';
 import { statusAfterSubmit, submitLogEntries } from './submit-logs';
 
@@ -79,6 +82,13 @@ async function announce(
   userId: string,
   confirmed: number,
   unconfirmed: readonly string[],
+  /**
+   * Every file the learner intended for this study — not merely the ones
+   * this attempt tried to confirm. A file that never reached storage at all
+   * (so it was never even registered) must still count against the total, or
+   * a short submit announces itself as complete.
+   */
+  intendedTotal: number,
 ): Promise<void> {
   try {
     const scanLogs = await createUserLogs(
@@ -95,7 +105,7 @@ async function announce(
     );
 
     await updateScan(client, scanId, {
-      status: statusAfterSubmit(confirmed, confirmed + unconfirmed.length),
+      status: statusAfterSubmit(confirmed, intendedTotal),
       scanLogs,
       notifyUser: true,
     });
@@ -153,7 +163,7 @@ export async function submitDraft({
     const fileIds = new Map(scan.files.map((file) => [file.filename, file.id]));
 
     const confirmation = await confirmFiles(client, state.scanId, ready, fileIds);
-    const review = await requestReview(client, state.scanId, state);
+    const review = await requestReview(client, state.scanId, state, scan.tags);
     await announce(
       client,
       state.scanId,
@@ -162,22 +172,33 @@ export async function submitDraft({
       userId,
       confirmation.confirmed,
       confirmation.unconfirmed.map((file) => file.name),
+      // The total this study was created with, not this attempt's ready
+      // count: a resumed submit can hold fewer (or more) stored files than
+      // the original one did.
+      scan.fileTotal,
     );
 
     return {
       scanId: state.scanId,
       scanTitle: scan.title,
       filesConfirmed: confirmation.confirmed,
-      filesTotal: ready.length,
+      filesTotal: scan.fileTotal,
       unconfirmed: confirmation.unconfirmed,
       expertReview: review.status,
       expertReviewError: review.error,
     };
   }
 
+  // Every file the learner still intends for this study — including one
+  // that never reached storage at all, so `files` (below) has nothing to
+  // register for it. Sending `ready.length` here was the bug: a study short
+  // a file recorded a `fileTotal` equal to what actually landed, so nothing
+  // — not the server, not this app — could tell the submit was short.
+  const intendedTotal = countTracked(state.files);
+
   const payload: CreateScanPayload = {
     scanTypeId: state.scanTypeId,
-    fileTotal: files.length,
+    fileTotal: intendedTotal,
     findings: toFindingsPayload(state.findings),
     note: state.note || undefined,
     scanIdentifier: state.scanIdentifier || undefined,
@@ -195,7 +216,7 @@ export async function submitDraft({
   const fileIds = new Map(created.files.map((file) => [file.filename, file.id]));
 
   const confirmation = await confirmFiles(client, created.id, ready, fileIds);
-  const review = await requestReview(client, created.id, state);
+  const review = await requestReview(client, created.id, state, created.tags);
   await announce(
     client,
     created.id,
@@ -204,13 +225,14 @@ export async function submitDraft({
     userId,
     confirmation.confirmed,
     confirmation.unconfirmed.map((file) => file.name),
+    intendedTotal,
   );
 
   return {
     scanId: created.id,
     scanTitle: created.title,
     filesConfirmed: confirmation.confirmed,
-    filesTotal: ready.length,
+    filesTotal: intendedTotal,
     unconfirmed: confirmation.unconfirmed,
     expertReview: review.status,
     expertReviewError: review.error,
@@ -269,12 +291,23 @@ async function confirmFiles(
   return { confirmed, unconfirmed };
 }
 
+/**
+ * @param existingTags the scan's current tags. On a resumed submit this is
+ *   the record of what a previous, partially-failed attempt already did —
+ *   `POST /api/scan-review/request-expert` tags the scan on success, and
+ *   without this check a resume would spend a SECOND credit re-issuing a
+ *   request that already succeeded, with nothing telling the learner so.
+ */
 async function requestReview(
   client: ApiClient,
   scanId: string,
   state: DraftState,
+  existingTags: readonly string[] = [],
 ): Promise<{ status: SubmitOutcome['expertReview']; error: string | null }> {
   if (!state.expertReview) return { status: 'not-requested', error: null };
+  if (existingTags.some((tag) => tag.trim().toLowerCase() === EXPERT_REVIEW_TAG)) {
+    return { status: 'requested', error: null };
+  }
 
   try {
     await requestExpertScanReview(client, {

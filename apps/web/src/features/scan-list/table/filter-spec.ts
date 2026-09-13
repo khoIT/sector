@@ -1,6 +1,7 @@
 import { SCAN_STATUS_LABEL, SCAN_STATUSES, SHARED_SCAN_STATUS_LABEL } from '@sector/api-client';
 
 import { isReviewedList, type ScanVaultView } from '../scan-list-views';
+import { COMPLETE_TAG, INCOMPLETE_TAG } from '../rows/scan-tags';
 import type { FilterOption } from './filter-controls';
 
 /**
@@ -67,8 +68,8 @@ export const STATUS_FILTER_OPTIONS: FilterOption[] = SCAN_STATUSES.filter(
 
 /** The scan tag vocabulary the server recognises, lowercased as it stores them. */
 export const TAG_FILTER_OPTIONS: FilterOption[] = [
-  { value: 'complete', label: 'Complete' },
-  { value: 'incomplete', label: 'Incomplete' },
+  { value: COMPLETE_TAG, label: 'Complete' },
+  { value: INCOMPLETE_TAG, label: 'Incomplete' },
 ];
 
 export const SHARE_STATUS_FILTER_OPTIONS: FilterOption[] = (['unopened', 'opened'] as const).map(

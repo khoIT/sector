@@ -160,7 +160,7 @@ describe('the database the old name held', () => {
     const store = await unmigratedStore();
 
     await expect(store.readDraftFiles('draft-1')).resolves.toEqual([]);
-    await expect(store.putDraftFile('draft-1', 'file-a', new Blob(['a']))).resolves.toBeUndefined();
+    await expect(store.putDraftFile('draft-1', 'file-a', new Blob(['a']))).resolves.toBe(false);
   });
 });
 

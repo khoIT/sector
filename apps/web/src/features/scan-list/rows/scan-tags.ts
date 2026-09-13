@@ -17,14 +17,22 @@
  * Anything with no label here is dropped too. A raw database token shown to a
  * user is a leak, not a feature, and a new tag should be added deliberately.
  */
+/** The two completeness tags a reviewer writes. Mutually exclusive. */
+export const COMPLETE_TAG = 'complete';
+export const INCOMPLETE_TAG = 'incomplete';
+
+/** Set by POST /api/scan-review/request-expert; read wherever a caller needs
+ *  to know a review was already requested rather than re-issuing one. */
+export const EXPERT_REVIEW_TAG = 'expert_scan_review';
+
 const SCAN_TAG_KEY: Readonly<Record<string, string>> = {
-  expert_scan_review: 'row.expertReview',
+  [EXPERT_REVIEW_TAG]: 'row.expertReview',
   resubmitted: 'row.resubmitted',
   dicom: 'row.dicom',
 };
 
 /** Stored, deliberately never rendered. See the note above. */
-const SUPPRESSED_TAGS: ReadonlySet<string> = new Set(['complete', 'incomplete']);
+const SUPPRESSED_TAGS: ReadonlySet<string> = new Set([COMPLETE_TAG, INCOMPLETE_TAG]);
 
 export type DisplayTag = { id: string; labelKey: string };
 
@@ -54,4 +62,37 @@ export function displayTags(tags: readonly string[] | null | undefined): Display
 /** True when fewer files arrived than the scan declared. */
 export function isMissingFiles(fileCount: number, fileTotal: number): boolean {
   return fileTotal > 0 && fileCount < fileTotal;
+}
+
+export type CompletionTag = typeof COMPLETE_TAG | typeof INCOMPLETE_TAG;
+
+export type CompletionTagMutation = {
+  /** The tag to add, or null when the scan already carries it. */
+  add: CompletionTag | null;
+  /** The opposite tag to remove, or null when it was never there. */
+  remove: CompletionTag | null;
+};
+
+/**
+ * What it takes to set a scan's completeness to `next`.
+ *
+ * The server writes tags with `$push`, not `$addToSet` or a replace, so
+ * mutual exclusion is not enforced there: without this, marking a scan
+ * `complete` twice would push a duplicate, and marking a scan tagged
+ * `incomplete` as `complete` would leave BOTH tags on the same scan — the
+ * write-only state the audit found. This is what the client sends instead:
+ * add the new tag only when it is not already there, and always drop the
+ * opposite one when present.
+ */
+export function completionTagMutation(
+  currentTags: readonly string[] | null | undefined,
+  next: CompletionTag,
+): CompletionTagMutation {
+  const opposite = next === COMPLETE_TAG ? INCOMPLETE_TAG : COMPLETE_TAG;
+  const normalized = new Set((currentTags ?? []).map((tag) => tag.trim().toLowerCase()));
+
+  return {
+    add: normalized.has(next) ? null : next,
+    remove: normalized.has(opposite) ? opposite : null,
+  };
 }
