@@ -179,6 +179,23 @@ SECTOR_TEST_PASSWORD='<the same>'       pnpm tsx scripts/data/seed-test-accounts
 | `reviewer@sector.test` | scan_reviewer | leads the same group as the demo reviewer | leads the largest production queue |
 | `admin@sector.test`    | administrator | `full-access`                             | `full-access`                      |
 
+The learner is also enrolled in every course that has a published version, 115
+of them on the mirror, because the dumps carry no enrolments and a learner with
+more than a hundred is the case My Courses has to get right.
+
+`scripts/data/seed-course-progress.ts` then gives that learner real progress by
+driving the API rather than by writing documents, so the records are shaped the
+way the version pinning and recalculation shape them:
+
+```bash
+pnpm tsx scripts/data/seed-course-progress.ts        # needs the mirror API on :5002
+```
+
+It leaves a spread the surfaces can be judged against — one course untouched,
+four part way, one finished — and a course only reaches 100% because its
+quizzes are answered question by question, which is the one thing an ordinary
+track call cannot do.
+
 `--remove` takes them out again. Keep the password in `.env.local` (gitignored)
 so the route replay can find it: `pnpm fidelity` also walks every list view
 through the running mirror API for all four accounts when
