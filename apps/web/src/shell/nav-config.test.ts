@@ -53,7 +53,7 @@ function itemIds(user: AuthUser | null, groupId: string): string[] {
 
 describe('destinations that are not scan lists', () => {
   it('puts an ungated section in the rail with the URL the router mounted', () => {
-    expect(itemIds(LEARNER, 'learn')).toEqual(['courses', 'question-banks']);
+    expect(itemIds(LEARNER, 'learn')).toEqual(['courses', 'gallery', 'sage', 'question-banks']);
 
     const courses = visibleNavGroups(LEARNER)
       .flatMap((group) => group.items)

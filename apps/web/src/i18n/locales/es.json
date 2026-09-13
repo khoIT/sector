@@ -9,7 +9,9 @@
     "courses": "Cursos",
     "questionBanks": "Bancos de preguntas",
     "groupAdministration": "Administración de grupos",
-    "home": "Inicio"
+    "home": "Inicio",
+    "gallery": "Galería de Patología",
+    "sage": "Sage AI"
   },
   "tabs": {
     "reviewed": "Revisado"
@@ -627,6 +629,70 @@
       "selectGroup": "Selecciona un grupo",
       "noGroups": "Todavía no hay grupos",
       "noGroupsHint": "En cuanto exista un grupo, selecciónalo aquí para ver su resumen de cursos y escaneos."
+    }
+  },
+  "gallery": {
+    "title": "Galería de Patología",
+    "categoriesError": {
+      "title": "No se pudieron cargar las categorías",
+      "retry": "Intentar de nuevo"
+    },
+    "noCategories": "No hay categorías disponibles",
+    "subCategoriesFor": "Subcategorías de {{category}}",
+    "allSubCategories": "Todas las subcategorías",
+    "noVideoAvailable": "No hay video disponible para este elemento",
+    "loadError": {
+      "title": "No se pudo cargar esta categoría",
+      "retry": "Intentar de nuevo"
+    },
+    "noItems": "Todavía no hay elementos en esta categoría",
+    "pageOf": "Página {{current}} de {{total}}"
+  },
+  "sage": {
+    "title": "Sage AI",
+    "description": "Pregúntale a Sage AI cualquier cosa sobre ecografía en el punto de atención.",
+    "loading": "Cargando Sage AI…",
+    "signedOut": {
+      "title": "Inicia sesión para usar Sage AI",
+      "description": "Sage AI necesita una cuenta con sesión iniciada para abrirse."
+    }
+  },
+  "assignments": {
+    "title": "Asignaciones",
+    "searchPlaceholder": "Buscar asignaciones…",
+    "columns": {
+      "learner": "Estudiante",
+      "content": "Contenido",
+      "type": "Tipo",
+      "dueDate": "Fecha límite",
+      "status": "Estado"
+    },
+    "type": {
+      "course": "Curso",
+      "module": "Módulo",
+      "topic": "Tema",
+      "quiz": "Cuestionario"
+    },
+    "status": {
+      "draft": "Borrador",
+      "active": "Activo",
+      "in_progress": "En progreso",
+      "completed": "Completado",
+      "cancelled": "Cancelado"
+    },
+    "filters": {
+      "status": "Estado",
+      "allStatuses": "Todos los estados",
+      "type": "Tipo",
+      "allTypes": "Todos los tipos"
+    },
+    "empty": {
+      "title": "Aún no hay asignaciones",
+      "description": "Todavía no se ha asignado nada a este grupo."
+    },
+    "error": {
+      "title": "No se pudieron cargar las asignaciones",
+      "retry": "Intentar de nuevo"
     }
   }
 }

@@ -764,8 +764,6 @@ export { exportFileToBlob } from './export-download';
 export {
   createGroupAssignmentPayloadSchema,
   groupAssignmentSchema,
-  groupAssignmentStatusSchema,
-  groupAssignmentTypeSchema,
   groupCourseOptionSchema,
   groupLearnerSchema,
   type CreateGroupAssignmentPayload,
@@ -775,14 +773,14 @@ export {
 } from './schemas/group-assignment';
 export {
   createGroupAssignment,
-  getGroupAssignments,
+  getAssignmentsForGroup,
   getGroupCourseOptions,
   getGroupLearners,
   type GetGroupAssignmentsQuery,
 } from './endpoints/group-assignment';
 export {
+  useAssignmentsForGroup,
   useCreateGroupAssignmentMutation,
-  useGroupAssignments,
   useGroupCourseOptions,
   useGroupLearners,
 } from './react/use-group-assignments';
@@ -868,3 +866,51 @@ export {
 } from './react/use-dashboard';
 
 export { dashboardKeys } from './query-keys';
+// ─── pathology gallery: category bar, sub-category rail, card grid ────────
+export {
+  pathologyCategorySchema,
+  pathologyGalleryItemSchema,
+  PATHOLOGY_STATUSES,
+  pathologyStatusSchema,
+  type PathologyCategory,
+  type PathologyGalleryItem,
+  type PathologyStatus,
+} from './schemas/pathology';
+
+export {
+  getPathologyCategories,
+  getPathologyGalleryList,
+  getPathologySubCategories,
+  type PathologyGalleryListQuery,
+} from './endpoints/pathology';
+
+export {
+  usePathologyCategories,
+  usePathologyGalleryList,
+  usePathologySubCategories,
+  type UsePathologyGalleryListOptions,
+} from './react/use-pathology-gallery';
+
+export { pathologyKeys } from './query-keys';
+
+// ─── group assignments: read-only surface for a group's assignments ───────
+export {
+  assignmentContentRefSchema,
+  assignmentGroupRefSchema,
+  assignmentListResponseSchema,
+  assignmentSchema,
+  GROUP_ASSIGNMENT_STATUSES,
+  GROUP_ASSIGNMENT_TYPES,
+  groupAssignmentStatusSchema,
+  groupAssignmentTypeSchema,
+  type Assignment,
+  type AssignmentContentRef,
+  type AssignmentGroupRef,
+  type AssignmentListResponse,
+  type GroupAssignmentStatus,
+  type GroupAssignmentType,
+} from './schemas/assignment';
+
+export { getGroupAssignments, type AssignmentListQuery } from './endpoints/assignment';
+export { useGroupAssignments } from './react/use-assignments';
+export { assignmentKeys } from './query-keys';
