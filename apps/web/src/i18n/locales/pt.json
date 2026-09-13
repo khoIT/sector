@@ -515,6 +515,77 @@
       "quiz": {
         "bestPercentage": "Melhor: {{percent}}%"
       }
+    },
+    "runner": {
+      "courseProgress": "{{percent}}% concluído",
+      "sidebar": {
+        "title": "Conteúdo do curso"
+      },
+      "nav": {
+        "previous": "Anterior",
+        "next": "Próximo"
+      },
+      "itemNotFound": {
+        "title": "Este item não faz parte deste curso",
+        "description": "Ele pode ter sido removido, ou pertencer a outra versão deste curso."
+      },
+      "lesson": {
+        "error": {
+          "title": "Não foi possível carregar esta lição",
+          "retry": "Tentar novamente"
+        }
+      },
+      "topic": {
+        "error": {
+          "title": "Não foi possível carregar este tópico",
+          "retry": "Tentar novamente"
+        }
+      },
+      "quiz": {
+        "blocked": {
+          "title": "Este questionário ainda não tem perguntas"
+        },
+        "error": {
+          "title": "Não foi possível carregar este questionário",
+          "retry": "Tentar novamente"
+        },
+        "noQuestions": {
+          "title": "Este questionário ainda não tem perguntas e não pode ser iniciado"
+        },
+        "questionCount_one": "{{count}} pergunta",
+        "questionCount_other": "{{count}} perguntas",
+        "start": "Iniciar",
+        "continue": "Continuar",
+        "retake": "Refazer",
+        "backToOutline": "Voltar ao resumo do curso",
+        "saveError": "Sua última resposta não pôde ser salva. Continue — a tentativa será refeita.",
+        "resumeError": "Seu progresso salvo não pôde ser carregado. Começando do zero."
+      }
+    },
+    "admin": {
+      "title": "Progresso do aluno no curso",
+      "heading": "Progresso de {{learner}} em {{course}}",
+      "assignmentType": {
+        "personal": "Inscrição pessoal",
+        "group": "Atribuído por meio de {{group}}"
+      },
+      "progress": {
+        "title": "Progresso"
+      },
+      "stat": {
+        "completedItems": "Itens concluídos",
+        "lessons": "Lições concluídas",
+        "topics": "Tópicos concluídos",
+        "quizzes": "Questionários concluídos",
+        "lastAccessedAt": "Último acesso",
+        "enrolledAt": "Inscrito em",
+        "never": "Nunca"
+      },
+      "expiredBadge": "Expirado",
+      "error": {
+        "title": "Não foi possível carregar o curso deste aluno",
+        "retry": "Tentar novamente"
+      }
     }
   },
   "createScan": {

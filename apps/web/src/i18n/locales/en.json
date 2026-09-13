@@ -593,6 +593,77 @@
       "quiz": {
         "bestPercentage": "Best: {{percent}}%"
       }
+    },
+    "runner": {
+      "courseProgress": "{{percent}}% complete",
+      "sidebar": {
+        "title": "Course contents"
+      },
+      "nav": {
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "itemNotFound": {
+        "title": "This item is not part of this course",
+        "description": "It may have been removed, or belong to a different version of this course."
+      },
+      "lesson": {
+        "error": {
+          "title": "This lesson could not be loaded",
+          "retry": "Try again"
+        }
+      },
+      "topic": {
+        "error": {
+          "title": "This topic could not be loaded",
+          "retry": "Try again"
+        }
+      },
+      "quiz": {
+        "blocked": {
+          "title": "This quiz has no questions yet"
+        },
+        "error": {
+          "title": "This quiz could not be loaded",
+          "retry": "Try again"
+        },
+        "noQuestions": {
+          "title": "This quiz has no questions yet and cannot be started"
+        },
+        "questionCount_one": "{{count}} question",
+        "questionCount_other": "{{count}} questions",
+        "start": "Start",
+        "continue": "Continue",
+        "retake": "Retake",
+        "backToOutline": "Back to course outline",
+        "saveError": "Your last answer could not be saved. Keep going — it will retry.",
+        "resumeError": "Your saved progress could not be loaded. Starting fresh."
+      }
+    },
+    "admin": {
+      "title": "Learner course progress",
+      "heading": "{{learner}}'s progress in {{course}}",
+      "assignmentType": {
+        "personal": "Personal enrolment",
+        "group": "Assigned through {{group}}"
+      },
+      "progress": {
+        "title": "Progress"
+      },
+      "stat": {
+        "completedItems": "Items completed",
+        "lessons": "Lessons completed",
+        "topics": "Topics completed",
+        "quizzes": "Quizzes completed",
+        "lastAccessedAt": "Last accessed",
+        "enrolledAt": "Enrolled",
+        "never": "Never"
+      },
+      "expiredBadge": "Expired",
+      "error": {
+        "title": "This learner's course could not be loaded",
+        "retry": "Try again"
+      }
     }
   },
   "createScan": {

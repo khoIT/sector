@@ -2,7 +2,9 @@ import type { CourseOutlineItem } from '@sector/api-client';
 import { StatusPill } from '@sector/ui';
 import { CircleHelp, FileQuestion, Lock, PlayCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
+import { courseItemPathFor } from '../courses-links';
 import { courseProgressTone } from '../my-courses/course-row-model';
 import {
   blockedReasonLabelKey,
@@ -17,6 +19,10 @@ const KIND_ICON = {
 } as const;
 
 export type CourseOutlineItemRowProps = {
+  courseId: string;
+  /** Forwarded into the runner's `<Link state>`, same reasoning as
+   *  `course-outline-page.tsx`'s own fallback title. */
+  courseTitle: string | undefined;
   item: CourseOutlineItem;
   /** Whether this is the item the resume action would open. */
   isResumeTarget: boolean;
@@ -25,33 +31,30 @@ export type CourseOutlineItemRowProps = {
 };
 
 /**
- * One row of the outline.
+ * One row of the outline — a real link into the course runner
+ * (`/learn/courses/:courseId/:itemId`) now that it exists, closing the gap
+ * this component's own previous doc comment named ("the course runner this
+ * would open is the next phase, not this one"). A blocked item still
+ * explains itself instead of linking anywhere: it has no questions to open.
  *
- * A plain `<div>`, not a list item: the caller (`course-outline-page.tsx`)
- * already wraps every row in its own `<li>` to build the ordered list, and
- * this component used to render a SECOND `<li>` inside that one — invalid
- * `<li>` nested directly in `<li>`, caught only by a cold browser load
- * (`scripts/check/cold-load-sweep.mjs`), because the suites run with no DOM
- * and nothing here ever renders in them. The `id` stays: it is the anchor the
- * Resume/Start/Review action jumps to.
- *
- * Not a link (see the phase report for why: the course runner this would
- * open is the next phase, not this one). Kind, title and status are always
- * shown; a blocked item explains itself instead of pretending to be
- * openable, and the resume target is highlighted so the Start/Resume/Review
- * action above has something visible to point at when it jumps here.
+ * A plain wrapper, not a list item, either way: the caller
+ * (`course-outline-page.tsx`) already wraps every row in its own `<li>`.
  */
-export function CourseOutlineItemRow({ item, isResumeTarget, indent }: CourseOutlineItemRowProps) {
+export function CourseOutlineItemRow({
+  courseId,
+  courseTitle,
+  item,
+  isResumeTarget,
+  indent,
+}: CourseOutlineItemRowProps) {
   const { t } = useTranslation();
   const Icon = item.blockedReason ? Lock : KIND_ICON[item.kind];
+  const rowClasses = `flex flex-wrap items-center gap-2 rounded-token border px-3 py-2 ${
+    isResumeTarget ? 'border-accent-ink bg-accent-soft' : 'border-line bg-surface'
+  } ${indent ? 'ml-5' : ''}`;
 
-  return (
-    <div
-      id={`item-${item.id}`}
-      className={`flex flex-wrap items-center gap-2 rounded-token border px-3 py-2 ${
-        isResumeTarget ? 'border-accent-ink bg-accent-soft' : 'border-line bg-surface'
-      } ${indent ? 'ml-5' : ''}`}
-    >
+  const body = (
+    <>
       <Icon className="h-4 w-4 shrink-0 text-ink-dim" aria-hidden />
 
       <span className="text-[11px] uppercase tracking-wide text-ink-dim">
@@ -77,6 +80,25 @@ export function CourseOutlineItemRow({ item, isResumeTarget, indent }: CourseOut
           label={t(itemStatusLabelKey(item.status))}
         />
       )}
-    </div>
+    </>
+  );
+
+  if (item.blockedReason) {
+    return (
+      <div id={`item-${item.id}`} className={rowClasses} aria-disabled="true">
+        {body}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      id={`item-${item.id}`}
+      to={courseItemPathFor(courseId, item.id)}
+      state={{ title: courseTitle }}
+      className={`${rowClasses} outline-none focus-visible:ring-2 focus-visible:ring-accent-ink`}
+    >
+      {body}
+    </Link>
   );
 }

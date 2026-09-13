@@ -15,11 +15,7 @@ export function coursePathFor(courseId: string): string {
   return `${COURSES_PATH}/${courseId}`;
 }
 
-/**
- * Where an outline item would open once the course runner (the next phase)
- * exists. Not mounted as a route yet — see `outline/course-outline-page.tsx`
- * for how the outline surface stands in for it today.
- */
+/** Where an outline item opens: the course runner (this phase). */
 export function courseItemPathFor(courseId: string, itemId: string): string {
   return `${COURSES_PATH}/${courseId}/${itemId}`;
 }
@@ -33,3 +29,16 @@ export const COURSES_INDEX_ROUTE_PATH = stripLeadingSlash(COURSES_PATH);
 
 /** Route path for one course's outline, relative to the app root. */
 export const COURSE_OUTLINE_ROUTE_PATH = `${COURSES_INDEX_ROUTE_PATH}/:courseId`;
+
+/** Route path for the course runner: one route for every item kind and
+ *  every nesting shape the outline resolves. */
+export const COURSE_ITEM_ROUTE_PATH = `${COURSES_INDEX_ROUTE_PATH}/:courseId/:itemId`;
+
+/** The admin/leader read-only view of a learner's course state — a sibling
+ *  of `/learn/courses`, not nested under it, so it can never collide with
+ *  `COURSE_ITEM_ROUTE_PATH`'s `:courseId/:itemId` segment pair. */
+export const COURSE_ADMIN_ROUTE_PATH = 'learn/course-progress/:learnerId/:courseId';
+
+export function courseAdminPathFor(learnerId: string, courseId: string): string {
+  return `/learn/course-progress/${learnerId}/${courseId}`;
+}
