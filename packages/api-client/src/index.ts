@@ -338,6 +338,7 @@ export {
   multipartUploadInitResponseSchema,
   scanFilePayloadSchema,
   scanFileRecordSchema,
+  scanFilesMutationResponseSchema,
   updateFilePayloadSchema,
   updateScanPayloadSchema,
   uploadPresignPayloadSchema,
@@ -348,6 +349,7 @@ export {
   type MultipartUploadInitResponse,
   type ScanFilePayload,
   type ScanFileRecord,
+  type ScanFilesMutationResponse,
   type UpdateFilePayload,
   type UpdateScanPayload,
   type UploadPresignResponse,
@@ -384,7 +386,9 @@ export {
 } from './endpoints/scan-upload';
 
 export {
+  addScanFiles,
   createScan,
+  deleteScanFiles,
   updateFileDetailsStatus,
   updateScan,
   updateScanFileStatus,
@@ -563,13 +567,9 @@ export {
 } from './upload-retry-policy';
 
 // ─── scan tags (mark complete/incomplete, and every other reviewer tag) ───────
-export {
-  scanTagPayloadSchema,
-  scanTagsResponseSchema,
-  type ScanTagPayload,
-} from './schemas/scan-tags';
-export { addScanTag, getScanTags, removeScanTag } from './endpoints/scan-tags';
-export { useAddScanTag, useRemoveScanTag, useScanTags } from './react/use-scan-tags';
+export { scanTagPayloadSchema, type ScanTagPayload } from './schemas/scan-tags';
+export { addScanTag, removeScanTag } from './endpoints/scan-tags';
+export { useAddScanTag, useRemoveScanTag } from './react/use-scan-tags';
 
 // ─── reset-upload (recovering a failed or failed-upload scan) ────────────────
 export { resetScanUpload } from './endpoints/scan-reset-upload';

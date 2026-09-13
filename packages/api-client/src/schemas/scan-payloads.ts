@@ -33,10 +33,12 @@ export const scanFilePayloadSchema = z.object({
    *
    * POST /api/scan/create stores this VERBATIM. POST /api/scan/:id/add-files
    * does NOT — it rebuilds the key as
-   * `storage/{userId}/scan/{scanId}/{sanitized trailing segment}` and, for a
-   * file registered as `completed`, 400s when no object exists there. So a
-   * file uploaded before its scan existed can only be registered through
-   * `create`, never through `add-files`.
+   * `storage/{userId}/scan/{scanId}/{sanitized trailing segment}`. So a file
+   * uploaded under a draft prefix, before its scan existed, can only be
+   * registered through `create`; a file uploaded once the scan id is known is
+   * already under that exact prefix, and `add-files` rebuilds the same key.
+   * The wizard presigns with the scan id as soon as it has one for this
+   * reason — see `transfer` in use-create-scan-draft.ts.
    */
   filepath: z.string(),
   originalFilename: z.string().optional(),
@@ -104,6 +106,24 @@ export const createScanResponseSchema = z.object({
 });
 
 export type CreateScanResponse = z.infer<typeof createScanResponseSchema>;
+
+/**
+ * What POST /api/scan/:scanId/add-files and DELETE /api/scan/:scanId/files
+ * both answer with: the whole updated scan as the raw Mongoose document.
+ *
+ * Only two fields matter to a caller and both are load-bearing rather than
+ * informational. `files` carries the File records just created, whose ids are
+ * what the per-file confirmation needs. `fileTotal` is read back rather than
+ * predicted because both routes move it — add `$inc`s it by the number added,
+ * delete `$inc`s it down by the number actually attached and then clamps at
+ * zero — and the decision to destroy a draft hangs on that number being right.
+ */
+export const scanFilesMutationResponseSchema = z.object({
+  fileTotal: z.number(),
+  files: z.array(scanFileRecordSchema).default([]),
+});
+
+export type ScanFilesMutationResponse = z.infer<typeof scanFilesMutationResponseSchema>;
 
 /** PATCH /api/scan/:scanId/file-details/status — matched by FILENAME, not id. */
 export const fileDetailsStatusPayloadSchema = z.object({

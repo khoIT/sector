@@ -1,18 +1,12 @@
 import type { ApiClient } from '../client';
-import {
-  scanTagPayloadSchema,
-  scanTagsResponseSchema,
-  type ScanTagPayload,
-} from '../schemas/scan-tags';
+import { scanTagPayloadSchema, type ScanTagPayload } from '../schemas/scan-tags';
 
-/** GET /api/scan/:scanId/tags. Requires `read:scan`. */
-export async function getScanTags(
-  client: ApiClient,
-  scanId: string,
-  signal?: AbortSignal,
-): Promise<string[]> {
-  return client.get(`/api/scan/${scanId}/tags`, { schema: scanTagsResponseSchema, signal });
-}
+/*
+ * GET /api/scan/:scanId/tags is deliberately not wrapped. Every surface that
+ * reads tags already has them: the list routes and the detail routes both send
+ * `tags` on the scan, and `scanSchema` parses it. A second way to ask the same
+ * question is a second thing to keep in sync.
+ */
 
 /**
  * POST /api/scan/:scanId/tags. Requires `edit:scan`.

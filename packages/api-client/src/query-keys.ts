@@ -49,8 +49,6 @@ export const scanKeys = {
   allListRoots: () => SCAN_LIST_VIEWS.map((view) => [SCAN_LIST_KEY[view]] as const),
   users: (type: 'pending' | 'reviewed') => ['get-scan-users', type] as const,
   userGroups: () => ['get-scan-user-groups'] as const,
-  /** GET /api/scan/:scanId/tags, read on its own rather than through a detail fetch. */
-  tags: (scanId: string) => ['get-scan-tags', scanId] as const,
 } as const;
 
 export const noteKeys = {

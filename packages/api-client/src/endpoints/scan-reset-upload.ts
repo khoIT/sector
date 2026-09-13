@@ -11,6 +11,12 @@ import type { ApiClient } from '../client';
  * its `fileTotal`, which is what lets a retry re-confirm the same files by
  * name once they are re-uploaded.
  *
+ * No notice anywhere in this app promises this recovery. The parity audit's
+ * "three notices promise a recovery path the port does not have" row was
+ * already closed before this endpoint existed — the notices were reworded, not
+ * left waiting for it — so nothing here is repairing them. This exists because
+ * a failed upload had no recovery at all, which is the separate row.
+ *
  * The response body is the updated scan as the raw Mongoose document (no
  * presigned media URLs, different field shapes from every read route), which
  * nothing here has a use for — the caller re-fetches through the ordinary
