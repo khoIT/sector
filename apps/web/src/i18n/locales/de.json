@@ -34,7 +34,11 @@
     "createScanStudy": "Scan erstellen",
     "cancel": "Stornieren",
     "save": "Speichern",
-    "view": "Ansicht"
+    "view": "Ansicht",
+    "resetUpload": "Für erneuten Upload zurücksetzen",
+    "requestExpertReview": "Expertenprüfung anfordern",
+    "markComplete": "Als vollständig markieren",
+    "markIncomplete": "Als unvollständig markieren"
   },
   "status": {
     "pending": "Ausstehend",
@@ -80,5 +84,35 @@
   },
   "empty": {
     "loading": "Wird geladen"
+  },
+  "createScan": {
+    "storageDegradedTitle": "Dieser Browser konnte deinen Fortschritt nicht speichern",
+    "storageDegradedBody": "Bereits hochgeladene Dateien sind sicher gespeichert, aber dieser Entwurf übersteht das Schließen oder Neuladen dieses Tabs nicht. Lass ihn geöffnet, bis du absendest.",
+    "validationFileTooLarge": "„{{name}}“ ist allein schon größer als das Studienlimit von {{limit}} und kann daher nicht hinzugefügt werden.",
+    "validationStudyTooLarge": "Das Hinzufügen von „{{name}}“ würde dieses Studium über das Limit von {{limit}} bringen. Entferne zuerst eine andere Datei oder füge sie einem neuen Studium hinzu.",
+    "resumingResetTitle": "Ein zurückgesetztes Studium wird fortgesetzt",
+    "resumingResetBody": "{{title}} wurde für einen erneuten Upload zurückgesetzt. Füge die Dateien erneut hinzu und sende ab — dadurch werden sie demselben Studium zugeordnet, statt ein neues zu erstellen.",
+    "submitIncompleteSubtitle": "Das Studium wurde erstellt, enthält aber noch nicht alle in diesem Entwurf vorgesehenen Dateien.",
+    "submitIncompleteStatus": "Unvollständig",
+    "submitIncompleteTitle": "{{confirmed}} von {{total}} Dateien angehängt — das Studium wurde nicht vollständig übermittelt",
+    "submitIncompleteBody": "Der Entwurf und alle hochgeladenen Dateien sind noch hier — nichts wurde verworfen. Versuche es erneut, um dasselbe Studium fortzusetzen, oder öffne es, um genau zu sehen, was angekommen ist.",
+    "tryAgain": "Erneut versuchen",
+    "creditsUsedOfTotal": "{{used}} von {{total}} verwendet"
+  },
+  "scanDetail": {
+    "resetUploadDialogTitle": "„{{title}}“ für erneuten Upload zurücksetzen?",
+    "resetUploadDialogBody": "Dadurch wird das Studium auf Ausstehend zurückgesetzt und die Dateianzahl gelöscht. Du wirst zu Scan-Studie erstellen weitergeleitet, wobei dasselbe Studium bereits geöffnet ist — füge die Dateien erneut hinzu und sende ab, um es abzuschließen. Bereits geprüfte oder beantwortete Inhalte dieses Studiums bleiben unverändert.",
+    "resetUploadConfirm": "Zurücksetzen und erneut hochladen",
+    "resetUploadPending": "Wird zurückgesetzt…",
+    "resetUploadError": "Der Scan konnte nicht zurückgesetzt werden.",
+    "requestExpertReviewDialogTitle": "Expertenprüfung anfordern",
+    "requestExpertReviewDialogBody": "Ein GUSI-Experte prüft „{{title}}“ zusätzlich zu allen Gruppenprüfern, für ein Guthaben.",
+    "requestExpertReviewAlready": "Für dieses Studium wurde bereits eine Expertenprüfung angefordert. Eine erneute Anfrage würde ein zweites Guthaben für dieselbe Prüfung verbrauchen und ist daher deaktiviert.",
+    "requestExpertReviewSubmit": "Prüfung anfordern",
+    "requestExpertReviewPending": "Wird angefordert…",
+    "requestExpertReviewError": "Die Anfrage ist fehlgeschlagen.",
+    "markComplete": "Als vollständig markieren",
+    "markIncomplete": "Als unvollständig markieren",
+    "close": "Schließen"
   }
 }

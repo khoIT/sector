@@ -34,7 +34,11 @@
     "createScanStudy": "Crea scansione",
     "cancel": "Annulla",
     "save": "Salva",
-    "view": "Visualizza"
+    "view": "Visualizza",
+    "resetUpload": "Reimposta per ricaricare",
+    "requestExpertReview": "Richiedi revisione esperta",
+    "markComplete": "Contrassegna come completo",
+    "markIncomplete": "Contrassegna come incompleto"
   },
   "status": {
     "pending": "In sospeso",
@@ -80,5 +84,35 @@
   },
   "empty": {
     "loading": "Caricamento"
+  },
+  "createScan": {
+    "storageDegradedTitle": "Questo browser non è riuscito a salvare i tuoi progressi",
+    "storageDegradedBody": "I file già caricati sono al sicuro nell'archiviazione, ma questa bozza non sopravviverà alla chiusura o al ricaricamento di questa scheda. Tienila aperta finché non invii lo studio.",
+    "validationFileTooLarge": "\"{{name}}\" supera da solo il limite di {{limit}} dello studio, quindi non può essere aggiunto.",
+    "validationStudyTooLarge": "Aggiungere \"{{name}}\" porterebbe questo studio oltre il limite di {{limit}}. Rimuovi prima un altro file, oppure aggiungilo a un nuovo studio.",
+    "resumingResetTitle": "Ripresa di uno studio reimpostato",
+    "resumingResetBody": "{{title}} è stato reimpostato per il nuovo caricamento. Aggiungi di nuovo i suoi file e invia — questo li allega allo stesso studio invece di crearne uno nuovo.",
+    "submitIncompleteSubtitle": "Lo studio è stato creato, ma non contiene ancora tutti i file previsti da questa bozza.",
+    "submitIncompleteStatus": "Incompleto",
+    "submitIncompleteTitle": "{{confirmed}} di {{total}} file allegati — lo studio non è stato inviato completamente",
+    "submitIncompleteBody": "La bozza e tutti i file caricati sono ancora qui — niente è andato perso. Riprova per riprendere questo stesso studio, oppure aprilo per vedere esattamente cosa è arrivato.",
+    "tryAgain": "Riprova",
+    "creditsUsedOfTotal": "{{used}} di {{total}} usati"
+  },
+  "scanDetail": {
+    "resetUploadDialogTitle": "Reimpostare “{{title}}” per il nuovo caricamento?",
+    "resetUploadDialogBody": "Questo riporta lo studio in Sospeso e azzera il conteggio dei file. Verrai portato a Crea studio di scansione con questo stesso studio aperto — aggiungi di nuovo i file e invia per completarlo. Nulla di ciò che è già stato revisionato o compilato in questo studio viene modificato.",
+    "resetUploadConfirm": "Reimposta e ricarica",
+    "resetUploadPending": "Reimpostazione…",
+    "resetUploadError": "Non è stato possibile reimpostare la scansione.",
+    "requestExpertReviewDialogTitle": "Richiedi revisione esperta",
+    "requestExpertReviewDialogBody": "Un esperto GUSI revisiona “{{title}}” oltre a qualsiasi revisore del gruppo, per un credito.",
+    "requestExpertReviewAlready": "Una revisione esperta è già stata richiesta per questo studio. Richiederla di nuovo spenderebbe un secondo credito per la stessa revisione, quindi è disabilitata.",
+    "requestExpertReviewSubmit": "Richiedi revisione",
+    "requestExpertReviewPending": "Richiesta in corso…",
+    "requestExpertReviewError": "La richiesta non è andata a buon fine.",
+    "markComplete": "Contrassegna come completo",
+    "markIncomplete": "Contrassegna come incompleto",
+    "close": "Chiudi"
   }
 }

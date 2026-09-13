@@ -34,7 +34,11 @@
     "createScanStudy": "Crear escaneo",
     "cancel": "Cancelar",
     "save": "Guardar",
-    "view": "Ver"
+    "view": "Ver",
+    "resetUpload": "Restablecer para volver a subir",
+    "requestExpertReview": "Solicitar revisión de experto",
+    "markComplete": "Marcar como completo",
+    "markIncomplete": "Marcar como incompleto"
   },
   "status": {
     "pending": "Pendiente",
@@ -80,5 +84,35 @@
   },
   "empty": {
     "loading": "Cargando"
+  },
+  "createScan": {
+    "storageDegradedTitle": "Este navegador no pudo guardar tu progreso",
+    "storageDegradedBody": "Los archivos ya subidos están seguros en el almacenamiento, pero este borrador no sobrevivirá si cierras o recargas esta pestaña. Mantenla abierta hasta que envíes el estudio.",
+    "validationFileTooLarge": "\"{{name}}\" supera por sí solo el límite de {{limit}} del estudio, así que no se puede añadir.",
+    "validationStudyTooLarge": "Añadir \"{{name}}\" haría que este estudio superara el límite de {{limit}}. Elimina otro archivo primero, o añádelo a un estudio nuevo.",
+    "resumingResetTitle": "Retomando un estudio restablecido",
+    "resumingResetBody": "{{title}} se restableció para volver a subirlo. Añade sus archivos de nuevo y envía — esto los adjunta al mismo estudio en lugar de crear uno nuevo.",
+    "submitIncompleteSubtitle": "El estudio se creó, pero todavía no contiene todos los archivos que este borrador pretendía.",
+    "submitIncompleteStatus": "Incompleto",
+    "submitIncompleteTitle": "{{confirmed}} de {{total}} archivos adjuntados — el estudio no se envió por completo",
+    "submitIncompleteBody": "El borrador y todos los archivos subidos siguen aquí — no se ha perdido nada. Vuelve a intentarlo para retomar este mismo estudio, o ábrelo para ver exactamente qué se guardó.",
+    "tryAgain": "Intentar de nuevo",
+    "creditsUsedOfTotal": "{{used}} de {{total}} usados"
+  },
+  "scanDetail": {
+    "resetUploadDialogTitle": "¿Restablecer “{{title}}” para volver a subir?",
+    "resetUploadDialogBody": "Esto vuelve a poner el estudio en Pendiente y borra su recuento de archivos. Se te llevará a Crear estudio de escaneo con este mismo estudio abierto — añade los archivos de nuevo y envía para terminarlo. Nada de lo ya revisado o respondido en este estudio se ve afectado.",
+    "resetUploadConfirm": "Restablecer y volver a subir",
+    "resetUploadPending": "Restableciendo…",
+    "resetUploadError": "No se pudo restablecer el escaneo.",
+    "requestExpertReviewDialogTitle": "Solicitar revisión de experto",
+    "requestExpertReviewDialogBody": "Un experto de GUSI revisa “{{title}}” además de cualquier revisor del grupo, por un crédito.",
+    "requestExpertReviewAlready": "Ya se ha solicitado una revisión de experto para este estudio. Solicitarla de nuevo gastaría un segundo crédito para la misma revisión, así que está deshabilitado.",
+    "requestExpertReviewSubmit": "Solicitar revisión",
+    "requestExpertReviewPending": "Solicitando…",
+    "requestExpertReviewError": "La solicitud no se pudo completar.",
+    "markComplete": "Marcar como completo",
+    "markIncomplete": "Marcar como incompleto",
+    "close": "Cerrar"
   }
 }
