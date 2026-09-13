@@ -395,9 +395,12 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
     // `filesRef.current` would not see a file this same batch just accepted.
     let runningBytes = trackedBytes(filesRef.current);
 
-    // Each file is added to state the instant IT validates, not after the
-    // whole batch does: the first clip starts transferring while the rest
-    // are still being probed, which is the entire point of the flow.
+    // Phase 1, synchronous and in selection order: duplicate names and the
+    // size caps need no I/O, and the study-cap math needs a stable order —
+    // deciding it inside the concurrent phase below would make which file
+    // "wins" a shared byte budget depend on which one happened to validate
+    // first.
+    const pending: Array<{ id: string; file: File }> = [];
     for (const file of incoming) {
       // PATCH /api/scan/:id/file-details/status matches an entry by FILENAME,
       // so two files with the same name in one study cannot be told apart.
@@ -405,9 +408,6 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
         failures.push({ name: file.name, reason: 'duplicate-name' });
         continue;
       }
-
-      // Checked before spending time on the decode probe below: a file that
-      // cannot fit does not need to be validated to be refused.
       if (exceedsFileLimit(file.size)) {
         failures.push({ name: file.name, reason: 'file-too-large' });
         continue;
@@ -419,38 +419,65 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
 
       existingNames.add(file.name);
       runningBytes += file.size;
-
-      const result = await validateMediaFile(file);
-
-      if (blocksMediaUpload(result)) {
-        failures.push({ name: file.name, reason: result.reason });
-        continue;
-      }
-
-      const accepted: DraftFile = {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        status: 'queued',
-        progress: 0,
-        storageKey: null,
-        // A structure-only file is a real scan the browser cannot decode.
-        // It uploads exactly like any other; the badge only sets expectations.
-        confidence: result.ok ? result.confidence : null,
-        error: null,
-        blob: file,
-      };
-
-      setState((previous) => ({ ...previous, files: [...previous.files, accepted] }));
-      // Durable from the moment it is accepted, so a reload two seconds later
-      // still has the bytes. Dropped again as soon as the upload completes.
-      const stored = await putDraftFile(draftIdRef.current, accepted.id, file);
-      if (!stored) setBlobStorageDegraded(true);
+      pending.push({ id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`, file });
     }
 
+    // Phase 2: every file that passed the cheap checks appears immediately,
+    // as `validating` — a learner picking five clips used to see nothing
+    // until the FIRST one's decode probe finished, which can take up to a
+    // minute on a large file; now every row shows up at once.
+    if (pending.length > 0) {
+      setState((previous) => ({
+        ...previous,
+        files: [
+          ...previous.files,
+          ...pending.map(({ id, file }): DraftFile => ({
+            id,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            status: 'validating',
+            progress: 0,
+            storageKey: null,
+            confidence: null,
+            error: null,
+            blob: file,
+          })),
+        ],
+      }));
+    }
+
+    // Phase 3: the decode probe itself runs for every file AT ONCE rather
+    // than one at a time, so five clips take as long as the slowest one to
+    // validate rather than the sum of all five.
+    await Promise.all(
+      pending.map(async ({ id, file }) => {
+        const result = await validateMediaFile(file);
+
+        if (blocksMediaUpload(result)) {
+          failures.push({ name: file.name, reason: result.reason });
+          setState((previous) => ({
+            ...previous,
+            files: previous.files.filter((entry) => entry.id !== id),
+          }));
+          return;
+        }
+
+        patchFile(id, {
+          status: 'queued',
+          // A structure-only file is a real scan the browser cannot decode.
+          // It uploads exactly like any other; the badge only sets expectations.
+          confidence: result.ok ? result.confidence : null,
+        });
+        // Durable from the moment it is accepted, so a reload two seconds
+        // later still has the bytes. Dropped again once the upload completes.
+        const stored = await putDraftFile(draftIdRef.current, id, file);
+        if (!stored) setBlobStorageDegraded(true);
+      }),
+    );
+
     setValidationFailures(failures);
-  }, []);
+  }, [patchFile]);
 
   const cancelFile = useCallback((id: string) => {
     controllersRef.current.get(id)?.abort();
