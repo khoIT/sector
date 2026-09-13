@@ -1,0 +1,11 @@
+# Revisions that changed formatting only, and would otherwise sit on top of
+# every line in `git blame`.
+#
+# Local clones need this once:
+#     git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# GitHub reads the file at this path automatically, so blame on the web
+# already skips these.
+
+# style: format the workspace with Prettier
+062c6eebd4679c4d4b914dbe4df3afb6955e8488
