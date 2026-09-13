@@ -2,6 +2,7 @@ import type { RouteObject } from 'react-router-dom';
 
 import { accountRoutes } from '@/features/account/account-routes';
 import { createScanRoutes } from '@/features/create-scan/create-scan-routes';
+import { groupsRoutes } from '@/features/groups/groups-routes';
 import { scanDetailRoutes } from '@/features/scan-detail';
 
 import { unbuiltSurfaceRoutes } from './unbuilt-surface-routes';
@@ -28,8 +29,10 @@ export const featureRoutes: RouteObject[] = [
   ...scanDetailRoutes,
   ...createScanRoutes,
   ...accountRoutes,
-  // The Learn and Administer sections. They are in the rail and routed here
-  // before their surfaces exist; each one resolves to the same honest
-  // placeholder until a feature replaces its row in ./unbuilt-surfaces.ts.
+  ...groupsRoutes,
+  // The Learn section. It is in the rail and routed here before its surfaces
+  // exist; each one resolves to the same honest placeholder until a feature
+  // replaces its row in ./unbuilt-surfaces.ts. Administer/group-administration
+  // graduated out of this table — see ./unbuilt-surfaces.ts.
   ...unbuiltSurfaceRoutes,
 ];
