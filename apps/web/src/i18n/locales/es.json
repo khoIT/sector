@@ -127,8 +127,7 @@
         "role": "Rol",
         "status": "Estado",
         "joined": "Se unió",
-        "expires": "Vence",
-        "actions": "Acciones"
+        "expires": "Vence"
       },
       "role": {
         "leader": "Líder",
@@ -140,7 +139,6 @@
         "inactive": "Inactivo",
         "expired": "Caducado"
       },
-      "actionsMenu": "Más acciones para {{name}}",
       "empty": {
         "title": "Aún no hay miembros",
         "description": "Invita a alguien para comenzar con este grupo."

@@ -7,7 +7,7 @@ import {
   type GroupMember,
 } from '@sector/api-client';
 import { Button, EmptyState, StatusPill } from '@sector/ui';
-import { ChevronLeft, MoreHorizontal, TriangleAlert, Users2 } from 'lucide-react';
+import { ChevronLeft, TriangleAlert, Users2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useParams } from 'react-router-dom';
 
@@ -77,26 +77,6 @@ function toListColumn(
         id: def.id,
         header: t(def.labelKey),
         cell: (member) => formatDate(member.expiresAt),
-      };
-    case 'actions':
-      return {
-        id: def.id,
-        header: t(def.labelKey),
-        cell: (member) => (
-          // The seam a later slice wires role changes and removal into. Left
-          // disabled rather than given fake menu items: there is nothing
-          // behind it yet, and a menu that opens onto nothing is worse than
-          // no menu.
-          <Button
-            variant="ghost"
-            size="icon"
-            disabled
-            aria-label={t('groups.members.actionsMenu', { name: userDisplayName(member.user) })}
-          >
-            <MoreHorizontal className="h-4 w-4" aria-hidden />
-          </Button>
-        ),
-        className: 'w-10',
       };
   }
 }
@@ -198,6 +178,11 @@ export function MembersSurface() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 pb-3">
+        {/* Kept for every role even though the server currently drops this
+            keyword on the leader/reviewer-scoped route (see the `keyword`
+            doc on `GroupMemberListQuery`) — it already narrows the list for
+            a full-access caller today, and needs no client change once the
+            pending API fix ships. */}
         <GroupsSearchField
           value={url.keyword}
           onChange={url.setKeyword}

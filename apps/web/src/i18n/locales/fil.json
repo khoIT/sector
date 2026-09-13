@@ -127,8 +127,7 @@
         "role": "Papel",
         "status": "Katayuan",
         "joined": "Sumali noong",
-        "expires": "Mag-e-expire",
-        "actions": "Mga Pagkilos"
+        "expires": "Mag-e-expire"
       },
       "role": {
         "leader": "Pinuno",
@@ -140,7 +139,6 @@
         "inactive": "Hindi Aktibo",
         "expired": "Nag-expire na"
       },
-      "actionsMenu": "Higit pang aksyon para kay {{name}}",
       "empty": {
         "title": "Wala pang mga miyembro",
         "description": "Mag-imbita ng isang tao upang simulan ang grupong ito."

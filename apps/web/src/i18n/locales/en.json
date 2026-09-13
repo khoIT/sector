@@ -204,8 +204,7 @@
         "role": "Role",
         "status": "Status",
         "joined": "Joined",
-        "expires": "Expires",
-        "actions": "Actions"
+        "expires": "Expires"
       },
       "role": {
         "leader": "Leader",
@@ -217,7 +216,6 @@
         "inactive": "Inactive",
         "expired": "Expired"
       },
-      "actionsMenu": "More actions for {{name}}",
       "empty": {
         "title": "No members yet",
         "description": "Invite someone to get this group started."

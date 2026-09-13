@@ -127,8 +127,7 @@
         "role": "Função",
         "status": "Status",
         "joined": "Entrou em",
-        "expires": "Expira",
-        "actions": "Ações"
+        "expires": "Expira"
       },
       "role": {
         "leader": "Líder",
@@ -140,7 +139,6 @@
         "inactive": "Inativo",
         "expired": "Expirado"
       },
-      "actionsMenu": "Mais ações para {{name}}",
       "empty": {
         "title": "Ainda não há membros",
         "description": "Convide alguém para começar este grupo."

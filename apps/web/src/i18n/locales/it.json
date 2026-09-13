@@ -127,8 +127,7 @@
         "role": "Ruolo",
         "status": "Stato",
         "joined": "Iscritto il",
-        "expires": "Scade",
-        "actions": "Azioni"
+        "expires": "Scade"
       },
       "role": {
         "leader": "Leader",
@@ -140,7 +139,6 @@
         "inactive": "Inattivo",
         "expired": "Scaduto"
       },
-      "actionsMenu": "Altre azioni per {{name}}",
       "empty": {
         "title": "Ancora nessun membro",
         "description": "Invita qualcuno per iniziare con questo gruppo."

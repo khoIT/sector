@@ -127,8 +127,7 @@
         "role": "Rôle",
         "status": "Statut",
         "joined": "Rejoint le",
-        "expires": "Expire",
-        "actions": "Actions"
+        "expires": "Expire"
       },
       "role": {
         "leader": "Dirigeant",
@@ -140,7 +139,6 @@
         "inactive": "Inactif",
         "expired": "Expiré"
       },
-      "actionsMenu": "Plus d’actions pour {{name}}",
       "empty": {
         "title": "Aucun membre pour l’instant",
         "description": "Invitez quelqu’un pour démarrer ce groupe."

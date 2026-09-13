@@ -3,11 +3,12 @@
  *
  * The dashboard this replaces carried two separate members screens because
  * "a leader needs something different" kept getting solved as a new screen.
- * It is a column set: everything a group leader sees, an administrator also
- * sees, plus one more column (a row-actions seam later slices wire up). This
- * file is the proof — `columns.test.ts` asserts the two configurations below
- * are the same array with one entry appended, never two hand-maintained lists
- * that can drift apart.
+ * Here it is a column set instead: `memberColumnsFor('leader')` and
+ * `memberColumnsFor('administrator')` return the SAME array today —
+ * `columns.test.ts` asserts that directly — because the write slice (role
+ * changes, removal) that would make an administrator's set diverge is not
+ * yet wired. When it lands, an administrator's extra column is appended
+ * here, which is what keeps this one surface rather than a second screen.
  *
  * "Viewing as" is the caller's REAL capability, not a switcher: resolve
  * `MembersViewerRole` once, from `hasAnyPermission(user, GROUP_ADMIN_BYPASS_PERMISSIONS)`,
@@ -15,7 +16,7 @@
  */
 export type MembersViewerRole = 'leader' | 'administrator';
 
-export type MemberColumnId = 'member' | 'role' | 'status' | 'joined' | 'expires' | 'actions';
+export type MemberColumnId = 'member' | 'role' | 'status' | 'joined' | 'expires';
 
 export type MemberColumnDef = {
   id: MemberColumnId;
@@ -34,16 +35,11 @@ const SHARED_COLUMNS: readonly MemberColumnDef[] = [
 ];
 
 /**
- * The seam for role/invite actions a later slice implements. Left as a bare
- * column (no menu contents yet) rather than a disabled button with a tooltip
- * — there is nothing to explain yet, so nothing is rendered until there is.
+ * `role` is not yet read: both configurations are `SHARED_COLUMNS` until the
+ * write slice gives an administrator something a leader does not get. The
+ * parameter stays so every call site is already role-aware and needs no
+ * change when that happens.
  */
-const ADMINISTRATOR_ONLY_COLUMNS: readonly MemberColumnDef[] = [
-  { id: 'actions', labelKey: 'groups.members.columns.actions' },
-];
-
-export function memberColumnsFor(role: MembersViewerRole): readonly MemberColumnDef[] {
-  return role === 'administrator'
-    ? [...SHARED_COLUMNS, ...ADMINISTRATOR_ONLY_COLUMNS]
-    : SHARED_COLUMNS;
+export function memberColumnsFor(_role: MembersViewerRole): readonly MemberColumnDef[] {
+  return SHARED_COLUMNS;
 }

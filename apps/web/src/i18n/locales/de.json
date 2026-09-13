@@ -127,8 +127,7 @@
         "role": "Rolle",
         "status": "Status",
         "joined": "Beigetreten",
-        "expires": "Läuft ab",
-        "actions": "Aktionen"
+        "expires": "Läuft ab"
       },
       "role": {
         "leader": "Anführer",
@@ -140,7 +139,6 @@
         "inactive": "Inaktiv",
         "expired": "Abgelaufen"
       },
-      "actionsMenu": "Weitere Aktionen für {{name}}",
       "empty": {
         "title": "Noch keine Mitglieder",
         "description": "Laden Sie jemanden ein, um diese Gruppe zu starten."
