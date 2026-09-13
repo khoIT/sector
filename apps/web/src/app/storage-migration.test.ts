@@ -156,17 +156,31 @@ describe('a session written before the rename', () => {
   it('still signs the user in, through the real read path', () => {
     // The sweep is what stands between an upgrade and 3,151 people being
     // bounced to the login screen with no explanation.
+    // A WHOLE session, the way the old build actually wrote one. A stub with
+    // a token and a stray id would pass the sweep and fail the read, which
+    // validates what it loads — and the thing under test here is the sweep,
+    // so the fixture has to be something the reader would accept.
     const storage = fakeStorage({
       'scanvault.session': JSON.stringify({
         token: 'still-valid',
-        user: { id: 'u1' },
+        refreshToken: 'still-refreshable',
+        user: {
+          id: 'u1',
+          email: 'learner@scanvault.test',
+          userName: 'sv_learner',
+          role: { id: 'r1', name: 'Learner', slug: 'learner', permissions: ['view:scan'] },
+        },
       }),
     });
     vi.stubGlobal('window', { localStorage: storage });
 
     migratePersistedStorage();
 
-    expect(createSessionStore().getToken()).toBe('still-valid');
+    const restored = createSessionStore();
+    expect(restored.getToken()).toBe('still-valid');
+    // Not just the token: the user has to arrive whole, or the shell renders
+    // against a session it cannot read a role from.
+    expect(restored.read()?.user.role.permissions).toEqual(['view:scan']);
     expect(storage.getItem('scanvault.session')).toBeNull();
   });
 });

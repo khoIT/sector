@@ -538,6 +538,10 @@ const {
   pre-Sector `scanvault.session` key once, in `main.tsx`, before the first
   render and therefore before anything can read it. It is not a second writer
   at runtime, and it is the only code that may ever be one.
+- `read()` **validates** against `authSessionSchema` rather than casting, so its
+  `AuthSession | null` is true for every caller and no consumer has to re-check
+  the parts it touches. A stored value that does not parse is removed and the
+  user is signed out, not handed through half-formed.
 - On boot, if a refresh token is stored, `status` is `'restoring'` while
   `GET /api/me` runs. `RequireAuth` renders skeletons during that window, so a
   deep link does not flash the login page.
