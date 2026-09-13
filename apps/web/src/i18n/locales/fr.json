@@ -80,5 +80,77 @@
   },
   "empty": {
     "loading": "Chargement"
+  },
+  "groups": {
+    "index": {
+      "title": "Groupes",
+      "searchPlaceholder": "Rechercher des groupes",
+      "columns": {
+        "name": "Groupe",
+        "type": "Type",
+        "members": "Membres",
+        "leaders": "Dirigeants",
+        "seats": "Places",
+        "expires": "Expire"
+      },
+      "type": {
+        "group": "Groupe",
+        "class": "Classe"
+      },
+      "seatsUsed": "{{used}} / {{total}}",
+      "unlimitedSeats": "Illimité",
+      "empty": {
+        "title": "Aucun groupe pour l’instant",
+        "description": "Les groupes que vous dirigez, ou tous les groupes avec un accès complet, s’affichent ici."
+      },
+      "noMatch": {
+        "title": "Aucun groupe ne correspond à votre recherche",
+        "description": "Aucun nom de groupe ne correspond à « {{keyword}} »."
+      },
+      "pagePastEnd": {
+        "title": "Rien sur cette page",
+        "backToFirstPage": "Aller à la première page"
+      },
+      "error": {
+        "title": "Impossible de charger cette liste",
+        "retry": "Réessayer"
+      }
+    },
+    "members": {
+      "title": "Membres",
+      "subtitle_one": "{{count}} membre",
+      "subtitle_other": "{{count}} membres",
+      "backToGroups": "Tous les groupes",
+      "searchPlaceholder": "Rechercher des membres",
+      "columns": {
+        "member": "Membre",
+        "role": "Rôle",
+        "status": "Statut",
+        "joined": "Rejoint le",
+        "expires": "Expire"
+      },
+      "role": {
+        "leader": "Dirigeant",
+        "learner": "Apprenant"
+      },
+      "status": {
+        "active": "Actif",
+        "pending": "En attente",
+        "inactive": "Inactif",
+        "expired": "Expiré"
+      },
+      "empty": {
+        "title": "Aucun membre pour l’instant",
+        "description": "Invitez quelqu’un pour démarrer ce groupe."
+      },
+      "noMatch": {
+        "title": "Aucun membre ne correspond à votre recherche",
+        "description": "Aucun nom ou e-mail ne correspond à « {{keyword}} »."
+      },
+      "error": {
+        "title": "Impossible de charger cette liste",
+        "retry": "Réessayer"
+      }
+    }
   }
 }

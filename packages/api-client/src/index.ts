@@ -455,3 +455,35 @@ export {
   type MultipartSession,
   type UploadScanObjectOptions,
 } from './multipart-upload';
+
+// ─── group administration (groups index + members surface) ──────────────────
+export {
+  GROUP_ADMIN_BYPASS_PERMISSIONS,
+  GROUP_TYPES,
+  groupSchema,
+  groupTypeSchema,
+  type Group,
+  type GroupTypeValue,
+} from './schemas/group';
+
+export {
+  GROUP_MEMBER_ROLES,
+  GROUP_MEMBER_STATUSES,
+  groupMemberRoleSchema,
+  groupMemberSchema,
+  groupMemberStatusSchema,
+  type GroupMember,
+  type GroupMemberRoleValue,
+  type GroupMemberStatusValue,
+} from './schemas/group-member';
+
+export { getAllGroups, getLedGroups, type GroupListQuery } from './endpoints/group';
+
+export {
+  getAnyGroupMembers,
+  getLedGroupMembers,
+  type GroupMemberListQuery,
+} from './endpoints/group-member';
+
+export { useGroups, type UseGroupsOptions } from './react/use-groups';
+export { useGroupMembers, type UseGroupMembersOptions } from './react/use-group-members';

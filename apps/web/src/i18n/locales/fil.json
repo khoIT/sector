@@ -80,5 +80,77 @@
   },
   "empty": {
     "loading": "Pag-load"
+  },
+  "groups": {
+    "index": {
+      "title": "Mga Grupo",
+      "searchPlaceholder": "Maghanap ng mga grupo",
+      "columns": {
+        "name": "Grupo",
+        "type": "Uri",
+        "members": "Mga Miyembro",
+        "leaders": "Mga Pinuno",
+        "seats": "Puwesto",
+        "expires": "Mag-e-expire"
+      },
+      "type": {
+        "group": "Grupo",
+        "class": "Klase"
+      },
+      "seatsUsed": "{{used}} / {{total}}",
+      "unlimitedSeats": "Walang Limitasyon",
+      "empty": {
+        "title": "Wala pang mga grupo",
+        "description": "Ang mga grupong pinamumunuan mo, o lahat ng grupo kung mayroon kang buong access, ay lalabas dito."
+      },
+      "noMatch": {
+        "title": "Walang grupong tumutugma sa iyong paghahanap",
+        "description": "Walang pangalan ng grupo na tumutugma sa “{{keyword}}”."
+      },
+      "pagePastEnd": {
+        "title": "Walang laman sa pahinang ito",
+        "backToFirstPage": "Pumunta sa unang pahina"
+      },
+      "error": {
+        "title": "Hindi ma-load ang listahang ito",
+        "retry": "Subukan muli"
+      }
+    },
+    "members": {
+      "title": "Mga Miyembro",
+      "subtitle_one": "{{count}} miyembro",
+      "subtitle_other": "{{count}} na miyembro",
+      "backToGroups": "Lahat ng grupo",
+      "searchPlaceholder": "Maghanap ng mga miyembro",
+      "columns": {
+        "member": "Miyembro",
+        "role": "Papel",
+        "status": "Katayuan",
+        "joined": "Sumali noong",
+        "expires": "Mag-e-expire"
+      },
+      "role": {
+        "leader": "Pinuno",
+        "learner": "Mag-aaral"
+      },
+      "status": {
+        "active": "Aktibo",
+        "pending": "Naghihintay",
+        "inactive": "Hindi Aktibo",
+        "expired": "Nag-expire na"
+      },
+      "empty": {
+        "title": "Wala pang mga miyembro",
+        "description": "Mag-imbita ng isang tao upang simulan ang grupong ito."
+      },
+      "noMatch": {
+        "title": "Walang miyembrong tumutugma sa iyong paghahanap",
+        "description": "Walang pangalan o email na tumutugma sa “{{keyword}}”."
+      },
+      "error": {
+        "title": "Hindi ma-load ang listahang ito",
+        "retry": "Subukan muli"
+      }
+    }
   }
 }

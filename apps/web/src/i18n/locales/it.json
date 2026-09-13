@@ -80,5 +80,77 @@
   },
   "empty": {
     "loading": "Caricamento"
+  },
+  "groups": {
+    "index": {
+      "title": "Gruppi",
+      "searchPlaceholder": "Cerca gruppi",
+      "columns": {
+        "name": "Gruppo",
+        "type": "Tipo",
+        "members": "Membri",
+        "leaders": "Leader",
+        "seats": "Posti",
+        "expires": "Scade"
+      },
+      "type": {
+        "group": "Gruppo",
+        "class": "Classe"
+      },
+      "seatsUsed": "{{used}} / {{total}}",
+      "unlimitedSeats": "Illimitato",
+      "empty": {
+        "title": "Ancora nessun gruppo",
+        "description": "I gruppi che guidi, o tutti i gruppi con accesso completo, appariranno qui."
+      },
+      "noMatch": {
+        "title": "Nessun gruppo corrisponde alla ricerca",
+        "description": "Nessun nome di gruppo corrisponde a «{{keyword}}»."
+      },
+      "pagePastEnd": {
+        "title": "Niente in questa pagina",
+        "backToFirstPage": "Vai alla prima pagina"
+      },
+      "error": {
+        "title": "Impossibile caricare questo elenco",
+        "retry": "Riprova"
+      }
+    },
+    "members": {
+      "title": "Membri",
+      "subtitle_one": "{{count}} membro",
+      "subtitle_other": "{{count}} membri",
+      "backToGroups": "Tutti i gruppi",
+      "searchPlaceholder": "Cerca membri",
+      "columns": {
+        "member": "Membro",
+        "role": "Ruolo",
+        "status": "Stato",
+        "joined": "Iscritto il",
+        "expires": "Scade"
+      },
+      "role": {
+        "leader": "Leader",
+        "learner": "Allievo"
+      },
+      "status": {
+        "active": "Attivo",
+        "pending": "In attesa",
+        "inactive": "Inattivo",
+        "expired": "Scaduto"
+      },
+      "empty": {
+        "title": "Ancora nessun membro",
+        "description": "Invita qualcuno per iniziare con questo gruppo."
+      },
+      "noMatch": {
+        "title": "Nessun membro corrisponde alla ricerca",
+        "description": "Nessun nome o email corrisponde a «{{keyword}}»."
+      },
+      "error": {
+        "title": "Impossibile caricare questo elenco",
+        "retry": "Riprova"
+      }
+    }
   }
 }

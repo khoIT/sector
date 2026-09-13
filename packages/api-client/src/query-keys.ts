@@ -90,6 +90,12 @@ export const groupKeys = {
    *  is a different result set rather than a client-side view of one. */
   filterOptions: (keyword: string, page: number) =>
     ['get-group-filter-options', keyword, page] as const,
+  /** Prefix for every page of the group index, across both scoped endpoints. */
+  listRoot: () => ['get-groups'] as const,
+  list: (params: unknown) => ['get-groups', params] as const,
+  /** Prefix for every page of one group's member list. */
+  membersRoot: (groupId: string) => ['get-group-members', groupId] as const,
+  members: (groupId: string, params: unknown) => ['get-group-members', groupId, params] as const,
 } as const;
 
 export const authKeys = {

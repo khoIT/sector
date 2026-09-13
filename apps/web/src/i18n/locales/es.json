@@ -80,5 +80,77 @@
   },
   "empty": {
     "loading": "Cargando"
+  },
+  "groups": {
+    "index": {
+      "title": "Grupos",
+      "searchPlaceholder": "Buscar grupos",
+      "columns": {
+        "name": "Grupo",
+        "type": "Tipo",
+        "members": "Miembros",
+        "leaders": "Líderes",
+        "seats": "Plazas",
+        "expires": "Vence"
+      },
+      "type": {
+        "group": "Grupo",
+        "class": "Clase"
+      },
+      "seatsUsed": "{{used}} / {{total}}",
+      "unlimitedSeats": "Ilimitado",
+      "empty": {
+        "title": "Aún no hay grupos",
+        "description": "Los grupos que lideras, o todos los grupos si tienes acceso completo, aparecerán aquí."
+      },
+      "noMatch": {
+        "title": "Ningún grupo coincide con tu búsqueda",
+        "description": "Ningún nombre de grupo coincide con «{{keyword}}»."
+      },
+      "pagePastEnd": {
+        "title": "Nada en esta página",
+        "backToFirstPage": "Ir a la primera página"
+      },
+      "error": {
+        "title": "No se pudo cargar esta lista",
+        "retry": "Intentar de nuevo"
+      }
+    },
+    "members": {
+      "title": "Miembros",
+      "subtitle_one": "{{count}} miembro",
+      "subtitle_other": "{{count}} miembros",
+      "backToGroups": "Todos los grupos",
+      "searchPlaceholder": "Buscar miembros",
+      "columns": {
+        "member": "Miembro",
+        "role": "Rol",
+        "status": "Estado",
+        "joined": "Se unió",
+        "expires": "Vence"
+      },
+      "role": {
+        "leader": "Líder",
+        "learner": "Estudiante"
+      },
+      "status": {
+        "active": "Activo",
+        "pending": "Pendiente",
+        "inactive": "Inactivo",
+        "expired": "Caducado"
+      },
+      "empty": {
+        "title": "Aún no hay miembros",
+        "description": "Invita a alguien para comenzar con este grupo."
+      },
+      "noMatch": {
+        "title": "Ningún miembro coincide con tu búsqueda",
+        "description": "Ningún nombre o correo coincide con «{{keyword}}»."
+      },
+      "error": {
+        "title": "No se pudo cargar esta lista",
+        "retry": "Intentar de nuevo"
+      }
+    }
   }
 }

@@ -1,6 +1,7 @@
 import type { AuthUser } from '@sector/api-client';
-import { BookOpen, FolderClock, Share2, Users2 } from 'lucide-react';
+import { BookOpen, FolderClock, Settings2, Share2, Users2 } from 'lucide-react';
 
+import { GROUP_ADMINISTRATION_PATH } from '@/features/groups/groups-links';
 import { UNBUILT_SURFACES, type UnbuiltSurfaceId } from '@/routes/unbuilt-surfaces';
 
 import {
@@ -111,7 +112,23 @@ export const NAV_GROUPS = [
     // One entry, and most roles do not hold its permission — which is exactly
     // the case visibleNavGroups() has to drop rather than render as a heading
     // with nothing under it.
-    items: [unbuiltDestination('group-administration')],
+    items: [
+      {
+        id: 'group-administration',
+        labelKey: 'nav.groupAdministration',
+        icon: Settings2,
+        path: GROUP_ADMINISTRATION_PATH,
+        matchPrefix: GROUP_ADMINISTRATION_PATH,
+        // `read:group` is the permission every seeded group role shares
+        // (and every full-access role also holds it) — see the scoping note
+        // on groups-routes.tsx for what actually guards each route beneath
+        // it: the leader routes rely on server-side leadership scoping, the
+        // administrator routes on `read:group`/`read:group-member`. Replaces
+        // the placeholder's borrowed scan permission now that there is real
+        // group data behind the route.
+        visibleWhen: whenPermitted('read:group'),
+      },
+    ],
   },
 ] as const;
 
