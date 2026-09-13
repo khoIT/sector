@@ -1,9 +1,9 @@
 import type { AuthUser } from '@sector/api-client';
 import { describe, expect, it } from 'vitest';
 
+import { COURSES_PATH } from '@/features/courses/courses-links';
 import { GROUP_ADMINISTRATION_PATH } from '@/features/groups/groups-links';
 import { SCAN_VAULT_PATH } from '@/features/scan-list/scan-list-views';
-import { UNBUILT_SURFACES } from '@/routes/unbuilt-surfaces';
 
 import { firstVisibleNavItem, shellTitleKeyFor, visibleNavGroups } from './nav-config';
 
@@ -58,7 +58,7 @@ describe('destinations that are not scan lists', () => {
     const courses = visibleNavGroups(LEARNER)
       .flatMap((group) => group.items)
       .find((item) => item.id === 'courses');
-    expect(courses?.path).toBe(UNBUILT_SURFACES.courses.path);
+    expect(courses?.path).toBe(COURSES_PATH);
     expect(courses?.labelKey).toBe('nav.courses');
   });
 
@@ -85,7 +85,7 @@ describe('destinations that are not scan lists', () => {
   });
 
   it('names the section in the topbar heading', () => {
-    expect(shellTitleKeyFor(UNBUILT_SURFACES.courses.path)).toBe('nav.courses');
+    expect(shellTitleKeyFor(COURSES_PATH)).toBe('nav.courses');
     expect(shellTitleKeyFor(GROUP_ADMINISTRATION_PATH)).toBe('nav.groupAdministration');
   });
 });

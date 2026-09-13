@@ -551,3 +551,61 @@ export { deleteAccount } from './endpoints/account-delete';
 export { useDeleteAccountMutation } from './react/use-account';
 
 export { notificationPreferenceKeys } from './query-keys';
+
+// ─── courses: My Courses + the resolved course outline ────────────────────
+export {
+  ASSIGNMENT_TYPES,
+  COURSE_PROGRESS_STATUSES,
+  ENROLLMENT_STATUSES,
+  EXPIRATION_TYPES,
+  assignmentTypeSchema,
+  courseProgressStatusSchema,
+  enrollmentStatusSchema,
+  expirationTypeSchema,
+  learnerCourseAuthorSchema,
+  learnerCourseGroupSchema,
+  learnerCourseListItemSchema,
+  learnerCourseMetaVersionSummarySchema,
+  learnerCourseProgressSchema,
+  learnerCourseSummarySchema,
+  learnerCoursesPageSchema,
+  type AssignmentType,
+  type CourseProgressStatus,
+  type EnrollmentStatus,
+  type ExpirationType,
+  type LearnerCourseAuthor,
+  type LearnerCourseGroup,
+  type LearnerCourseListItem,
+  type LearnerCourseMetaVersionSummary,
+  type LearnerCourseProgress,
+  type LearnerCourseSummary,
+  type LearnerCoursesPage,
+} from './schemas/course';
+
+export {
+  COURSE_OUTLINE_BLOCKED_REASONS,
+  COURSE_OUTLINE_ITEM_KINDS,
+  courseOutlineBlockedReasonSchema,
+  courseOutlineItemKindSchema,
+  courseOutlineItemSchema,
+  courseOutlineQuizSummarySchema,
+  courseOutlineResumeSchema,
+  courseOutlineSchema,
+  type CourseOutline,
+  type CourseOutlineBlockedReason,
+  type CourseOutlineItem,
+  type CourseOutlineItemKind,
+  type CourseOutlineQuizSummary,
+  type CourseOutlineResume,
+} from './schemas/course-outline';
+
+export {
+  getCourseOutline,
+  getLearnerCourses,
+  type CourseListStatusFilter,
+  type CoursesListQuery,
+} from './endpoints/course';
+
+export { useCourses, type UseCoursesOptions } from './react/use-courses';
+export { useCourseOutline, type UseCourseOutlineOptions } from './react/use-course-outline';
+export { courseKeys } from './query-keys';

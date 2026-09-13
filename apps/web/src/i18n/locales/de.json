@@ -244,5 +244,89 @@
       "registration": "Konten werden von Ihrer Organisation oder über eine Gruppeneinladung für Sie erstellt. Melden Sie sich mit den zugesandten Daten an.",
       "switch-user": "Die Anmeldung als anderer Benutzer erfolgt über die interne Konsole, nicht von hier."
     }
+  },
+  "courses": {
+    "index": {
+      "title": "Meine Kurse",
+      "searchPlaceholder": "Kurse durchsuchen",
+      "statusFilter": {
+        "label": "Status",
+        "all": "Alle Status",
+        "not_started": "Nicht gestartet",
+        "in_progress": "Im Gange",
+        "completed": "Abgeschlossen",
+        "active": "Aktiv",
+        "paused": "Pausiert",
+        "dropped": "Abgebrochen",
+        "expired": "Abgelaufen"
+      },
+      "status": {
+        "not_started": "Nicht gestartet",
+        "in_progress": "Im Gange",
+        "completed": "Abgeschlossen"
+      },
+      "action": {
+        "start": "Starten",
+        "resume": "Fortsetzen",
+        "review": "Ansehen"
+      },
+      "progressLabel": "{{percent}}% abgeschlossen",
+      "empty": {
+        "title": "Noch keine Kurse",
+        "description": "Kurse, die Ihnen persönlich oder über eine Gruppe zugewiesen wurden, erscheinen hier."
+      },
+      "noMatch": {
+        "title": "Keine Kurse gefunden",
+        "description": "Kein Kurstitel entspricht „{{keyword}}“."
+      },
+      "pagePastEnd": {
+        "title": "Nichts auf dieser Seite",
+        "backToFirstPage": "Zur ersten Seite"
+      },
+      "error": {
+        "title": "Diese Liste konnte nicht geladen werden",
+        "retry": "Erneut versuchen"
+      },
+      "expired": {
+        "title_one": "{{count}} abgelaufene Einschreibung",
+        "title_other": "{{count}} abgelaufene Einschreibungen",
+        "description": "Der Zugriff darauf ist beendet; die Verlängerung einer Zuweisung übernimmt Ihre Gruppenleitung oder Ihr Administrator.",
+        "badge": "Abgelaufen"
+      }
+    },
+    "outline": {
+      "title": "Kursübersicht",
+      "backToCourses": "Meine Kurse",
+      "progress": "{{completed}}/{{total}} abgeschlossen ({{percent}}%)",
+      "resume": {
+        "start": "Starten: {{title}}",
+        "resume": "Fortsetzen: {{title}}",
+        "review": "Ansehen: {{title}}"
+      },
+      "completedBanner": "Sie haben diesen Kurs abgeschlossen.",
+      "empty": {
+        "title": "Dieser Kurs hat noch keinen Inhalt"
+      },
+      "error": {
+        "title": "Diese Übersicht konnte nicht geladen werden",
+        "retry": "Erneut versuchen"
+      },
+      "kind": {
+        "lesson": "Lektion",
+        "topic": "Thema",
+        "quiz": "Quiz"
+      },
+      "itemStatus": {
+        "not_started": "Nicht gestartet",
+        "in_progress": "Im Gange",
+        "completed": "Abgeschlossen"
+      },
+      "blocked": {
+        "quiz_has_no_questions": "Dieses Quiz hat noch keine Fragen und kann nicht geöffnet werden."
+      },
+      "quiz": {
+        "bestPercentage": "Beste: {{percent}}%"
+      }
+    }
   }
 }

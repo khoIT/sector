@@ -244,5 +244,89 @@
       "registration": "Ginagawa para sa iyo ang account ng iyong organisasyon o ng imbitasyon ng grupo. Mag-sign in gamit ang mga detalyeng ipinadala sa iyo.",
       "switch-user": "Ang pag-sign in bilang ibang user ay ginagawa mula sa internal console, hindi mula rito."
     }
+  },
+  "courses": {
+    "index": {
+      "title": "Ang Aking Mga Kurso",
+      "searchPlaceholder": "Maghanap ng mga kurso",
+      "statusFilter": {
+        "label": "Katayuan",
+        "all": "Lahat ng katayuan",
+        "not_started": "Hindi Nagsimula",
+        "in_progress": "Sa Pag-unlad",
+        "completed": "Nakumpleto",
+        "active": "Aktibo",
+        "paused": "Naka-pause",
+        "dropped": "Tumigil",
+        "expired": "Nag-expire"
+      },
+      "status": {
+        "not_started": "Hindi Nagsimula",
+        "in_progress": "Sa Pag-unlad",
+        "completed": "Nakumpleto"
+      },
+      "action": {
+        "start": "Simulan",
+        "resume": "Magpatuloy",
+        "review": "Suriin"
+      },
+      "progressLabel": "{{percent}}% Kumpleto",
+      "empty": {
+        "title": "Wala pang mga kurso",
+        "description": "Lalabas dito ang mga kursong itinalaga sa iyo, personal man o sa pamamagitan ng isang grupo."
+      },
+      "noMatch": {
+        "title": "Walang kursong tumutugma sa iyong paghahanap",
+        "description": "Walang pamagat ng kurso na tumutugma sa “{{keyword}}”."
+      },
+      "pagePastEnd": {
+        "title": "Walang laman ang pahinang ito",
+        "backToFirstPage": "Pumunta sa unang pahina"
+      },
+      "error": {
+        "title": "Hindi na-load ang listahang ito",
+        "retry": "Subukan muli"
+      },
+      "expired": {
+        "title_one": "{{count}} pagpapatalang nag-expire",
+        "title_other": "{{count}} mga pagpapatalang nag-expire",
+        "description": "Tapos na ang access dito; ang pagpapanibago ng isang atas ay hawak ng iyong lider ng grupo o administrador.",
+        "badge": "Nag-expire"
+      }
+    },
+    "outline": {
+      "title": "Balangkas ng Kurso",
+      "backToCourses": "Aking Mga Kurso",
+      "progress": "{{completed}}/{{total}} nakumpleto ({{percent}}%)",
+      "resume": {
+        "start": "Simulan: {{title}}",
+        "resume": "Magpatuloy: {{title}}",
+        "review": "Suriin: {{title}}"
+      },
+      "completedBanner": "Nakumpleto mo na ang kursong ito.",
+      "empty": {
+        "title": "Wala pang laman ang kursong ito"
+      },
+      "error": {
+        "title": "Hindi na-load ang balangkas na ito",
+        "retry": "Subukan muli"
+      },
+      "kind": {
+        "lesson": "Aralin",
+        "topic": "Paksa",
+        "quiz": "Pagsusulit"
+      },
+      "itemStatus": {
+        "not_started": "Hindi Nagsimula",
+        "in_progress": "Sa Pag-unlad",
+        "completed": "Nakumpleto"
+      },
+      "blocked": {
+        "quiz_has_no_questions": "Wala pang mga tanong ang pagsusulit na ito at hindi pa ito maaaring buksan."
+      },
+      "quiz": {
+        "bestPercentage": "Pinakamataas: {{percent}}%"
+      }
+    }
   }
 }

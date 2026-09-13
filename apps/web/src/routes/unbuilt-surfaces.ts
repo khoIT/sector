@@ -1,4 +1,4 @@
-import { GraduationCap, ListChecks, type LucideIcon } from 'lucide-react';
+import { ListChecks, type LucideIcon } from 'lucide-react';
 
 /**
  * Sections that have a place in the rail and a URL, and nothing behind them
@@ -20,7 +20,7 @@ import { GraduationCap, ListChecks, type LucideIcon } from 'lucide-react';
  * the real page under the same path, and the rail follows.
  */
 
-export type UnbuiltSurfaceId = 'courses' | 'question-banks';
+export type UnbuiltSurfaceId = 'question-banks';
 
 export type UnbuiltSurface = {
   /** Absolute URL, for links; the router mounts it relative. */
@@ -36,12 +36,10 @@ export type UnbuiltSurface = {
 };
 
 export const UNBUILT_SURFACES: Readonly<Record<UnbuiltSurfaceId, UnbuiltSurface>> = {
-  courses: {
-    path: '/learn/courses',
-    permission: null,
-    labelKey: 'nav.courses',
-    icon: GraduationCap,
-  },
+  // 'courses' graduated out of this table: My Courses and the outline are
+  // real pages now (features/courses/**), routed and gated for themselves.
+  // See the module doc comment above — this is exactly the deletion it
+  // describes, not a migration.
   'question-banks': {
     path: '/learn/question-banks',
     permission: null,

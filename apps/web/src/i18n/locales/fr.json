@@ -244,5 +244,89 @@
       "registration": "Votre organisation ou une invitation de groupe crée votre compte pour vous. Connectez-vous avec les identifiants reçus.",
       "switch-user": "Se connecter en tant qu’un autre utilisateur se fait depuis la console interne, pas d’ici."
     }
+  },
+  "courses": {
+    "index": {
+      "title": "Mes cours",
+      "searchPlaceholder": "Rechercher des cours",
+      "statusFilter": {
+        "label": "Statut",
+        "all": "Tous les statuts",
+        "not_started": "Non démarré",
+        "in_progress": "En cours",
+        "completed": "Terminé",
+        "active": "Actif",
+        "paused": "En pause",
+        "dropped": "Abandonné",
+        "expired": "Expiré"
+      },
+      "status": {
+        "not_started": "Non démarré",
+        "in_progress": "En cours",
+        "completed": "Terminé"
+      },
+      "action": {
+        "start": "Commencer",
+        "resume": "Poursuivre",
+        "review": "Revoir"
+      },
+      "progressLabel": "{{percent}} % terminé",
+      "empty": {
+        "title": "Aucun cours pour le moment",
+        "description": "Les cours qui vous sont attribués, personnellement ou via un groupe, apparaissent ici."
+      },
+      "noMatch": {
+        "title": "Aucun cours ne correspond à votre recherche",
+        "description": "Aucun titre de cours ne correspond à « {{keyword}} »."
+      },
+      "pagePastEnd": {
+        "title": "Rien sur cette page",
+        "backToFirstPage": "Aller à la première page"
+      },
+      "error": {
+        "title": "Cette liste n’a pas pu être chargée",
+        "retry": "Réessayer"
+      },
+      "expired": {
+        "title_one": "{{count}} inscription expirée",
+        "title_other": "{{count}} inscriptions expirées",
+        "description": "L’accès à ces cours a pris fin ; le renouvellement d’une attribution est géré par votre responsable de groupe ou votre administrateur.",
+        "badge": "Expiré"
+      }
+    },
+    "outline": {
+      "title": "Plan du cours",
+      "backToCourses": "Mes cours",
+      "progress": "{{completed}}/{{total}} terminés ({{percent}} %)",
+      "resume": {
+        "start": "Commencer : {{title}}",
+        "resume": "Poursuivre : {{title}}",
+        "review": "Revoir : {{title}}"
+      },
+      "completedBanner": "Vous avez terminé ce cours.",
+      "empty": {
+        "title": "Ce cours n’a pas encore de contenu"
+      },
+      "error": {
+        "title": "Ce plan n’a pas pu être chargé",
+        "retry": "Réessayer"
+      },
+      "kind": {
+        "lesson": "Leçon",
+        "topic": "Sujet",
+        "quiz": "Quiz"
+      },
+      "itemStatus": {
+        "not_started": "Non démarré",
+        "in_progress": "En cours",
+        "completed": "Terminé"
+      },
+      "blocked": {
+        "quiz_has_no_questions": "Ce quiz n’a pas encore de questions et ne peut pas être ouvert."
+      },
+      "quiz": {
+        "bestPercentage": "Meilleur score : {{percent}} %"
+      }
+    }
   }
 }

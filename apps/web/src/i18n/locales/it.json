@@ -244,5 +244,89 @@
       "registration": "L’account viene creato per te dalla tua organizzazione o da un invito di gruppo. Accedi con i dati che ti sono stati inviati.",
       "switch-user": "Accedere come un altro utente si fa dalla console interna, non da qui."
     }
+  },
+  "courses": {
+    "index": {
+      "title": "I miei corsi",
+      "searchPlaceholder": "Cerca corsi",
+      "statusFilter": {
+        "label": "Stato",
+        "all": "Tutti gli stati",
+        "not_started": "Non avviato",
+        "in_progress": "In corso",
+        "completed": "Completato",
+        "active": "Attivo",
+        "paused": "In pausa",
+        "dropped": "Abbandonato",
+        "expired": "Scaduto"
+      },
+      "status": {
+        "not_started": "Non avviato",
+        "in_progress": "In corso",
+        "completed": "Completato"
+      },
+      "action": {
+        "start": "Inizia",
+        "resume": "Continua",
+        "review": "Rivedi"
+      },
+      "progressLabel": "{{percent}}% completato",
+      "empty": {
+        "title": "Ancora nessun corso",
+        "description": "I corsi a te assegnati, personalmente o tramite un gruppo, compaiono qui."
+      },
+      "noMatch": {
+        "title": "Nessun corso corrisponde alla tua ricerca",
+        "description": "Nessun titolo di corso corrisponde a «{{keyword}}»."
+      },
+      "pagePastEnd": {
+        "title": "Niente in questa pagina",
+        "backToFirstPage": "Vai alla prima pagina"
+      },
+      "error": {
+        "title": "Impossibile caricare questo elenco",
+        "retry": "Riprova"
+      },
+      "expired": {
+        "title_one": "{{count}} iscrizione scaduta",
+        "title_other": "{{count}} iscrizioni scadute",
+        "description": "L’accesso a questi corsi è terminato; il rinnovo di un’assegnazione è gestito dal tuo responsabile di gruppo o amministratore.",
+        "badge": "Scaduto"
+      }
+    },
+    "outline": {
+      "title": "Struttura del corso",
+      "backToCourses": "I miei corsi",
+      "progress": "{{completed}}/{{total}} completati ({{percent}}%)",
+      "resume": {
+        "start": "Inizia: {{title}}",
+        "resume": "Continua: {{title}}",
+        "review": "Rivedi: {{title}}"
+      },
+      "completedBanner": "Hai completato questo corso.",
+      "empty": {
+        "title": "Questo corso non ha ancora contenuti"
+      },
+      "error": {
+        "title": "Impossibile caricare questa struttura",
+        "retry": "Riprova"
+      },
+      "kind": {
+        "lesson": "Lezione",
+        "topic": "Argomento",
+        "quiz": "Quiz"
+      },
+      "itemStatus": {
+        "not_started": "Non avviato",
+        "in_progress": "In corso",
+        "completed": "Completato"
+      },
+      "blocked": {
+        "quiz_has_no_questions": "Questo quiz non ha ancora domande e non può essere aperto."
+      },
+      "quiz": {
+        "bestPercentage": "Migliore: {{percent}}%"
+      }
+    }
   }
 }

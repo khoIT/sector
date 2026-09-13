@@ -244,5 +244,89 @@
       "registration": "Sua organização ou um convite de grupo cria a conta para você. Entre com os dados que recebeu.",
       "switch-user": "Entrar como outro usuário é feito pelo console interno, não por aqui."
     }
+  },
+  "courses": {
+    "index": {
+      "title": "Meus cursos",
+      "searchPlaceholder": "Pesquisar cursos",
+      "statusFilter": {
+        "label": "Status",
+        "all": "Todos os status",
+        "not_started": "Não iniciado",
+        "in_progress": "Em andamento",
+        "completed": "Concluído",
+        "active": "Ativo",
+        "paused": "Pausado",
+        "dropped": "Abandonado",
+        "expired": "Expirado"
+      },
+      "status": {
+        "not_started": "Não iniciado",
+        "in_progress": "Em andamento",
+        "completed": "Concluído"
+      },
+      "action": {
+        "start": "Começar",
+        "resume": "Continuar",
+        "review": "Revisar"
+      },
+      "progressLabel": "{{percent}}% concluído",
+      "empty": {
+        "title": "Ainda não há cursos",
+        "description": "Cursos atribuídos a você, pessoalmente ou por um grupo, aparecem aqui."
+      },
+      "noMatch": {
+        "title": "Nenhum curso corresponde à sua pesquisa",
+        "description": "Nenhum título de curso corresponde a “{{keyword}}”."
+      },
+      "pagePastEnd": {
+        "title": "Nada nesta página",
+        "backToFirstPage": "Ir para a primeira página"
+      },
+      "error": {
+        "title": "Não foi possível carregar esta lista",
+        "retry": "Tentar novamente"
+      },
+      "expired": {
+        "title_one": "{{count}} matrícula expirada",
+        "title_other": "{{count}} matrículas expiradas",
+        "description": "O acesso a estes terminou; renovar uma atribuição é feito pelo seu líder de grupo ou administrador.",
+        "badge": "Expirado"
+      }
+    },
+    "outline": {
+      "title": "Estrutura do curso",
+      "backToCourses": "Meus cursos",
+      "progress": "{{completed}}/{{total}} concluídos ({{percent}}%)",
+      "resume": {
+        "start": "Começar: {{title}}",
+        "resume": "Continuar: {{title}}",
+        "review": "Revisar: {{title}}"
+      },
+      "completedBanner": "Você concluiu este curso.",
+      "empty": {
+        "title": "Este curso ainda não tem conteúdo"
+      },
+      "error": {
+        "title": "Não foi possível carregar esta estrutura",
+        "retry": "Tentar novamente"
+      },
+      "kind": {
+        "lesson": "Lição",
+        "topic": "Tópico",
+        "quiz": "Questionário"
+      },
+      "itemStatus": {
+        "not_started": "Não iniciado",
+        "in_progress": "Em andamento",
+        "completed": "Concluído"
+      },
+      "blocked": {
+        "quiz_has_no_questions": "Este questionário ainda não tem perguntas e não pode ser aberto."
+      },
+      "quiz": {
+        "bestPercentage": "Melhor: {{percent}}%"
+      }
+    }
   }
 }

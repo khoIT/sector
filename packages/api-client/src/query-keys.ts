@@ -98,6 +98,13 @@ export const groupKeys = {
   members: (groupId: string, params: unknown) => ['get-group-members', groupId, params] as const,
 } as const;
 
+export const courseKeys = {
+  /** Prefix for every page of My Courses, across every keyword/status/sort. */
+  listRoot: () => ['get-learner-courses'] as const,
+  list: (params: unknown) => ['get-learner-courses', params] as const,
+  outline: (courseId: string) => ['get-learner-course-outline', courseId] as const,
+} as const;
+
 export const authKeys = {
   session: () => ['auth-session'] as const,
 } as const;

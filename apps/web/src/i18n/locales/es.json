@@ -244,5 +244,89 @@
       "registration": "Su organización o una invitación de grupo crean la cuenta por usted. Inicie sesión con los datos que le enviaron.",
       "switch-user": "Iniciar sesión como otro usuario se hace desde la consola interna, no desde aquí."
     }
+  },
+  "courses": {
+    "index": {
+      "title": "Mis cursos",
+      "searchPlaceholder": "Buscar cursos",
+      "statusFilter": {
+        "label": "Estado",
+        "all": "Todos los estados",
+        "not_started": "No iniciado",
+        "in_progress": "En progreso",
+        "completed": "Completado",
+        "active": "Activo",
+        "paused": "Pausado",
+        "dropped": "Abandonado",
+        "expired": "Caducado"
+      },
+      "status": {
+        "not_started": "No iniciado",
+        "in_progress": "En progreso",
+        "completed": "Completado"
+      },
+      "action": {
+        "start": "Comenzar",
+        "resume": "Continuar",
+        "review": "Revisar"
+      },
+      "progressLabel": "{{percent}}% completado",
+      "empty": {
+        "title": "Aún no hay cursos",
+        "description": "Los cursos que se te asignen, de forma personal o a través de un grupo, aparecerán aquí."
+      },
+      "noMatch": {
+        "title": "Ningún curso coincide con tu búsqueda",
+        "description": "Ningún título de curso coincide con «{{keyword}}»."
+      },
+      "pagePastEnd": {
+        "title": "No hay nada en esta página",
+        "backToFirstPage": "Ir a la primera página"
+      },
+      "error": {
+        "title": "No se pudo cargar esta lista",
+        "retry": "Intentar de nuevo"
+      },
+      "expired": {
+        "title_one": "{{count}} inscripción caducada",
+        "title_other": "{{count}} inscripciones caducadas",
+        "description": "El acceso a estos ha terminado; renovar una asignación lo gestiona tu líder de grupo o administrador.",
+        "badge": "Caducado"
+      }
+    },
+    "outline": {
+      "title": "Esquema del curso",
+      "backToCourses": "Mis cursos",
+      "progress": "{{completed}}/{{total}} completado ({{percent}}%)",
+      "resume": {
+        "start": "Comenzar: {{title}}",
+        "resume": "Continuar: {{title}}",
+        "review": "Revisar: {{title}}"
+      },
+      "completedBanner": "Has completado este curso.",
+      "empty": {
+        "title": "Este curso aún no tiene contenido"
+      },
+      "error": {
+        "title": "No se pudo cargar este esquema",
+        "retry": "Intentar de nuevo"
+      },
+      "kind": {
+        "lesson": "Lección",
+        "topic": "Tema",
+        "quiz": "Cuestionario"
+      },
+      "itemStatus": {
+        "not_started": "No iniciado",
+        "in_progress": "En progreso",
+        "completed": "Completado"
+      },
+      "blocked": {
+        "quiz_has_no_questions": "Este cuestionario aún no tiene preguntas y no se puede abrir."
+      },
+      "quiz": {
+        "bestPercentage": "Mejor: {{percent}}%"
+      }
+    }
   }
 }

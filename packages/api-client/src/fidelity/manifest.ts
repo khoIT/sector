@@ -8,6 +8,7 @@ import {
   organizationSchema,
   scanTypeSummarySchema,
 } from '../schemas/create-scan-lookups';
+import { learnerCourseSummarySchema } from '../schemas/course';
 import { groupSchema } from '../schemas/group';
 import { groupFilterOptionSchema } from '../schemas/group-filter';
 import { groupMemberSchema } from '../schemas/group-member';
@@ -407,6 +408,43 @@ export const REPLAY_ENTRIES: readonly ReplayEntry[] = [
       return { ...(toWire(rest) as Record<string, unknown>), role: role ? toWire(role) : null };
     },
   },
+  {
+    name: 'v2courses → the course inside a My Courses item',
+    collection: 'v2courses',
+    schema: learnerCourseSummarySchema,
+    proves: ['learnerCourseSummarySchema', 'learnerCourseAuthorSchema'],
+    prefetch: async (_batch, { refs }) => refs.loadAll('users'),
+    project: (course, { refs }) => {
+      const author = refs.get('users', course.author);
+      return {
+        ...(toWire(
+          pick(course, [
+            'title',
+            'slug',
+            'content',
+            'imageUrl',
+            'duration',
+            'cmeCredits',
+            'cmeUrl',
+            'cmeCode',
+            'status',
+          ]),
+        ) as Record<string, unknown>),
+        // getCloudfrontUrl() presigns per request; a dump cannot replay that,
+        // same call as the scan-type and file entries above.
+        imageUrl: null,
+        // resolveCourseAuthor() keys this `_id`, not `id` — see the schema.
+        author: author
+          ? {
+              _id: String(author._id),
+              email: author.email ?? '',
+              firstName: author.firstName ?? '',
+              lastName: author.lastName ?? '',
+            }
+          : { _id: '', email: '', firstName: '', lastName: '' },
+      };
+    },
+  },
 ];
 
 /**
@@ -466,4 +504,33 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   updateGroupNotificationPreferencePayloadSchema:
     'request body of PUT /api/group-notifications/:groupId',
   deleteAccountPayloadSchema: 'request body of DELETE /api/account/delete',
+
+  // My Courses and the course outline: both assembled per learner across
+  // UserCourse, UserCourseProgress, GroupMember/GroupCourse and
+  // CourseMetaVersionV2 (or, for the outline, the resolved item traversal) —
+  // no single collection holds either shape. The embedded course document is
+  // the one part that IS replayed; see `learnerCourseSummarySchema` above.
+  courseProgressStatusSchema:
+    'the value of usercourseprogresses.status; proved together with the assembled progress it appears in, below',
+  enrollmentStatusSchema: 'the value of usercourses.status, assembled into the list item below',
+  assignmentTypeSchema:
+    "'personal' | 'group', computed by which branch of getLearnerCourses built the row",
+  expirationTypeSchema: 'computed by normalizeLearnerCourses(), not stored on any document',
+  learnerCourseProgressSchema:
+    'assembled from usercourseprogresses (or its not-started default) per learner-course pair',
+  learnerCourseMetaVersionSummarySchema:
+    'assembled from v2coursemetaversions per learner-course pair',
+  learnerCourseGroupSchema:
+    'assembled from a populated GroupMember + GroupCourse join, group assignments only',
+  learnerCourseListItemSchema:
+    'the full My Courses row: UserCourse/GroupCourse joined with progress, meta version and group in one pass',
+  learnerCoursesPageSchema: 'the paginated envelope around learnerCourseListItemSchema',
+  courseOutlineItemKindSchema:
+    'a resolved outline item kind, computed by the traversal, not stored',
+  courseOutlineBlockedReasonSchema: 'computed by the traversal from the quiz question count',
+  courseOutlineQuizSummarySchema: 'assembled per quiz from quiz attempts, not a stored document',
+  courseOutlineResumeSchema: 'computed by the traversal: the first incomplete leaf',
+  courseOutlineItemSchema: 'one resolved item; see courseOutlineSchema',
+  courseOutlineSchema:
+    'the resolved outline has no single source collection — see the doc comment in schemas/course-outline.ts',
 };

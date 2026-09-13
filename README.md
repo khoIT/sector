@@ -129,7 +129,12 @@ node scripts/check/cold-load-sweep.mjs "$SECTOR_MIRROR_JWT_SECRET" <fixture-dir>
 Each route gets a fresh browser context, because the bug this exists to catch
 was invisible on a second visit with a warm query cache. The fixture directory
 holds `sweep-ids.json` (a user id per role) and `sweep-routes.json` (the paths
-and which role opens each).
+and which role opens each). `sweep-routes.json` ships beside the script and
+covers every route built so far, so only `sweep-ids.json` has to be written by
+hand — the seeded accounts get fresh ids each time the local database is
+rebuilt, which is why it cannot be committed. Omit the fixture directory to use
+the shipped routes. Set `SECTOR_WEB_ORIGIN` to point the sweep at a worktree's
+own dev server on its own port instead of the shared `:3101` instance.
 
 ### The production mirror, and proving the schemas against it
 
