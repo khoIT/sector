@@ -350,6 +350,17 @@ Upload: `sanitizeFilename`, `buildScanFilekey`, `extractFilekey`,
 `putToPresignedUrl(url, blob, contentType, signal)` (returns `{ etag }`; bypasses
 the API client because S3 rejects the Authorization header and sends no envelope).
 
+### Every schema has a fidelity decision
+
+`packages/api-client/src/fidelity/manifest.ts` maps each exported `*Schema` to
+the production collection that proves it (with the projection that turns a raw
+document into what the route sends) or to a written reason it has none — a
+request payload, a token, a computed aggregate. `pnpm test` fails when a new
+schema has neither. `pnpm fidelity` runs the replay against the local mirror;
+see the README. A shape the replay finds is either learned by the schema, with
+the count and the evidence in a comment, or recorded in the manifest as a known
+exception. Never widen a schema without one of the two.
+
 ### Wire drifts already handled — do not "fix" these
 
 These were found by diffing the legacy Zod objects (which were never parsed)

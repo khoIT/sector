@@ -116,6 +116,75 @@ Note: `/api/login` and `/api/me` share a **20 requests / 15 minutes per IP** lim
 Repeated sign-ins while testing will start returning 429; the response's
 `RateLimit-Reset` header says how many seconds remain.
 
+### The production mirror, and proving the schemas against it
+
+The dumps beside this repo hold every production content and scan collection.
+Restored into a **local** database, `gusi_prod_mirror`, they are the fidelity
+target: `pnpm fidelity` replays every document through the schema that parses
+its API route and reports, per route, how many parsed and which _shapes_ did
+not — "704 reviews hold an object in `reviewFacts`", not 704 rows.
+
+```bash
+scripts/data/restore-prod-mirror.sh   # dumps → gusi_prod_mirror on localhost (≈ 1 min)
+pnpm fidelity                         # every collection, every schema; prints the parse table
+```
+
+Nothing in this connects to the production cluster. Every script and the
+harness itself refuse any URI whose host is not loopback.
+
+The register of what proves what is `packages/api-client/src/fidelity/manifest.ts`.
+A schema exported from `src/schemas` that appears in no entry there and is not
+excused with a reason fails the ordinary `pnpm test`, so a new route family
+cannot ship without deciding how real data tests it. When the replay finds a
+shape, the schema either learns it (with the count and the reason in a
+comment, see `reviewFacts` in `schemas/scan.ts`) or the manifest records it as
+a known exception.
+
+**Driving the app against the mirror.** A second API instance serves the
+mirror on `:5002`, and a second dev server proxies to it on `:3101`, leaving
+`:5001` / `:3100` on `gusi_dev` untouched. From a clone of the API repo:
+
+```bash
+NODE_ENV=development HTTP_PORT=5002 \
+MONGODB_URI='mongodb://localhost:27017/gusi_prod_mirror?directConnection=true' \
+AWS_SECRET_MANAGER_KEY=local AWS_SECRET_MANAGER_REGION=us-east-1 \
+S3_ENDPOINT=http://localhost:9000 S3_ACCESS_KEY=minioadmin S3_SECRET_KEY=minioadmin \
+AWS_S3_BUCKET=gusi-local JWT_SECRET_KEY="$SECTOR_MIRROR_JWT_SECRET" \
+EMAIL_PROVIDER=smtp SMTP_HOST=localhost SMTP_PORT=1025 pnpm dev:http
+```
+
+```bash
+SECTOR_API_ORIGIN=http://localhost:5002 pnpm --filter @sector/web exec vite --port 3101
+```
+
+The two `AWS_SECRET_MANAGER_*` values only have to be present: the API's env
+loader requires them, fails to reach AWS, and falls back to the environment.
+Media on the mirror comes from local MinIO (`docker-compose.minio.yml` in the
+API repo), fed by `pnpm tsx scripts/data/seed-minio.ts`, which puts synthetic
+objects behind a sample of real file keys — the dumps carry file records, not
+the bytes, so real playback of real media still needs staging object storage.
+
+**Accounts.** The demo accounts' password is private to the team, so the
+tooling seeds its own:
+
+```bash
+SECTOR_TEST_PASSWORD='<8+ characters>' pnpm tsx scripts/data/seed-test-accounts.ts --db gusi_dev
+SECTOR_TEST_PASSWORD='<the same>'       pnpm tsx scripts/data/seed-test-accounts.ts --db gusi_prod_mirror
+```
+
+| Account                | Role          | On `gusi_dev`                             | On the mirror                      |
+| ---------------------- | ------------- | ----------------------------------------- | ---------------------------------- |
+| `learner@sector.test`  | subscriber    | no scans of its own                       | no scans of its own                |
+| `leader@sector.test`   | group_leader  | leads the same group as the demo leader   | leads the largest production queue |
+| `reviewer@sector.test` | scan_reviewer | leads the same group as the demo reviewer | leads the largest production queue |
+| `admin@sector.test`    | administrator | `full-access`                             | `full-access`                      |
+
+`--remove` takes them out again. Keep the password in `.env.local` (gitignored)
+so the route replay can find it: `pnpm fidelity` also walks every list view
+through the running mirror API for all four accounts when
+`SECTOR_MIRROR_JWT_SECRET` is set to the secret the `:5002` instance was
+started with, minting sessions rather than spending the auth rate limit.
+
 ## Layout of the app
 
 `apps/web/src`:
