@@ -119,9 +119,13 @@ export const NAV_GROUPS = [
         icon: Settings2,
         path: GROUP_ADMINISTRATION_PATH,
         matchPrefix: GROUP_ADMINISTRATION_PATH,
-        // The server's own guard for every route this section reads — see
-        // groups-routes.tsx. Replaces the placeholder's borrowed scan
-        // permission now that there is real group data behind the route.
+        // `read:group` is the permission every seeded group role shares
+        // (and every full-access role also holds it) — see the scoping note
+        // on groups-routes.tsx for what actually guards each route beneath
+        // it: the leader routes rely on server-side leadership scoping, the
+        // administrator routes on `read:group`/`read:group-member`. Replaces
+        // the placeholder's borrowed scan permission now that there is real
+        // group data behind the route.
         visibleWhen: whenPermitted('read:group'),
       },
     ],

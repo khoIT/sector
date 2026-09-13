@@ -8,11 +8,15 @@ import { GROUP_MEMBERS_ROUTE_PATH, GROUPS_INDEX_ROUTE_PATH } from './groups-link
 /**
  * Routes for the group-administration surfaces, spread into `featureRoutes`.
  *
- * Gated on `read:group` as ONE pathless layout route covering both pages —
- * the server's own guard for every route this feature calls (`GET /api/groups`,
- * `GET /api/groups/manage`, `GET /api/group-members`,
- * `GET /api/groups/manage/member/:groupId` all require it), so a role that
- * cannot read groups cannot deep-link into either page.
+ * Gated on `read:group` as ONE pathless layout route covering both pages.
+ * `read:group` is the permission every seeded group role shares (leader,
+ * reviewer, administrator, superadmin all hold it) — it is NOT literally the
+ * guard on every route this page calls: `GET /api/groups` requires it, but
+ * `GET /api/groups/manage` and `GET /api/groups/manage/member/:groupId` are
+ * `authUser` only and rely on server-side leadership scoping instead, and
+ * `GET /api/group-members` requires `read:group-member`. Gating the ROUTE on
+ * `read:group` still keeps out the one role with none of these (subscriber);
+ * the individual endpoints layer their own, different checks on top.
  *
  * Lazily loaded: reached from the "Administer" nav section, not from a list a
  * page depends on at boot.
