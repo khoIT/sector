@@ -8,7 +8,9 @@
     "administer": "Amministrazione",
     "courses": "Corsi",
     "questionBanks": "Banche di domande",
-    "groupAdministration": "Amministrazione dei gruppi"
+    "groupAdministration": "Amministrazione dei gruppi",
+    "gallery": "Galleria di Patologia",
+    "sage": "Sage AI"
   },
   "tabs": {
     "reviewed": "Recensito"
@@ -562,5 +564,69 @@
     "close": "Chiudi",
     "completionTagErrorTitle": "Il contrassegno non è stato salvato",
     "completionTagError": "Non è stato possibile modificare la completezza dello scan. Non è stato salvato nulla: riprova."
+  },
+  "gallery": {
+    "title": "Galleria di Patologia",
+    "categoriesError": {
+      "title": "Impossibile caricare le categorie",
+      "retry": "Riprova"
+    },
+    "noCategories": "Nessuna categoria disponibile",
+    "subCategoriesFor": "Sottocategorie di {{category}}",
+    "allSubCategories": "Tutte le sottocategorie",
+    "noVideoAvailable": "Nessun video disponibile per questo elemento",
+    "loadError": {
+      "title": "Impossibile caricare questa categoria",
+      "retry": "Riprova"
+    },
+    "noItems": "Ancora nessun elemento in questa categoria",
+    "pageOf": "Pagina {{current}} di {{total}}"
+  },
+  "sage": {
+    "title": "Sage AI",
+    "description": "Chiedi a Sage AI qualsiasi cosa sull'ecografia point-of-care.",
+    "loading": "Caricamento di Sage AI…",
+    "signedOut": {
+      "title": "Accedi per usare Sage AI",
+      "description": "Sage AI richiede un account con sessione avviata per aprirsi."
+    }
+  },
+  "assignments": {
+    "title": "Assegnazioni",
+    "searchPlaceholder": "Cerca assegnazioni…",
+    "columns": {
+      "learner": "Discente",
+      "content": "Contenuto",
+      "type": "Tipo",
+      "dueDate": "Scadenza",
+      "status": "Stato"
+    },
+    "type": {
+      "course": "Corso",
+      "module": "Modulo",
+      "topic": "Argomento",
+      "quiz": "Quiz"
+    },
+    "status": {
+      "draft": "Bozza",
+      "active": "Attivo",
+      "in_progress": "In corso",
+      "completed": "Completato",
+      "cancelled": "Annullato"
+    },
+    "filters": {
+      "status": "Stato",
+      "allStatuses": "Tutti gli stati",
+      "type": "Tipo",
+      "allTypes": "Tutti i tipi"
+    },
+    "empty": {
+      "title": "Ancora nessuna assegnazione",
+      "description": "Non è stato ancora assegnato nulla a questo gruppo."
+    },
+    "error": {
+      "title": "Impossibile caricare le assegnazioni",
+      "retry": "Riprova"
+    }
   }
 }

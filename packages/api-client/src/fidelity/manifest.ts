@@ -14,6 +14,7 @@ import { groupFilterOptionSchema } from '../schemas/group-filter';
 import { groupMemberSchema } from '../schemas/group-member';
 import { groupWithNotificationPreferenceSchema } from '../schemas/group-notification-preferences';
 import { questionBankDetailSchema, questionBankSummarySchema } from '../schemas/question-bank';
+import { pathologyGalleryItemSchema } from '../schemas/pathology';
 import {
   scanFindingSchema,
   scanNoteSchema,
@@ -530,6 +531,17 @@ export const REPLAY_ENTRIES: readonly ReplayEntry[] = [
       };
     },
   },
+  {
+    name: 'pathologygalleries → GET /api/pathology-gallery item',
+    collection: 'pathologygalleries',
+    schema: pathologyGalleryItemSchema,
+    proves: ['pathologyGalleryItemSchema', 'pathologyStatusSchema'],
+    // Only published items are ever listed by the route (the client always
+    // sends status=published) — restrict the replay to the same population,
+    // matching the 1,305-item count this schema was verified against.
+    filter: { status: 'published' },
+    project: raw,
+  },
 ];
 
 /**
@@ -657,11 +669,6 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
     'a computed, pre-formatted report row (class/course/member completion), aggregated ' +
     'per request rather than read off one stored document',
   createGroupAssignmentPayloadSchema: 'request body of POST /api/group-assignment',
-  groupAssignmentTypeSchema:
-    'the assignment-type enum; this client only writes/reads the course value — see ' +
-    'groupAssignmentSchema for why the collection is not replayed',
-  groupAssignmentStatusSchema:
-    'the assignment-status enum — see groupAssignmentSchema for why the collection is not replayed',
   groupAssignmentSchema:
     'the groupassignments collection exists in the production mirror, but this ' +
     "route's populate paths (groupAssignmentService.getAll) are not yet verified " +
@@ -677,4 +684,32 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
     'the groupcourses collection exists in the mirror, but this route sends the ' +
     "populated course document directly and the exact populate/projection isn't " +
     'yet verified; modelled minimally against only the fields this list renders',
+
+  // Pathology gallery category bar: joins the pathologygalleries.scanTypeId
+  // relation (proved directly by pathologyGalleryItemSchema above) against
+  // scantypes for a name and a presigned imagePath, plus the small set of
+  // published categories with no scanTypeId. Neither half is a single
+  // collection's document shape, and the join itself is what the category
+  // bar IS, so there is nothing left to replay once the relation is proved.
+  pathologyCategorySchema:
+    'computed per request by joining distinct pathologygalleries.scanTypeId values (and unmapped category names) against scantypes; the relation itself is proved by pathologyGalleryItemSchema',
+
+  // Group assignments: GET /api/group-assignment populates `group`, `user`
+  // and `contentId` (plus courseId/lessonId/topicId) onto a GroupAssignment
+  // row. `contentId` is polymorphic — a V2Course, V2Lesson, V2Topic or
+  // V2Quiz document depending on `contentRefModel` — so proving it needs a
+  // projection that branches per row on that field; verified instead against
+  // a live response from the local production mirror (2026-09-14, a `module`
+  // / `V2Lesson` row) and left as a route-suite concern rather than a
+  // replay, matching the read-only, no-writes scope this surface ported.
+  assignmentGroupRefSchema: 'populated group ref on a GroupAssignment row; see assignmentSchema',
+  assignmentContentRefSchema:
+    'contentId/courseId/lessonId/topicId are polymorphic (course/lesson/topic/quiz) populated refs on a GroupAssignment row; see assignmentSchema',
+  assignmentSchema:
+    'GET /api/group-assignment row: group, user and a polymorphic contentId populated per request onto groupassignments — no single collection holds the joined shape; verified against a live mirror response instead, see the schema doc comment',
+  assignmentListResponseSchema: 'the pagination envelope around assignmentSchema',
+  groupAssignmentTypeSchema:
+    'the value of groupassignments.assignmentType, assembled into assignmentSchema above',
+  groupAssignmentStatusSchema:
+    'the value of groupassignments.status, assembled into assignmentSchema above',
 };

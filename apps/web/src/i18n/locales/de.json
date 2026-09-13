@@ -8,7 +8,9 @@
     "administer": "Verwaltung",
     "courses": "Kurse",
     "questionBanks": "Fragenkataloge",
-    "groupAdministration": "Gruppenverwaltung"
+    "groupAdministration": "Gruppenverwaltung",
+    "gallery": "Pathologie-Galerie",
+    "sage": "Sage AI"
   },
   "tabs": {
     "reviewed": "Überprüft"
@@ -562,5 +564,69 @@
     "close": "Schließen",
     "completionTagErrorTitle": "Die Markierung wurde nicht gespeichert",
     "completionTagError": "Die Vollständigkeit des Scans konnte nicht geändert werden. Es wurde nichts gespeichert – bitte erneut versuchen."
+  },
+  "gallery": {
+    "title": "Pathologie-Galerie",
+    "categoriesError": {
+      "title": "Kategorien konnten nicht geladen werden",
+      "retry": "Erneut versuchen"
+    },
+    "noCategories": "Keine Kategorien verfügbar",
+    "subCategoriesFor": "Unterkategorien für {{category}}",
+    "allSubCategories": "Alle Unterkategorien",
+    "noVideoAvailable": "Für dieses Element ist kein Video verfügbar",
+    "loadError": {
+      "title": "Diese Kategorie konnte nicht geladen werden",
+      "retry": "Erneut versuchen"
+    },
+    "noItems": "Noch keine Einträge in dieser Kategorie",
+    "pageOf": "Seite {{current}} von {{total}}"
+  },
+  "sage": {
+    "title": "Sage AI",
+    "description": "Frag Sage AI alles rund um die point-of-care Sonografie.",
+    "loading": "Sage AI wird geladen…",
+    "signedOut": {
+      "title": "Melde dich an, um Sage AI zu nutzen",
+      "description": "Sage AI benötigt ein angemeldetes Konto, um geöffnet zu werden."
+    }
+  },
+  "assignments": {
+    "title": "Zuweisungen",
+    "searchPlaceholder": "Zuweisungen durchsuchen…",
+    "columns": {
+      "learner": "Lernende:r",
+      "content": "Inhalt",
+      "type": "Typ",
+      "dueDate": "Fällig am",
+      "status": "Status"
+    },
+    "type": {
+      "course": "Kurs",
+      "module": "Modul",
+      "topic": "Thema",
+      "quiz": "Quiz"
+    },
+    "status": {
+      "draft": "Entwurf",
+      "active": "Aktiv",
+      "in_progress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "cancelled": "Storniert"
+    },
+    "filters": {
+      "status": "Status",
+      "allStatuses": "Alle Status",
+      "type": "Typ",
+      "allTypes": "Alle Typen"
+    },
+    "empty": {
+      "title": "Noch keine Zuweisungen",
+      "description": "Dieser Gruppe wurde noch nichts zugewiesen."
+    },
+    "error": {
+      "title": "Zuweisungen konnten nicht geladen werden",
+      "retry": "Erneut versuchen"
+    }
   }
 }

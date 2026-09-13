@@ -13,7 +13,9 @@
     "administer": "Administer",
     "courses": "Courses",
     "questionBanks": "Question Banks",
-    "groupAdministration": "Group Administration"
+    "groupAdministration": "Group Administration",
+    "gallery": "Pathology Gallery",
+    "sage": "Sage AI"
   },
   "tabs": {
     "unreviewed": "Unreviewed",
@@ -640,5 +642,69 @@
     "close": "Close",
     "completionTagErrorTitle": "The mark did not save",
     "completionTagError": "The scan's completeness could not be changed. Nothing was saved — try again."
+  },
+  "gallery": {
+    "title": "Pathology Gallery",
+    "categoriesError": {
+      "title": "Couldn't load categories",
+      "retry": "Try again"
+    },
+    "noCategories": "No categories available",
+    "subCategoriesFor": "Sub-categories for {{category}}",
+    "allSubCategories": "All sub-categories",
+    "noVideoAvailable": "No video available for this item",
+    "loadError": {
+      "title": "Couldn't load this category",
+      "retry": "Try again"
+    },
+    "noItems": "No items in this category yet",
+    "pageOf": "Page {{current}} of {{total}}"
+  },
+  "sage": {
+    "title": "Sage AI",
+    "description": "Ask Sage AI anything about point-of-care ultrasound.",
+    "loading": "Loading Sage AI…",
+    "signedOut": {
+      "title": "Sign in to use Sage AI",
+      "description": "Sage AI needs a signed-in account to open."
+    }
+  },
+  "assignments": {
+    "title": "Assignments",
+    "searchPlaceholder": "Search assignments…",
+    "columns": {
+      "learner": "Learner",
+      "content": "Content",
+      "type": "Type",
+      "dueDate": "Due date",
+      "status": "Status"
+    },
+    "type": {
+      "course": "Course",
+      "module": "Module",
+      "topic": "Topic",
+      "quiz": "Quiz"
+    },
+    "status": {
+      "draft": "Draft",
+      "active": "Active",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "filters": {
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "type": "Type",
+      "allTypes": "All types"
+    },
+    "empty": {
+      "title": "No assignments yet",
+      "description": "Nothing has been assigned to this group yet."
+    },
+    "error": {
+      "title": "Couldn't load assignments",
+      "retry": "Try again"
+    }
   }
 }

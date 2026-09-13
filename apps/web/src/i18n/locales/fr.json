@@ -8,7 +8,9 @@
     "administer": "Administration",
     "courses": "Cours",
     "questionBanks": "Banques de questions",
-    "groupAdministration": "Administration des groupes"
+    "groupAdministration": "Administration des groupes",
+    "gallery": "Galerie de pathologie",
+    "sage": "Sage AI"
   },
   "tabs": {
     "reviewed": "Révisé"
@@ -562,5 +564,69 @@
     "close": "Fermer",
     "completionTagErrorTitle": "La marque n'a pas été enregistrée",
     "completionTagError": "L'état de complétude du scan n'a pas pu être modifié. Rien n'a été enregistré — réessayez."
+  },
+  "gallery": {
+    "title": "Galerie de pathologie",
+    "categoriesError": {
+      "title": "Impossible de charger les catégories",
+      "retry": "Réessayer"
+    },
+    "noCategories": "Aucune catégorie disponible",
+    "subCategoriesFor": "Sous-catégories de {{category}}",
+    "allSubCategories": "Toutes les sous-catégories",
+    "noVideoAvailable": "Aucune vidéo disponible pour cet élément",
+    "loadError": {
+      "title": "Impossible de charger cette catégorie",
+      "retry": "Réessayer"
+    },
+    "noItems": "Aucun élément dans cette catégorie pour le moment",
+    "pageOf": "Page {{current}} sur {{total}}"
+  },
+  "sage": {
+    "title": "Sage AI",
+    "description": "Posez à Sage AI toutes vos questions sur l'échographie au point de service.",
+    "loading": "Chargement de Sage AI…",
+    "signedOut": {
+      "title": "Connectez-vous pour utiliser Sage AI",
+      "description": "Sage AI nécessite un compte connecté pour s'ouvrir."
+    }
+  },
+  "assignments": {
+    "title": "Devoirs",
+    "searchPlaceholder": "Rechercher des devoirs…",
+    "columns": {
+      "learner": "Apprenant(e)",
+      "content": "Contenu",
+      "type": "Type",
+      "dueDate": "Échéance",
+      "status": "Statut"
+    },
+    "type": {
+      "course": "Cours",
+      "module": "Module",
+      "topic": "Sujet",
+      "quiz": "Quiz"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "active": "Actif",
+      "in_progress": "En cours",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "filters": {
+      "status": "Statut",
+      "allStatuses": "Tous les statuts",
+      "type": "Type",
+      "allTypes": "Tous les types"
+    },
+    "empty": {
+      "title": "Aucun devoir pour l'instant",
+      "description": "Rien n'a encore été attribué à ce groupe."
+    },
+    "error": {
+      "title": "Impossible de charger les devoirs",
+      "retry": "Réessayer"
+    }
   }
 }
