@@ -3,6 +3,7 @@ import {
   BookOpen,
   FolderClock,
   GraduationCap,
+  Home,
   ListChecks,
   Settings2,
   Share2,
@@ -11,6 +12,7 @@ import {
 
 import { COURSES_PATH } from '@/features/courses/courses-links';
 import { GROUP_ADMINISTRATION_PATH } from '@/features/groups/groups-links';
+import { HOME_PATH } from '@/features/home/home-route';
 import { QUESTION_BANK_LIST_PATH } from '@/features/question-banks/question-bank-links';
 
 import {
@@ -91,6 +93,21 @@ const groupAdministrationDestination: NavDestination<'group-administration'> = {
   visibleWhen: whenPermitted('read:group'),
 };
 
+/**
+ * The home screen. Every signed-in user has one of the four role
+ * dashboards, so — like Courses — there is no permission to gate on: the
+ * dashboard itself resolves by role (`resolveHomeDashboard`), never by a
+ * permission check here.
+ */
+const homeDestination: NavDestination<'home'> = {
+  id: 'home',
+  labelKey: 'nav.home',
+  icon: Home,
+  path: HOME_PATH,
+  matchPrefix: HOME_PATH,
+  visibleWhen: whenPermitted(null),
+};
+
 /*
  * Written without a `satisfies readonly NavGroup[]` clause, and that is load
  * bearing: the clause contextually types every entry as NavDestination<string>,
@@ -100,6 +117,12 @@ const groupAdministrationDestination: NavDestination<'group-administration'> = {
  * these entries as NavDestination.
  */
 export const NAV_GROUPS = [
+  {
+    id: 'home',
+    labelKey: 'nav.home',
+    showLabel: false,
+    items: [homeDestination],
+  },
   {
     id: 'scan-vault',
     labelKey: 'nav.section',

@@ -8,7 +8,8 @@
     "administer": "Amministrazione",
     "courses": "Corsi",
     "questionBanks": "Banche di domande",
-    "groupAdministration": "Amministrazione dei gruppi"
+    "groupAdministration": "Amministrazione dei gruppi",
+    "home": "Home"
   },
   "tabs": {
     "reviewed": "Recensito"
@@ -562,5 +563,70 @@
     "close": "Chiudi",
     "completionTagErrorTitle": "Il contrassegno non è stato salvato",
     "completionTagError": "Non è stato possibile modificare la completezza dello scan. Non è stato salvato nulla: riprova."
+  },
+  "home": {
+    "greeting": "Bentornato, {{name}}",
+    "courseStatus": {
+      "inProgress": "In corso",
+      "completed": "Completato",
+      "notStarted": "Non iniziato"
+    },
+    "myLearning": {
+      "title": "Il mio apprendimento",
+      "course": "Corso",
+      "selectCourse": "Seleziona un corso",
+      "courseProgress": "Progresso del corso",
+      "noCourseProgress": "Ancora nessun progresso nel corso.",
+      "scanProgress": "Le mie scansioni",
+      "noScanProgress": "Ancora nessuna scansione.",
+      "qbank": "Tentativi nella banca di domande",
+      "noQbank": "Ancora nessun tentativo nella banca di domande.",
+      "attempts_one": "{{count}} tentativo",
+      "attempts_other": "{{count}} tentativi",
+      "timeline": "Progresso nel tempo",
+      "noTimeline": "Non c'è ancora abbastanza attività per mostrare una tendenza.",
+      "topCourses": "Corsi principali",
+      "noTopCourses": "Ancora nessun corso in corso.",
+      "topics": "Argomenti",
+      "noTopics": "Ancora nessun progresso sugli argomenti.",
+      "quizzes": "Quiz",
+      "noQuizzes": "Ancora nessun progresso sui quiz."
+    },
+    "leader": {
+      "title": "Dashboard del leader di gruppo",
+      "group": "Gruppo",
+      "noGroup": "Non guidi ancora nessun gruppo",
+      "noGroupHint": "Non appena un gruppo ti nomina leader, qui apparirà il suo riepilogo di corsi e scansioni."
+    },
+    "group": {
+      "title": "{{groupName}}",
+      "viewMembers": "Visualizza membri",
+      "courseProgress": "Progresso del corso",
+      "noCourseProgress": "Ancora nessun progresso del corso per questo gruppo.",
+      "scanProgress": "Progresso delle scansioni",
+      "noScanProgress": "Ancora nessuna scansione per questo gruppo.",
+      "qbank": "Tentativi nella banca di domande",
+      "noQbank": "Ancora nessun tentativo nella banca di domande per questo gruppo.",
+      "averageScore": "{{score}}% punteggio migliore"
+    },
+    "reviewer": {
+      "title": "Dashboard del revisore delle scansioni",
+      "expertUnreviewed": "Scansioni da parte di esperti — non revisionate",
+      "expertReviewed": "Scansioni da parte di esperti — revisionate",
+      "groupUnreviewed": "Scansioni di gruppo — non revisionate",
+      "groupReviewed": "Scansioni di gruppo — revisionate",
+      "credits": "Crediti per revisione esperta",
+      "personalCredits": "I tuoi crediti",
+      "creditsUnavailable": "Impossibile caricare i saldi crediti.",
+      "loading": "Caricamento…"
+    },
+    "admin": {
+      "title": "Dashboard amministratore",
+      "manageGroups": "Gestisci gruppi",
+      "group": "Gruppo",
+      "selectGroup": "Seleziona un gruppo",
+      "noGroups": "Ancora nessun gruppo",
+      "noGroupsHint": "Non appena esiste un gruppo, selezionalo qui per vedere il suo riepilogo di corsi e scansioni."
+    }
   }
 }

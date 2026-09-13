@@ -70,18 +70,18 @@ describe('destinations that are not scan lists', () => {
   it('drops the whole section rather than rendering a heading with nothing under it', () => {
     const learnerGroups = visibleNavGroups(LEARNER).map((group) => group.id);
     expect(learnerGroups).not.toContain('administer');
-    expect(learnerGroups).toEqual(['scan-vault', 'learn']);
+    expect(learnerGroups).toEqual(['home', 'scan-vault', 'learn']);
 
     for (const group of visibleNavGroups(LEARNER)) {
       expect(group.items.length).toBeGreaterThan(0);
     }
   });
 
-  it('leaves the landing surface inside the Scan Vault', () => {
-    // `/` forwards to this. A section that has no page behind it yet must not
-    // become the first thing an account sees.
-    expect(firstVisibleNavItem(LEARNER)?.path).toBe(SCAN_VAULT_PATH.my);
-    expect(firstVisibleNavItem(LEADER)?.path).toBe(SCAN_VAULT_PATH.my);
+  it('lands every role on the home dashboard, not inside the Scan Vault', () => {
+    // `/` no longer redirects into a scan list — it renders the role's own
+    // dashboard (HomeRoute), so Home is the first destination for every role.
+    expect(firstVisibleNavItem(LEARNER)?.path).toBe('/');
+    expect(firstVisibleNavItem(LEADER)?.path).toBe('/');
   });
 
   it('names the section in the topbar heading', () => {

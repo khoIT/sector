@@ -6,6 +6,7 @@ import { LoginPage } from '@/auth/login-page';
 import { RequireAuth } from '@/auth/require-auth';
 import { ResetPasswordPage } from '@/auth/reset-password-page';
 import { ResetSentPage } from '@/auth/reset-sent-page';
+import { HomeRoute } from '@/features/home/home-route';
 import { featureRoutes } from '@/routes/feature-routes';
 import { AppShell } from '@/shell/app-shell';
 
@@ -14,7 +15,6 @@ import { LEGACY_ROOTS } from './legacy-route-map';
 import { NotFoundPage } from './not-found-page';
 import { RouteErrorPage } from './route-error-page';
 import { scanVaultRoutes } from './scan-vault-routes';
-import { VaultIndexRedirect } from './vault-index-redirect';
 
 /**
  * The route tree.
@@ -26,7 +26,7 @@ import { VaultIndexRedirect } from './vault-index-redirect';
  *   /group-invitation-confirmation            public — the invitation email's link
  *   <RequireAuth>               redirects to /login?from=<path> when signed out
  *     /  <AppShell>             sidebar + topbar frame, content in <Outlet/>
- *        index                  forwards to the first permitted tab
+ *        index                  HomeRoute — the role's dashboard, no redirect
  *        ...scanVaultRoutes     the four tabs, each behind its permission
  *        ...featureRoutes       everything else features register
  *        /dashboard/*, /register/*, /certificates/*, /store-listing/*, /switch-user
@@ -85,7 +85,7 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
         path: '/',
         element: <AppShell />,
         children: [
-          { index: true, element: <VaultIndexRedirect /> },
+          { index: true, element: <HomeRoute /> },
           ...scanVaultRoutes,
           ...featureRoutes,
           // Every URL the dashboard served resolves here — to the surface
