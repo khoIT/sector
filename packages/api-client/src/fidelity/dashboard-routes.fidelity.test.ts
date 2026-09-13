@@ -154,9 +154,15 @@ describe.skipIf(!enabled)('dashboard route replay against the mirror API', () =>
         expectClean(finish(`${email} top-course-progress`, top, started));
 
         // A course this account actually has progress on, if any — My
-        // Courses is the one route every role can call for itself.
-        const courses = await getLearnerCourses(client, { limit: 1 });
-        const courseId = courses.items[0]?.course.id;
+        // Courses is the one route every role can call for itself. Tolerant
+        // of `getLearnerCourses` itself failing to parse: that route belongs
+        // to `schemas/course.ts` (a different phase's schema), not to the
+        // dashboard endpoints this file proves, so a pre-existing shape gap
+        // there (e.g. an `expirationType` value the enum does not list yet)
+        // should not block proving the eight routes this file owns.
+        const courseId = await getLearnerCourses(client, { limit: 1 })
+          .then((page) => page.items[0]?.course.id)
+          .catch(() => undefined);
 
         if (courseId) {
           const progress = tally();
@@ -204,7 +210,15 @@ describe.skipIf(!enabled)('dashboard route replay against the mirror API', () =>
         const started = Date.now();
 
         const led = await getLedGroups(client, { limit: 1 });
-        const groupId = led.items[0]?.id ?? (await getAllGroups(client, { limit: 1 })).items[0]?.id;
+        // GET /api/groups (getAllGroups) is a full-access-only route — see
+        // GROUP_ADMIN_BYPASS_PERMISSIONS in schemas/group.ts — so only the
+        // admin account may fall back to it. Calling it for learner/leader/
+        // reviewer is a genuine 403, not a shape gap.
+        const groupId =
+          led.items[0]?.id ??
+          (email === 'admin@sector.test'
+            ? (await getAllGroups(client, { limit: 1 })).items[0]?.id
+            : undefined);
         if (!groupId) {
           // learner@sector.test leads nothing and is not full-access — there
           // is no group snapshot for this role, which is the correct answer,

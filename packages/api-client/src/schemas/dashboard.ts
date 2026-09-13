@@ -196,17 +196,28 @@ export const topicProgressItemSchema = z.object({
   id: z.string(),
   title: z.string(),
   slug: z.string(),
+  photoIcon: z.string().nullish(),
+  courseId: z.string().nullish(),
   // `lessonPathsMap.get(lessonId) || null` — required in the legacy schema,
   // but the controller sends null once a lesson has no resolvable path.
   path: z.string().nullish(),
   completionPercentage: z.number(),
   completedUsers: z.number(),
-  completedItems: z.number(),
-  totalItems: z.number(),
   totalUsers: z.number(),
   inProgressUsers: z.number(),
   notStartedUsers: z.number(),
   averageTimeSpent: z.string(),
+  // The controller spreads `...(courseId && {totalItems, completedItems,
+  // inProgressItems, notStartedItems, totalTimeSpent})` onto each row — these
+  // five exist ONLY when the request itself carries a `courseId`. The legacy
+  // schema required two of them unconditionally, which is exactly the shape
+  // the group-scoped call (no courseId) never sends — verified against the
+  // mirror API for every one of the four seeded accounts.
+  totalItems: z.number().optional(),
+  completedItems: z.number().optional(),
+  inProgressItems: z.number().optional(),
+  notStartedItems: z.number().optional(),
+  totalTimeSpent: z.number().optional(),
 });
 export type TopicProgressItem = z.infer<typeof topicProgressItemSchema>;
 
@@ -215,8 +226,13 @@ export const topicProgressSchema = z.object({
   summary: z.object({
     totalTopics: z.number(),
     averageCompletionRate: z.number(),
-    topPerformingTopic: z.object({ title: z.string(), completionRate: z.number() }),
-    lowestPerformingTopic: z.object({ title: z.string(), completionRate: z.number() }),
+    // `processedTopicProgress[0] || null` / `[…length - 1] || null` — an
+    // empty progress list sends `null`, not an absent key. Verified against
+    // dashboard.controller.ts and against the mirror API (a learner with no
+    // topic activity 200s with both fields null; the legacy schema's
+    // required object would have thrown on parse for exactly that account).
+    topPerformingTopic: z.object({ title: z.string(), completionRate: z.number() }).nullable(),
+    lowestPerformingTopic: z.object({ title: z.string(), completionRate: z.number() }).nullable(),
   }),
 });
 export type TopicProgress = z.infer<typeof topicProgressSchema>;
@@ -237,6 +253,7 @@ export const quizProgressItemSchema = z.object({
   slug: z.string(),
   path: z.string().nullish(),
   photoIcon: z.string().nullish(),
+  courseId: z.string().nullish(),
   isQbank: z.boolean(),
   completionPercentage: z.number(),
   completedUsers: z.number(),
@@ -260,16 +277,22 @@ export const quizProgressSchema = z.object({
     totalQuizzes: z.number(),
     averageCompletionRate: z.number(),
     overallAverageScore: z.number(),
-    topPerformingQuiz: z.object({
-      title: z.string(),
-      completionRate: z.number(),
-      averageScore: z.number(),
-    }),
-    lowestPerformingQuiz: z.object({
-      title: z.string(),
-      completionRate: z.number(),
-      averageScore: z.number(),
-    }),
+    // Same `[0] || null` / `[…length - 1] || null` pattern as topic progress
+    // above, verified in the same function family (dashboard.controller.ts).
+    topPerformingQuiz: z
+      .object({
+        title: z.string(),
+        completionRate: z.number(),
+        averageScore: z.number(),
+      })
+      .nullable(),
+    lowestPerformingQuiz: z
+      .object({
+        title: z.string(),
+        completionRate: z.number(),
+        averageScore: z.number(),
+      })
+      .nullable(),
   }),
 });
 export type QuizProgress = z.infer<typeof quizProgressSchema>;
