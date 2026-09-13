@@ -86,6 +86,15 @@ describe('scanSchema groups', () => {
     expect(scanSchema.parse({ ...scan, groups: [] }).groups).toEqual([]);
   });
 
+  it('drops the null the detail route leaves for a soft-deleted group', () => {
+    // Seen on the running API: ten of a thousand sampled details carried
+    // `[null, null]` where every group of the study had since been deleted.
+    expect(
+      scanSchema.parse({ ...scan, groups: [null, { id: 'g1', name: 'Kept' }, null] }).groups,
+    ).toEqual([{ id: 'g1', name: 'Kept' }]);
+    expect(scanSchema.parse({ ...scan, groups: [null, null] }).groups).toEqual([]);
+  });
+
   it("normalises the list route's _id key", () => {
     const parsed = scanSchema.parse({ ...scan, groups: [{ _id: 'g1', name: 'Class of 2029' }] });
     expect(parsed.groups).toEqual([{ id: 'g1', name: 'Class of 2029' }]);

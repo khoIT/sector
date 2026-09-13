@@ -112,6 +112,7 @@ export {
   fileStatusSchema,
   isPendingFilePlaceholder,
   mediaFileSchema,
+  scanGroupListSchema,
   scanGroupRefSchema,
   userBasicSchema,
   userDisplayName,

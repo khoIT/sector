@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { SCAN_STATUSES } from '../scan-status';
-import { mediaFileSchema, scanGroupRefSchema, userBasicSchema } from './common';
+import { mediaFileSchema, scanGroupListSchema, userBasicSchema } from './common';
 
 /**
  * Scan shapes, checked field-by-field against live responses from
@@ -301,7 +301,7 @@ export const scanSchema = z.object({
    * turns a field the response never sent into the positive claim that the
    * study went to nobody, on the one decision submit cannot undo.
    */
-  groups: z.array(scanGroupRefSchema).optional(),
+  groups: scanGroupListSchema.optional(),
   tags: z.array(z.string()).default([]),
 
   scanIdentifier: z.string().nullish(),

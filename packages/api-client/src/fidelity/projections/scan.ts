@@ -74,13 +74,18 @@ export function projectScan(scan: Document, context: ReplayContext): unknown {
 
   const review = refs.get('scanreviews', scan.review);
 
-  // batchGetGroupsByScanIds: `select: '_id name'`, deduplicated, and the LIST
-  // shape keeps `_id` because the mapper reads a lean() result.
+  // The LIST mapper (batchGetGroupsByScanIds) selects `_id name`, dedupes and
+  // skips a membership whose group did not populate; the DETAIL route's
+  // per-scan resolver keeps populate's null for a soft-deleted group. Emit the
+  // detail behaviour — it is the stricter of the two for the shared schema.
   const groupIds = new Set<string>();
   const groups: unknown[] = [];
   for (const membership of refs.children('groupuserscans', 'scan', scan._id)) {
     const group = refs.get('groups', membership.group);
-    if (!group) continue;
+    if (!group) {
+      groups.push(null);
+      continue;
+    }
     const id = String(group._id);
     if (groupIds.has(id)) continue;
     groupIds.add(id);

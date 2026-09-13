@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { mediaFileSchema, scanGroupRefSchema, userBasicSchema } from './common';
+import { mediaFileSchema, scanGroupListSchema, userBasicSchema } from './common';
 import {
   fileDetailSchema,
   scanFindingSchema,
@@ -67,7 +67,7 @@ export const sharedScanDetailScanSchema = z.object({
   reviewedAt: z.string().nullish(),
 
   /** Null on this route, unlike every /api/scan/* route where it is an array. */
-  groups: z.array(scanGroupRefSchema).nullish(),
+  groups: scanGroupListSchema.nullish(),
   tags: z.array(z.string()).default([]),
 
   scanIdentifier: z.string().nullish(),

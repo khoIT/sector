@@ -71,6 +71,7 @@ export const REPLAY_ENTRIES: readonly ReplayEntry[] = [
       'mediaFileSchema',
       'fileStatusSchema',
       'scanGroupRefSchema',
+      'scanGroupListSchema',
       'userBasicSchema',
     ],
     prefetch: prefetchScans,

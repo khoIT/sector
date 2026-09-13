@@ -85,6 +85,21 @@ export const scanGroupRefSchema = z
 export type ScanGroupRef = z.infer<typeof scanGroupRefSchema>;
 
 /**
+ * The `groups` array as a scan route sends it.
+ *
+ * VERIFIED SHAPE (production mirror through the running API, 13 Sep 2026):
+ * the DETAIL route resolves a scan's groups one scan at a time and keeps the
+ * null that populate leaves for a group that has since been soft-deleted —
+ * ten sampled details out of a thousand carried `[null, null]`. The LIST
+ * mapper filters those out before answering. One schema serves both routes,
+ * so it drops the nulls itself: a group that no longer exists is not a
+ * destination the study went to, and it is not a reason to blank the page.
+ */
+export const scanGroupListSchema = z
+  .array(scanGroupRefSchema.nullable())
+  .transform((groups) => groups.filter((group): group is ScanGroupRef => group !== null));
+
+/**
  * Caller's groups from GET /api/scan/user-groups — the group filter source,
  * and the only scan route with no permission guard (authUser only).
  */
