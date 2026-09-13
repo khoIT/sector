@@ -346,6 +346,82 @@ describe('submitDraft — recovering a study that was reset for re-upload', () =
     expect(outcome.filesConfirmed).toBe(1);
   });
 
+  it('leaves a legacy record with no status alone rather than deleting it', async () => {
+    // `File.status` was added in Feb 2026 and more than half the File
+    // documents in production predate it. Absence means the upload arrived —
+    // the same rule the server applies in scan-completeness.ts — so reading it
+    // as "never landed" would hard-delete files the learner still has.
+    const state = emptyDraftStateForTest({
+      scanId: 'scan-1',
+      scanTypeId: 'type-1',
+      files: [
+        draftFile({
+          id: 'b',
+          name: 'b.mp4',
+          status: 'stored',
+          storageKey: 'storage/x/scan/scan-1/b.mp4',
+        }),
+      ],
+    });
+
+    getScanById.mockResolvedValue({
+      id: 'scan-1',
+      title: 'Study-1',
+      fileTotal: 1,
+      tags: [],
+      files: [
+        // A legacy upload: elsewhere, and no status at all.
+        { id: 'legacy-a', filename: 'a.mp4', filepath: 'storage/x/scan/old/a.mp4' },
+      ],
+    });
+    addScanFiles.mockResolvedValue({
+      fileTotal: 2,
+      files: [{ id: 'file-b', filename: 'b.mp4', filepath: 'storage/x/scan/scan-1/b.mp4' }],
+    });
+
+    await submitDraft({ client, state, groupIds: [], onScanCreated: () => undefined });
+
+    expect(deleteScanFiles).not.toHaveBeenCalled();
+  });
+
+  it('leaves a completed record elsewhere alone — it is a file the learner still has', async () => {
+    const state = emptyDraftStateForTest({
+      scanId: 'scan-1',
+      scanTypeId: 'type-1',
+      files: [
+        draftFile({
+          id: 'b',
+          name: 'b.mp4',
+          status: 'stored',
+          storageKey: 'storage/x/scan/scan-1/b.mp4',
+        }),
+      ],
+    });
+
+    getScanById.mockResolvedValue({
+      id: 'scan-1',
+      title: 'Study-1',
+      fileTotal: 1,
+      tags: [],
+      files: [
+        scanRecord({
+          id: 'kept-a',
+          filename: 'a.mp4',
+          filepath: 'storage/x/scan/old/a.mp4',
+          status: 'completed',
+        }),
+      ],
+    });
+    addScanFiles.mockResolvedValue({
+      fileTotal: 2,
+      files: [{ id: 'file-b', filename: 'b.mp4', filepath: 'storage/x/scan/scan-1/b.mp4' }],
+    });
+
+    await submitDraft({ client, state, groupIds: [], onScanCreated: () => undefined });
+
+    expect(deleteScanFiles).not.toHaveBeenCalled();
+  });
+
   it('registers a file added after the scan row existed instead of orphaning it', async () => {
     // The audit's other half: a file that reached storage only after `create`
     // had already run has no record, and used to be reported as "the study has

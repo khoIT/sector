@@ -261,11 +261,22 @@ export async function submitDraft({
  *   points elsewhere, landed     leave it; it is a file the learner still has
  *   no record at all             register it with add-files
  *
+ * "Not landed" means the record says so: `pending` or `failed`, and nothing
+ * else. A file with NO status is a legacy upload that did arrive — `status`
+ * was added in Feb 2026 and more than half the File documents in production
+ * predate it — which is the same rule the server applies when it decides
+ * whether a scan holds what it declared (`scan-completeness.ts`). Reading
+ * absence as "not landed" here would hard-delete the records of files the
+ * learner still has.
+ *
  * Nothing here runs on the ordinary resume of a failed confirmation: those
  * records were stored verbatim by `create` and already point at the right
  * key, so both lists come out empty and this is one `getScanById` and no
  * writes.
  */
+/** The two statuses that mean the object was never written. See above. */
+const NEVER_LANDED: ReadonlySet<string> = new Set(['pending', 'failed']);
+
 async function reconcileScanFiles(
   client: ApiClient,
   scanId: string,
@@ -277,7 +288,7 @@ async function reconcileScanFiles(
 
   const matched = scan.files.filter((record) => ourKeys.has(record.filepath));
   const orphaned = scan.files.filter(
-    (record) => !ourKeys.has(record.filepath) && record.status !== 'completed',
+    (record) => !ourKeys.has(record.filepath) && NEVER_LANDED.has(record.status ?? ''),
   );
 
   const fileIds = new Map(matched.map((record) => [record.filename, record.id]));
