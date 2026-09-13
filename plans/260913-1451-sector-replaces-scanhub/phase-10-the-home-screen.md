@@ -1,7 +1,7 @@
 ---
 phase: 10
 title: "The home screen"
-status: pending
+status: in-progress
 priority: P2
 effort: "22 days"
 dependencies: [6, 7, 8]
