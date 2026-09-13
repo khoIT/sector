@@ -356,10 +356,12 @@ export const REPLAY_ENTRIES: readonly ReplayEntry[] = [
       // getPresignedUrl is a live S3 call the replay cannot make; a real API
       // response carries an https URL here instead.
       photoIcon: null,
-      // populate({ path: 'questions', select: 'id title slug' }) drops any
-      // reference that does not resolve — 28 of 809 references across the
-      // mirror's 18 published banks — the same way a populated ARRAY always
-      // does (see RefCache.many's doc comment in ../wire.ts).
+      // populate({ path: 'questions', select: 'id title slug' }) would drop
+      // any reference that does not resolve, the way a populated ARRAY
+      // always does (see RefCache.many's doc comment in ../wire.ts) — moot in
+      // this mirror, where all 781 unique question ids across the 18
+      // published banks' 809 references resolve (the 28-reference gap is 28
+      // questions each shared by two banks, not a dangling reference).
       questions: refs
         .many('v2questions', quiz.questions)
         .map((question) => toWire(pick(question, ['title', 'slug']))),

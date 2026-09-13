@@ -8,11 +8,12 @@ import { z } from 'zod';
  * those are the only two the engine builds (see the quiz engine's README-level
  * comment for the production split: 95.1% single, 4.8% multiple, one stray
  * `sort_answer` question system-wide that the server itself hard-codes to
- * `isCorrect = false`). Every published question-bank question in the mirror
- * (781 of 809 references; 28 are dangling, see the fidelity manifest) is one
- * of these two, which `pnpm fidelity` proves; a bank that ever grows a
- * question of another type fails that replay loudly rather than silently
- * rendering an unscorable question.
+ * `isCorrect = false`). Published question banks in the mirror hold 809
+ * question references, 781 of them unique (28 questions are each shared by
+ * two banks — not dangling; every one of the 781 resolves in v2questions),
+ * and all 781 are one of these two answer types, which `pnpm fidelity`
+ * proves; a bank that ever grows a question of another type fails that
+ * replay loudly rather than silently rendering an unscorable question.
  */
 export const questionBankAnswerTypeSchema = z.enum(['single', 'multiple']);
 export type QuestionBankAnswerType = z.infer<typeof questionBankAnswerTypeSchema>;
