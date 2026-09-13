@@ -41,10 +41,12 @@ in the token file. Geometry and SVG in `design/` beside this plan.
 - Modify: ~20 files under `apps/web/src` carrying the literal "ScanVault"
   (`shell/sidebar.tsx` brand mark, `shell/app-shell.tsx` document.title,
   `auth/login-page.tsx`, `app/not-found-page.tsx`, `app/route-error-page.tsx`, …)
-- Modify: 7 storage key prefixes — `scanvault.create-scan.draft`,
+- Modify: **8** storage keys — `scanvault.create-scan.draft`,
   `scanvault.create-scan.flow`, `scanvault.review-draft.`,
   `scanvault.scan-list.last-tab.`, `scanvault.scan-list.columns.`, the
-  `scanvault.create-scan` IndexedDB database, and the `scanvault.session` auth key
+  `scanvault.create-scan` IndexedDB database, the `scanvault.session` auth key,
+  and `scanvault.theme` in `packages/ui/src/theme/theme-provider.tsx`, which
+  this list originally missed. Two of the eight live outside `apps/web`.
 - Modify: `apps/web/src/shell/nav-config.ts` — `NavItemId`, `NAV_GROUPS`,
   `visibleNavGroups`, `shellTitleKeyFor`
 - Modify: `apps/web/src/features/scan-list/scan-list-views.ts` — `SCAN_VAULT_PATH`
@@ -61,9 +63,12 @@ in the token file. Geometry and SVG in `design/` beside this plan.
    no behaviour change, `pnpm -w typecheck && pnpm -w lint && pnpm -w test` green.
 3. **Rename the user-visible strings**, including `document.title` (which is now
    `"<title> · ScanVault"` in `app-shell.tsx`) and the i18n brand key.
-4. **Migrate storage keys.** On boot, copy each `scanvault.*` key to its `sector.*`
-   name and delete the old one; same for the IndexedDB database name. A learner with
-   a live 7-day create-scan draft must not lose it.
+4. **Migrate storage keys.** Two mechanisms, because the stores differ in timing:
+   a synchronous localStorage sweep at boot, before first render, and an
+   IndexedDB migration inside `draft-blob-store.ts` itself — IndexedDB has no
+   rename, so the module that owns the database has to own the copy-and-drop, or
+   a reader can reach the new database before the copy finishes. A learner with a
+   live 7-day create-scan draft must not lose it.
 5. **Widen the nav model.** `NavItemId` stops being a closed union of four scan ids.
    A destination becomes `{ id, labelKey, icon, path, visibleWhen }` where
    `visibleWhen` is a permission predicate, and the scan entries keep resolving
