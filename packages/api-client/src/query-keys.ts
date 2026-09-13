@@ -115,6 +115,20 @@ export const notificationPreferenceKeys = {
 } as const;
 
 /**
+ * Question banks. The list route takes no filters or pagination (the server
+ * caps it at 500 and ignores query params entirely), so `list()` and
+ * `listRoot()` are the same key — there is only ever one page to invalidate.
+ */
+export const questionBankKeys = {
+  listRoot: () => ['get-question-banks'] as const,
+  list: () => ['get-question-banks'] as const,
+  detailRoot: () => ['get-question-bank-by-slug'] as const,
+  detail: (slug: string) => ['get-question-bank-by-slug', slug] as const,
+  progressRoot: () => ['get-question-bank-progress'] as const,
+  progress: (quizId: string) => ['get-question-bank-progress', quizId] as const,
+} as const;
+
+/**
  * Mutation keys, for useIsMutating checks and devtools readability. The two
  * legacy mutations that carried no key (updateScanById, deleteScanById) get
  * one here so the set is complete.

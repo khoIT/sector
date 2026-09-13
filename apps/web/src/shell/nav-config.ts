@@ -1,9 +1,17 @@
 import type { AuthUser } from '@sector/api-client';
-import { BookOpen, FolderClock, GraduationCap, Settings2, Share2, Users2 } from 'lucide-react';
+import {
+  BookOpen,
+  FolderClock,
+  GraduationCap,
+  ListChecks,
+  Settings2,
+  Share2,
+  Users2,
+} from 'lucide-react';
 
 import { COURSES_PATH } from '@/features/courses/courses-links';
 import { GROUP_ADMINISTRATION_PATH } from '@/features/groups/groups-links';
-import { UNBUILT_SURFACES, type UnbuiltSurfaceId } from '@/routes/unbuilt-surfaces';
+import { QUESTION_BANK_LIST_PATH } from '@/features/question-banks/question-bank-links';
 
 import {
   isNavItemActive,
@@ -35,21 +43,53 @@ import {
  */
 
 /**
- * A section that is in the rail before its surface exists. Label, icon, URL
- * and gate all come from the one table the router reads too.
+ * Courses, question banks and group administration all graduated out of
+ * routes/unbuilt-surfaces.ts the same way — a real surface replaced the
+ * placeholder row, and the id/path/label key it carried moved here as a
+ * literal `NavDestination` rather than being read back out of a table that
+ * no longer has a row for it. `unbuiltDestination()` (the helper that used
+ * to build one of these FROM that table) is gone with the last row it read.
  */
-function unbuiltDestination<TId extends UnbuiltSurfaceId>(id: TId): NavDestination<TId> {
-  const surface = UNBUILT_SURFACES[id];
+const coursesDestination: NavDestination<'courses'> = {
+  id: 'courses',
+  labelKey: 'nav.courses',
+  icon: GraduationCap,
+  path: COURSES_PATH,
+  matchPrefix: COURSES_PATH,
+  // Ungated: the API scopes My Courses to the caller's own enrolment, not to
+  // a role permission — there is nothing to check here.
+  visibleWhen: whenPermitted(null),
+};
 
-  return {
-    id,
-    labelKey: surface.labelKey,
-    icon: surface.icon,
-    path: surface.path,
-    matchPrefix: surface.path,
-    visibleWhen: whenPermitted(surface.permission),
-  };
-}
+/**
+ * `/api/v2/question-banks*` guards on nothing but a signed-in session, so
+ * this is ungated like Shared Scans.
+ */
+const questionBanksDestination: NavDestination<'question-banks'> = {
+  id: 'question-banks',
+  labelKey: 'nav.questionBanks',
+  icon: ListChecks,
+  path: QUESTION_BANK_LIST_PATH,
+  matchPrefix: QUESTION_BANK_LIST_PATH,
+  visibleWhen: whenPermitted(null),
+};
+
+/**
+ * `read:group` is the permission every seeded group role shares (and every
+ * full-access role also holds) — see the scoping note on groups-routes.tsx
+ * for what actually guards each route beneath it: the leader routes rely on
+ * server-side leadership scoping, the administrator routes on
+ * `read:group`/`read:group-member`. Replaces the placeholder's borrowed scan
+ * permission now that there is real group data behind the route.
+ */
+const groupAdministrationDestination: NavDestination<'group-administration'> = {
+  id: 'group-administration',
+  labelKey: 'nav.groupAdministration',
+  icon: Settings2,
+  path: GROUP_ADMINISTRATION_PATH,
+  matchPrefix: GROUP_ADMINISTRATION_PATH,
+  visibleWhen: whenPermitted('read:group'),
+};
 
 /*
  * Written without a `satisfies readonly NavGroup[]` clause, and that is load
@@ -104,24 +144,7 @@ export const NAV_GROUPS = [
     id: 'learn',
     labelKey: 'nav.learn',
     showLabel: true,
-    items: [
-      {
-        // Graduated out of unbuilt-surfaces.ts now that My Courses and the
-        // outline are real pages (features/courses/**). Id, path and label
-        // key are pinned identically to what that table carried, so this
-        // entry and this test file cannot disagree with a bookmark or a
-        // saved deep link minted before the surface existed.
-        id: 'courses',
-        labelKey: 'nav.courses',
-        icon: GraduationCap,
-        path: COURSES_PATH,
-        matchPrefix: COURSES_PATH,
-        // Ungated: the API scopes My Courses to the caller's own enrolment,
-        // not to a role permission — there is nothing to check here.
-        visibleWhen: whenPermitted(null),
-      },
-      unbuiltDestination('question-banks'),
-    ],
+    items: [coursesDestination, questionBanksDestination],
   },
   {
     id: 'administer',
@@ -130,23 +153,7 @@ export const NAV_GROUPS = [
     // One entry, and most roles do not hold its permission — which is exactly
     // the case visibleNavGroups() has to drop rather than render as a heading
     // with nothing under it.
-    items: [
-      {
-        id: 'group-administration',
-        labelKey: 'nav.groupAdministration',
-        icon: Settings2,
-        path: GROUP_ADMINISTRATION_PATH,
-        matchPrefix: GROUP_ADMINISTRATION_PATH,
-        // `read:group` is the permission every seeded group role shares
-        // (and every full-access role also holds it) — see the scoping note
-        // on groups-routes.tsx for what actually guards each route beneath
-        // it: the leader routes rely on server-side leadership scoping, the
-        // administrator routes on `read:group`/`read:group-member`. Replaces
-        // the placeholder's borrowed scan permission now that there is real
-        // group data behind the route.
-        visibleWhen: whenPermitted('read:group'),
-      },
-    ],
+    items: [groupAdministrationDestination],
   },
 ] as const;
 

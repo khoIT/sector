@@ -1,4 +1,4 @@
-import { ListChecks, type LucideIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 /**
  * Sections that have a place in the rail and a URL, and nothing behind them
@@ -17,10 +17,13 @@ import { ListChecks, type LucideIcon } from 'lucide-react';
  * landed on a blank page.
  *
  * Retiring one of these is a deletion, not a migration: drop the row, mount
- * the real page under the same path, and the rail follows.
+ * the real page under the same path, and the rail follows. `courses`,
+ * `question-banks` and `group-administration` — every row this table ever
+ * carried — have each graduated that way in turn; their ids, paths and label
+ * keys now live as literal `NavDestination`s in shell/nav-config.ts instead
+ * of being read back out of a row here. The table is empty until the next
+ * section lands in the rail ahead of its surface.
  */
-
-export type UnbuiltSurfaceId = 'question-banks';
 
 export type UnbuiltSurface = {
   /** Absolute URL, for links; the router mounts it relative. */
@@ -35,15 +38,10 @@ export type UnbuiltSurface = {
   icon: LucideIcon;
 };
 
-export const UNBUILT_SURFACES: Readonly<Record<UnbuiltSurfaceId, UnbuiltSurface>> = {
-  // 'courses' graduated out of this table: My Courses and the outline are
-  // real pages now (features/courses/**), routed and gated for themselves.
-  // See the module doc comment above — this is exactly the deletion it
-  // describes, not a migration.
-  'question-banks': {
-    path: '/learn/question-banks',
-    permission: null,
-    labelKey: 'nav.questionBanks',
-    icon: ListChecks,
-  },
-};
+/**
+ * Keyed by section id, same as every row this table has ever carried — but
+ * there is no fixed id union left to key it by now that all three have
+ * graduated, so a plain string index takes over rather than forcing a
+ * `never` key through `Object.values()` at every reader.
+ */
+export const UNBUILT_SURFACES: Readonly<Record<string, UnbuiltSurface>> = {};

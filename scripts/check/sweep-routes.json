@@ -69,6 +69,11 @@
     "role": "learner"
   },
   {
+    "path": "/learn/question-banks/question-bank-cardiac-basic",
+    "role": "learner",
+    "needs": "Cardiac|Start|Continue"
+  },
+  {
     "path": "/dashboard/scans/my-scans",
     "role": "learner"
   },
