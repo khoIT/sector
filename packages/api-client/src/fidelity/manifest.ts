@@ -677,4 +677,61 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
     'the groupcourses collection exists in the mirror, but this route sends the ' +
     "populated course document directly and the exact populate/projection isn't " +
     'yet verified; modelled minimally against only the fields this list renders',
+
+  // ─── course runner: progress writes, per-question quiz submit, content ──
+  // The write side of the seam Phase 6 read from. `usercourseprogresses` and
+  // `usercourseactivities` hold NO real production data at all: the dumps
+  // carry only "content and scan collections" (see the repo README), and a
+  // direct query of the mirror confirms it — every `usercourseprogresses`
+  // document present (5, all of them) was written by
+  // `scripts/data/seed-course-progress.ts` driving this exact API, not
+  // restored from production. That is the answer to this phase's own risk
+  // note: the shape below is not guessed and is not `z.any()` — it is read
+  // straight off one of those five real, persisted (if synthetic) documents
+  // (course `681a4b5b779a0d9e6c9cc52e`, three completed quiz items, 100%
+  // each, verified 14 Sep 2026) and cross-checked against the Mongoose
+  // schema that writes it (`user-course-progress.model.ts`) — but no
+  // PRODUCTION document will ever exist to replay it against, the same
+  // structural gap `questionBankAttemptInfoSchema` documents for qbank
+  // sessions below.
+  trackContentTypeSchema: 'request body enum of POST /api/v2/learners/courses/:courseId/track',
+  trackCourseProgressPayloadSchema: 'request body of POST /api/v2/learners/courses/:courseId/track',
+  trackCourseQuizProgressPayloadSchema:
+    'request body of POST /api/v2/learners/courses/:courseId/quizzes/:quizId/track',
+  trackCourseQuizProgressResultSchema:
+    'one question, graded per request by learners.quiz.track.ts#trackQuizAnswer; ' +
+    'no usercourseprogresses document holds this narrower echo shape — see quizAttemptAnswerSchema',
+  retakeCourseQuizResultSchema:
+    'an echo of the attempt POST /quizzes/:quizId/retake just opened, minted per request',
+  quizAttemptAnswerSchema:
+    'one graded answer inside a quizAttempts[].answers[] entry; usercourseprogresses ' +
+    'holds no production data at all (see the section note above) — verified instead ' +
+    'against a real document this API wrote when driven by scripts/data/seed-course-progress.ts',
+  quizAttemptSchema:
+    'one quizAttempts[] entry; same verification and same absence of production data as ' +
+    'quizAttemptAnswerSchema',
+  quizItemProgressStatusSchema:
+    "the item-level ProgressStatus enum (user-course-progress.model.ts), including 'failed' " +
+    '— usercourseprogresses holds no production data to replay this against',
+  courseQuizProgressEntrySchema:
+    'assembled per learner-course-quiz pair from usercourseprogresses (no production data) ' +
+    'joined with v2quizzes',
+  courseQuizProgressResultSchema: 'the envelope around courseQuizProgressEntrySchema',
+  courseContentBodySchema:
+    'a trivial id/title/content/status projection of v2lessons or v2topics, both real ' +
+    'production content collections in the mirror — not wired into the replay harness ' +
+    'this phase (no join, no computed field, negligible parse risk against either collection)',
+  courseQuizQuestionSchema:
+    'the same v2questions documents questionBankDetailSchema already replays, read through ' +
+    "this course-quiz route's narrower shape instead — not separately wired this phase",
+  courseQuizDetailSchema: 'the envelope around courseQuizQuestionSchema; see its entry',
+
+  // ─── the read-only admin/learner-course-detail view ──────────────────────
+  learnerCourseAdminDetailSchema:
+    'GET /dashboard/learner-course-detail assembles this per request from UserCourse, ' +
+    'GroupMember/GroupCourse and UserCourseProgress the same way the My Courses row does ' +
+    '(learnerCourseListItemSchema, above) — no single collection holds it',
+  learnerCourseAdminResultSchema:
+    'the envelope around learnerCourseAdminDetailSchema, plus the ' +
+    "target learner's id/name resolved per request",
 };

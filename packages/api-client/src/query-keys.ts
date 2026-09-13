@@ -116,6 +116,30 @@ export const courseKeys = {
   outline: (courseId: string) => ['get-learner-course-outline', courseId] as const,
 } as const;
 
+/** One lesson/topic/quiz body, read through the legacy `/api/lms/*` routes —
+ *  see `endpoints/course-content.ts`. */
+export const courseContentKeys = {
+  lesson: (courseId: string, lessonId: string) =>
+    ['get-course-lesson-detail', courseId, lessonId] as const,
+  topic: (courseId: string, topicId: string) =>
+    ['get-course-topic-detail', courseId, topicId] as const,
+  quiz: (courseId: string, quizId: string) => ['get-course-quiz-detail', courseId, quizId] as const,
+} as const;
+
+/** The course-quiz adapter's own progress read, keyed by course rather than
+ *  by quiz — one request answers "what has this learner done on every quiz
+ *  in this course", the same shape `GET .../quizzes/progress` returns. */
+export const courseQuizProgressKeys = {
+  root: (courseId: string) => ['get-course-quiz-progress', courseId] as const,
+} as const;
+
+/** The read-only admin/leader view of one learner's course
+ *  (`GET /dashboard/learner-course-detail`). */
+export const learnerCourseAdminKeys = {
+  detail: (learnerId: string, courseId: string) =>
+    ['get-learner-course-admin-detail', learnerId, courseId] as const,
+} as const;
+
 export const authKeys = {
   session: () => ['auth-session'] as const,
 } as const;
