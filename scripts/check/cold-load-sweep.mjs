@@ -28,6 +28,14 @@ import { chromium } from 'playwright';
 
 const [secret, fixtureDir] = process.argv.slice(2);
 const SP = fixtureDir ?? fileURLToPath(new URL('.', import.meta.url));
+
+/**
+ * Which app and which API to point at. Defaults to the mirror pair, and is
+ * overridable so the sweep can be run against a worktree's own dev server
+ * without stopping the one already on 3101.
+ */
+const WEB = process.env.SECTOR_SWEEP_WEB_ORIGIN ?? 'http://localhost:3101';
+const API = process.env.SECTOR_SWEEP_API_ORIGIN ?? 'http://localhost:5002';
 const b64 = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
 function mint(userId) {
   const now = Math.floor(Date.now() / 1000);
@@ -37,7 +45,7 @@ function mint(userId) {
 }
 async function sessionFor(userId) {
   const token = mint(userId);
-  const r = await fetch('http://localhost:5002/api/account/profile', {
+  const r = await fetch(`${API}/api/account/profile`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   const u = (await r.json()).data;
@@ -59,7 +67,6 @@ async function sessionFor(userId) {
   };
 }
 
-const { readFileSync } = await import('node:fs');
 const ids = JSON.parse(readFileSync(`${SP}/sweep-ids.json`, 'utf8'));
 const routes = JSON.parse(readFileSync(`${SP}/sweep-routes.json`, 'utf8'));
 const browser = await chromium.launch({ channel: 'chromium' });
@@ -80,13 +87,13 @@ for (const { path, role, needs } of routes) {
   });
   try {
     if (role) {
-      await page.goto('http://localhost:3101/login', { waitUntil: 'domcontentloaded' });
+      await page.goto(`${WEB}/login`, { waitUntil: 'domcontentloaded' });
       await page.evaluate(
         (s) => localStorage.setItem('sector.session', JSON.stringify(s)),
         sessions[role],
       );
     }
-    await page.goto(`http://localhost:3101${path}`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${WEB}${path}`, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(5500);
     const seen = await page.evaluate(() => {
       const main = document.querySelector('main') ?? document.body;
