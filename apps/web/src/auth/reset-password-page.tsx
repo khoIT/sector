@@ -51,11 +51,9 @@ export function ResetPasswordPage() {
             <CardDescription>{t('recovery.missingFlow')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Link to="/forgot-password">
-              <Button size="lg" className="w-full">
-                {t('recovery.startOver')}
-              </Button>
-            </Link>
+            <Button asChild size="lg" className="w-full">
+              <Link to="/forgot-password">{t('recovery.startOver')}</Link>
+            </Button>
           </CardContent>
         </Card>
       </AuthPageLayout>

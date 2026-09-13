@@ -13,7 +13,12 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { AuthPageLayout } from './auth-page-layout';
-import { buildVerifyPath, classifySendOtpError } from './password-recovery-model';
+import {
+  buildVerifyPath,
+  classifySendOtpError,
+  validateForgotPasswordEmail,
+  writeStoredRecoveryToken,
+} from './password-recovery-model';
 
 /**
  * Step 1 of 3: `POST /api/forgot-password/send-otp`.
@@ -23,6 +28,12 @@ import { buildVerifyPath, classifySendOtpError } from './password-recovery-model
  * `classifySendOtpError`. Whether the typed address belongs to an account is
  * never observable from here. Only the shared auth rate limit (429) and an
  * actual network failure are shown as themselves.
+ *
+ * The address is validated client-side FIRST: a malformed one (`me@gusi`)
+ * would otherwise reach the server, get the same 400 "Email not found" a
+ * real-but-unknown address gets, and land the visitor on "check your email"
+ * for an address that could never have received anything. A validation
+ * error is not a disclosure — it says nothing about any specific address.
  */
 export function ForgotPasswordPage() {
   const { t } = useTranslation();
@@ -30,25 +41,35 @@ export function ForgotPasswordPage() {
   const sendOtp = useSendPasswordResetOtpMutation();
 
   const [email, setEmail] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [fieldError, setFieldError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError(null);
+    setFieldError(null);
+    setFormError(null);
+
+    const validated = validateForgotPasswordEmail({ email });
+    if (!validated.ok) {
+      setFieldError(validated.error);
+      return;
+    }
 
     try {
-      const result = await sendOtp.mutateAsync({ email });
-      navigate(buildVerifyPath(email, result.token));
+      const result = await sendOtp.mutateAsync(validated.value);
+      writeStoredRecoveryToken(window.sessionStorage, result.token);
+      navigate(buildVerifyPath(validated.value.email));
     } catch (submitError) {
       switch (classifySendOtpError(submitError)) {
         case 'proceed':
-          navigate(buildVerifyPath(email, null));
+          writeStoredRecoveryToken(window.sessionStorage, null);
+          navigate(buildVerifyPath(validated.value.email));
           return;
         case 'rateLimited':
-          setError(t('recovery.rateLimited'));
+          setFormError(t('recovery.rateLimited'));
           return;
         case 'network':
-          setError(t('recovery.networkError'));
+          setFormError(t('recovery.networkError'));
       }
     }
   }
@@ -76,15 +97,16 @@ export function ForgotPasswordPage() {
               autoFocus
               value={email}
               onChange={(event) => setEmail(event.target.value)}
+              error={fieldError ?? undefined}
               required
             />
 
-            {error ? (
+            {formError ? (
               <p
                 role="alert"
                 className="rounded-token bg-crit-soft px-2.5 py-2 text-body text-crit"
               >
-                {error}
+                {formError}
               </p>
             ) : null}
 

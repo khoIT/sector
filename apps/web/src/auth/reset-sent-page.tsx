@@ -18,10 +18,11 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthPageLayout } from './auth-page-layout';
 import {
   buildResetPath,
-  buildVerifyPath,
   classifyAuthRequestError,
   classifySendOtpError,
   parseRecoveryQuery,
+  readStoredRecoveryToken,
+  writeStoredRecoveryToken,
 } from './password-recovery-model';
 
 /**
@@ -29,6 +30,13 @@ import {
  * `/forgot-password/verify`. The heading is the SAME regardless of whether
  * step 1 found a real account — the non-disclosure decision was already made
  * on the previous page; this one only has to not contradict it.
+ *
+ * The primary token this step needs comes from one of two places: this
+ * app's own step 1, which leaves it in sessionStorage rather than the URL
+ * (see `readStoredRecoveryToken`), or an emailed link
+ * (`admin-reset-password-otp.eta`), which carries it as `?q=` on the URL
+ * itself — `parseRecoveryQuery` already resolves that alias. The URL value
+ * wins when both are somehow present.
  *
  * A wrong or expired code answers the server's own generic message
  * (`OTP_COMMON_ERROR_MESSAGE`), which this page re-states in its own copy
@@ -39,7 +47,7 @@ export function ResetSentPage() {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const { token, email } = parseRecoveryQuery(location.search);
+  const { token: urlToken, email } = parseRecoveryQuery(location.search);
 
   const verifyOtp = useVerifyPasswordResetOtpMutation();
   const resendOtp = useSendPasswordResetOtpMutation();
@@ -53,8 +61,12 @@ export function ResetSentPage() {
     setError(null);
     setResendNotice(null);
 
+    const token = urlToken ?? readStoredRecoveryToken(window.sessionStorage);
+
     try {
       const result = await verifyOtp.mutateAsync({ token: token ?? '', otpCode });
+      // Spent — clear it so a stale value cannot leak into a later attempt.
+      writeStoredRecoveryToken(window.sessionStorage, null);
       navigate(buildResetPath(result.token));
     } catch (submitError) {
       switch (classifyAuthRequestError(submitError)) {
@@ -75,14 +87,17 @@ export function ResetSentPage() {
     setError(null);
     setResendNotice(null);
 
+    // The URL never changes on resend — only `email` was ever in it — so the
+    // new token, or its deliberate absence, goes to the same sessionStorage
+    // slot rather than anywhere a reload or a shared screen could show it.
     try {
       const result = await resendOtp.mutateAsync({ email });
-      navigate(buildVerifyPath(email, result.token), { replace: true });
+      writeStoredRecoveryToken(window.sessionStorage, result.token);
       setResendNotice(t('recovery.resendSent'));
     } catch (submitError) {
       switch (classifySendOtpError(submitError)) {
         case 'proceed':
-          navigate(buildVerifyPath(email, null), { replace: true });
+          writeStoredRecoveryToken(window.sessionStorage, null);
           setResendNotice(t('recovery.resendSent'));
           return;
         case 'rateLimited':
@@ -106,11 +121,9 @@ export function ResetSentPage() {
             <CardDescription>{t('recovery.missingFlow')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Link to="/forgot-password">
-              <Button size="lg" className="w-full">
-                {t('recovery.startOver')}
-              </Button>
-            </Link>
+            <Button asChild size="lg" className="w-full">
+              <Link to="/forgot-password">{t('recovery.startOver')}</Link>
+            </Button>
           </CardContent>
         </Card>
       </AuthPageLayout>

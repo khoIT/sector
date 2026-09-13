@@ -7,8 +7,26 @@ import {
   classifyAuthRequestError,
   classifySendOtpError,
   parseRecoveryQuery,
+  readStoredRecoveryToken,
+  validateForgotPasswordEmail,
   validateResetPassword,
+  writeStoredRecoveryToken,
 } from './password-recovery-model';
+
+/** A tiny in-memory Storage stand-in, the same shape language-store.test.ts uses. */
+function memoryStorage(initial: Record<string, string> = {}): Storage {
+  const store = new Map(Object.entries(initial));
+  return {
+    getItem: (key: string) => store.get(key) ?? null,
+    setItem: (key: string, value: string) => void store.set(key, value),
+    removeItem: (key: string) => void store.delete(key),
+    clear: () => store.clear(),
+    key: () => null,
+    get length() {
+      return store.size;
+    },
+  };
+}
 
 describe('parseRecoveryQuery', () => {
   it('reads both params off the query string', () => {
@@ -25,24 +43,65 @@ describe('parseRecoveryQuery', () => {
       email: 'learner@example.test',
     });
   });
+
+  it('falls back to the emailed `q` alias when there is no `token`', () => {
+    // admin-reset-password-otp.eta: /forgot-password/verify?q=<primary>&email=<email>
+    expect(parseRecoveryQuery('?q=primary.jwt&email=learner%40example.test')).toEqual({
+      token: 'primary.jwt',
+      email: 'learner@example.test',
+    });
+  });
+
+  it('prefers `token` over `q` when — impossibly — both are present', () => {
+    expect(parseRecoveryQuery('?token=own.jwt&q=emailed.jwt').token).toBe('own.jwt');
+  });
+
+  it('reads the manage-group reset email’s shape: just `q`, no `email`', () => {
+    // group-member.controller.ts sendPasswordReset: /forgot-password/reset?q=<token>&source=manage-group
+    expect(parseRecoveryQuery('?q=reset.jwt&source=manage-group')).toEqual({
+      token: 'reset.jwt',
+      email: null,
+    });
+  });
 });
 
 describe('buildVerifyPath', () => {
-  it('carries a real token', () => {
-    const path = buildVerifyPath('learner@example.test', 'primary.jwt');
-    expect(path).toBe('/forgot-password/verify?email=learner%40example.test&token=primary.jwt');
-  });
-
-  it('omits the token param for an unknown address — same URL shape either way', () => {
-    const path = buildVerifyPath('nobody@example.test', null);
-    expect(path).toBe('/forgot-password/verify?email=nobody%40example.test');
-    expect(path).not.toContain('token=');
+  it('carries only the email — never a token, so the URL cannot disclose whether one exists', () => {
+    expect(buildVerifyPath('learner@example.test')).toBe(
+      '/forgot-password/verify?email=learner%40example.test',
+    );
+    expect(buildVerifyPath('nobody@example.test')).toBe(
+      '/forgot-password/verify?email=nobody%40example.test',
+    );
   });
 });
 
 describe('buildResetPath', () => {
   it('carries the secondary token', () => {
     expect(buildResetPath('secondary.jwt')).toBe('/forgot-password/reset?token=secondary.jwt');
+  });
+});
+
+describe('readStoredRecoveryToken / writeStoredRecoveryToken', () => {
+  it('round-trips a token through the same fixed key', () => {
+    const storage = memoryStorage();
+    writeStoredRecoveryToken(storage, 'primary.jwt');
+    expect(readStoredRecoveryToken(storage)).toBe('primary.jwt');
+  });
+
+  it('clears the entry when written with null — the non-disclosure branch', () => {
+    const storage = memoryStorage({ 'sector.recovery.token': 'stale.jwt' });
+    writeStoredRecoveryToken(storage, null);
+    expect(readStoredRecoveryToken(storage)).toBeNull();
+  });
+
+  it('answers null for a fresh tab with nothing stored, same as an expired flow', () => {
+    expect(readStoredRecoveryToken(memoryStorage())).toBeNull();
+  });
+
+  it('answers null rather than throwing when storage is unavailable', () => {
+    expect(readStoredRecoveryToken(undefined)).toBeNull();
+    expect(() => writeStoredRecoveryToken(undefined, 'x')).not.toThrow();
   });
 });
 
@@ -90,6 +149,26 @@ describe('classifyAuthRequestError — verify-otp, reset, and resend', () => {
   it('shows a parse failure as a network problem, not a server message', () => {
     const error = new ApiError({ kind: 'parse', message: 'Unexpected response shape' });
     expect(classifyAuthRequestError(error)).toBe('network');
+  });
+});
+
+describe('validateForgotPasswordEmail', () => {
+  it('accepts a well-formed address', () => {
+    expect(validateForgotPasswordEmail({ email: 'learner@example.test' })).toEqual({
+      ok: true,
+      value: { email: 'learner@example.test' },
+    });
+  });
+
+  it('rejects a typo before it ever reaches the non-disclosure branch', () => {
+    const result = validateForgotPasswordEmail({ email: 'me@gusi' });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error).toBeTruthy();
+  });
+
+  it('rejects an empty address', () => {
+    expect(validateForgotPasswordEmail({ email: '' }).ok).toBe(false);
   });
 });
 
