@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sector/ui';
 
 import { CreateScanFlowSetting } from './create-scan-flow-setting';
+import { DeleteAccountDialog } from './delete-account-dialog';
+import { NotificationPreferences } from './notification-preferences';
 import { PasswordForm } from './password-form';
 import { ProfileIdentityForm } from './profile-identity-form';
 import { ProfilePhoto } from './profile-photo';
@@ -58,6 +60,20 @@ export function ProfilePage() {
         </CardHeader>
         <CardContent>
           <PasswordForm />
+        </CardContent>
+      </Card>
+
+      <NotificationPreferences />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Delete account</CardTitle>
+          <CardDescription>
+            This cannot be undone by you, and there is no other door once you confirm.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DeleteAccountDialog />
         </CardContent>
       </Card>
     </section>
