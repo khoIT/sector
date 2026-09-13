@@ -15,16 +15,38 @@ import { z } from 'zod';
  */
 
 /**
- * The three states `UserCourseProgress.status` actually takes
- * (`ProgressStatus` in the API). This is NOT the seven-value set the list
- * route's `status` FILTER accepts — that superset also covers the
- * enrolment-level `active | paused | dropped` and the derived `expired`,
- * which are not progress states at all. Keep the two apart: a request query
- * takes the wider set as a plain string, never this schema.
+ * The three states a COURSE-level status takes. Every writer of
+ * `UserCourseProgress.status` sets one of these — `recalculateProgressTotals`
+ * derives it from the item counts, and `updateQuizProgressAndActivity` only
+ * ever promotes `not_started` to `in_progress` — so the fourth value of the
+ * API's `ProgressStatus` enum cannot reach a course-level field.
+ *
+ * This is NOT the seven-value set the list route's `status` FILTER accepts —
+ * that superset also covers the enrolment-level `active | paused | dropped`
+ * and the derived `expired`, which are not progress states at all. Keep the
+ * two apart: a request query takes the wider set as a plain string, never
+ * this schema.
  */
 export const COURSE_PROGRESS_STATUSES = ['not_started', 'in_progress', 'completed'] as const;
 export const courseProgressStatusSchema = z.enum(COURSE_PROGRESS_STATUSES);
 export type CourseProgressStatus = z.infer<typeof courseProgressStatusSchema>;
+
+/**
+ * The states a single ITEM's stored status takes, which is the course-level
+ * set plus `failed`.
+ *
+ * `failed` is written by `learners.quiz.track.ts` (and
+ * `userCourseProgressService.updateQuizProgressAndActivity`) the moment a
+ * learner answers every question of a quiz and scores below its passing mark.
+ * Nothing maps it away afterwards: the outline route reads
+ * `UserCourseProgress.items[].status` straight through
+ * `buildOutlineProgressItems`, so a four-value enum is what a learner who has
+ * ever failed a quiz actually receives. Modelling it as three was a whole-page
+ * failure for that learner, not a missing badge.
+ */
+export const COURSE_ITEM_PROGRESS_STATUSES = [...COURSE_PROGRESS_STATUSES, 'failed'] as const;
+export const courseItemProgressStatusSchema = z.enum(COURSE_ITEM_PROGRESS_STATUSES);
+export type CourseItemProgressStatus = z.infer<typeof courseItemProgressStatusSchema>;
 
 /** `UserCourseStatus` — the enrolment's own lifecycle, independent of progress. */
 export const ENROLLMENT_STATUSES = ['active', 'completed', 'dropped', 'paused'] as const;
@@ -36,11 +58,22 @@ export const assignmentTypeSchema = z.enum(ASSIGNMENT_TYPES);
 export type AssignmentType = z.infer<typeof assignmentTypeSchema>;
 
 /**
- * Why a row counts as expired: the enrolment itself lapsed, the group
- * membership did, or the group did — `normalizeLearnerCourses()` in the
- * controller checks all three before it will drop a row into `expired`.
+ * Why a row counts as expired. Four values, not three: the enrolment itself
+ * lapsed (`user_course`), the group membership did, the group did, or the
+ * GROUP-COURSE ASSIGNMENT's own `expiresAt` passed (`course_assignment`).
+ *
+ * The last one is easy to miss because `normalizeLearnerCourses()` drops the
+ * `membership` and `group_expired` rows before they reach `expired` — but it
+ * has no rule for a lapsed course assignment under a live group and a live
+ * membership, so that row is served, and it is the only one of the four this
+ * client had never seen. 42 such assignments already exist on the mirror.
  */
-export const EXPIRATION_TYPES = ['user_course', 'membership', 'group_expired'] as const;
+export const EXPIRATION_TYPES = [
+  'user_course',
+  'membership',
+  'group_expired',
+  'course_assignment',
+] as const;
 export const expirationTypeSchema = z.enum(EXPIRATION_TYPES);
 export type ExpirationType = z.infer<typeof expirationTypeSchema>;
 
@@ -95,17 +128,27 @@ export type LearnerCourseSummary = z.infer<typeof learnerCourseSummarySchema>;
 /**
  * Assembled per learner-course pair by the controller (no stored document
  * matches this shape 1:1): `startedAt`/`completedAt`/`lastAccessedAt` are
- * `null`, not absent, when a course has never been opened.
+ * `null`, not absent, when a course has never been opened — the service
+ * coalesces those three itself.
+ *
+ * The counters are NOT coalesced: they are copied straight off a `.lean()`
+ * UserCourseProgress, and a lean read does not apply a Mongoose default, so a
+ * document written before a counter existed (`completedTopics` and
+ * `totalTimeSpent` both postdate the collection — see the API's
+ * migrate-user-progress-tracking-fields) arrives with the key ABSENT, not
+ * zero. Each `.default()` here is the same default the model declares, so a
+ * missing counter reads as the model would read it while a counter of the
+ * wrong TYPE still fails loudly.
  */
 export const learnerCourseProgressSchema = z.object({
-  status: courseProgressStatusSchema,
-  progress: z.number(),
-  totalItems: z.number(),
-  completedItems: z.number(),
-  completedLessons: z.number(),
-  completedTopics: z.number(),
-  completedQuizzes: z.number(),
-  totalTimeSpent: z.number(),
+  status: courseProgressStatusSchema.default('not_started'),
+  progress: z.number().default(0),
+  totalItems: z.number().default(0),
+  completedItems: z.number().default(0),
+  completedLessons: z.number().default(0),
+  completedTopics: z.number().default(0),
+  completedQuizzes: z.number().default(0),
+  totalTimeSpent: z.number().default(0),
   startedAt: z.string().nullable(),
   completedAt: z.string().nullable(),
   lastAccessedAt: z.string().nullable(),
@@ -120,12 +163,16 @@ export type LearnerCourseProgress = z.infer<typeof learnerCourseProgressSchema>;
  */
 export const learnerCourseMetaVersionSummarySchema = z.object({
   id: z.string(),
+  // `version` is the one field the model marks required; the totals and the
+  // status all carry model defaults that a `.lean()` read does not apply, and
+  // 43 of the mirror's 347 version documents predate the totals and have no
+  // key for them. Same rule as the list item's own lean-read fields.
   version: z.number(),
-  status: z.enum(['draft', 'published', 'archived', 'rejected']),
-  totalItems: z.number(),
-  totalLessons: z.number(),
-  totalTopics: z.number(),
-  totalQuiz: z.number(),
+  status: z.enum(['draft', 'published', 'archived', 'rejected']).default('draft'),
+  totalItems: z.number().default(0),
+  totalLessons: z.number().default(0),
+  totalTopics: z.number().default(0),
+  totalQuiz: z.number().default(0),
 });
 export type LearnerCourseMetaVersionSummary = z.infer<typeof learnerCourseMetaVersionSummarySchema>;
 
@@ -158,9 +205,16 @@ export const learnerCourseListItemSchema = z.object({
   course: learnerCourseSummarySchema,
   progress: learnerCourseProgressSchema,
   courseMetaVersion: learnerCourseMetaVersionSummarySchema,
-  enrolledAt: z.string(),
-  expiresAt: z.string().nullable(),
-  userCourseStatus: enrollmentStatusSchema,
+  // The three fields below are read straight off a `.lean()` UserCourse (the
+  // personal branch) or GroupCourse, each of which declares a Mongoose
+  // default that a lean read does NOT apply: an absent key reaches
+  // JSON.stringify as `undefined` and is dropped from the response entirely.
+  // 1,783 of the mirror's 2,969 live group courses have no `expiresAt` key at
+  // all, which made `Required` — not `null` — the real failure. Each schema
+  // default below is the model's own default.
+  enrolledAt: z.string().nullable().default(null),
+  expiresAt: z.string().nullable().default(null),
+  userCourseStatus: enrollmentStatusSchema.default('active'),
   isExpired: z.boolean(),
   expirationType: expirationTypeSchema.nullable(),
 });
