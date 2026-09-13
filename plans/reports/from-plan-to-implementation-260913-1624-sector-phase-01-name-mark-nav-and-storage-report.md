@@ -16,6 +16,8 @@ name. `git checkout demo/scanvault-pre-sector && pnpm i && pnpm dev` restores it
 | `ce3121d` | persisted state survives the rename |
 | `ce9de73` | the rail can carry a non-scan destination |
 | `bc4fa4c` | plan corrections |
+| `eb88f65` | a corrupt session signs the user out instead of white-screening |
+| `ab024ad` `062c6ee` `029ec27` | Prettier: config, one-time format, lint gate |
 
 ## Verification
 
@@ -72,12 +74,14 @@ Everything not requiring a credential is verified.
    copied literal. No seeded role carries a group-management string, so gating on one hides the
    entry from the people it is for. Right about *who*, wrong about *why* — give the surface its
    own permission before putting group data behind it.
-3. **No Prettier config.** `pnpm format` is a documented script that rewrites the tree to
-   double quotes at 80 cols. `prettier --check` with house-style options still flags **94
-   files**, so a `.prettierrc` alone does not fix it — it is a reformat-once decision.
-4. **A corrupt session white-screens the app.** `session-store.read()` validates the token but
-   not `user`, so a truncated value passes and `user.role` throws in `AuthProvider` instead of
-   signing the user out. Pre-existing — the only change to that file is the key name.
+3. ~~No Prettier config.~~ **Resolved.** `.prettierrc.json` + `.prettierignore` (which keeps
+   `plans/` out, so the documented `pnpm format` can no longer reflow the record of what was
+   decided), one mechanical reformat of 99 files, `.git-blame-ignore-revs` so blame skips it,
+   and `prettier --check` folded into `pnpm lint`. Verified: eslint passes a double-quoted,
+   oddly-spaced import that `prettier --check` rejects — that gap is what the gate closes.
+4. ~~A corrupt session white-screens the app.~~ **Resolved** in `eb88f65`: `read()` validates
+   against `authSessionSchema` instead of casting, and removes a value that fails. Three
+   corrupt shapes verified in Chromium to land on `/login` with no page error.
 5. **`i18n/language-store.ts` keeps the bare `language` key**, deliberately matching the legacy
    dashboard. Still wanted now the brand has moved?
 6. **A long-running Vite dev server does not survive the package rename** — module resolution
