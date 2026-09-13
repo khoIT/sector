@@ -24,6 +24,7 @@
     "@types/bcryptjs": "^3.0.0",
     "bcryptjs": "^3.0.3",
     "mongodb": "^7.6.0",
+    "playwright": "^1.48.0",
     "prettier": "^3.4.2",
     "tsx": "^4.23.13",
     "turbo": "^2.5.8",

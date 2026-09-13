@@ -116,6 +116,22 @@ Note: `/api/login` and `/api/me` share a **20 requests / 15 minutes per IP** lim
 Repeated sign-ins while testing will start returning 429; the response's
 `RateLimit-Reset` header says how many seconds remain.
 
+### One page load, before anything merges
+
+The suites run in a node environment with no DOM, so nothing in them ever
+renders. A slice can pass lint, typecheck, every test, the build and the
+fidelity replay and still be dead on screen. Open the routes:
+
+```bash
+node scripts/check/cold-load-sweep.mjs "$SECTOR_MIRROR_JWT_SECRET" <fixture-dir>
+```
+
+Each route gets a fresh browser context, because the bug this exists to catch
+was invisible on a second visit with a warm query cache. The fixture directory
+holds `sweep-ids.json` (a user id per role) and `sweep-routes.json` (the paths
+and which role opens each). Set `SECTOR_WEB_ORIGIN` to point it at a worktree's
+own dev server on its own port instead of the shared `:3101` instance.
+
 ### The production mirror, and proving the schemas against it
 
 The dumps beside this repo hold every production content and scan collection.
