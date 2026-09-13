@@ -53,6 +53,16 @@ sweep, unverified here but specific: any signed-in user can read another user's
 referral list including email addresses, and an unauthenticated-tier write
 endpoint ships in the production route table.
 
+> **Triaged and fixed, 14 Sep 2026.** Demonstrated against a restored copy of
+> production: a learner account holding no course permission published a draft
+> version and made it active, HTTP 200. The guards were never live — they name
+> permissions that are not in `config/permissions.ts`, so the file would not
+> compile with them in place. Restored with permissions that exist on branch
+> `feat/sector-course-version-guards`; the learner now gets 403 and an
+> administrator is unaffected. See
+> [the triage report](../reports/from-triage-to-fix-260914-0016-course-version-routes-unguarded-report.md).
+> The other two findings in this paragraph are still unverified.
+
 ## Phases
 
 | Phase | Name | Days | Depends on | Status |
