@@ -71,9 +71,13 @@ None of them changed a write.
 
 Seeded MinIO with synthetic objects behind 12 real file keys (8 images, 4 videos)
 and drove `:3101` (Sector) → `:5002` (mirror API) → MinIO in Chromium as the seeded
-reviewer: the production group queue renders (page one of 2,002), a seeded study opens.
-**Real playback of real media is not provable from the dumps** — they carry file
-records, not bytes. The plan predicted this; staging object storage remains an ask.
+reviewer: the production group queue renders (page one of 2,002); opening a seeded
+study shows the image in the viewer with its pager and file line, and the network log
+carries MinIO answering `200 image/jpeg` for stills and `206 video/mp4` (a range
+request, so the clip is playing) for video. The viewer, magnifier and pager work over
+real production keys. **Real playback of the real bytes is not provable from the
+dumps** — they carry file records, not objects — so staging object storage remains an
+ask, as the plan predicted.
 
 ## Accounts and the credential gap
 
