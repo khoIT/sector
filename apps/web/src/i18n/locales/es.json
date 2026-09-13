@@ -229,5 +229,20 @@
     "pending": "Eliminando cuenta…",
     "confirm": "Eliminar cuenta",
     "successNotice": "Tu cuenta ha sido eliminada."
+  },
+  "retired": {
+    "title": "Esta parte del panel anterior se retiró",
+    "goInstead": "Ir a lo más cercano que funciona",
+    "reason": {
+      "commerce": "Los pedidos, suscripciones y métodos de pago ya no se venden aquí. Los créditos de revisión experta se compran al enviar un estudio.",
+      "certificates": "Las descargas de certificados están desactivadas mientras el servicio de certificados está en mantenimiento. Su progreso en los cursos se conserva.",
+      "fellowship": "Las páginas del fellowship se congelaron y su sistema de programación fue reemplazado. Consulte con el responsable de su programa.",
+      "rapid-review": "Los desafíos de Rapid Review eran un producto aparte incrustado en un marco y no forman parte de Sector.",
+      "referrals": "Las referencias nunca se usaron y se han eliminado.",
+      "resources": "La página de recursos era un marcador de posición que nunca se completó.",
+      "notifications": "La lista de notificaciones en la aplicación se eliminó; todo lo importante le llega por correo electrónico.",
+      "registration": "Su organización o una invitación de grupo crean la cuenta por usted. Inicie sesión con los datos que le enviaron.",
+      "switch-user": "Iniciar sesión como otro usuario se hace desde la consola interna, no desde aquí."
+    }
   }
 }

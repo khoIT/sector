@@ -229,5 +229,20 @@
     "pending": "Konto wird gelöscht…",
     "confirm": "Konto löschen",
     "successNotice": "Ihr Konto wurde gelöscht."
+  },
+  "retired": {
+    "title": "Dieser Teil des alten Dashboards wurde eingestellt",
+    "goInstead": "Zur nächstgelegenen funktionierenden Seite",
+    "reason": {
+      "commerce": "Bestellungen, Abonnements und Zahlungsmethoden werden hier nicht mehr verkauft. Guthaben für Expertenbewertungen wird beim Einreichen einer Studie gekauft.",
+      "certificates": "Zertifikat-Downloads sind abgeschaltet, während der Zertifikatsdienst gewartet wird. Ihr Kursfortschritt bleibt erhalten.",
+      "fellowship": "Die Fellowship-Seiten wurden eingefroren und ihr Terminplanungssystem wurde ersetzt. Fragen Sie Ihre Programmleitung nach der aktuellen Regelung.",
+      "rapid-review": "Die Rapid-Review-Challenges waren ein separates, eingebettetes Produkt und gehören nicht zu Sector.",
+      "referrals": "Empfehlungen wurden nie genutzt und sind entfernt worden.",
+      "resources": "Die Ressourcen-Seite war ein Platzhalter, der nie gefüllt wurde.",
+      "notifications": "Die Benachrichtigungsliste in der App wurde entfernt; alles Wichtige erreicht Sie per E-Mail.",
+      "registration": "Konten werden von Ihrer Organisation oder über eine Gruppeneinladung für Sie erstellt. Melden Sie sich mit den zugesandten Daten an.",
+      "switch-user": "Die Anmeldung als anderer Benutzer erfolgt über die interne Konsole, nicht von hier."
+    }
   }
 }
