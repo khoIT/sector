@@ -1,7 +1,7 @@
 import {
   isApiError,
   useCreateGroupAssignmentMutation,
-  useGroupAssignments,
+  useAssignmentsForGroup,
   useGroupCourseOptions,
   useGroupLearners,
   userDisplayName,
@@ -61,7 +61,7 @@ export function GroupAssignmentsPanel() {
   const groupName = (location.state as GroupDetailLocationState)?.groupName;
   const title = groupName ?? t('groups.members.title');
 
-  const assignments = useGroupAssignments(groupId);
+  const assignments = useAssignmentsForGroup(groupId);
 
   if (!groupId) return null;
 

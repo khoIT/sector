@@ -1,4 +1,4 @@
-import { SESSION_STORAGE_KEY } from '@sector/api-client';
+import { authSessionSchema, SESSION_STORAGE_KEY } from '@sector/api-client';
 import { THEME_STORAGE_KEY } from '@sector/ui';
 
 import { CREATE_SCAN_FLOW_KEY } from '@/features/create-scan/model/create-scan-flow';
@@ -115,6 +115,61 @@ function legacyKeysUnder(storage: MigratableStorage, legacyPrefix: string): stri
 }
 
 /**
+ * The dashboard wrote two bare, unprefixed keys: `token` (a plain string) and
+ * `user` (JSON). Cutover is same-origin — the redirect map in
+ * `legacy-route-map.ts` and `LegacyRedirect` only work at all because Sector
+ * is deployed to the same domain the dashboard occupied — so a browser that
+ * signed in there still has both sitting in `localStorage` the first time
+ * Sector's bundle runs.
+ *
+ * The dashboard's `LoginResponse['user']` and Sector's `authUserSchema` carry
+ * the same fields (`id`, `email`, `userName`, `firstName`, `lastName`,
+ * `photo`, `stripeCustomerId?`, `role`), and `authSessionSchema` makes
+ * `refreshToken` optional specifically because the dashboard never stored
+ * one — so a session built from just `token` + `user` parses and signs the
+ * browser in immediately, without asking them to type a password again. It
+ * cannot restore past that bearer token's own expiry (there is no
+ * refreshToken to exchange), and any 401 in the meantime clears it the same
+ * way any other session's does — the ordinary path, not a special case.
+ *
+ * Only one attempt, from raw values that are read once and then removed: a
+ * value that fails to parse is left in place untouched rather than guessed
+ * at or deleted, in case a person debugging a failed handoff needs to see
+ * what was actually there.
+ */
+const LEGACY_DASHBOARD_TOKEN_KEY = 'token';
+const LEGACY_DASHBOARD_USER_KEY = 'user';
+
+function migrateLegacyDashboardSession(storage: MigratableStorage): void {
+  try {
+    // Never overwrite a session this build already wrote or already migrated
+    // from `scanvault.session` above — that one is newer.
+    if (storage.getItem(SESSION_STORAGE_KEY) !== null) return;
+
+    const token = storage.getItem(LEGACY_DASHBOARD_TOKEN_KEY);
+    const rawUser = storage.getItem(LEGACY_DASHBOARD_USER_KEY);
+    if (token === null || rawUser === null) return;
+
+    let user: unknown;
+    try {
+      user = JSON.parse(rawUser);
+    } catch {
+      return;
+    }
+
+    const parsed = authSessionSchema.safeParse({ token, user });
+    if (!parsed.success) return;
+
+    storage.setItem(SESSION_STORAGE_KEY, JSON.stringify(parsed.data));
+    storage.removeItem(LEGACY_DASHBOARD_TOKEN_KEY);
+    storage.removeItem(LEGACY_DASHBOARD_USER_KEY);
+  } catch {
+    // A blocked or full store leaves the dashboard's keys in place; the next
+    // load tries again, same as every other key in this file.
+  }
+}
+
+/**
  * Run before the first render — see `main.tsx` for why the timing matters.
  *
  * Synchronous on purpose, and safe to call twice.
@@ -137,4 +192,6 @@ export function migratePersistedStorage(
       moveKey(storage, legacyKey, name);
     }
   }
+
+  migrateLegacyDashboardSession(storage);
 }
