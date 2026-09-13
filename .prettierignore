@@ -1,0 +1,14 @@
+# Written documents, not source. Plans and reports quote code, commit
+# messages and the old product name verbatim; reflowing them rewrites the
+# record of what was decided and when.
+plans/
+
+# Build output and caches.
+dist/
+build/
+.turbo/
+coverage/
+.vite/
+
+# Generated, and enormous.
+pnpm-lock.yaml
