@@ -27,6 +27,14 @@ export type CourseOutlineItemRowProps = {
 /**
  * One row of the outline.
  *
+ * A plain `<div>`, not a list item: the caller (`course-outline-page.tsx`)
+ * already wraps every row in its own `<li>` to build the ordered list, and
+ * this component used to render a SECOND `<li>` inside that one — invalid
+ * `<li>` nested directly in `<li>`, caught only by a cold browser load
+ * (`scripts/check/cold-load-sweep.mjs`), because the suites run with no DOM
+ * and nothing here ever renders in them. The `id` stays: it is the anchor the
+ * Resume/Start/Review action jumps to.
+ *
  * Not a link (see the phase report for why: the course runner this would
  * open is the next phase, not this one). Kind, title and status are always
  * shown; a blocked item explains itself instead of pretending to be
@@ -38,7 +46,7 @@ export function CourseOutlineItemRow({ item, isResumeTarget, indent }: CourseOut
   const Icon = item.blockedReason ? Lock : KIND_ICON[item.kind];
 
   return (
-    <li
+    <div
       id={`item-${item.id}`}
       className={`flex flex-wrap items-center gap-2 rounded-token border px-3 py-2 ${
         isResumeTarget ? 'border-accent-ink bg-accent-soft' : 'border-line bg-surface'
@@ -69,6 +77,6 @@ export function CourseOutlineItemRow({ item, isResumeTarget, indent }: CourseOut
           label={t(itemStatusLabelKey(item.status))}
         />
       )}
-    </li>
+    </div>
   );
 }
