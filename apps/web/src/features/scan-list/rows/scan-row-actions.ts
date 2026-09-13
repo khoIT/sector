@@ -1,4 +1,7 @@
+import type { ScanStatus } from '@sector/api-client';
+
 import type { ScanVaultView } from '../scan-list-views';
+import { COMPLETE_TAG, INCOMPLETE_TAG } from './scan-tags';
 
 /**
  * Which actions a row offers, by surface.
@@ -7,13 +10,13 @@ import type { ScanVaultView } from '../scan-list-views';
  * per view — six near-copies whose contents had already drifted apart. Here it
  * is one table, so a rule can be read rather than diffed.
  *
- *   view            open  share  download  comment  delete
- *   my               y      y       y         y       y
- *   pending          y      y       y         y       y*
- *   reviewed         y      y       y         y       y*
- *   shared           y      -       y         y       -
- *   expert           y      y       y         y       -
- *   expert-reviewed  y      y       y         y       y*
+ *   view            open  share  download  comment  delete  reset  expert  complete/incomplete
+ *   my               y      y       y         y       y*      y*      y*      -
+ *   pending          y      y       y         y       y*      -       -       y*
+ *   reviewed         y      y       y         y       y*      -       -       y*
+ *   shared           y      -       y         y       -       -       -       -
+ *   expert           y      y       y         y       -       -       -       y*
+ *   expert-reviewed  y      y       y         y       y*      -       -       y*
  *
  * `y*` marks where this app deliberately differs. Legacy offers Delete on the
  * queues and the reviewed lists — surfaces made of OTHER people's scans — and
@@ -25,16 +28,29 @@ import type { ScanVaultView } from '../scan-list-views';
  * Shared Scans is the recipient's view of someone else's scan: no share (the
  * recipient is not the sharer) and no delete (it is not their scan).
  *
- * Four legacy row actions are deliberately NOT here, so the table above is the
- * whole story only for these five:
+ * Reset-upload and request-expert-review are owner actions, so they only ever
+ * appear on My Scans (`isOwnScan` is always true there — a row on someone
+ * else's My Scans does not exist). Mark complete/incomplete is a REVIEWER
+ * action, so it appears everywhere else a reviewer looks at someone else's
+ * scan and never on My Scans or Shared Scans, gated on `edit:scan` — the same
+ * permission the server's tag routes require.
+ *
+ * Two legacy row actions are deliberately still not here:
  *
  *   Logs             lives on the scan page as `scan-activity-log.tsx`
- *   Reset upload     a recovery tool; belongs with the scan, not a list row
- *   Expert review    not built in this app yet
  *   Review generator one of the AI surfaces still open in the parity audit
  */
 
-export type RowActionId = 'open' | 'share' | 'download' | 'comment' | 'delete';
+export type RowActionId =
+  | 'open'
+  | 'share'
+  | 'download'
+  | 'comment'
+  | 'delete'
+  | 'reset-upload'
+  | 'request-expert-review'
+  | 'mark-complete'
+  | 'mark-incomplete';
 
 export type RowActionContext = {
   view: ScanVaultView;
@@ -44,21 +60,44 @@ export type RowActionContext = {
   hasFiles: boolean;
   canReadNotes: boolean;
   canDelete: boolean;
+  /** Holds `edit:scan` — gates the two completeness actions. */
+  canEditScan: boolean;
+  status: ScanStatus;
+  tags: readonly string[];
 };
 
 /** Actions the surface offers at all, before any per-user gate. */
 function actionsForView(view: ScanVaultView): RowActionId[] {
   if (view === 'shared') return ['open', 'download', 'comment'];
-  return ['open', 'share', 'download', 'comment', 'delete'];
+  if (view === 'my') {
+    return [
+      'open',
+      'share',
+      'download',
+      'comment',
+      'reset-upload',
+      'request-expert-review',
+      'delete',
+    ];
+  }
+  return ['open', 'share', 'download', 'comment', 'mark-complete', 'mark-incomplete', 'delete'];
 }
 
+/** Statuses `PUT /api/scan/:id/reset-upload` actually accepts (scan-reset.controller.ts). */
+export const RESETTABLE_STATUSES: ReadonlySet<ScanStatus> = new Set(['failed', 'failed_upload']);
+
 export function rowActionsFor(context: RowActionContext): RowActionId[] {
-  const { view, isOwnScan, canReadNotes, canDelete } = context;
+  const { view, isOwnScan, canReadNotes, canDelete, canEditScan, status, tags } = context;
+  const normalizedTags = new Set(tags.map((tag) => tag.trim().toLowerCase()));
 
   return actionsForView(view).filter((action) => {
     if (action === 'comment') return canReadNotes;
     // Never on a scan the user does not own: see the note above.
     if (action === 'delete') return isOwnScan && canDelete;
+    if (action === 'reset-upload') return isOwnScan && RESETTABLE_STATUSES.has(status);
+    if (action === 'request-expert-review') return isOwnScan;
+    if (action === 'mark-complete') return canEditScan && !normalizedTags.has(COMPLETE_TAG);
+    if (action === 'mark-incomplete') return canEditScan && !normalizedTags.has(INCOMPLETE_TAG);
     return true;
   });
 }

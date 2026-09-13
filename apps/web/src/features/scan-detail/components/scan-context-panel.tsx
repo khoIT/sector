@@ -10,9 +10,17 @@ import type {
   UserBasic,
 } from '@sector/api-client';
 import { SCAN_STATUS_LABEL, scanStatusTone, userDisplayName } from '@sector/api-client';
-import { Badge, Card, CardContent, CardHeader, CardTitle, StatusPill } from '@sector/ui';
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, StatusPill } from '@sector/ui';
+import { CheckCircle, CircleSlash } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { formatDateTime } from '@/lib/format';
+import {
+  COMPLETE_TAG,
+  INCOMPLETE_TAG,
+  type CompletionTag,
+} from '@/features/scan-list/rows/scan-tags';
+
 import { ScanActivityLog } from './scan-activity-log';
 import { ScanFileList } from './scan-file-list';
 import { ScanSubmittedAnswers } from './scan-submitted-answers';
@@ -50,6 +58,15 @@ type ScanContextPanelProps = {
   clinicalNote?: { note: string; author: string; createdAt: string } | null;
   scanLogs?: ScanLog[];
   logs?: ScanLog[];
+  /**
+   * True when the viewer holds `edit:scan` on a scan that is not their own —
+   * the same guard the server's tag routes apply. Never true on My Scans or
+   * Shared Scans: those are the learner's own view of the study, not a
+   * reviewer's.
+   */
+  canEditCompletion?: boolean;
+  onSetCompletion?: (next: CompletionTag) => void;
+  settingCompletion?: boolean;
 };
 
 /** Everything about the study that is not the media itself. */
@@ -58,7 +75,11 @@ export function ScanContextPanel({
   clinicalNote,
   scanLogs = [],
   logs = [],
+  canEditCompletion = false,
+  onSetCompletion,
+  settingCompletion = false,
 }: ScanContextPanelProps) {
+  const { t } = useTranslation();
   // Undefined and empty mean opposite things here: the detail route does not
   // send `groups` at all, while the list route sends [] for a study that
   // really went to nobody. Collapsing the two told every learner their study
@@ -141,15 +162,39 @@ export function ScanContextPanel({
           </Section>
         ) : null}
 
-        {scan.tags.length > 0 ? (
+        {scan.tags.length > 0 || canEditCompletion ? (
           <Section title="Tags">
-            <ul className="flex flex-wrap gap-1.5">
-              {scan.tags.map((tag) => (
-                <li key={tag}>
-                  <Badge tone="accent">{tag}</Badge>
-                </li>
-              ))}
-            </ul>
+            {scan.tags.length > 0 ? (
+              <ul className="mb-2 flex flex-wrap gap-1.5">
+                {scan.tags.map((tag) => (
+                  <li key={tag}>
+                    <Badge tone="accent">{tag}</Badge>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
+            {canEditCompletion && onSetCompletion ? (
+              <div className="flex flex-wrap gap-1.5">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={settingCompletion || normalizedTags(scan.tags).has(COMPLETE_TAG)}
+                  onClick={() => onSetCompletion(COMPLETE_TAG)}
+                >
+                  <CheckCircle className="h-3.5 w-3.5" aria-hidden /> {t('scanDetail.markComplete')}
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={settingCompletion || normalizedTags(scan.tags).has(INCOMPLETE_TAG)}
+                  onClick={() => onSetCompletion(INCOMPLETE_TAG)}
+                >
+                  <CircleSlash className="h-3.5 w-3.5" aria-hidden />{' '}
+                  {t('scanDetail.markIncomplete')}
+                </Button>
+              </div>
+            ) : null}
           </Section>
         ) : null}
 
@@ -165,6 +210,10 @@ export function ScanContextPanel({
       </CardContent>
     </Card>
   );
+}
+
+function normalizedTags(tags: readonly string[]): Set<string> {
+  return new Set(tags.map((tag) => tag.trim().toLowerCase()));
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

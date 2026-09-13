@@ -1,9 +1,11 @@
-import { useScanReviewCredits, type ScanReviewCredits } from '@sector/api-client';
+import { useScanReviewCredits } from '@sector/api-client';
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Skeleton, cn } from '@sector/ui';
 import { CreditCard, Sparkles, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { ExpertReviewChoice } from '../model/draft-types';
+import { expertReviewCreditSources, isChoiceDrained } from '../model/expert-review-credit-sources';
 import { InlineNotice } from './inline-notice';
 import { PurchaseCreditsDialog } from './purchase-credits-dialog';
 
@@ -13,37 +15,6 @@ export type ExpertReviewPanelProps = {
   value: ExpertReviewChoice | null;
   onChange: (choice: ExpertReviewChoice | null) => void;
 };
-
-type CreditSource = {
-  key: string;
-  accountType: 'user' | 'group';
-  accountId: string;
-  label: string;
-  credits: number;
-};
-
-function creditSources(
-  userId: string,
-  userName: string,
-  credits: ScanReviewCredits,
-): CreditSource[] {
-  return [
-    {
-      key: `user:${userId}`,
-      accountType: 'user',
-      accountId: userId,
-      label: `${userName} (your balance)`,
-      credits: credits.userCredits,
-    },
-    ...credits.groups.map((group) => ({
-      key: `group:${group.groupId}`,
-      accountType: 'group' as const,
-      accountId: group.groupId,
-      label: group.groupName,
-      credits: group.currentCredits,
-    })),
-  ];
-}
 
 /**
  * Expert review, and where the credit comes from.
@@ -57,11 +28,24 @@ function creditSources(
  * is where the legacy flow dead-ended.
  */
 export function ExpertReviewPanel({ userId, userName, value, onChange }: ExpertReviewPanelProps) {
+  const { t } = useTranslation();
   const { data: credits, isPending, isError, error, refetch } = useScanReviewCredits();
   const [purchaseOpen, setPurchaseOpen] = useState(false);
 
-  const sources = credits ? creditSources(userId, userName, credits) : [];
+  const sources = useMemo(
+    () => (credits ? expertReviewCreditSources(userId, userName, credits) : []),
+    [credits, userId, userName],
+  );
   const total = sources.reduce((sum, source) => sum + source.credits, 0);
+
+  // A pool that was not empty when chosen can still drain to zero before
+  // submit — someone else in the same group spending the last credit, for
+  // instance. Selecting an empty pool is already blocked below; this is what
+  // un-picks a choice a refetch caught draining AFTER the fact, so the panel
+  // stops promising a review no pool can pay for.
+  useEffect(() => {
+    if (value && isChoiceDrained(sources, value)) onChange(null);
+  }, [sources, value, onChange]);
 
   return (
     <Card>
@@ -145,8 +129,17 @@ export function ExpertReviewPanel({ userId, userName, value, onChange }: ExpertR
                       )}
                     >
                       <Sparkles className="h-4 w-4 shrink-0 text-ink-dim" aria-hidden />
-                      <span className="min-w-0 flex-1 truncate text-body text-ink">
-                        {source.label}
+                      <span className="min-w-0 flex-1 text-body text-ink">
+                        <span className="block truncate">{source.label}</span>
+                        {/* The audit's finding: only the spendable count showed, so
+                            neither the user nor a group leader could see how much of
+                            the pool had already gone. */}
+                        <span className="sv-num block text-[11px] text-ink-dim">
+                          {t('createScan.creditsUsedOfTotal', {
+                            used: source.used,
+                            total: source.total,
+                          })}
+                        </span>
                       </span>
                       <Badge tone={empty ? 'neutral' : 'ok'}>
                         <span className="sv-num">{source.credits}</span>

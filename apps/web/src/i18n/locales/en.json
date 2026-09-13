@@ -53,7 +53,11 @@
     "view": "View",
     "downloading": "Downloading…",
     "rowMenuFor": "Actions for {{title}}",
-    "downloadFailed": "The download failed. Please try again."
+    "downloadFailed": "The download failed. Please try again.",
+    "resetUpload": "Reset for re-upload",
+    "requestExpertReview": "Request expert review",
+    "markComplete": "Mark complete",
+    "markIncomplete": "Mark incomplete"
   },
   "status": {
     "pending": "Pending",
@@ -163,6 +167,30 @@
     "storageDegradedTitle": "This browser could not save your progress",
     "storageDegradedBody": "Files already uploaded are safe in storage, but this draft will not survive closing or reloading this tab. Keep it open until you submit.",
     "validationFileTooLarge": "\"{{name}}\" is larger than the {{limit}} study limit on its own, so it cannot be added.",
-    "validationStudyTooLarge": "Adding \"{{name}}\" would take this study past the {{limit}} limit. Remove another file first, or add it to a new study."
+    "validationStudyTooLarge": "Adding \"{{name}}\" would take this study past the {{limit}} limit. Remove another file first, or add it to a new study.",
+    "resumingResetTitle": "Resuming a reset study",
+    "resumingResetBody": "{{title}} was reset for re-upload. Add its files again and submit — this attaches them to the same study rather than creating a new one.",
+    "submitIncompleteSubtitle": "The study was created, but it does not yet hold every file this draft intended.",
+    "submitIncompleteStatus": "Incomplete",
+    "submitIncompleteTitle": "{{confirmed}} of {{total}} files attached — the study was not fully submitted",
+    "submitIncompleteBody": "The draft and every uploaded file are still here — nothing was thrown away. Try again to resume this same study, or open it to see exactly what landed.",
+    "tryAgain": "Try again",
+    "creditsUsedOfTotal": "{{used}} of {{total}} used"
+  },
+  "scanDetail": {
+    "resetUploadDialogTitle": "Reset “{{title}}” for re-upload?",
+    "resetUploadDialogBody": "This puts the study back to Pending and clears its file count. You will be taken to Create Scan Study with this same study open — add the files again and submit to finish it. Nothing already reviewed or answered on this study is affected.",
+    "resetUploadConfirm": "Reset and re-upload",
+    "resetUploadPending": "Resetting…",
+    "resetUploadError": "The scan could not be reset.",
+    "requestExpertReviewDialogTitle": "Request expert review",
+    "requestExpertReviewDialogBody": "A GUSI expert reviews “{{title}}” in addition to any group reviewers, for one credit.",
+    "requestExpertReviewAlready": "An expert review has already been requested for this study. Requesting again would spend a second credit for the same review, so this is disabled.",
+    "requestExpertReviewSubmit": "Request review",
+    "requestExpertReviewPending": "Requesting…",
+    "requestExpertReviewError": "The request did not go through.",
+    "markComplete": "Mark complete",
+    "markIncomplete": "Mark incomplete",
+    "close": "Close"
   }
 }

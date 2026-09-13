@@ -1,7 +1,9 @@
+import { useScan } from '@sector/api-client';
 import { Button } from '@sector/ui';
 import { Trash2 } from 'lucide-react';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { SCAN_VAULT_PATH } from '@/features/scan-list/scan-list-views';
 
@@ -49,6 +51,7 @@ import { StudySurface } from './steps/study-surface';
  * State, transfers and persistence are all in model/use-create-scan-draft.ts.
  */
 export function CreateScanPage() {
+  const { t } = useTranslation();
   const [flow] = useState(() => readCreateScanFlow(globalThis.localStorage));
   const draft = useCreateScanDraft(flow);
   const { state } = draft;
@@ -61,6 +64,41 @@ export function CreateScanPage() {
   // six findings and a note but no file yet is exactly the draft a learner
   // most wants to throw away, and the control used to be hidden for it.
   const holdings = draftHoldings(state);
+
+  // ─── entering from "Reset for re-upload" ──────────────────────────────────
+  //
+  // The row action resets the scan server-side (status -> pending, fileCount
+  // -> 0) and lands here with `?resetScanId=`. The scan's own File records and
+  // fileTotal survive the reset, so what this page needs is a FRESH draft
+  // carrying that scan id and its scan type — submitDraft's existing resume
+  // branch does the rest, matching re-added files to the records already
+  // there by filename.
+  const [searchParams] = useSearchParams();
+  const resetScanId = searchParams.get('resetScanId');
+  const resetScan = useScan({
+    view: 'my',
+    scanId: resetScanId ?? undefined,
+    enabled: Boolean(resetScanId),
+  });
+  const seededResetId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!resetScanId || !resetScan.data) return;
+    if (state.scanId === resetScanId) return;
+    if (seededResetId.current === resetScanId) return;
+    seededResetId.current = resetScanId;
+
+    draft.reset();
+    draft.update({
+      scanId: resetScanId,
+      scanTypeId: resetScan.data.scanType.id,
+      scanTypeName: resetScan.data.scanType.name,
+      organizationId: resetScan.data.scanType.organization?.id ?? null,
+    });
+    // draft.reset / draft.update are stable (useCallback with fixed deps);
+    // `draft` itself is a fresh object every render and must not be a dep.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetScanId, resetScan.data, state.scanId, draft.reset, draft.update]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -126,6 +164,12 @@ export function CreateScanPage() {
       {!submitted && draft.blobStorageDegraded ? (
         <InlineNotice tone="warn" title={draft.storageDegradedMessage.title}>
           {draft.storageDegradedMessage.body}
+        </InlineNotice>
+      ) : null}
+
+      {!submitted && resetScanId && state.scanId === resetScanId ? (
+        <InlineNotice tone="info" title={t('createScan.resumingResetTitle')}>
+          {t('createScan.resumingResetBody', { title: resetScan.data?.title ?? 'This study' })}
         </InlineNotice>
       ) : null}
 

@@ -1,4 +1,4 @@
-import type { AuthUser, MediaFile } from '@sector/api-client';
+import type { AuthUser, MediaFile, ScanStatus } from '@sector/api-client';
 import { hasPermission } from '@sector/api-client';
 import {
   Button,
@@ -16,11 +16,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@sector/ui';
-import { Download, MessageSquare, MoreVertical, Play, Share2, Trash2 } from 'lucide-react';
+import {
+  CheckCircle,
+  CircleSlash,
+  Download,
+  MessageSquare,
+  MoreVertical,
+  Play,
+  RotateCcw,
+  Share2,
+  Sparkles,
+  Trash2,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
+import { RequestExpertReviewDialog } from '@/features/scan-detail/components/request-expert-review-dialog';
+import { ResetUploadDialog } from '@/features/scan-detail/components/reset-upload-dialog';
 import { ScanNotesDialog } from '@/features/scan-detail/components/scan-notes-dialog';
 import { ScanShareDialog } from '@/features/scan-detail/components/scan-share-dialog';
 import {
@@ -32,6 +45,8 @@ import {
 import type { ScanVaultView } from '../scan-list-views';
 import { DeleteScanDialog } from './delete-scan-dialog';
 import { isRowActionDisabled, rowActionsFor, type RowActionId } from './scan-row-actions';
+import { COMPLETE_TAG, INCOMPLETE_TAG } from './scan-tags';
+import { useSetScanCompletionTag } from './use-scan-completion-tag';
 
 export type ScanRowMenuProps = {
   scanId: string;
@@ -40,13 +55,15 @@ export type ScanRowMenuProps = {
   files: readonly MediaFile[];
   /** The id of the user who submitted the scan. */
   ownerId: string;
+  status: ScanStatus;
+  tags: readonly string[];
   view: ScanVaultView;
   user: AuthUser | null;
   /** Where "Open scan" goes, already carrying the return URL. */
   to: string;
 };
 
-type Dialogs = 'share' | 'notes' | 'delete' | null;
+type Dialogs = 'share' | 'notes' | 'delete' | 'reset-upload' | 'request-expert-review' | null;
 
 type DownloadReport = { tone: 'warn' | 'crit'; message: string; failed: string[] };
 
@@ -56,6 +73,10 @@ const ACTION_KEY: Record<RowActionId, string> = {
   download: 'actions.download',
   comment: 'actions.comment',
   delete: 'actions.deleteScan',
+  'reset-upload': 'actions.resetUpload',
+  'request-expert-review': 'actions.requestExpertReview',
+  'mark-complete': 'actions.markComplete',
+  'mark-incomplete': 'actions.markIncomplete',
 };
 
 const ACTION_ICON = {
@@ -64,6 +85,10 @@ const ACTION_ICON = {
   download: Download,
   comment: MessageSquare,
   delete: Trash2,
+  'reset-upload': RotateCcw,
+  'request-expert-review': Sparkles,
+  'mark-complete': CheckCircle,
+  'mark-incomplete': CircleSlash,
 } as const;
 
 /**
@@ -81,6 +106,8 @@ export function ScanRowMenu({
   scanTitle,
   files,
   ownerId,
+  status,
+  tags,
   view,
   user,
   to,
@@ -96,6 +123,7 @@ export function ScanRowMenu({
    * a note would replace the notes dialog and throw the draft away.
    */
   const [report, setReport] = useState<DownloadReport | null>(null);
+  const completionTag = useSetScanCompletionTag();
 
   const downloadable: DownloadableFile[] = files
     .filter((file) => Boolean(file.url))
@@ -107,6 +135,9 @@ export function ScanRowMenu({
     hasFiles: downloadable.length > 0,
     canReadNotes: hasPermission(user, 'read:scan:note'),
     canDelete: hasPermission(user, 'delete:scan'),
+    canEditScan: hasPermission(user, 'edit:scan'),
+    status,
+    tags,
   });
 
   async function runDownload() {
@@ -138,7 +169,13 @@ export function ScanRowMenu({
     else if (action === 'share') setDialog('share');
     else if (action === 'comment') setDialog('notes');
     else if (action === 'delete') setDialog('delete');
-    else void runDownload();
+    else if (action === 'reset-upload') setDialog('reset-upload');
+    else if (action === 'request-expert-review') setDialog('request-expert-review');
+    else if (action === 'mark-complete')
+      void completionTag.setCompletion(scanId, tags, COMPLETE_TAG);
+    else if (action === 'mark-incomplete') {
+      void completionTag.setCompletion(scanId, tags, INCOMPLETE_TAG);
+    } else void runDownload();
   }
 
   const destructive = actions.filter((action) => action === 'delete');
@@ -221,6 +258,25 @@ export function ScanRowMenu({
           scanTitle={scanTitle}
           open
           onOpenChange={(open) => setDialog(open ? 'delete' : null)}
+        />
+      ) : null}
+
+      {dialog === 'reset-upload' ? (
+        <ResetUploadDialog
+          scanId={scanId}
+          scanTitle={scanTitle}
+          open
+          onOpenChange={(open) => setDialog(open ? 'reset-upload' : null)}
+        />
+      ) : null}
+
+      {dialog === 'request-expert-review' ? (
+        <RequestExpertReviewDialog
+          scanId={scanId}
+          scanTitle={scanTitle}
+          tags={tags}
+          open
+          onOpenChange={(open) => setDialog(open ? 'request-expert-review' : null)}
         />
       ) : null}
 

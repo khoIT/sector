@@ -1,5 +1,6 @@
 import { Button, Card, CardContent, CardHeader, CardTitle, StatusPill } from '@sector/ui';
 import { AlertTriangle, CheckCircle2, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import { scanDetailPathFor } from '@/features/scan-detail/scan-detail-links';
@@ -30,6 +31,7 @@ export type StepSubmittedProps = {
  * each outcome gets its own line and its own next action.
  */
 export function StepSubmitted({ outcome, onCreateAnother, onTryAgain }: StepSubmittedProps) {
+  const { t } = useTranslation();
   const complete = isFullySubmitted(outcome);
 
   return (
@@ -47,13 +49,13 @@ export function StepSubmitted({ outcome, onCreateAnother, onTryAgain }: StepSubm
               <p className="mt-0.5 text-[12px] text-ink-dim">
                 {complete
                   ? 'The study is in your vault. Processing and de-identification finish on the server a few seconds from now; the list updates itself.'
-                  : 'The study was created, but it does not yet hold every file this draft intended.'}
+                  : t('createScan.submitIncompleteSubtitle')}
               </p>
             </div>
           </div>
           <StatusPill
             tone={complete ? 'ok' : 'warn'}
-            label={complete ? 'Submitted' : 'Incomplete'}
+            label={complete ? 'Submitted' : t('createScan.submitIncompleteStatus')}
           />
         </CardHeader>
 
@@ -80,11 +82,14 @@ export function StepSubmitted({ outcome, onCreateAnother, onTryAgain }: StepSubm
           {!complete ? (
             <InlineNotice
               tone="warn"
-              title={`${outcome.filesConfirmed} of ${outcome.filesTotal} files attached — the study was not fully submitted`}
+              title={t('createScan.submitIncompleteTitle', {
+                confirmed: outcome.filesConfirmed,
+                total: outcome.filesTotal,
+              })}
               action={
                 onTryAgain ? (
                   <Button variant="secondary" size="sm" onClick={onTryAgain}>
-                    Try again
+                    {t('createScan.tryAgain')}
                   </Button>
                 ) : outcome.scanId ? (
                   <Button asChild variant="secondary" size="sm">
@@ -100,8 +105,7 @@ export function StepSubmitted({ outcome, onCreateAnother, onTryAgain }: StepSubm
                   </li>
                 ))}
               </ul>
-              The draft and every uploaded file are still here — nothing was thrown away. Try again
-              to resume this same study, or open it to see exactly what landed.
+              {t('createScan.submitIncompleteBody')}
             </InlineNotice>
           ) : null}
 
