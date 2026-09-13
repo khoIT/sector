@@ -73,6 +73,18 @@ export function SharedScanDetailPage() {
             </Button>
           }
         />
+      ) : share && !scan ? (
+        // The share is real; the study behind it is gone. The API keeps the
+        // share record after a scan is deleted and answers with scan: null.
+        <EmptyState
+          title="This study is no longer available"
+          description="The person who shared it has since deleted the scan. The share stays in your list so you know it existed, but there is nothing left to open."
+          action={
+            <Button variant="secondary" asChild>
+              <Link to={returnUrl}>Back to shared scans</Link>
+            </Button>
+          }
+        />
       ) : !share || !scan ? null : (
         <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_420px] xl:grid-cols-[minmax(0,1fr)_470px]">
           {/* Sticky on wide screens: the reviewer writes feedback in the right

@@ -25,6 +25,17 @@ import { mediaParts, summariseMedia } from './scan-media-summary';
 import { OUTCOME_KEY, type ScanOutcome } from './scan-outcome';
 import { displayTags, isMissingFiles } from './scan-tags';
 
+/**
+ * What a share renders once the study behind it has been deleted.
+ *
+ * The API keeps the share and sends it with `scan: null` — 5 of 282 shares in
+ * production are in that state — so the row has to say so rather than crash,
+ * and it offers nothing to open: there is no study to land on.
+ */
+export function RemovedStudyCell({ label }: { label: string }) {
+  return <span className="text-body italic text-ink-dim">{label}</span>;
+}
+
 /** A dim separator between two facts that belong to the same group. */
 function Dot() {
   return <span aria-hidden>·</span>;

@@ -92,7 +92,8 @@
     "dicom": "DICOM",
     "showAllGroups": "Show all {{count}} groups for {{title}}",
     "rubricTitle": "Submitted under {{name}} rubric {{version}}",
-    "none": "—"
+    "none": "—",
+    "studyRemoved": "Study no longer available"
   },
   "toolbar": {
     "searchScans": "Search by title, identifier or learner",

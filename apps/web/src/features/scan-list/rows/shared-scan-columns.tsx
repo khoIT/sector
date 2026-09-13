@@ -9,7 +9,14 @@ import { sharedScanDetailPathFor } from '@/features/scan-detail/scan-detail-link
 
 import type { ListColumn } from '../table/column-model';
 import { formatDate } from '@/lib/format';
-import { DateCell, ScanTypeCell, StatusCell, TitleCell, UserCell } from './list-cells';
+import {
+  DateCell,
+  RemovedStudyCell,
+  ScanTypeCell,
+  StatusCell,
+  TitleCell,
+  UserCell,
+} from './list-cells';
 import { OpenScanAction } from './row-actions';
 import { ScanRowMenu } from './scan-row-menu';
 
@@ -40,26 +47,29 @@ export function sharedScanColumns({
       id: 'details',
       header: t('columns.details'),
       alwaysVisible: true,
-      cell: (share) => (
-        <TitleCell
-          title={share.scan.title}
-          // Shares are opened through the share record, not the scan: the
-          // recipient may have no permission on the scan itself.
-          to={sharedScanDetailPathFor(share.id, returnUrl)}
-          scanIdentifier={share.scan.scanIdentifier}
-          fileCount={share.scan.fileCount}
-          fileTotal={share.scan.fileTotal}
-          tags={share.scan.tags}
-          files={share.scan.files}
-          // No findings or notes: the shared-scans mapper populates neither,
-          // and the summary schema models only what this route really sends.
-        />
-      ),
+      cell: (share) =>
+        share.scan ? (
+          <TitleCell
+            title={share.scan.title}
+            // Shares are opened through the share record, not the scan: the
+            // recipient may have no permission on the scan itself.
+            to={sharedScanDetailPathFor(share.id, returnUrl)}
+            scanIdentifier={share.scan.scanIdentifier}
+            fileCount={share.scan.fileCount}
+            fileTotal={share.scan.fileTotal}
+            tags={share.scan.tags}
+            files={share.scan.files}
+            // No findings or notes: the shared-scans mapper populates neither,
+            // and the summary schema models only what this route really sends.
+          />
+        ) : (
+          <RemovedStudyCell label={t('row.studyRemoved')} />
+        ),
     },
     {
       id: 'scanType',
       header: t('columns.scanType'),
-      cell: (share) => <ScanTypeCell scanType={share.scan.scanType} />,
+      cell: (share) => (share.scan ? <ScanTypeCell scanType={share.scan.scanType} /> : null),
     },
     {
       id: 'sharedBy',
@@ -79,7 +89,7 @@ export function sharedScanColumns({
     {
       id: 'scanStatus',
       header: t('columns.scanStatus'),
-      cell: (share) => <StatusCell status={share.scan.status} />,
+      cell: (share) => (share.scan ? <StatusCell status={share.scan.status} /> : null),
     },
     {
       id: 'createdAt',
@@ -93,24 +103,25 @@ export function sharedScanColumns({
       header: t('columns.actions'),
       alwaysVisible: true,
       className: 'text-right',
-      cell: (share) => (
-        <div className="flex items-center justify-end gap-1">
-          <OpenScanAction to={sharedScanDetailPathFor(share.id, returnUrl)} />
-          <ScanRowMenu
-            // The SCAN's id, not the share's: notes and downloads address the
-            // scan. Only navigation goes through the share.
-            scanId={share.scan.id}
-            scanTitle={share.scan.title}
-            files={share.scan.files}
-            // The scan's own user. `sharedBy` is who sent it, which is a
-            // different person the moment someone shares a scan they do not own.
-            ownerId={share.scan.user.id}
-            view="shared"
-            user={user}
-            to={sharedScanDetailPathFor(share.id, returnUrl)}
-          />
-        </div>
-      ),
+      cell: (share) =>
+        share.scan ? (
+          <div className="flex items-center justify-end gap-1">
+            <OpenScanAction to={sharedScanDetailPathFor(share.id, returnUrl)} />
+            <ScanRowMenu
+              // The SCAN's id, not the share's: notes and downloads address the
+              // scan. Only navigation goes through the share.
+              scanId={share.scan.id}
+              scanTitle={share.scan.title}
+              files={share.scan.files}
+              // The scan's own user. `sharedBy` is who sent it, which is a
+              // different person the moment someone shares a scan they do not own.
+              ownerId={share.scan.user.id}
+              view="shared"
+              user={user}
+              to={sharedScanDetailPathFor(share.id, returnUrl)}
+            />
+          </div>
+        ) : null,
     },
   ];
 }
