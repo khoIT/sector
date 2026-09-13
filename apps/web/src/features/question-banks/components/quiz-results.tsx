@@ -1,13 +1,12 @@
-import type { QuestionBankResultQuestion, QuestionBankResult } from '@sector/api-client';
 import { Badge, Button, Card, CardContent, RichText, Ring, Stat } from '@sector/ui';
 import { useTranslation } from 'react-i18next';
 
-import type { QuizQuestion } from '@/features/quiz/engine/types';
+import type { QuizQuestion, QuizResult, QuizResultQuestion } from '@/features/quiz/engine/types';
 
 import { formatElapsedTime } from '../format-elapsed-time';
 
 type QuizResultsProps = {
-  result: QuestionBankResult;
+  result: QuizResult;
   questions: readonly QuizQuestion[];
   onTakeAgain: () => void;
   onBackToList: () => void;
@@ -69,13 +68,31 @@ export function QuizResults({ result, questions, onTakeAgain, onBackToList }: Qu
   );
 }
 
+/** A comma-free list of answer titles, each through RichText — an answer's
+ *  `title` is the same author-written field as an option's, and just as
+ *  capable of holding markup (`allowHtml` is unreliable author data, not
+ *  checked here — see quiz-runner.tsx's identical decision). */
+function AnswerTitleList({ answers }: { answers: readonly { title: string }[] }) {
+  if (answers.length === 0) return <>—</>;
+  return (
+    <span className="inline-flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+      {answers.map((answer, index) => (
+        <span key={index} className="inline-flex items-center gap-x-1.5">
+          <RichText html={answer.title} className="inline" />
+          {index < answers.length - 1 ? <span aria-hidden>,</span> : null}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 function ResultQuestionCard({
   index,
   entry,
   question,
 }: {
   index: number;
-  entry: QuestionBankResultQuestion;
+  entry: QuizResultQuestion;
   question: QuizQuestion | undefined;
 }) {
   const { t } = useTranslation();
@@ -98,9 +115,7 @@ function ResultQuestionCard({
           <span className="font-medium text-ink">
             {isMultiple ? t('quiz.yourAnswers') : t('quiz.yourAnswer')}:
           </span>{' '}
-          {entry.selectedAnswers.length > 0
-            ? entry.selectedAnswers.map((answer) => answer.title).join(', ')
-            : '—'}
+          <AnswerTitleList answers={entry.selectedAnswers} />
         </div>
 
         {!entry.isCorrect ? (
@@ -108,7 +123,7 @@ function ResultQuestionCard({
             <span className="font-medium text-ink">
               {isMultiple ? t('quiz.correctAnswers') : t('quiz.correctAnswer')}:
             </span>{' '}
-            {entry.correctAnswers.map((answer) => answer.title).join(', ')}
+            <AnswerTitleList answers={entry.correctAnswers} />
           </div>
         ) : null}
 

@@ -31,6 +31,12 @@ export const RichText = forwardRef<HTMLDivElement, RichTextProps>(function RichT
   return (
     <div
       ref={ref}
+      {...props}
+      // `props` spreads FIRST: `className` and `dangerouslySetInnerHTML` must
+      // always be the ones that land, never something a caller's own props
+      // object happens to carry — the whole point of routing HTML through
+      // this component rather than a bare div is that the sanitised body
+      // cannot be overridden after the fact.
       className={cn(
         'text-body text-ink [&_a]:text-accent-ink [&_a]:underline [&_a]:underline-offset-2',
         '[&_h1]:text-[17px] [&_h2]:text-[16px] [&_h3]:text-[15px] [&_h1]:font-semibold [&_h2]:font-semibold [&_h3]:font-semibold',
@@ -44,7 +50,6 @@ export const RichText = forwardRef<HTMLDivElement, RichTextProps>(function RichT
       )}
       // Sanitised above; this is the one place raw HTML enters the app.
       dangerouslySetInnerHTML={{ __html: clean }}
-      {...props}
     />
   );
 });

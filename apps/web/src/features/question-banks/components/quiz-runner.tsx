@@ -1,7 +1,7 @@
 import { Button, RadioCard, RichText, SegmentedProgress } from '@sector/ui';
 import { useTranslation } from 'react-i18next';
 
-import { allQuestionsAnswered, isQuestionAnswered } from '@/features/quiz/engine/answers';
+import { answeredCount, isQuestionAnswered } from '@/features/quiz/engine/answers';
 import { isLastQuestion } from '@/features/quiz/engine/navigation';
 import type { QuizState } from '@/features/quiz/engine/state';
 
@@ -44,10 +44,15 @@ export function QuizRunner({
   if (!question) return null;
 
   const selected = state.answers[question.id] ?? [];
-  const answered = isQuestionAnswered(state.answers, question.id);
+  const currentAnswered = isQuestionAnswered(state.answers, question.id);
   const last = isLastQuestion(state.currentIndex, state.questions.length);
   const submitting = state.phase === 'finishing';
-  const remaining = state.questions.length - Object.keys(state.answers).length;
+  const answered = answeredCount(state.answers, state.questions);
+  // Finish is available once ANY question has an answer, not only when this
+  // one does — a learner who deselects the last question they are looking at
+  // must still be able to submit the ones they already answered; the count
+  // in `quiz.finishWithRemaining` already tells them what is left unanswered.
+  const canFinish = answered > 0;
 
   return (
     <div className="flex max-w-[42rem] flex-col gap-4">
@@ -65,6 +70,7 @@ export function QuizRunner({
           current: state.currentIndex + 1,
           total: state.questions.length,
         })}
+        segmentLabel={(index) => t('quiz.jumpToQuestion', { number: index + 1 })}
         total={state.questions.length}
         currentIndex={state.currentIndex}
         isDoneAt={(index) => isQuestionAnswered(state.answers, state.questions[index]?.id ?? '')}
@@ -79,7 +85,7 @@ export function QuizRunner({
         </span>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div role="radiogroup" aria-label={question.title} className="flex flex-col gap-2">
         {question.answers.map((option, index) => {
           const isSelected = selected.includes(option.id);
           return (
@@ -95,7 +101,11 @@ export function QuizRunner({
                   : onSelectSingle(question.id, option.id)
               }
             >
-              {option.allowHtml ? <RichText html={option.title} /> : option.title}
+              {/* Always through RichText, not gated on `allowHtml` — that
+                  flag is author-set and unreliable (real answer bodies carry
+                  markup with it left false); sanitising plain text is a
+                  no-op, so there is no cost to always doing it. */}
+              <RichText html={option.title} className="inline" />
             </RadioCard>
           );
         })}
@@ -111,15 +121,15 @@ export function QuizRunner({
         </Button>
 
         {last ? (
-          <Button onClick={() => void onFinish()} disabled={!answered || submitting}>
+          <Button onClick={() => void onFinish()} disabled={!canFinish || submitting}>
             {submitting
               ? t('quiz.submitting')
-              : allQuestionsAnswered(state.answers, state.questions)
+              : answered === state.questions.length
                 ? t('quiz.finish')
-                : t('quiz.finishWithRemaining', { count: remaining })}
+                : t('quiz.finishWithRemaining', { count: state.questions.length - answered })}
           </Button>
         ) : (
-          <Button onClick={onNext} disabled={!answered || submitting}>
+          <Button onClick={onNext} disabled={!currentAnswered || submitting}>
             {t('quiz.next')}
           </Button>
         )}

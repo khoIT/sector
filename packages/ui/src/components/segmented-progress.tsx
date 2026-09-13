@@ -15,6 +15,13 @@ export type SegmentedProgressProps = Omit<
   /** Jump navigation. Omit to render a purely visual (non-interactive) bar. */
   onJumpTo?: (index: number) => void;
   label: string;
+  /**
+   * Per-segment aria-label, e.g. `(index) => \`Question ${index + 1}\``.
+   * Required alongside `onJumpTo` (a jump target needs an announced name);
+   * this package has no `t()` of its own, so the caller supplies the
+   * translated string rather than this component hard-coding English.
+   */
+  segmentLabel?: (index: number) => string;
 };
 
 const SEGMENT_TONE: Record<'current' | 'done' | 'todo', string> = {
@@ -35,7 +42,16 @@ const SEGMENT_TONE: Record<'current' | 'done' | 'todo', string> = {
  */
 export const SegmentedProgress = forwardRef<HTMLDivElement, SegmentedProgressProps>(
   function SegmentedProgress(
-    { total, currentIndex, isDoneAt, onJumpTo, label, className, ...props },
+    {
+      total,
+      currentIndex,
+      isDoneAt,
+      onJumpTo,
+      label,
+      segmentLabel = (index) => `Question ${index + 1}`,
+      className,
+      ...props
+    },
     ref,
   ) {
     const states = segmentStates(total, currentIndex, isDoneAt);
@@ -60,7 +76,7 @@ export const SegmentedProgress = forwardRef<HTMLDivElement, SegmentedProgressPro
             <button
               key={index}
               type="button"
-              aria-label={`Question ${index + 1}`}
+              aria-label={segmentLabel(index)}
               aria-current={state === 'current' ? 'step' : undefined}
               onClick={() => onJumpTo(index)}
               className={cn(
