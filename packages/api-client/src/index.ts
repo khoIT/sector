@@ -609,3 +609,52 @@ export {
 export { useCourses, type UseCoursesOptions } from './react/use-courses';
 export { useCourseOutline, type UseCourseOutlineOptions } from './react/use-course-outline';
 export { courseKeys } from './query-keys';
+
+// ─── pathology gallery: category bar, sub-category rail, card grid ────────
+export {
+  pathologyCategorySchema,
+  pathologyGalleryItemSchema,
+  PATHOLOGY_STATUSES,
+  pathologyStatusSchema,
+  type PathologyCategory,
+  type PathologyGalleryItem,
+  type PathologyStatus,
+} from './schemas/pathology';
+
+export {
+  getPathologyCategories,
+  getPathologyGalleryList,
+  getPathologySubCategories,
+  type PathologyGalleryListQuery,
+} from './endpoints/pathology';
+
+export {
+  usePathologyCategories,
+  usePathologyGalleryList,
+  usePathologySubCategories,
+  type UsePathologyGalleryListOptions,
+} from './react/use-pathology-gallery';
+
+export { pathologyKeys } from './query-keys';
+
+// ─── group assignments: read-only surface for a group's assignments ───────
+export {
+  assignmentContentRefSchema,
+  assignmentGroupRefSchema,
+  assignmentListResponseSchema,
+  assignmentSchema,
+  GROUP_ASSIGNMENT_STATUSES,
+  GROUP_ASSIGNMENT_TYPES,
+  groupAssignmentStatusSchema,
+  groupAssignmentTypeSchema,
+  type Assignment,
+  type AssignmentContentRef,
+  type AssignmentGroupRef,
+  type AssignmentListResponse,
+  type GroupAssignmentStatus,
+  type GroupAssignmentType,
+} from './schemas/assignment';
+
+export { getGroupAssignments, type AssignmentListQuery } from './endpoints/assignment';
+export { useGroupAssignments } from './react/use-assignments';
+export { assignmentKeys } from './query-keys';

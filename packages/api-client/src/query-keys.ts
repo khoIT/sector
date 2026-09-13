@@ -105,6 +105,21 @@ export const courseKeys = {
   outline: (courseId: string) => ['get-learner-course-outline', courseId] as const,
 } as const;
 
+export const pathologyKeys = {
+  /** The category bar. One entry — the server caches it, so the client does too. */
+  categories: () => ['get-pathology-categories'] as const,
+  /** Prefix for every page of the gallery grid, across every category/sub-category. */
+  listRoot: () => ['get-pathology-galleries'] as const,
+  list: (params: unknown) => ['get-pathology-galleries', params] as const,
+  subCategories: (category: string) => ['get-pathology-sub-categories', category] as const,
+} as const;
+
+export const assignmentKeys = {
+  /** Prefix for every page of one group's assignments, across every filter. */
+  listRoot: (groupId: string) => ['get-group-assignments', groupId] as const,
+  list: (groupId: string, params: unknown) => ['get-group-assignments', groupId, params] as const,
+} as const;
+
 export const authKeys = {
   session: () => ['auth-session'] as const,
 } as const;
