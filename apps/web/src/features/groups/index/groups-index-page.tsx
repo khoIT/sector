@@ -13,6 +13,7 @@ import { DataTablePagination } from '../../scan-list/table/data-table-pagination
 import { hasActiveNarrowing } from '../../scan-list/table/list-url-state';
 import { useDebouncedValue } from '../../scan-list/table/use-debounced-value';
 import { useListUrlState } from '../../scan-list/table/use-list-url-state';
+import { GroupFormDialog } from '../forms/group-form-dialog';
 import { groupMembersPathFor } from '../groups-links';
 import { GroupsSearchField } from '../groups-search-field';
 import { hasExpiry, seatsUsage } from './group-row-model';
@@ -28,7 +29,7 @@ import { hasExpiry, seatsUsage } from './group-row-model';
  */
 export function GroupsIndexPage() {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, can } = useAuth();
   const navigate = useNavigate();
 
   const url = useListUrlState([]);
@@ -152,6 +153,7 @@ export function GroupsIndexPage() {
           onChange={url.setKeyword}
           placeholder={t('groups.index.searchPlaceholder')}
         />
+        {can('create:group') ? <GroupFormDialog mode="create" /> : null}
       </div>
 
       <DataTable

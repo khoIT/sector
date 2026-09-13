@@ -7,9 +7,9 @@ import {
   type GroupMember,
 } from '@sector/api-client';
 import { Button, EmptyState, StatusPill } from '@sector/ui';
-import { ChevronLeft, TriangleAlert, Users2 } from 'lucide-react';
+import { TriangleAlert, Users2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/auth-context';
 import { formatDate } from '@/lib/format';
@@ -20,16 +20,12 @@ import { DataTablePagination } from '../../scan-list/table/data-table-pagination
 import { hasActiveNarrowing } from '../../scan-list/table/list-url-state';
 import { useDebouncedValue } from '../../scan-list/table/use-debounced-value';
 import { useListUrlState } from '../../scan-list/table/use-list-url-state';
-import { GROUP_ADMINISTRATION_PATH } from '../groups-links';
+import { InviteMemberDialog } from '../forms/invite-member-dialog';
+import { GroupDetailTabs, type GroupDetailLocationState } from '../group-detail-tabs';
 import { GroupsSearchField } from '../groups-search-field';
 import { memberColumnsFor, type MemberColumnDef } from './columns';
 import { memberRoleTone, memberStatusTone } from './member-badge-tone';
-
-/** `groups-index-page.tsx` carries the group's name here on navigation, so
- *  the header does not need a second fetch just to name the page. A direct
- *  deep link (no state) falls back to the generic title — the member list
- *  itself does not depend on it. */
-type MembersLocationState = { groupName?: string } | null | undefined;
+import { MemberActionsCell } from './member-actions-cell';
 
 function toListColumn(
   def: MemberColumnDef,
@@ -84,20 +80,44 @@ function toListColumn(
 /**
  * ONE members surface. Its column set is a function of the caller's real
  * capability (`memberColumnsFor`, `columns.ts`) — there is no "viewing as"
- * switcher, and no second screen for the administrator case.
+ * switcher, and no second screen for the administrator case. The `actions`
+ * column (role change, removal) is appended here for BOTH roles, gated
+ * per-cell on the real permission — see the doc comment on `memberColumnsFor`.
  */
 export function MembersSurface() {
   const { t } = useTranslation();
   const { user, canAny } = useAuth();
   const { groupId } = useParams<{ groupId: string }>();
   const location = useLocation();
-  const groupName = (location.state as MembersLocationState)?.groupName;
+  const groupName = (location.state as GroupDetailLocationState)?.groupName;
 
   const url = useListUrlState([]);
   const debouncedKeyword = useDebouncedValue(url.keyword, LIST_SEARCH_DEBOUNCE_MS);
 
   const viewerRole = canAny([...GROUP_ADMIN_BYPASS_PERMISSIONS]) ? 'administrator' : 'leader';
-  const columns = memberColumnsFor(viewerRole).map((def) => toListColumn(def, t));
+  const canEditRole = canAny(['edit:group-member']);
+  const canRemove = canAny(['delete:group-member']);
+  const canInvite = canAny(['create:group-member']);
+  const showActions = canEditRole || canRemove;
+
+  const baseColumns = memberColumnsFor(viewerRole).map((def) => toListColumn(def, t));
+  const columns: ListColumn<GroupMember>[] = showActions
+    ? [
+        ...baseColumns,
+        {
+          id: 'actions',
+          header: '',
+          cell: (member) => (
+            <MemberActionsCell
+              member={member}
+              groupId={groupId ?? ''}
+              canEditRole={canEditRole}
+              canRemove={canRemove}
+            />
+          ),
+        },
+      ]
+    : baseColumns;
 
   const query = useGroupMembers({
     user,
@@ -110,20 +130,12 @@ export function MembersSurface() {
   const pagePastEnd = rows.length === 0 && !query.isPending && (query.data?.totalItems ?? 0) > 0;
   const title = groupName ?? t('groups.members.title');
 
-  const backLink = (
-    <Button asChild variant="ghost" size="sm" className="mb-2">
-      <Link to={GROUP_ADMINISTRATION_PATH}>
-        <ChevronLeft className="h-3.5 w-3.5" aria-hidden />
-        {t('groups.members.backToGroups')}
-      </Link>
-    </Button>
-  );
+  if (!groupId) return null;
 
   if (query.isError) {
     return (
       <section aria-label={title}>
-        {backLink}
-        <h2 className="mb-3 text-[17px] font-semibold text-ink">{title}</h2>
+        <GroupDetailTabs groupId={groupId} title={title} active="members" />
         <EmptyState
           tone="crit"
           icon={<TriangleAlert className="h-5 w-5" aria-hidden />}
@@ -168,10 +180,9 @@ export function MembersSurface() {
 
   return (
     <section aria-label={title}>
-      {backLink}
+      <GroupDetailTabs groupId={groupId} title={title} active="members" />
 
       <div className="mb-3 flex flex-wrap items-baseline gap-2">
-        <h2 className="text-[17px] font-semibold text-ink">{title}</h2>
         <span className="sv-num text-body text-ink-dim">
           {t('groups.members.subtitle', { count: query.data?.totalItems ?? 0 })}
         </span>
@@ -188,6 +199,7 @@ export function MembersSurface() {
           onChange={url.setKeyword}
           placeholder={t('groups.members.searchPlaceholder')}
         />
+        {canInvite ? <InviteMemberDialog groupId={groupId} /> : null}
       </div>
 
       <DataTable

@@ -4,11 +4,15 @@
  * The dashboard this replaces carried two separate members screens because
  * "a leader needs something different" kept getting solved as a new screen.
  * Here it is a column set instead: `memberColumnsFor('leader')` and
- * `memberColumnsFor('administrator')` return the SAME array today —
- * `columns.test.ts` asserts that directly — because the write slice (role
- * changes, removal) that would make an administrator's set diverge is not
- * yet wired. When it lands, an administrator's extra column is appended
- * here, which is what keeps this one surface rather than a second screen.
+ * `memberColumnsFor('administrator')` return the SAME array —
+ * `columns.test.ts` asserts that directly, and it stays true now that the
+ * write slice (role changes, removal) has landed: a group LEADER is exactly
+ * who invites and manages their own roster, so the extra "actions" column is
+ * not an administrator-only addition. `members-surface.tsx` appends it for
+ * BOTH roles, gated per-cell on the real `edit:group-member` /
+ * `delete:group-member` permission rather than on this coarse role param —
+ * a viewer holding neither (a read-only observer, if that role ever exists)
+ * sees the same five columns modelled here and nothing more.
  *
  * "Viewing as" is the caller's REAL capability, not a switcher: resolve
  * `MembersViewerRole` once, from `hasAnyPermission(user, GROUP_ADMIN_BYPASS_PERMISSIONS)`,
