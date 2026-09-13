@@ -2,6 +2,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { createClient, type ApiClient } from './client';
 import { getCurrentUser, login } from './endpoints/auth';
+import { getLedGroups } from './endpoints/group';
+import { getLedGroupMembers } from './endpoints/group-member';
 import { getScanById, getScanList, getScanUserGroups, getScanUsers } from './endpoints/scan';
 import { isApiError } from './errors';
 import { SCAN_LIST_VIEWS } from './query-keys';
@@ -105,6 +107,28 @@ describe.skipIf(!LIVE || !PASSWORD)('live API shapes', () => {
       expect(notes.items.length).toBe(notes.totalItems);
     }
   }, 120_000);
+
+  it('parses the leader-scoped groups index and members list for accounts that lead a group', async () => {
+    // Only the leader-scoped branch (getLedGroups / getLedGroupMembers) is
+    // exercised here. The administrator branch (getAllGroups /
+    // getAnyGroupMembers) stays unverified by this suite: none of the four
+    // seeded demo accounts holds full-access, so there is no account here to
+    // run it against. Check that branch manually against an administrator
+    // session before relying on this suite alone.
+    for (const userEmail of ['leader@scanvault.test', 'reviewer@scanvault.test']) {
+      const authed = clients.get(userEmail)!;
+
+      const groups = await getLedGroups(authed, { limit: 10 });
+      // Both accounts lead a group (README: "reviewer@scanvault.test ...
+      // leads a group, so both queues fill"), so the led-groups index must
+      // not come back empty.
+      const group = groups.items[0];
+      expect(group).toBeDefined();
+
+      const members = await getLedGroupMembers(authed, group!.id, { limit: 50 });
+      expect(members.totalItems).toBeGreaterThanOrEqual(members.items.length);
+    }
+  }, 60_000);
 
   it('parses a session restore', async () => {
     const session = sessions.get('leader@scanvault.test')!;
