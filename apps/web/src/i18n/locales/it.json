@@ -80,5 +80,81 @@
   },
   "empty": {
     "loading": "Caricamento"
+  },
+  "auth": {
+    "tagline": "Global Ultrasound Institute",
+    "signInTitle": "Accedi",
+    "usernameOrEmailLabel": "Nome utente o email",
+    "passwordLabel": "Password",
+    "signIn": "Accedi",
+    "signingIn": "Accesso in corso…",
+    "forgotPasswordLink": "Password dimenticata?",
+    "rateLimited": "Troppi tentativi di accesso. Attendi qualche minuto e riprova.",
+    "networkError": "Impossibile raggiungere il server. L'API è in esecuzione sulla porta :5001?"
+  },
+  "recovery": {
+    "forgotTitle": "Password dimenticata?",
+    "forgotDescription": "Inserisci il tuo indirizzo email e ti invieremo un codice per reimpostare la password.",
+    "emailLabel": "E-mail",
+    "sendCode": "Invia codice",
+    "sending": "Invio in corso…",
+    "backToLogin": "Torna al login",
+    "rateLimited": "Troppi tentativi. Attendi qualche minuto e riprova.",
+    "networkError": "Impossibile raggiungere il server. Riprova tra un momento.",
+    "sentTitle": "Controlla la tua email",
+    "sentDescription": "Se esiste un account per questo indirizzo, è stato inviato un codice.",
+    "codeLabel": "Codice di verifica",
+    "verify": "Verifica codice",
+    "verifying": "Verifica in corso…",
+    "invalidCode": "Il codice non è valido o è scaduto.",
+    "resendCode": "Invia un nuovo codice",
+    "resending": "Invio di un nuovo codice…",
+    "resendSent": "Un nuovo codice è in arrivo.",
+    "missingFlow": "Ricomincia la reimpostazione della password.",
+    "startOver": "Ricomincia",
+    "resetTitle": "Reimposta la password",
+    "resetDescription": "Scegli una password di almeno 8 caratteri.",
+    "newPasswordLabel": "Nuova password",
+    "confirmPasswordLabel": "Conferma nuova password",
+    "resetButton": "Reimposta la password",
+    "resetting": "Reimpostazione in corso…",
+    "resetError": "Il link di reimpostazione non è valido o è scaduto. Ricomincia per ottenerne uno nuovo.",
+    "successNotice": "La tua password è stata reimpostata. Accedi con la tua nuova password."
+  },
+  "invitation": {
+    "title": "Sei stato invitato a far parte di un gruppo",
+    "description": "Imposta una password per attivare il tuo account e unirti al gruppo.",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Conferma la password",
+    "confirmButton": "Conferma invito",
+    "confirming": "Confermando…",
+    "missingToken": "A questo link di invito manca il token. Chiedi al tuo leader di gruppo di rinviarlo.",
+    "networkError": "Impossibile raggiungere il server. Riprova tra un momento.",
+    "successNotice": "Il tuo account è pronto. Accedi per continuare."
+  },
+  "notifications": {
+    "title": "Notifiche di scansione di gruppo",
+    "description": "Gruppi che gestisci. Scegli quali eventi di scansione ti arrivano via email.",
+    "enabled": "Abilitato",
+    "disabled": "Disabilitato",
+    "loadError": "Non è stato possibile caricare le impostazioni di notifica dei tuoi gruppi.",
+    "retry": "Riprova",
+    "saveError": "Non è stato possibile salvare questa impostazione.",
+    "types": {
+      "scan_created": "Scansione creata",
+      "scan_submitted": "Scansione inviata",
+      "scan_reviewed": "Scansione revisionata",
+      "scan_failed": "Scansione non riuscita"
+    }
+  },
+  "deleteAccount": {
+    "trigger": "Elimina account",
+    "title": "Eliminare il tuo account?",
+    "warning": "Questa azione non può essere annullata. Il tuo account viene disattivato e il tuo indirizzo email si libera per un nuovo utilizzo, ma le tue scansioni, revisioni e appartenenze ai gruppi non vengono rimosse e restano registrate.",
+    "confirmLabel": "Digita la tua email per confermare: {{email}}",
+    "error": "Non è stato possibile eliminare il tuo account.",
+    "pending": "Eliminazione dell'account…",
+    "confirm": "Elimina account",
+    "successNotice": "Il tuo account è stato eliminato."
   }
 }
