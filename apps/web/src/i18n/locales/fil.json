@@ -8,7 +8,9 @@
     "administer": "Pangangasiwa",
     "courses": "Mga Kurso",
     "questionBanks": "Mga Bangko ng Tanong",
-    "groupAdministration": "Pangangasiwa ng Grupo"
+    "groupAdministration": "Pangangasiwa ng Grupo",
+    "gallery": "Pathology Gallery",
+    "sage": "Sage AI"
   },
   "tabs": {
     "reviewed": "Sinuri"
@@ -327,6 +329,70 @@
       "quiz": {
         "bestPercentage": "Pinakamataas: {{percent}}%"
       }
+    }
+  },
+  "gallery": {
+    "title": "Pathology Gallery",
+    "categoriesError": {
+      "title": "Hindi ma-load ang mga kategorya",
+      "retry": "Subukang muli"
+    },
+    "noCategories": "Walang available na kategorya",
+    "subCategoriesFor": "Mga sub-kategorya para sa {{category}}",
+    "allSubCategories": "Lahat ng sub-kategorya",
+    "noVideoAvailable": "Walang available na video para sa item na ito",
+    "loadError": {
+      "title": "Hindi ma-load ang kategoryang ito",
+      "retry": "Subukang muli"
+    },
+    "noItems": "Wala pang laman ang kategoryang ito",
+    "pageOf": "Pahina {{current}} ng {{total}}"
+  },
+  "sage": {
+    "title": "Sage AI",
+    "description": "Magtanong kay Sage AI tungkol sa point-of-care ultrasound.",
+    "loading": "Nilo-load ang Sage AI…",
+    "signedOut": {
+      "title": "Mag-sign in upang magamit ang Sage AI",
+      "description": "Kailangan ng naka-sign-in na account ang Sage AI bago ito mabuksan."
+    }
+  },
+  "assignments": {
+    "title": "Mga Assignment",
+    "searchPlaceholder": "Maghanap ng mga assignment…",
+    "columns": {
+      "learner": "Mag-aaral",
+      "content": "Nilalaman",
+      "type": "Uri",
+      "dueDate": "Deadline",
+      "status": "Status"
+    },
+    "type": {
+      "course": "Kurso",
+      "module": "Module",
+      "topic": "Paksa",
+      "quiz": "Pagsusulit"
+    },
+    "status": {
+      "draft": "Draft",
+      "active": "Aktibo",
+      "in_progress": "Isinasagawa",
+      "completed": "Nakumpleto",
+      "cancelled": "Kinansela"
+    },
+    "filters": {
+      "status": "Status",
+      "allStatuses": "Lahat ng status",
+      "type": "Uri",
+      "allTypes": "Lahat ng uri"
+    },
+    "empty": {
+      "title": "Wala pang assignment",
+      "description": "Wala pang naitatalagang gawain sa grupong ito."
+    },
+    "error": {
+      "title": "Hindi ma-load ang mga assignment",
+      "retry": "Subukang muli"
     }
   }
 }

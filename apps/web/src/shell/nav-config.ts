@@ -1,8 +1,19 @@
 import type { AuthUser } from '@sector/api-client';
-import { BookOpen, FolderClock, GraduationCap, Settings2, Share2, Users2 } from 'lucide-react';
+import {
+  BookOpen,
+  FolderClock,
+  GraduationCap,
+  Images,
+  Settings2,
+  Share2,
+  Sparkles,
+  Users2,
+} from 'lucide-react';
 
 import { COURSES_PATH } from '@/features/courses/courses-links';
+import { GALLERY_PATH } from '@/features/gallery/gallery-links';
 import { GROUP_ADMINISTRATION_PATH } from '@/features/groups/groups-links';
+import { SAGE_PATH } from '@/features/sage/sage-links';
 import { UNBUILT_SURFACES, type UnbuiltSurfaceId } from '@/routes/unbuilt-surfaces';
 
 import {
@@ -118,6 +129,26 @@ export const NAV_GROUPS = [
         matchPrefix: COURSES_PATH,
         // Ungated: the API scopes My Courses to the caller's own enrolment,
         // not to a role permission — there is nothing to check here.
+        visibleWhen: whenPermitted(null),
+      },
+      {
+        id: 'gallery',
+        labelKey: 'nav.gallery',
+        icon: Images,
+        path: GALLERY_PATH,
+        matchPrefix: GALLERY_PATH,
+        // Ungated, same as the legacy nav entry: all three routes it calls
+        // require only `authUser`.
+        visibleWhen: whenPermitted(null),
+      },
+      {
+        id: 'sage',
+        labelKey: 'nav.sage',
+        icon: Sparkles,
+        path: SAGE_PATH,
+        matchPrefix: SAGE_PATH,
+        // Ungated, same as the legacy nav entry — no permission or feature
+        // flag guarded it there either.
         visibleWhen: whenPermitted(null),
       },
       unbuiltDestination('question-banks'),
