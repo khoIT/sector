@@ -56,18 +56,29 @@ describe('roundedProgress', () => {
 });
 
 describe('COURSE_LIST_STATUS_FILTERS', () => {
-  it('lists all seven values the server filter accepts, exactly once each', () => {
-    expect(new Set(COURSE_LIST_STATUS_FILTERS).size).toBe(7);
+  it('offers the six values that can fill the grid, exactly once each', () => {
+    expect(new Set(COURSE_LIST_STATUS_FILTERS).size).toBe(6);
     expect(COURSE_LIST_STATUS_FILTERS).toEqual(
       expect.arrayContaining([
         'not_started',
         'in_progress',
         'completed',
-        'expired',
         'active',
         'paused',
         'dropped',
       ]),
     );
+  });
+
+  /**
+   * The route accepts `expired` and this menu does not offer it: filtering on
+   * it keeps only rows that normalizeLearnerCourses then moves into the
+   * separate `expired` array, so `items` comes back empty every time and the
+   * grid can only say "no courses match". Verified against the mirror —
+   * `?status=expired` answers `{ totalPages: 0, totalItems: 0, items: [] }`.
+   * The expired enrolments have their own section under the grid.
+   */
+  it('does not offer the one the grid can never show', () => {
+    expect(COURSE_LIST_STATUS_FILTERS).not.toContain('expired');
   });
 });

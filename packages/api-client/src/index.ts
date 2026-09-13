@@ -608,10 +608,12 @@ export { notificationPreferenceKeys } from './query-keys';
 // ─── courses: My Courses + the resolved course outline ────────────────────
 export {
   ASSIGNMENT_TYPES,
+  COURSE_ITEM_PROGRESS_STATUSES,
   COURSE_PROGRESS_STATUSES,
   ENROLLMENT_STATUSES,
   EXPIRATION_TYPES,
   assignmentTypeSchema,
+  courseItemProgressStatusSchema,
   courseProgressStatusSchema,
   enrollmentStatusSchema,
   expirationTypeSchema,
@@ -623,6 +625,7 @@ export {
   learnerCourseSummarySchema,
   learnerCoursesPageSchema,
   type AssignmentType,
+  type CourseItemProgressStatus,
   type CourseProgressStatus,
   type EnrollmentStatus,
   type ExpirationType,

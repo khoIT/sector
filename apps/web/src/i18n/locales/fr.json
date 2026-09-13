@@ -447,8 +447,7 @@
         "completed": "Terminé",
         "active": "Actif",
         "paused": "En pause",
-        "dropped": "Abandonné",
-        "expired": "Expiré"
+        "dropped": "Abandonné"
       },
       "status": {
         "not_started": "Non démarré",
@@ -467,7 +466,8 @@
       },
       "noMatch": {
         "title": "Aucun cours ne correspond à votre recherche",
-        "description": "Aucun titre de cours ne correspond à « {{keyword}} »."
+        "description": "Aucun titre de cours ne correspond à « {{keyword}} ».",
+        "descriptionFiltered": "Aucun cours n'a le statut sélectionné."
       },
       "pagePastEnd": {
         "title": "Rien sur cette page",
@@ -491,7 +491,9 @@
       "resume": {
         "start": "Commencer : {{title}}",
         "resume": "Poursuivre : {{title}}",
-        "review": "Revoir : {{title}}"
+        "retry": "Réessayer : {{title}}",
+        "review": "Revoir : {{title}}",
+        "jumpsOnly": "Vous amène à cet endroit de la liste ; le lecteur de cours n'existe pas encore."
       },
       "completedBanner": "Vous avez terminé ce cours.",
       "empty": {
@@ -509,7 +511,8 @@
       "itemStatus": {
         "not_started": "Non démarré",
         "in_progress": "En cours",
-        "completed": "Terminé"
+        "completed": "Terminé",
+        "failed": "Non validé"
       },
       "blocked": {
         "quiz_has_no_questions": "Ce quiz n’a pas encore de questions et ne peut pas être ouvert."

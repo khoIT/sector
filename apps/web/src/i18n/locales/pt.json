@@ -447,8 +447,7 @@
         "completed": "Concluído",
         "active": "Ativo",
         "paused": "Pausado",
-        "dropped": "Abandonado",
-        "expired": "Expirado"
+        "dropped": "Abandonado"
       },
       "status": {
         "not_started": "Não iniciado",
@@ -467,7 +466,8 @@
       },
       "noMatch": {
         "title": "Nenhum curso corresponde à sua pesquisa",
-        "description": "Nenhum título de curso corresponde a “{{keyword}}”."
+        "description": "Nenhum título de curso corresponde a “{{keyword}}”.",
+        "descriptionFiltered": "Nenhum curso tem o status selecionado."
       },
       "pagePastEnd": {
         "title": "Nada nesta página",
@@ -491,7 +491,9 @@
       "resume": {
         "start": "Começar: {{title}}",
         "resume": "Continuar: {{title}}",
-        "review": "Revisar: {{title}}"
+        "retry": "Tentar novamente: {{title}}",
+        "review": "Revisar: {{title}}",
+        "jumpsOnly": "Leva você até esse ponto da lista; o player do curso ainda não existe."
       },
       "completedBanner": "Você concluiu este curso.",
       "empty": {
@@ -509,7 +511,8 @@
       "itemStatus": {
         "not_started": "Não iniciado",
         "in_progress": "Em andamento",
-        "completed": "Concluído"
+        "completed": "Concluído",
+        "failed": "Não aprovado"
       },
       "blocked": {
         "quiz_has_no_questions": "Este questionário ainda não tem perguntas e não pode ser aberto."
