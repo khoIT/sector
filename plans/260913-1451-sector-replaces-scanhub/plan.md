@@ -72,7 +72,7 @@ endpoint ships in the production route table.
 | 3 | [Close the lockout](./phase-03-close-the-lockout.md) | 7 | 1 | **Done** |
 | 4 | [Scan surfaces to parity](./phase-04-scan-surfaces-to-parity.md) | 16 | 2 | **In progress** (reviewed, blockers being fixed) |
 | 5 | [Foundations and question banks](./phase-05-foundations-and-question-banks.md) | 17 | 1, 2 | **In progress** (reviewed, blockers being fixed) |
-| 6 | [The course read seam](./phase-06-the-course-read-seam.md) | 11 | 1, 5 | **In progress** (built, browser pass outstanding) |
+| 6 | [The course read seam](./phase-06-the-course-read-seam.md) | 11 | 1, 5 | **Done** |
 | 7 | [Taking a course](./phase-07-taking-a-course.md) | 12 | 5, 6 | Pending |
 | 8 | [Group administration](./phase-08-group-administration.md) | 15 | 1 | **In progress** (index + members done; exports + forms in flight) |
 | 9 | [Assignments, gallery and Sage](./phase-09-assignments-gallery-and-sage.md) | 9 | 5, 8 | Pending |

@@ -1,7 +1,7 @@
 ---
 phase: 6
 title: "The course read seam"
-status: in-progress
+status: completed
 priority: P1
 effort: "11 days (2-3 of them API)"
 dependencies: [1, 5]
