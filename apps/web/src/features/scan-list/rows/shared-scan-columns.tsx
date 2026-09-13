@@ -116,6 +116,8 @@ export function sharedScanColumns({
               // The scan's own user. `sharedBy` is who sent it, which is a
               // different person the moment someone shares a scan they do not own.
               ownerId={share.scan.user.id}
+              status={share.scan.status}
+              tags={share.scan.tags}
               view="shared"
               user={user}
               to={sharedScanDetailPathFor(share.id, returnUrl)}

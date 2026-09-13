@@ -339,6 +339,7 @@ export {
   multipartUploadInitResponseSchema,
   scanFilePayloadSchema,
   scanFileRecordSchema,
+  scanFilesMutationResponseSchema,
   updateFilePayloadSchema,
   updateScanPayloadSchema,
   uploadPresignPayloadSchema,
@@ -349,6 +350,7 @@ export {
   type MultipartUploadInitResponse,
   type ScanFilePayload,
   type ScanFileRecord,
+  type ScanFilesMutationResponse,
   type UpdateFilePayload,
   type UpdateScanPayload,
   type UploadPresignResponse,
@@ -385,7 +387,9 @@ export {
 } from './endpoints/scan-upload';
 
 export {
+  addScanFiles,
   createScan,
+  deleteScanFiles,
   updateFileDetailsStatus,
   updateScan,
   updateScanFileStatus,
@@ -658,3 +662,21 @@ export {
 export { useCourses, type UseCoursesOptions } from './react/use-courses';
 export { useCourseOutline, type UseCourseOutlineOptions } from './react/use-course-outline';
 export { courseKeys } from './query-keys';
+// ─── upload retry policy ──────────────────────────────────────────────────────
+export {
+  backoffDelayMs,
+  DEFAULT_UPLOAD_RETRY_POLICY,
+  isRetryableUploadStatus,
+  runWithUploadRetry,
+  type RunWithUploadRetryOptions,
+  type UploadRetryPolicy,
+} from './upload-retry-policy';
+
+// ─── scan tags (mark complete/incomplete, and every other reviewer tag) ───────
+export { scanTagPayloadSchema, type ScanTagPayload } from './schemas/scan-tags';
+export { addScanTag, removeScanTag } from './endpoints/scan-tags';
+export { useAddScanTag, useRemoveScanTag } from './react/use-scan-tags';
+
+// ─── reset-upload (recovering a failed or failed-upload scan) ────────────────
+export { resetScanUpload } from './endpoints/scan-reset-upload';
+export { useResetScanUpload } from './react/use-scan-reset-upload';

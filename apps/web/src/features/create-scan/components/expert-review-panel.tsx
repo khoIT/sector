@@ -1,9 +1,11 @@
-import { useScanReviewCredits, type ScanReviewCredits } from '@sector/api-client';
+import { useScanReviewCredits } from '@sector/api-client';
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Skeleton, cn } from '@sector/ui';
 import { CreditCard, Sparkles, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { ExpertReviewChoice } from '../model/draft-types';
+import { expertReviewCreditSources, isChoiceDrained } from '../model/expert-review-credit-sources';
 import { InlineNotice } from './inline-notice';
 import { PurchaseCreditsDialog } from './purchase-credits-dialog';
 
@@ -13,37 +15,6 @@ export type ExpertReviewPanelProps = {
   value: ExpertReviewChoice | null;
   onChange: (choice: ExpertReviewChoice | null) => void;
 };
-
-type CreditSource = {
-  key: string;
-  accountType: 'user' | 'group';
-  accountId: string;
-  label: string;
-  credits: number;
-};
-
-function creditSources(
-  userId: string,
-  userName: string,
-  credits: ScanReviewCredits,
-): CreditSource[] {
-  return [
-    {
-      key: `user:${userId}`,
-      accountType: 'user',
-      accountId: userId,
-      label: `${userName} (your balance)`,
-      credits: credits.userCredits,
-    },
-    ...credits.groups.map((group) => ({
-      key: `group:${group.groupId}`,
-      accountType: 'group' as const,
-      accountId: group.groupId,
-      label: group.groupName,
-      credits: group.currentCredits,
-    })),
-  ];
-}
 
 /**
  * Expert review, and where the credit comes from.
@@ -57,24 +28,34 @@ function creditSources(
  * is where the legacy flow dead-ended.
  */
 export function ExpertReviewPanel({ userId, userName, value, onChange }: ExpertReviewPanelProps) {
+  const { t } = useTranslation();
   const { data: credits, isPending, isError, error, refetch } = useScanReviewCredits();
   const [purchaseOpen, setPurchaseOpen] = useState(false);
 
-  const sources = credits ? creditSources(userId, userName, credits) : [];
+  const sources = useMemo(
+    () => (credits ? expertReviewCreditSources(userId, userName, credits) : []),
+    [credits, userId, userName],
+  );
   const total = sources.reduce((sum, source) => sum + source.credits, 0);
+
+  // A pool that was not empty when chosen can still drain to zero before
+  // submit — someone else in the same group spending the last credit, for
+  // instance. Selecting an empty pool is already blocked below; this is what
+  // un-picks a choice a refetch caught draining AFTER the fact, so the panel
+  // stops promising a review no pool can pay for.
+  useEffect(() => {
+    if (value && isChoiceDrained(sources, value)) onChange(null);
+  }, [sources, value, onChange]);
 
   return (
     <Card>
       <CardHeader className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <CardTitle>Expert review</CardTitle>
-          <p className="mt-0.5 text-[12px] text-ink-dim">
-            Optional. A GUSI expert reviews the study in addition to any group reviewers. One credit
-            per review.
-          </p>
+          <CardTitle>{t('createScan.expertReviewTitle')}</CardTitle>
+          <p className="mt-0.5 text-[12px] text-ink-dim">{t('createScan.expertReviewBlurb')}</p>
         </div>
         <Button variant="secondary" size="sm" onClick={() => setPurchaseOpen(true)}>
-          <CreditCard className="h-3.5 w-3.5" aria-hidden /> Buy credits
+          <CreditCard className="h-3.5 w-3.5" aria-hidden /> {t('createScan.buyCredits')}
         </Button>
       </CardHeader>
 
@@ -84,31 +65,29 @@ export function ExpertReviewPanel({ userId, userName, value, onChange }: ExpertR
         ) : isError ? (
           <InlineNotice
             tone="crit"
-            title="Credit balances could not be loaded"
+            title={t('createScan.creditsLoadFailedTitle')}
             action={
               <Button size="sm" variant="secondary" onClick={() => void refetch()}>
-                Try again
+                {t('createScan.tryAgain')}
               </Button>
             }
           >
-            {error instanceof Error ? error.message : 'The request failed.'} You can submit the
-            study without an expert review and request one later from the scan.
+            {error instanceof Error ? error.message : t('createScan.creditsLoadFailedFallback')}{' '}
+            {t('createScan.creditsLoadFailedBody')}
           </InlineNotice>
         ) : (
           <>
             {total === 0 ? (
               <InlineNotice
                 tone="warn"
-                title="No expert review credits available"
+                title={t('createScan.noCreditsTitle')}
                 action={
                   <Button size="sm" onClick={() => setPurchaseOpen(true)}>
-                    Buy credits
+                    {t('createScan.buyCredits')}
                   </Button>
                 }
               >
-                Neither your balance nor any of your groups has a credit left. The study will be
-                submitted to your groups as usual — expert review can be requested later once
-                credits are topped up.
+                {t('createScan.noCreditsBody')}
               </InlineNotice>
             ) : null}
 
@@ -145,12 +124,20 @@ export function ExpertReviewPanel({ userId, userName, value, onChange }: ExpertR
                       )}
                     >
                       <Sparkles className="h-4 w-4 shrink-0 text-ink-dim" aria-hidden />
-                      <span className="min-w-0 flex-1 truncate text-body text-ink">
-                        {source.label}
+                      <span className="min-w-0 flex-1 text-body text-ink">
+                        <span className="block truncate">{source.label}</span>
+                        {/* The audit's finding: only the spendable count showed, so
+                            neither the user nor a group leader could see how much of
+                            the pool had already gone. */}
+                        <span className="sv-num block text-[11px] text-ink-dim">
+                          {t('createScan.creditsUsedOfTotal', {
+                            used: source.used,
+                            total: source.total,
+                          })}
+                        </span>
                       </span>
                       <Badge tone={empty ? 'neutral' : 'ok'}>
-                        <span className="sv-num">{source.credits}</span>
-                        {source.credits === 1 ? ' credit' : ' credits'}
+                        {t('createScan.creditCount', { count: source.credits })}
                       </Badge>
                     </button>
                   </li>
@@ -161,15 +148,14 @@ export function ExpertReviewPanel({ userId, userName, value, onChange }: ExpertR
             {value ? (
               <InlineNotice
                 tone="ok"
-                title={`One credit from ${value.label} will be spent on submit`}
+                title={t('createScan.creditWillBeSpent', { label: value.label })}
                 action={
                   <Button variant="ghost" size="sm" onClick={() => onChange(null)}>
-                    <X className="h-3.5 w-3.5" aria-hidden /> Remove
+                    <X className="h-3.5 w-3.5" aria-hidden /> {t('actions.remove')}
                   </Button>
                 }
               >
-                The credit is only spent once the study is submitted. If the request fails you will
-                be told, and the study is saved either way.
+                {t('createScan.creditSpentOnSubmit')}
               </InlineNotice>
             ) : null}
           </>

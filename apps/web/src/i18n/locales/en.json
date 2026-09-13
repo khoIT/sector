@@ -53,7 +53,12 @@
     "view": "View",
     "downloading": "Downloading…",
     "rowMenuFor": "Actions for {{title}}",
-    "downloadFailed": "The download failed. Please try again."
+    "downloadFailed": "The download failed. Please try again.",
+    "resetUpload": "Reset for re-upload",
+    "requestExpertReview": "Request expert review",
+    "markComplete": "Mark complete",
+    "markIncomplete": "Mark incomplete",
+    "remove": "Remove"
   },
   "status": {
     "pending": "Pending",
@@ -457,5 +462,51 @@
         "bestPercentage": "Best: {{percent}}%"
       }
     }
+  },
+  "createScan": {
+    "storageDegradedTitle": "This browser could not save your progress",
+    "storageDegradedBody": "Files already uploaded are safe in storage, but this draft will not survive closing or reloading this tab. Keep it open until you submit.",
+    "validationFileTooLarge": "\"{{name}}\" is larger than the {{limit}} study limit on its own, so it cannot be added.",
+    "validationStudyTooLarge": "Adding \"{{name}}\" would take this study past the {{limit}} limit. Remove another file first, or add it to a new study.",
+    "resumingResetTitle": "Resuming a reset study",
+    "resumingResetBody": "{{title}} was reset for re-upload. Add its files again and submit — this attaches them to the same study rather than creating a new one.",
+    "submitIncompleteSubtitle": "The study was created, but it does not yet hold every file this draft intended.",
+    "submitIncompleteStatus": "Incomplete",
+    "submitIncompleteTitle": "{{confirmed}} of {{total}} files attached — the study was not fully submitted",
+    "submitIncompleteBody": "The draft and every uploaded file are still here — nothing was thrown away. Try again to resume this same study, or open it to see exactly what landed.",
+    "tryAgain": "Try again",
+    "creditsUsedOfTotal": "{{used}} of {{total}} used",
+    "draftExpiredTitle": "A saved draft expired",
+    "draftExpiredBody": "A draft older than seven days was removed, along with the files it was still holding in this browser. If it had already created a study, that study is still in My Scans.",
+    "expertReviewTitle": "Expert review",
+    "expertReviewBlurb": "Optional. A GUSI expert reviews the study in addition to any group reviewers. One credit per review.",
+    "buyCredits": "Buy credits",
+    "creditsLoadFailedTitle": "Credit balances could not be loaded",
+    "creditsLoadFailedFallback": "The request failed.",
+    "creditsLoadFailedBody": "You can submit the study without an expert review and request one later from the scan.",
+    "noCreditsTitle": "No expert review credits available",
+    "noCreditsBody": "Neither your balance nor any of your groups has a credit left. The study will be submitted to your groups as usual — expert review can be requested later once credits are topped up.",
+    "creditCount_one": "{{count}} credit",
+    "creditCount_other": "{{count}} credits",
+    "creditWillBeSpent": "One credit from {{label}} will be spent on submit",
+    "creditSpentOnSubmit": "The credit is only spent once the study is submitted. If the request fails you will be told, and the study is saved either way."
+  },
+  "scanDetail": {
+    "resetUploadDialogTitle": "Reset “{{title}}” for re-upload?",
+    "resetUploadDialogBody": "This puts the study back to Pending and clears its file count. You will be taken to Create Scan Study with this same study open — add the files again and submit to finish it. Nothing already reviewed or answered on this study is affected.",
+    "resetUploadConfirm": "Reset and re-upload",
+    "resetUploadPending": "Resetting…",
+    "resetUploadError": "The scan could not be reset.",
+    "requestExpertReviewDialogTitle": "Request expert review",
+    "requestExpertReviewDialogBody": "A GUSI expert reviews “{{title}}” in addition to any group reviewers, for one credit.",
+    "requestExpertReviewAlready": "An expert review has already been requested for this study. Requesting again would spend a second credit for the same review, so this is disabled.",
+    "requestExpertReviewSubmit": "Request review",
+    "requestExpertReviewPending": "Requesting…",
+    "requestExpertReviewError": "The request did not go through.",
+    "markComplete": "Mark complete",
+    "markIncomplete": "Mark incomplete",
+    "close": "Close",
+    "completionTagErrorTitle": "The mark did not save",
+    "completionTagError": "The scan's completeness could not be changed. Nothing was saved — try again."
   }
 }

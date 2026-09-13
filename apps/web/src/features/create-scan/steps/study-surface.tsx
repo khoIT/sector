@@ -1,4 +1,4 @@
-import { useFindingDefinitions, userDisplayName } from '@sector/api-client';
+import { useFindingDefinitions, useUserOrganizations, userDisplayName } from '@sector/api-client';
 import { cn } from '@sector/ui';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -13,7 +13,8 @@ import { SetupBar } from '../components/setup-bar';
 import { StudyRail } from '../components/study-rail';
 import { SwitchScanTypeDialog } from '../components/switch-scan-type-dialog';
 import type { SubmitOutcome } from '../model/draft-types';
-import { canAutoCollapseFiles } from '../model/file-counts';
+import { shouldShowFileCountNudge } from '../model/file-count-nudge';
+import { canAutoCollapseFiles, countTracked } from '../model/file-counts';
 import { missingRequiredFindings } from '../model/finding-controls';
 import { readinessFor } from '../model/readiness';
 import { useDraftMediaSources } from '../model/use-draft-media-sources';
@@ -52,9 +53,16 @@ export function StudySurface({ draft, onSubmitted }: StudySurfaceProps) {
 
   const switcher = useScanTypeSwitch(draft);
   const sources = useDraftMediaSources(state.files);
+  const { data: organizations } = useUserOrganizations(user?.id);
 
+  // The moment every file finishes is also the moment the study is about to
+  // be submitted — which used to be exactly when the "most studies have at
+  // least three files" nudge disappeared, folded away inside the collapsed
+  // files panel. A study short on files needs that reminder MOST right before
+  // Submit, so the panel is not allowed to fold itself away while it applies.
+  const showFileCountNudge = shouldShowFileCountNudge(countTracked(state.files), organizations);
   const [filesCollapsed, setFilesCollapsed] = useState(false);
-  const collapsible = canAutoCollapseFiles(state.files);
+  const collapsible = canAutoCollapseFiles(state.files) && !showFileCountNudge;
 
   // Fold the files away once they are all safely stored, and unfold the moment
   // anything needs attention again — a retry, a new file, a restored draft.

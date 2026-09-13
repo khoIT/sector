@@ -5,7 +5,12 @@ import {
   multipartUploadPart,
   uploadPresign,
 } from './endpoints/scan-upload';
-import { uploadToPresignedUrl, type UploadProgress } from './upload-transfer';
+import {
+  isRetryableUploadStatus,
+  runWithUploadRetry,
+  type UploadRetryPolicy,
+} from './upload-retry-policy';
+import { UploadTransferError, uploadToPresignedUrl, type UploadProgress } from './upload-transfer';
 
 /**
  * One scan object, uploaded whole or in parts.
@@ -45,7 +50,14 @@ export type UploadScanObjectOptions = {
   session?: MultipartSession | null;
   /** Called as soon as a session exists, and after every accepted part. */
   onSession?: (session: MultipartSession) => void;
+  /** Overridable for tests; defaults to 3 attempts with jittered backoff. */
+  retryPolicy?: UploadRetryPolicy;
 };
+
+/** A transient failure worth another attempt: a network error, 429, or 5xx. */
+function isUploadRetryable(error: unknown): boolean {
+  return error instanceof UploadTransferError && isRetryableUploadStatus(error.status);
+}
 
 export class MultipartEtagError extends Error {
   constructor(partNumber: number) {
@@ -83,10 +95,16 @@ async function uploadSingleShot(
     options.signal,
   );
 
-  await uploadToPresignedUrl(presigned.url, input.blob, input.contentType, {
-    signal: options.signal,
-    onProgress: options.onProgress,
-  });
+  // The PUT itself, not the presign call, is what a flaky connection or an
+  // overloaded bucket actually fails on — so that is what gets retried.
+  await runWithUploadRetry(
+    () =>
+      uploadToPresignedUrl(presigned.url, input.blob, input.contentType, {
+        signal: options.signal,
+        onProgress: options.onProgress,
+      }),
+    { policy: options.retryPolicy, isRetryable: isUploadRetryable, signal: options.signal },
+  );
 
   return { key: presigned.key };
 }
@@ -164,13 +182,17 @@ async function uploadInParts(
           options.signal,
         ));
 
-      const { etag } = await uploadToPresignedUrl(url, slice, input.contentType, {
-        signal: options.signal,
-        onProgress: ({ loaded }) => {
-          loadedByPart.set(partNumber, loaded);
-          report();
-        },
-      });
+      const { etag } = await runWithUploadRetry(
+        () =>
+          uploadToPresignedUrl(url, slice, input.contentType, {
+            signal: options.signal,
+            onProgress: ({ loaded }) => {
+              loadedByPart.set(partNumber, loaded);
+              report();
+            },
+          }),
+        { policy: options.retryPolicy, isRetryable: isUploadRetryable, signal: options.signal },
+      );
 
       if (!etag) throw new MultipartEtagError(partNumber);
 

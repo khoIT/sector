@@ -34,7 +34,12 @@
     "createScanStudy": "Créer un scan",
     "cancel": "Annuler",
     "save": "Enregistrer",
-    "view": "Afficher"
+    "view": "Afficher",
+    "resetUpload": "Réinitialiser pour un nouvel envoi",
+    "requestExpertReview": "Demander une revue d'expert",
+    "markComplete": "Marquer comme complet",
+    "markIncomplete": "Marquer comme incomplet",
+    "remove": "Retirer"
   },
   "status": {
     "pending": "En attente",
@@ -379,5 +384,51 @@
         "bestPercentage": "Meilleur score : {{percent}} %"
       }
     }
+  },
+  "createScan": {
+    "storageDegradedTitle": "Ce navigateur n'a pas pu enregistrer votre progression",
+    "storageDegradedBody": "Les fichiers déjà envoyés sont en sécurité dans le stockage, mais ce brouillon ne survivra pas à la fermeture ou au rechargement de cet onglet. Laissez-le ouvert jusqu'à l'envoi.",
+    "validationFileTooLarge": "« {{name}} » dépasse à lui seul la limite de {{limit}} de l'étude, il ne peut donc pas être ajouté.",
+    "validationStudyTooLarge": "Ajouter « {{name}} » ferait dépasser à cette étude la limite de {{limit}}. Retirez d'abord un autre fichier, ou ajoutez-le à une nouvelle étude.",
+    "resumingResetTitle": "Reprise d'une étude réinitialisée",
+    "resumingResetBody": "{{title}} a été réinitialisée pour un nouvel envoi. Ajoutez à nouveau ses fichiers et envoyez — cela les rattache à la même étude au lieu d'en créer une nouvelle.",
+    "submitIncompleteSubtitle": "L'étude a été créée, mais elle ne contient pas encore tous les fichiers prévus par ce brouillon.",
+    "submitIncompleteStatus": "Incomplet",
+    "submitIncompleteTitle": "{{confirmed}} fichier(s) sur {{total}} rattaché(s) — l'étude n'a pas été entièrement envoyée",
+    "submitIncompleteBody": "Le brouillon et tous les fichiers envoyés sont encore là — rien n'a été perdu. Réessayez pour reprendre cette même étude, ou ouvrez-la pour voir exactement ce qui est arrivé.",
+    "tryAgain": "Réessayer",
+    "creditsUsedOfTotal": "{{used}} sur {{total}} utilisés",
+    "draftExpiredTitle": "Un brouillon enregistré a expiré",
+    "draftExpiredBody": "Un brouillon de plus de sept jours a été supprimé, ainsi que les fichiers qu'il conservait encore dans ce navigateur. S'il avait déjà créé une étude, celle-ci reste dans Mes scans.",
+    "expertReviewTitle": "Revue par un expert",
+    "expertReviewBlurb": "Facultatif. Un expert GUSI examine l'étude en plus des relecteurs du groupe. Un crédit par revue.",
+    "buyCredits": "Acheter des crédits",
+    "creditsLoadFailedTitle": "Impossible de charger les soldes de crédits",
+    "creditsLoadFailedFallback": "La requête a échoué.",
+    "creditsLoadFailedBody": "Vous pouvez soumettre l'étude sans revue d'expert et en demander une plus tard depuis le scan.",
+    "noCreditsTitle": "Aucun crédit de revue d'expert disponible",
+    "noCreditsBody": "Ni votre solde ni aucun de vos groupes ne dispose encore d'un crédit. L'étude sera transmise à vos groupes comme d'habitude — une revue d'expert pourra être demandée une fois les crédits rechargés.",
+    "creditCount_one": "{{count}} crédit",
+    "creditCount_other": "{{count}} crédits",
+    "creditWillBeSpent": "Un crédit de {{label}} sera utilisé à la soumission",
+    "creditSpentOnSubmit": "Le crédit n'est utilisé qu'une fois l'étude soumise. En cas d'échec de la demande, vous serez averti, et l'étude est enregistrée dans tous les cas."
+  },
+  "scanDetail": {
+    "resetUploadDialogTitle": "Réinitialiser « {{title}} » pour un nouvel envoi ?",
+    "resetUploadDialogBody": "Cela remet l'étude en attente et efface son nombre de fichiers. Vous serez amené à Créer une étude d'échographie avec cette même étude déjà ouverte — ajoutez à nouveau les fichiers et envoyez pour la terminer. Rien de ce qui a déjà été examiné ou renseigné sur cette étude n'est affecté.",
+    "resetUploadConfirm": "Réinitialiser et renvoyer",
+    "resetUploadPending": "Réinitialisation…",
+    "resetUploadError": "Le scan n'a pas pu être réinitialisé.",
+    "requestExpertReviewDialogTitle": "Demander une revue d'expert",
+    "requestExpertReviewDialogBody": "Un expert GUSI examine « {{title}} » en plus des relecteurs du groupe, pour un crédit.",
+    "requestExpertReviewAlready": "Une revue d'expert a déjà été demandée pour cette étude. En redemander une dépenserait un second crédit pour la même revue, c'est pourquoi c'est désactivé.",
+    "requestExpertReviewSubmit": "Demander la revue",
+    "requestExpertReviewPending": "Demande en cours…",
+    "requestExpertReviewError": "La demande n'a pas abouti.",
+    "markComplete": "Marquer comme complet",
+    "markIncomplete": "Marquer comme incomplet",
+    "close": "Fermer",
+    "completionTagErrorTitle": "La marque n'a pas été enregistrée",
+    "completionTagError": "L'état de complétude du scan n'a pas pu être modifié. Rien n'a été enregistré — réessayez."
   }
 }

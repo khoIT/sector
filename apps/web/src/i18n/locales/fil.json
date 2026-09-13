@@ -34,7 +34,12 @@
     "createScanStudy": "Lumikha ng Scan",
     "cancel": "Kanselahin",
     "save": "I-save",
-    "view": "Tingnan"
+    "view": "Tingnan",
+    "resetUpload": "I-reset para muling mag-upload",
+    "requestExpertReview": "Humiling ng review ng eksperto",
+    "markComplete": "Markahang kumpleto",
+    "markIncomplete": "Markahang hindi kumpleto",
+    "remove": "Alisin"
   },
   "status": {
     "pending": "Nagbabantay",
@@ -379,5 +384,51 @@
         "bestPercentage": "Pinakamataas: {{percent}}%"
       }
     }
+  },
+  "createScan": {
+    "storageDegradedTitle": "Hindi na-save ng browser na ito ang iyong progreso",
+    "storageDegradedBody": "Ligtas sa storage ang mga na-upload nang file, pero hindi mabubuhay ang draft na ito kapag isinara o ni-reload ang tab. Panatilihin itong bukas hanggang sa mag-submit ka.",
+    "validationFileTooLarge": "Mas malaki na mag-isa ang \"{{name}}\" kaysa sa {{limit}} na limitasyon ng pag-aaral, kaya hindi ito maidadagdag.",
+    "validationStudyTooLarge": "Kung idadagdag ang \"{{name}}\", lalampas ang pag-aaral na ito sa {{limit}} na limitasyon. Alisin muna ang ibang file, o idagdag na lang ito sa bagong pag-aaral.",
+    "resumingResetTitle": "Ipinagpapatuloy ang na-reset na pag-aaral",
+    "resumingResetBody": "Na-reset ang {{title}} para muling ma-upload. Idagdag ulit ang mga file nito at mag-submit — idadagdag nito ang mga ito sa parehong pag-aaral sa halip na gumawa ng bago.",
+    "submitIncompleteSubtitle": "Nagawa na ang pag-aaral, pero wala pa itong lahat ng file na nilalayon ng draft na ito.",
+    "submitIncompleteStatus": "Hindi kumpleto",
+    "submitIncompleteTitle": "{{confirmed}} sa {{total}} na file ang naidagdag — hindi lubos na na-submit ang pag-aaral",
+    "submitIncompleteBody": "Nandito pa rin ang draft at lahat ng na-upload na file — walang natapon. Subukan ulit para ipagpatuloy ang parehong pag-aaral, o buksan ito para makita mismo kung ano ang naidagdag.",
+    "tryAgain": "Subukan ulit",
+    "creditsUsedOfTotal": "{{used}} sa {{total}} ang nagamit",
+    "draftExpiredTitle": "May na-save na draft na nag-expire",
+    "draftExpiredBody": "Inalis ang draft na mahigit pitong araw na, kasama ang mga file na hawak pa nito sa browser na ito. Kung nakagawa na ito ng pag-aaral, nasa My Scans pa rin ang pag-aaral na iyon.",
+    "expertReviewTitle": "Pagsusuri ng eksperto",
+    "expertReviewBlurb": "Opsyonal. Sinusuri ng eksperto ng GUSI ang pag-aaral bukod pa sa mga tagasuri ng grupo. Isang credit bawat pagsusuri.",
+    "buyCredits": "Bumili ng credits",
+    "creditsLoadFailedTitle": "Hindi ma-load ang balanse ng credits",
+    "creditsLoadFailedFallback": "Nabigo ang kahilingan.",
+    "creditsLoadFailedBody": "Puwede mong isumite ang pag-aaral nang walang pagsusuri ng eksperto at humiling nito mamaya mula sa scan.",
+    "noCreditsTitle": "Walang available na credits para sa pagsusuri ng eksperto",
+    "noCreditsBody": "Wala nang natitirang credit ang iyong balanse o alinman sa iyong mga grupo. Isusumite pa rin ang pag-aaral sa iyong mga grupo gaya ng dati — puwedeng humiling ng pagsusuri ng eksperto kapag nadagdagan na ang credits.",
+    "creditCount_one": "{{count}} credit",
+    "creditCount_other": "{{count}} na credits",
+    "creditWillBeSpent": "Isang credit mula sa {{label}} ang gagamitin sa pagsusumite",
+    "creditSpentOnSubmit": "Ginagamit lang ang credit kapag naisumite na ang pag-aaral. Kung mabigo ang kahilingan, sasabihin sa iyo, at naka-save pa rin ang pag-aaral."
+  },
+  "scanDetail": {
+    "resetUploadDialogTitle": "I-reset ang “{{title}}” para muling mag-upload?",
+    "resetUploadDialogBody": "Ibabalik nito ang pag-aaral sa Pending at buburahin ang bilang ng file nito. Dadalhin ka sa Create Scan Study na naka-open na ang parehong pag-aaral — idagdag ulit ang mga file at mag-submit para matapos ito. Walang maaapektuhan sa nasuri na o nasagot na sa pag-aaral na ito.",
+    "resetUploadConfirm": "I-reset at mag-upload ulit",
+    "resetUploadPending": "Nire-reset…",
+    "resetUploadError": "Hindi ma-reset ang scan.",
+    "requestExpertReviewDialogTitle": "Humiling ng review ng eksperto",
+    "requestExpertReviewDialogBody": "Susuriin ng eksperto ng GUSI ang “{{title}}” bilang karagdagan sa anumang reviewer ng grupo, sa halagang isang credit.",
+    "requestExpertReviewAlready": "May hiling na nang review ng eksperto para sa pag-aaral na ito. Ang muling paghiling ay gagastos ng ikalawang credit para sa parehong review, kaya naka-disable ito.",
+    "requestExpertReviewSubmit": "Humiling ng review",
+    "requestExpertReviewPending": "Hinihiling…",
+    "requestExpertReviewError": "Hindi natuloy ang kahilingan.",
+    "markComplete": "Markahang kumpleto",
+    "markIncomplete": "Markahang hindi kumpleto",
+    "close": "Isara",
+    "completionTagErrorTitle": "Hindi na-save ang marka",
+    "completionTagError": "Hindi nabago ang pagkakumpleto ng scan. Walang na-save — subukan muli."
   }
 }

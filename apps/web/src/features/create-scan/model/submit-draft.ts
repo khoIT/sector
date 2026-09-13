@@ -1,6 +1,8 @@
 import {
+  addScanFiles,
   createScan,
   createUserLogs,
+  deleteScanFiles,
   getScanById,
   isApiError,
   requestExpertScanReview,
@@ -9,10 +11,14 @@ import {
   updateScanFileStatus,
   type ApiClient,
   type CreateScanPayload,
+  type Scan,
   type ScanFilePayload,
 } from '@sector/api-client';
 
+import { EXPERT_REVIEW_TAG } from '@/features/scan-list/rows/scan-tags';
+
 import type { DraftFile, DraftState, SubmitOutcome } from './draft-types';
+import { countTracked } from './file-counts';
 import { toFindingsPayload } from './finding-controls';
 import { statusAfterSubmit, submitLogEntries } from './submit-logs';
 
@@ -79,6 +85,13 @@ async function announce(
   userId: string,
   confirmed: number,
   unconfirmed: readonly string[],
+  /**
+   * Every file the learner intended for this study — not merely the ones
+   * this attempt tried to confirm. A file that never reached storage at all
+   * (so it was never even registered) must still count against the total, or
+   * a short submit announces itself as complete.
+   */
+  intendedTotal: number,
 ): Promise<void> {
   try {
     const scanLogs = await createUserLogs(
@@ -95,7 +108,7 @@ async function announce(
     );
 
     await updateScan(client, scanId, {
-      status: statusAfterSubmit(confirmed, confirmed + unconfirmed.length),
+      status: statusAfterSubmit(confirmed, intendedTotal),
       scanLogs,
       notifyUser: true,
     });
@@ -150,10 +163,10 @@ export async function submitDraft({
   // server holds rather than creating a second study.
   if (state.scanId) {
     const scan = await getScanById(client, 'my', state.scanId);
-    const fileIds = new Map(scan.files.map((file) => [file.filename, file.id]));
+    const reconciled = await reconcileScanFiles(client, state.scanId, state.draftId, scan, ready);
 
-    const confirmation = await confirmFiles(client, state.scanId, ready, fileIds);
-    const review = await requestReview(client, state.scanId, state);
+    const confirmation = await confirmFiles(client, state.scanId, ready, reconciled.fileIds);
+    const review = await requestReview(client, state.scanId, state, scan.tags);
     await announce(
       client,
       state.scanId,
@@ -162,22 +175,33 @@ export async function submitDraft({
       userId,
       confirmation.confirmed,
       confirmation.unconfirmed.map((file) => file.name),
+      // The study's own total AFTER reconciliation, not this attempt's ready
+      // count and not the total it was created with: both routes above move
+      // `fileTotal`, and the decision to destroy this draft hangs on it.
+      reconciled.fileTotal,
     );
 
     return {
       scanId: state.scanId,
       scanTitle: scan.title,
       filesConfirmed: confirmation.confirmed,
-      filesTotal: ready.length,
+      filesTotal: reconciled.fileTotal,
       unconfirmed: confirmation.unconfirmed,
       expertReview: review.status,
       expertReviewError: review.error,
     };
   }
 
+  // Every file the learner still intends for this study — including one
+  // that never reached storage at all, so `files` (below) has nothing to
+  // register for it. Sending `ready.length` here was the bug: a study short
+  // a file recorded a `fileTotal` equal to what actually landed, so nothing
+  // — not the server, not this app — could tell the submit was short.
+  const intendedTotal = countTracked(state.files);
+
   const payload: CreateScanPayload = {
     scanTypeId: state.scanTypeId,
-    fileTotal: files.length,
+    fileTotal: intendedTotal,
     findings: toFindingsPayload(state.findings),
     note: state.note || undefined,
     scanIdentifier: state.scanIdentifier || undefined,
@@ -195,7 +219,7 @@ export async function submitDraft({
   const fileIds = new Map(created.files.map((file) => [file.filename, file.id]));
 
   const confirmation = await confirmFiles(client, created.id, ready, fileIds);
-  const review = await requestReview(client, created.id, state);
+  const review = await requestReview(client, created.id, state, created.tags);
   await announce(
     client,
     created.id,
@@ -204,17 +228,93 @@ export async function submitDraft({
     userId,
     confirmation.confirmed,
     confirmation.unconfirmed.map((file) => file.name),
+    intendedTotal,
   );
 
   return {
     scanId: created.id,
     scanTitle: created.title,
     filesConfirmed: confirmation.confirmed,
-    filesTotal: ready.length,
+    filesTotal: intendedTotal,
     unconfirmed: confirmation.unconfirmed,
     expertReview: review.status,
     expertReviewError: review.error,
   };
+}
+
+/**
+ * Make the scan's File records describe the bytes THIS attempt actually
+ * uploaded, and hand back the ids to confirm.
+ *
+ * A record is identified by `filepath`, not by filename. Filename is what the
+ * first version matched on, and it is wrong on exactly the path that matters:
+ * after a study is reset for re-upload it still holds a record per file of the
+ * failed attempt, under that attempt's key. Matching by name finds one of
+ * those, and confirming it makes the server verify a path nothing was ever
+ * written to — `updateFileById` checks `objectExists(file.filepath)` and 400s.
+ * Every file then reports "uploaded but not attached" and the recovery cannot
+ * finish. Matching by key asks the only question that matters: does a record
+ * already point at these bytes?
+ *
+ *   points at our bytes          confirm it, nothing else to do
+ *   points elsewhere, not landed drop it — its object was never written
+ *   points elsewhere, landed     leave it; it is a file the learner still has
+ *   no record at all             register it with add-files
+ *
+ * "Not landed" means the record says so: `pending` or `failed`, and nothing
+ * else. A file with NO status is a legacy upload that did arrive — `status`
+ * was added in Feb 2026 and more than half the File documents in production
+ * predate it — which is the same rule the server applies when it decides
+ * whether a scan holds what it declared (`scan-completeness.ts`). Reading
+ * absence as "not landed" here would hard-delete the records of files the
+ * learner still has.
+ *
+ * Nothing here runs on the ordinary resume of a failed confirmation: those
+ * records were stored verbatim by `create` and already point at the right
+ * key, so both lists come out empty and this is one `getScanById` and no
+ * writes.
+ */
+/** The two statuses that mean the object was never written. See above. */
+const NEVER_LANDED: ReadonlySet<string> = new Set(['pending', 'failed']);
+
+async function reconcileScanFiles(
+  client: ApiClient,
+  scanId: string,
+  draftId: string,
+  scan: Scan,
+  ready: DraftFile[],
+): Promise<{ fileIds: Map<string, string>; fileTotal: number }> {
+  const ourKeys = new Set(ready.map((file) => file.storageKey));
+
+  const matched = scan.files.filter((record) => ourKeys.has(record.filepath));
+  const orphaned = scan.files.filter(
+    (record) => !ourKeys.has(record.filepath) && NEVER_LANDED.has(record.status ?? ''),
+  );
+
+  const fileIds = new Map(matched.map((record) => [record.filename, record.id]));
+  let fileTotal = scan.fileTotal;
+
+  if (orphaned.length > 0) {
+    const after = await deleteScanFiles(
+      client,
+      scanId,
+      orphaned.map((record) => record.id),
+    );
+    fileTotal = after.fileTotal;
+  }
+
+  const unregistered = ready.filter((file) => !fileIds.has(file.name));
+  if (unregistered.length > 0) {
+    const after = await addScanFiles(
+      client,
+      scanId,
+      unregistered.map((file) => toFilePayload(draftId, file)),
+    );
+    fileTotal = after.fileTotal;
+    for (const record of after.files) fileIds.set(record.filename, record.id);
+  }
+
+  return { fileIds, fileTotal };
 }
 
 /**
@@ -269,12 +369,23 @@ async function confirmFiles(
   return { confirmed, unconfirmed };
 }
 
+/**
+ * @param existingTags the scan's current tags. On a resumed submit this is
+ *   the record of what a previous, partially-failed attempt already did —
+ *   `POST /api/scan-review/request-expert` tags the scan on success, and
+ *   without this check a resume would spend a SECOND credit re-issuing a
+ *   request that already succeeded, with nothing telling the learner so.
+ */
 async function requestReview(
   client: ApiClient,
   scanId: string,
   state: DraftState,
+  existingTags: readonly string[] = [],
 ): Promise<{ status: SubmitOutcome['expertReview']; error: string | null }> {
   if (!state.expertReview) return { status: 'not-requested', error: null };
+  if (existingTags.some((tag) => tag.trim().toLowerCase() === EXPERT_REVIEW_TAG)) {
+    return { status: 'requested', error: null };
+  }
 
   try {
     await requestExpertScanReview(client, {

@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { displayTags, isMissingFiles } from './scan-tags';
+import {
+  COMPLETE_TAG,
+  completionTagMutation,
+  displayTags,
+  INCOMPLETE_TAG,
+  isMissingFiles,
+} from './scan-tags';
 
 describe('displayTags', () => {
   it('labels the tags worth showing', () => {
@@ -57,5 +63,60 @@ describe('isMissingFiles', () => {
 
   it('is false when more files arrived than were declared', () => {
     expect(isMissingFiles(4, 3)).toBe(false);
+  });
+});
+
+describe('completionTagMutation', () => {
+  it('adds complete on an untagged scan and removes nothing', () => {
+    expect(completionTagMutation([], COMPLETE_TAG)).toEqual({ add: COMPLETE_TAG, remove: null });
+  });
+
+  it('marking complete removes an existing incomplete tag — the server does not', () => {
+    // scanService.addTag uses $push, not $addToSet or a replace, so the two
+    // tags coexisting is exactly what the audit found: the client is the only
+    // thing enforcing mutual exclusion.
+    expect(completionTagMutation([INCOMPLETE_TAG], COMPLETE_TAG)).toEqual({
+      add: COMPLETE_TAG,
+      remove: INCOMPLETE_TAG,
+    });
+  });
+
+  it('marking incomplete removes an existing complete tag', () => {
+    expect(completionTagMutation([COMPLETE_TAG], INCOMPLETE_TAG)).toEqual({
+      add: INCOMPLETE_TAG,
+      remove: COMPLETE_TAG,
+    });
+  });
+
+  it('does not re-add a tag the scan already carries, avoiding a duplicate $push', () => {
+    expect(completionTagMutation([COMPLETE_TAG], COMPLETE_TAG)).toEqual({
+      add: null,
+      remove: null,
+    });
+  });
+
+  it('leaves unrelated tags alone', () => {
+    expect(completionTagMutation(['dicom', INCOMPLETE_TAG], COMPLETE_TAG)).toEqual({
+      add: COMPLETE_TAG,
+      remove: INCOMPLETE_TAG,
+    });
+  });
+
+  it('normalises case, matching how the server stores tags', () => {
+    expect(completionTagMutation(['INCOMPLETE'], COMPLETE_TAG)).toEqual({
+      add: COMPLETE_TAG,
+      remove: INCOMPLETE_TAG,
+    });
+  });
+
+  it('handles a scan with no tags at all', () => {
+    expect(completionTagMutation(null, INCOMPLETE_TAG)).toEqual({
+      add: INCOMPLETE_TAG,
+      remove: null,
+    });
+    expect(completionTagMutation(undefined, INCOMPLETE_TAG)).toEqual({
+      add: INCOMPLETE_TAG,
+      remove: null,
+    });
   });
 });

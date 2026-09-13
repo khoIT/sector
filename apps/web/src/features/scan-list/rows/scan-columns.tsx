@@ -179,6 +179,8 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
             scanTitle={scan.title}
             files={scan.files}
             ownerId={scan.user.id}
+            status={scan.status}
+            tags={scan.tags}
             view={view}
             user={user}
             to={to}

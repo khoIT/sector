@@ -7,6 +7,7 @@ import {
   type MultipartSession,
 } from '@sector/api-client';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
   clearDraftFiles,
@@ -19,7 +20,13 @@ import { DEFAULT_CREATE_SCAN_FLOW, stepForFlow, type CreateScanFlow } from './cr
 import { mintDraftId } from './draft-id';
 import { useAuth } from '@/auth/auth-context';
 
-import { clearDraft, readDraft, restoreFiles, writeDraft } from './draft-storage';
+import {
+  clearDraft,
+  draftExpiredThisLoad,
+  readDraft,
+  restoreFiles,
+  writeDraft,
+} from './draft-storage';
 import { draftHoldings } from './draft-holdings';
 import type {
   DraftFile,
@@ -29,6 +36,14 @@ import type {
   ValidationFailure,
   WizardStep,
 } from './draft-types';
+import { isFullySubmitted } from './submit-outcome';
+import { trackedBytes } from './file-counts';
+import {
+  exceedsFileLimit,
+  formatMegabytes,
+  MAX_STUDY_BYTES,
+  wouldExceedStudyLimit,
+} from './upload-limits';
 import { blocksMediaUpload, validateMediaFile } from './validate-media-file';
 
 /**
@@ -65,7 +80,16 @@ function emptyDraft(draftId: string, flow: CreateScanFlow): DraftState {
   };
 }
 
-const VALIDATION_MESSAGE: Record<ValidationFailure['reason'], (name: string) => string> = {
+/**
+ * Pre-existing, hard-coded English. Not part of this pass's i18n obligation
+ * (create-scan's blanket extraction is separate, later work) — but the two
+ * NEW reasons below (the size caps) are new strings, so they are routed
+ * through `t()` in `validationMessage` instead of living here.
+ */
+const VALIDATION_MESSAGE: Record<
+  Exclude<ValidationFailure['reason'], 'file-too-large' | 'study-too-large'>,
+  (name: string) => string
+> = {
   corrupted: (name) => `"${name}" is not a readable image or video. Re-export it and add it again.`,
   'invalid-type': (name) =>
     `"${name}" is not a supported format. Add a JPEG, PNG, GIF, WebP, BMP, SVG, MP4, MOV, WebM, AVI or MKV file.`,
@@ -102,8 +126,13 @@ export type UseCreateScanDraft = ReturnType<typeof useCreateScanDraft>;
 export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FLOW) {
   const client = useApiClient();
   const userId = useAuth().user?.id;
+  const { t } = useTranslation();
 
   const [restoredDraft] = useState(() => readDraft());
+  // Read after `readDraft`, which is what sets it. A draft that aged out took
+  // the only route back to any study it had already created with it, so the
+  // learner is told rather than left to find an untouchable `pending` scan.
+  const [draftExpired] = useState(() => draftExpiredThisLoad());
   const [state, setState] = useState<DraftState>(() => {
     if (!restoredDraft) return emptyDraft(mintDraftId(), flow);
     return {
@@ -129,6 +158,14 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
 
   const [validationFailures, setValidationFailures] = useState<ValidationFailure[]>([]);
   const wasRestored = restoredDraft !== null;
+
+  // Set the first time a file's bytes fail to reach IndexedDB — a private
+  // window, or a full quota — and never cleared again this session: once one
+  // file's bytes are unprotected, the draft as a whole can no longer promise
+  // to survive a reload, even if a later file's write happens to succeed.
+  // The wizard keeps working from memory either way; this is only about what
+  // the learner is told a reload will do to it.
+  const [blobStorageDegraded, setBlobStorageDegraded] = useState(false);
 
   // Persist on every change. Cheap (a manifest, not bytes) and it means the
   // draft survives a crash, not just a deliberate navigation.
@@ -220,6 +257,10 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
   filesRef.current = state.files;
   const draftIdRef = useRef(state.draftId);
   draftIdRef.current = state.draftId;
+  // The scan this draft is already writing into, once one exists — a submit
+  // that landed short, or a study reset for re-upload. See `uploadPrefixId`.
+  const scanIdRef = useRef(state.scanId);
+  scanIdRef.current = state.scanId;
   const runningRef = useRef(false);
 
   const patchFile = useCallback((id: string, patch: Partial<DraftFile>) => {
@@ -242,16 +283,28 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
       patchFile(file.id, { status: 'uploading', progress: 0, error: null });
 
       try {
-        // The draft id is only a valid ObjectId, not a real scan: the presign
-        // and init routes check the format and never look it up. That is what
-        // lets the transfer start before the study exists.
+        // Where the bytes go: the real scan id once this draft has one, and
+        // the draft id before that.
+        //
+        // The presign builds `storage/{userId}/scan/{scanId}/{key}` from
+        // whatever id it is handed, and never looks it up — the draft id is a
+        // valid ObjectId and that is all the route checks, which is what lets
+        // a transfer start before the study exists. But `create` is the only
+        // route that stores a filepath verbatim: `add-files`, the only way to
+        // attach media afterwards, REBUILDS the key around the scan id. So a
+        // file uploaded under the draft prefix after the scan row already
+        // exists can never be attached to it, and every recovery path — a
+        // short submit retried, a study reset for re-upload — is made of
+        // exactly those files. Uploading under the scan's own prefix once it
+        // is known is what makes them attachable.
         //
         // A fresh key is minted per attempt; a resumed multipart upload ignores
         // it and keeps writing to the object its session already opened.
+        const uploadPrefixId = scanIdRef.current ?? draftIdRef.current;
         const stored = await uploadScanObject(
           client,
           {
-            scanId: draftIdRef.current,
+            scanId: uploadPrefixId,
             key: nextFilekey(file.name),
             blob,
             contentType: blob.type,
@@ -282,6 +335,10 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
       } catch (error) {
         if (isAbortError(error)) {
           patchFile(file.id, { status: 'cancelled', progress: 0 });
+          // A cancelled file is not part of the study any more (see
+          // countTracked), so its blob has nothing left to do in storage —
+          // left there, it would sit for the rest of the session.
+          void dropDraftFile(draftIdRef.current, file.id);
           return;
         }
 
@@ -350,58 +407,106 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
 
   // ─── file actions ──────────────────────────────────────────────────────────
 
-  const addFiles = useCallback(async (incoming: File[]) => {
-    if (incoming.length === 0) return;
+  const addFiles = useCallback(
+    async (incoming: File[]) => {
+      if (incoming.length === 0) return;
 
-    const failures: ValidationFailure[] = [];
-    const existingNames = new Set(
-      filesRef.current
-        .filter((file) => file.status !== 'rejected' && file.status !== 'cancelled')
-        .map((file) => file.name),
-    );
+      const failures: ValidationFailure[] = [];
+      const existingNames = new Set(
+        filesRef.current
+          .filter((file) => file.status !== 'rejected' && file.status !== 'cancelled')
+          .map((file) => file.name),
+      );
+      // Running total of what the study already holds, kept alongside
+      // `existingNames` for the same reason: state has not re-rendered yet, so
+      // `filesRef.current` would not see a file this same batch just accepted.
+      let runningBytes = trackedBytes(filesRef.current);
 
-    // Each file is added to state the instant IT validates, not after the
-    // whole batch does: the first clip starts transferring while the rest
-    // are still being probed, which is the entire point of the flow.
-    for (const file of incoming) {
-      // PATCH /api/scan/:id/file-details/status matches an entry by FILENAME,
-      // so two files with the same name in one study cannot be told apart.
-      if (existingNames.has(file.name)) {
-        failures.push({ name: file.name, reason: 'duplicate-name' });
-        continue;
+      // Phase 1, synchronous and in selection order: duplicate names and the
+      // size caps need no I/O, and the study-cap math needs a stable order —
+      // deciding it inside the concurrent phase below would make which file
+      // "wins" a shared byte budget depend on which one happened to validate
+      // first.
+      const pending: Array<{ id: string; file: File }> = [];
+      for (const file of incoming) {
+        // PATCH /api/scan/:id/file-details/status matches an entry by FILENAME,
+        // so two files with the same name in one study cannot be told apart.
+        if (existingNames.has(file.name)) {
+          failures.push({ name: file.name, reason: 'duplicate-name' });
+          continue;
+        }
+        if (exceedsFileLimit(file.size)) {
+          failures.push({ name: file.name, reason: 'file-too-large' });
+          continue;
+        }
+        if (wouldExceedStudyLimit(runningBytes, file.size)) {
+          failures.push({ name: file.name, reason: 'study-too-large' });
+          continue;
+        }
+
+        existingNames.add(file.name);
+        runningBytes += file.size;
+        pending.push({ id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`, file });
       }
-      existingNames.add(file.name);
 
-      const result = await validateMediaFile(file);
-
-      if (blocksMediaUpload(result)) {
-        failures.push({ name: file.name, reason: result.reason });
-        continue;
+      // Phase 2: every file that passed the cheap checks appears immediately,
+      // as `validating` — a learner picking five clips used to see nothing
+      // until the FIRST one's decode probe finished, which can take up to a
+      // minute on a large file; now every row shows up at once.
+      if (pending.length > 0) {
+        setState((previous) => ({
+          ...previous,
+          files: [
+            ...previous.files,
+            ...pending.map(({ id, file }): DraftFile => ({
+              id,
+              name: file.name,
+              size: file.size,
+              type: file.type,
+              status: 'validating',
+              progress: 0,
+              storageKey: null,
+              confidence: null,
+              error: null,
+              blob: file,
+            })),
+          ],
+        }));
       }
 
-      const accepted: DraftFile = {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        status: 'queued',
-        progress: 0,
-        storageKey: null,
-        // A structure-only file is a real scan the browser cannot decode.
-        // It uploads exactly like any other; the badge only sets expectations.
-        confidence: result.ok ? result.confidence : null,
-        error: null,
-        blob: file,
-      };
+      // Phase 3: the decode probe itself runs for every file AT ONCE rather
+      // than one at a time, so five clips take as long as the slowest one to
+      // validate rather than the sum of all five.
+      await Promise.all(
+        pending.map(async ({ id, file }) => {
+          const result = await validateMediaFile(file);
 
-      setState((previous) => ({ ...previous, files: [...previous.files, accepted] }));
-      // Durable from the moment it is accepted, so a reload two seconds later
-      // still has the bytes. Dropped again as soon as the upload completes.
-      void putDraftFile(draftIdRef.current, accepted.id, file);
-    }
+          if (blocksMediaUpload(result)) {
+            failures.push({ name: file.name, reason: result.reason });
+            setState((previous) => ({
+              ...previous,
+              files: previous.files.filter((entry) => entry.id !== id),
+            }));
+            return;
+          }
 
-    setValidationFailures(failures);
-  }, []);
+          patchFile(id, {
+            status: 'queued',
+            // A structure-only file is a real scan the browser cannot decode.
+            // It uploads exactly like any other; the badge only sets expectations.
+            confidence: result.ok ? result.confidence : null,
+          });
+          // Durable from the moment it is accepted, so a reload two seconds
+          // later still has the bytes. Dropped again once the upload completes.
+          const stored = await putDraftFile(draftIdRef.current, id, file);
+          if (!stored) setBlobStorageDegraded(true);
+        }),
+      );
+
+      setValidationFailures(failures);
+    },
+    [patchFile],
+  );
 
   const cancelFile = useCallback((id: string) => {
     controllersRef.current.get(id)?.abort();
@@ -411,12 +516,22 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
     for (const controller of controllersRef.current.values()) controller.abort();
     // A queued file has no controller yet, so aborting alone would leave it to
     // start the moment a slot frees up — the opposite of what Cancel all means.
+    const cancelledQueuedIds = filesRef.current
+      .filter((file) => file.status === 'queued')
+      .map((file) => file.id);
+
     setState((previous) => ({
       ...previous,
       files: previous.files.map((file) =>
         file.status === 'queued' ? { ...file, status: 'cancelled' as const, progress: 0 } : file,
       ),
     }));
+
+    // A cancelled file is not part of the study (see countTracked), so its
+    // blob has nothing left to do in IndexedDB — left there, it would sit
+    // for the rest of the session. A file already transferring is cleaned up
+    // where its status actually flips to `cancelled`, inside `transfer()`.
+    for (const id of cancelledQueuedIds) void dropDraftFile(draftIdRef.current, id);
   }, []);
 
   const retryFile = useCallback((id: string) => {
@@ -441,22 +556,80 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
     // upload itself is left for the bucket's incomplete-upload lifecycle
     // rule: the legacy API exposes no abort-multipart route to call.
     sessionsRef.current.delete(id);
+    // Its blob has nothing left to do in IndexedDB either — left behind, it
+    // would sit there for the rest of the session with nothing pointing at it.
+    void dropDraftFile(draftIdRef.current, id);
     setState((previous) => ({
       ...previous,
       files: previous.files.filter((file) => file.id !== id),
     }));
   }, []);
 
-  /** Re-attach bytes to an entry restored from a saved draft. */
-  const reattachFile = useCallback((id: string, blob: File) => {
+  /**
+   * Re-attach bytes to an entry restored from a saved draft.
+   *
+   * "Choose again" used to accept whatever was picked with no check at all,
+   * and submitted it under the OLD entry's name, size and MIME type — so a
+   * learner who picked a different file by mistake had it silently relabelled
+   * as the one the draft still remembered. This runs the same validation and
+   * duplicate-name check a first pick gets, and records the file actually
+   * chosen rather than the one it is replacing.
+   */
+  const reattachFile = useCallback(async (id: string, blob: File) => {
+    const existingNames = new Set(
+      filesRef.current
+        .filter(
+          (file) => file.id !== id && file.status !== 'rejected' && file.status !== 'cancelled',
+        )
+        .map((file) => file.name),
+    );
+
+    if (existingNames.has(blob.name)) {
+      setValidationFailures([{ name: blob.name, reason: 'duplicate-name' }]);
+      return;
+    }
+
+    if (exceedsFileLimit(blob.size)) {
+      setValidationFailures([{ name: blob.name, reason: 'file-too-large' }]);
+      return;
+    }
+
+    // The entry being replaced is excluded from the running total: its old
+    // size is leaving the study along with its old bytes.
+    const otherTrackedBytes = trackedBytes(filesRef.current.filter((file) => file.id !== id));
+    if (wouldExceedStudyLimit(otherTrackedBytes, blob.size)) {
+      setValidationFailures([{ name: blob.name, reason: 'study-too-large' }]);
+      return;
+    }
+
+    const result = await validateMediaFile(blob);
+    if (blocksMediaUpload(result)) {
+      setValidationFailures([{ name: blob.name, reason: result.reason }]);
+      return;
+    }
+
     setState((previous) => ({
       ...previous,
       files: previous.files.map((file) =>
         file.id === id
-          ? { ...file, blob, status: 'queued' as const, progress: 0, error: null }
+          ? {
+              ...file,
+              name: blob.name,
+              size: blob.size,
+              type: blob.type,
+              blob,
+              status: 'queued' as const,
+              progress: 0,
+              storageKey: null,
+              confidence: result.ok ? result.confidence : null,
+              error: null,
+            }
           : file,
       ),
     }));
+
+    const stored = await putDraftFile(draftIdRef.current, id, blob);
+    if (!stored) setBlobStorageDegraded(true);
   }, []);
 
   // ─── form actions ──────────────────────────────────────────────────────────
@@ -470,10 +643,25 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
   }, []);
 
   const finish = useCallback((outcome: SubmitOutcome) => {
-    setState((previous) => ({ ...previous, step: 'submitted', submitOutcome: outcome }));
-    // The scan now exists server-side, so the draft has nothing left to resume.
-    clearDraft();
-    void clearDraftFiles(draftIdRef.current);
+    setState((previous) => ({
+      ...previous,
+      step: 'submitted',
+      submitOutcome: outcome,
+      scanId: outcome.scanId ?? previous.scanId,
+    }));
+
+    // Only a fully-landed submit has nothing left to resume. A short one —
+    // a file that never reached storage, a confirmation that failed after
+    // the scan row was already created — leaves real work outstanding, and
+    // the draft plus its blobs are the ONLY way back to finishing it: the
+    // scan id is already on the receipt, and a later retry resumes against
+    // it rather than creating a second study. Destroying them here
+    // regardless of the outcome is what used to strand a short submit in
+    // `pending` forever with no draft left to retry from.
+    if (isFullySubmitted(outcome)) {
+      clearDraft();
+      void clearDraftFiles(draftIdRef.current);
+    }
   }, []);
 
   const reset = useCallback(() => {
@@ -484,6 +672,22 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
     setState(emptyDraft(mintDraftId(), flow));
   }, [cancelAll, flow]);
 
+  /**
+   * Leave the receipt and go back to finishing a submit that landed short.
+   *
+   * Only reachable when `finish()` kept the draft — i.e. the receipt itself
+   * is short a file. The scan id is still on `state.scanId`, so the next
+   * submit takes `submitDraft`'s resume branch and confirms against the SAME
+   * scan rather than creating a second one.
+   */
+  const resumeSubmit = useCallback(() => {
+    setState((previous) => ({
+      ...previous,
+      step: stepForFlow('submit', flow),
+      submitOutcome: null,
+    }));
+  }, [flow]);
+
   const dismissValidationFailures = useCallback(() => setValidationFailures([]), []);
 
   return {
@@ -491,6 +695,8 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
     wasRestored,
     validationFailures,
     dismissValidationFailures,
+    blobStorageDegraded,
+    draftExpired,
     addFiles,
     cancelFile,
     cancelAll,
@@ -500,8 +706,25 @@ export function useCreateScanDraft(flow: CreateScanFlow = DEFAULT_CREATE_SCAN_FL
     update,
     goToStep,
     finish,
+    resumeSubmit,
     reset,
-    validationMessage: (failure: ValidationFailure) =>
-      VALIDATION_MESSAGE[failure.reason](failure.name),
+    validationMessage: (failure: ValidationFailure) => {
+      const limit = formatMegabytes(MAX_STUDY_BYTES);
+      if (failure.reason === 'file-too-large') {
+        return t('createScan.validationFileTooLarge', { name: failure.name, limit });
+      }
+      if (failure.reason === 'study-too-large') {
+        return t('createScan.validationStudyTooLarge', { name: failure.name, limit });
+      }
+      return VALIDATION_MESSAGE[failure.reason](failure.name);
+    },
+    storageDegradedMessage: {
+      title: t('createScan.storageDegradedTitle'),
+      body: t('createScan.storageDegradedBody'),
+    },
+    draftExpiredMessage: {
+      title: t('createScan.draftExpiredTitle'),
+      body: t('createScan.draftExpiredBody'),
+    },
   };
 }

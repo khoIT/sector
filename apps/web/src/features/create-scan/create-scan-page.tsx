@@ -1,7 +1,9 @@
+import { useScan } from '@sector/api-client';
 import { Button } from '@sector/ui';
 import { Trash2 } from 'lucide-react';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { SCAN_VAULT_PATH } from '@/features/scan-list/scan-list-views';
 
@@ -12,6 +14,7 @@ import { WizardStepper } from './components/wizard-stepper';
 import { canEnterClassicStep } from './model/classic-steps';
 import { draftHoldings } from './model/draft-holdings';
 import { readCreateScanFlow } from './model/create-scan-flow';
+import { isFullySubmitted } from './model/submit-outcome';
 import { useCreateScanDraft } from './model/use-create-scan-draft';
 import { ClassicSteps } from './steps/classic-steps';
 import { StepSubmitted } from './steps/step-submitted';
@@ -48,6 +51,7 @@ import { StudySurface } from './steps/study-surface';
  * State, transfers and persistence are all in model/use-create-scan-draft.ts.
  */
 export function CreateScanPage() {
+  const { t } = useTranslation();
   const [flow] = useState(() => readCreateScanFlow(globalThis.localStorage));
   const draft = useCreateScanDraft(flow);
   const { state } = draft;
@@ -60,6 +64,56 @@ export function CreateScanPage() {
   // six findings and a note but no file yet is exactly the draft a learner
   // most wants to throw away, and the control used to be hidden for it.
   const holdings = draftHoldings(state);
+
+  // ─── entering from "Reset for re-upload" ──────────────────────────────────
+  //
+  // The row action resets the scan server-side (status -> pending, fileCount
+  // -> 0) and lands here with `?resetScanId=`. What this page needs is a FRESH
+  // draft carrying that scan id and its scan type; submitDraft's resume branch
+  // then reconciles the scan's File records against the re-uploaded keys.
+  //
+  // Seeding REPLACES whatever draft is open, and there is only one draft slot,
+  // so arriving here can destroy a study in progress — files included. That is
+  // the same irreversible loss "Discard draft" is guarded for, reached by a
+  // different door, so it goes through the same confirm rather than happening
+  // on navigation.
+  const [searchParams] = useSearchParams();
+  const resetScanId = searchParams.get('resetScanId');
+  const resetScan = useScan({
+    view: 'my',
+    scanId: resetScanId ?? undefined,
+    enabled: Boolean(resetScanId),
+  });
+  const seededResetId = useRef<string | null>(null);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+
+  const seedFromReset = useCallback(() => {
+    if (!resetScanId || !resetScan.data) return;
+    seededResetId.current = resetScanId;
+    draft.reset();
+    draft.update({
+      scanId: resetScanId,
+      scanTypeId: resetScan.data.scanType.id,
+      scanTypeName: resetScan.data.scanType.name,
+      organizationId: resetScan.data.scanType.organization?.id ?? null,
+    });
+    // draft.reset / draft.update are stable (useCallback with fixed deps);
+    // `draft` itself is a fresh object every render and must not be a dep.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetScanId, resetScan.data, draft.reset, draft.update]);
+
+  useEffect(() => {
+    if (!resetScanId || !resetScan.data) return;
+    if (state.scanId === resetScanId) return;
+    if (seededResetId.current === resetScanId) return;
+
+    // An empty draft has nothing to lose, so it is seeded straight away.
+    if (holdings.length === 0) {
+      seedFromReset();
+      return;
+    }
+    setResetConfirmOpen(true);
+  }, [resetScanId, resetScan.data, state.scanId, holdings.length, seedFromReset]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -122,6 +176,24 @@ export function CreateScanPage() {
         </InlineNotice>
       ) : null}
 
+      {!submitted && draft.draftExpired ? (
+        <InlineNotice tone="warn" title={draft.draftExpiredMessage.title}>
+          {draft.draftExpiredMessage.body}
+        </InlineNotice>
+      ) : null}
+
+      {!submitted && draft.blobStorageDegraded ? (
+        <InlineNotice tone="warn" title={draft.storageDegradedMessage.title}>
+          {draft.storageDegradedMessage.body}
+        </InlineNotice>
+      ) : null}
+
+      {!submitted && resetScanId && state.scanId === resetScanId ? (
+        <InlineNotice tone="info" title={t('createScan.resumingResetTitle')}>
+          {t('createScan.resumingResetBody', { title: resetScan.data?.title ?? 'This study' })}
+        </InlineNotice>
+      ) : null}
+
       <DiscardDraftDialog
         open={discardOpen}
         onOpenChange={setDiscardOpen}
@@ -129,8 +201,27 @@ export function CreateScanPage() {
         onConfirm={draft.reset}
       />
 
+      {/* Same dialog, same holdings, same irreversibility — the only
+          difference is that confirming here hands the emptied draft to the
+          study being recovered instead of leaving it blank. Declining leaves
+          the open draft exactly as it was; the reset itself already happened
+          server-side, so the study stays recoverable from My Scans. */}
+      <DiscardDraftDialog
+        open={resetConfirmOpen}
+        onOpenChange={setResetConfirmOpen}
+        holdings={holdings}
+        onConfirm={seedFromReset}
+      />
+
       {submitted && state.submitOutcome ? (
-        <StepSubmitted outcome={state.submitOutcome} onCreateAnother={draft.reset} />
+        <StepSubmitted
+          outcome={state.submitOutcome}
+          onCreateAnother={draft.reset}
+          // Only offered when the submit landed short: a fully-confirmed
+          // study has nothing left to retry, and the draft that would back
+          // a retry has already been cleared by `finish()`.
+          onTryAgain={isFullySubmitted(state.submitOutcome) ? undefined : draft.resumeSubmit}
+        />
       ) : classic ? (
         <ClassicSteps draft={draft} onSubmitted={draft.finish} />
       ) : (

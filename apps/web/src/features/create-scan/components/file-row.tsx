@@ -32,7 +32,8 @@ export type FileRowProps = {
   onCancel: (id: string) => void;
   onRetry: (id: string) => void;
   onRemove: (id: string) => void;
-  onReattach: (id: string, blob: File) => void;
+  /** Async: it revalidates the picked file before accepting it. */
+  onReattach: (id: string, blob: File) => void | Promise<void>;
 };
 
 export function FileRow({ file, onCancel, onRetry, onRemove, onReattach }: FileRowProps) {
@@ -88,7 +89,7 @@ export function FileRow({ file, onCancel, onRetry, onRemove, onReattach }: FileR
                 className="hidden"
                 onChange={(event) => {
                   const picked = event.target.files?.[0];
-                  if (picked) onReattach(file.id, picked);
+                  if (picked) void onReattach(file.id, picked);
                   event.target.value = '';
                 }}
               />

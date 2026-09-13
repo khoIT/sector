@@ -550,6 +550,8 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   createScanPayloadSchema: 'request body of POST /api/scan/create',
   scanFileRecordSchema:
     'response of POST /api/scan/:id/add-files, a subset of the File document proved by the files entry',
+  scanFilesMutationResponseSchema:
+    'response of POST /api/scan/:id/add-files and DELETE /api/scan/:id/files — a counter plus the File records above, both proved by the scans and files entries',
   createScanResponseSchema: 'response of POST /api/scan/create — a scan proved by the scans entry',
   fileDetailsStatusPayloadSchema: 'request body of PATCH /api/scan/:id/file-details/status',
   fileDetailsStatusResponseSchema: 'response of PATCH /api/scan/:id/file-details/status',
@@ -634,4 +636,5 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   courseOutlineItemSchema: 'one resolved item; see courseOutlineSchema',
   courseOutlineSchema:
     'the resolved outline has no single source collection — see the doc comment in schemas/course-outline.ts',
+  scanTagPayloadSchema: 'request body of POST/DELETE /api/scan/:id/tags',
 };

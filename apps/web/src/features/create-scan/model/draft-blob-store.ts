@@ -261,13 +261,22 @@ async function withStore<T>(
   return runOnStore(mode, run, fallback);
 }
 
-/** Keep the bytes of one unfinished file, with its transfer position. */
+/**
+ * Keep the bytes of one unfinished file, with its transfer position.
+ *
+ * Resolves `true` when the bytes are actually durable and `false` when they
+ * are not — IndexedDB unavailable (a private window) or refusing the write
+ * (a full quota). The caller needs that distinction: a session that never
+ * gets durable storage still works in memory, but a reload will not bring
+ * this file back, and the learner deserves to be told rather than to find
+ * out the hard way. See `blobStorageDegraded` in use-create-scan-draft.ts.
+ */
 export async function putDraftFile(
   draftId: string,
   fileId: string,
   blob: Blob,
   session: MultipartSession | null = null,
-): Promise<void> {
+): Promise<boolean> {
   const record: StoredDraftFile = {
     id: keyFor(draftId, fileId),
     draftId,
@@ -275,7 +284,15 @@ export async function putDraftFile(
     blob,
     session,
   };
-  await withStore('readwrite', (store) => store.put(record), undefined);
+  // `store.put` resolves to the record's key on success; the shared fallback
+  // this module uses everywhere else is `undefined`, which doubles as "it
+  // did not work" here.
+  const key = await withStore<IDBValidKey | undefined>(
+    'readwrite',
+    (store) => store.put(record),
+    undefined,
+  );
+  return key !== undefined;
 }
 
 /**

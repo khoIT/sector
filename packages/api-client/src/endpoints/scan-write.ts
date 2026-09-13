@@ -4,11 +4,14 @@ import type { ApiClient } from '../client';
 import {
   createScanResponseSchema,
   fileDetailsStatusResponseSchema,
+  scanFilesMutationResponseSchema,
 } from '../schemas/scan-payloads';
 import type {
   CreateScanPayload,
   CreateScanResponse,
   FileDetailsStatusPayload,
+  ScanFilePayload,
+  ScanFilesMutationResponse,
   UpdateFilePayload,
   UpdateScanPayload,
 } from '../schemas/scan-payloads';
@@ -52,6 +55,59 @@ export async function updateScanFileStatus(
   signal?: AbortSignal,
 ): Promise<void> {
   await client.put(`/api/file/${fileId}/update`, { body: payload, signal });
+}
+
+/**
+ * POST /api/scan/:scanId/add-files — register files on a scan that exists.
+ *
+ * The only way to attach media to a study after `create`. The server rebuilds
+ * every `filepath` as `storage/{userId}/scan/{scanId}/{sanitized trailing
+ * segment}`, so the bytes must already be under that exact prefix: presign
+ * with the scan id, not a draft id.
+ *
+ * Register as `pending`, not `completed`. Both end up attached, but only a
+ * record that is still pending when `updateScanFileStatus` confirms it
+ * increments `fileCount` — `updateFileById` guards the increment on
+ * `file.status !== completed`. Registering as completed attaches the file and
+ * leaves `fileCount` behind forever, which is what makes a recovered scan
+ * read as permanently short of its own files.
+ *
+ * Also `$inc`s `fileTotal` by the number of files added, which is why the
+ * response's `fileTotal` is read back rather than assumed.
+ */
+export async function addScanFiles(
+  client: ApiClient,
+  scanId: string,
+  files: ScanFilePayload[],
+  signal?: AbortSignal,
+): Promise<ScanFilesMutationResponse> {
+  return client.post(`/api/scan/${scanId}/add-files`, {
+    body: { files },
+    schema: scanFilesMutationResponseSchema,
+    signal,
+  });
+}
+
+/**
+ * DELETE /api/scan/:scanId/files — unlink and hard-delete File records.
+ *
+ * Deletes the File DOCUMENTS and decrements `fileTotal`; it does not touch S3.
+ * Used for exactly one thing here: dropping the records of an attempt whose
+ * bytes never landed, so a recovered scan is not left counting them. Never
+ * call it for a record whose object exists — that is a file the learner still
+ * has.
+ */
+export async function deleteScanFiles(
+  client: ApiClient,
+  scanId: string,
+  fileIds: string[],
+  signal?: AbortSignal,
+): Promise<ScanFilesMutationResponse> {
+  return client.del(`/api/scan/${scanId}/files`, {
+    body: { fileIds },
+    schema: scanFilesMutationResponseSchema,
+    signal,
+  });
 }
 
 /**

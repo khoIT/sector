@@ -1,11 +1,20 @@
 import type { ScanListView } from '@sector/api-client';
 import { isApiError, useScan } from '@sector/api-client';
 import { Button, EmptyState, Skeleton } from '@sector/ui';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/auth-context';
+import {
+  EXPERT_REVIEWABLE_STATUSES,
+  RESETTABLE_STATUSES,
+} from '@/features/scan-list/rows/scan-row-actions';
+import { useSetScanCompletionTag } from '@/features/scan-list/rows/use-scan-completion-tag';
 
+import { RequestExpertReviewDialog } from './components/request-expert-review-dialog';
+import { ResetUploadDialog } from './components/reset-upload-dialog';
 import { ScanContextPanel } from './components/scan-context-panel';
 import { ScanMediaViewer } from './components/scan-media-viewer';
 import { ScanNotesThread } from './components/scan-notes-thread';
@@ -30,7 +39,11 @@ const REVIEW_DESTINATION: Partial<Record<ScanListView, ScanListView>> = {
   expert: 'expert-reviewed',
 };
 
+/** Views where a reviewer, not the learner, is looking at the study. */
+const REVIEWER_VIEWS = new Set<ScanListView>(['pending', 'reviewed', 'expert', 'expert-reviewed']);
+
 export function ScanDetailPage({ view }: { view: ScanListView }) {
+  const { t } = useTranslation();
   const { scanId } = useParams<{ scanId: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -42,6 +55,16 @@ export function ScanDetailPage({ view }: { view: ScanListView }) {
 
   const scan = scanQuery.data;
   const isReviewQueue = REVIEW_QUEUES.has(view) && can('create:scan:review');
+  const isOwner = view === 'my' && Boolean(user) && scan?.user.id === user?.id;
+  const canEditCompletion = REVIEWER_VIEWS.has(view) && can('edit:scan');
+  const canRequestExpertReview = Boolean(scan) && EXPERT_REVIEWABLE_STATUSES.has(scan!.status);
+  // `edit:scan` is what PUT /api/scan/:id/reset-upload requires, so the
+  // control is gated on the same thing the row menu gates it on.
+  const canResetUpload = Boolean(scan) && can('edit:scan') && RESETTABLE_STATUSES.has(scan!.status);
+
+  const completionTag = useSetScanCompletionTag();
+  const [resetOpen, setResetOpen] = useState(false);
+  const [expertReviewOpen, setExpertReviewOpen] = useState(false);
 
   function handleReviewed(reviewedScanId: string) {
     const destination = REVIEW_DESTINATION[view];
@@ -58,14 +81,50 @@ export function ScanDetailPage({ view }: { view: ScanListView }) {
 
   return (
     <div className="mx-auto w-full max-w-[1600px] px-4 py-4">
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <Button variant="ghost" size="sm" asChild>
           <Link to={returnUrl}>
             <ArrowLeft className="h-4 w-4" aria-hidden />
             Back to {SCAN_VIEW_LABEL[view]}
           </Link>
         </Button>
+
+        {isOwner && scan ? (
+          <div className="flex items-center gap-2">
+            {canResetUpload ? (
+              <Button variant="secondary" size="sm" onClick={() => setResetOpen(true)}>
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden /> {t('actions.resetUpload')}
+              </Button>
+            ) : null}
+            {/* Only on a submitted study. A credit spent on one that holds no
+                files is spent, and the server's duplicate-purchase check then
+                refuses the request forever. */}
+            {canRequestExpertReview ? (
+              <Button variant="secondary" size="sm" onClick={() => setExpertReviewOpen(true)}>
+                <Sparkles className="h-3.5 w-3.5" aria-hidden /> {t('actions.requestExpertReview')}
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
       </div>
+
+      {isOwner && scan ? (
+        <>
+          <ResetUploadDialog
+            scanId={scan.id}
+            scanTitle={scan.title}
+            open={resetOpen}
+            onOpenChange={setResetOpen}
+          />
+          <RequestExpertReviewDialog
+            scanId={scan.id}
+            scanTitle={scan.title}
+            tags={scan.tags}
+            open={expertReviewOpen}
+            onOpenChange={setExpertReviewOpen}
+          />
+        </>
+      ) : null}
 
       {scanQuery.isPending ? (
         <DetailSkeleton />
@@ -115,6 +174,18 @@ export function ScanDetailPage({ view }: { view: ScanListView }) {
               clinicalNote={clinicalNoteFor(scan)}
               scanLogs={scan.scanLogs}
               logs={scan.logs}
+              canEditCompletion={canEditCompletion}
+              settingCompletion={completionTag.isPending}
+              // `setCompletion` resolves on failure and reports here, so a
+              // reviewer never sees a mark quietly do nothing.
+              completionError={
+                completionTag.error
+                  ? isApiError(completionTag.error)
+                    ? completionTag.error.message
+                    : t('scanDetail.completionTagError')
+                  : null
+              }
+              onSetCompletion={(next) => void completionTag.setCompletion(scan.id, scan.tags, next)}
             />
 
             <ScanNotesThread

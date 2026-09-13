@@ -34,7 +34,12 @@
     "createScanStudy": "Criar digitalização",
     "cancel": "Cancelar",
     "save": "Salvar",
-    "view": "Visualizar"
+    "view": "Visualizar",
+    "resetUpload": "Redefinir para novo envio",
+    "requestExpertReview": "Solicitar revisão especializada",
+    "markComplete": "Marcar como completo",
+    "markIncomplete": "Marcar como incompleto",
+    "remove": "Remover"
   },
   "status": {
     "pending": "Pendente",
@@ -379,5 +384,51 @@
         "bestPercentage": "Melhor: {{percent}}%"
       }
     }
+  },
+  "createScan": {
+    "storageDegradedTitle": "Este navegador não conseguiu salvar seu progresso",
+    "storageDegradedBody": "Os arquivos já enviados estão seguros no armazenamento, mas este rascunho não sobreviverá ao fechar ou recarregar esta aba. Mantenha-a aberta até enviar o estudo.",
+    "validationFileTooLarge": "\"{{name}}\" sozinho é maior que o limite de {{limit}} do estudo, então não pode ser adicionado.",
+    "validationStudyTooLarge": "Adicionar \"{{name}}\" faria este estudo ultrapassar o limite de {{limit}}. Remova outro arquivo primeiro, ou adicione-o a um novo estudo.",
+    "resumingResetTitle": "Retomando um estudo redefinido",
+    "resumingResetBody": "{{title}} foi redefinido para novo envio. Adicione os arquivos novamente e envie — isso os anexa ao mesmo estudo em vez de criar um novo.",
+    "submitIncompleteSubtitle": "O estudo foi criado, mas ainda não contém todos os arquivos que este rascunho previa.",
+    "submitIncompleteStatus": "Incompleto",
+    "submitIncompleteTitle": "{{confirmed}} de {{total}} arquivos anexados — o estudo não foi enviado por completo",
+    "submitIncompleteBody": "O rascunho e todos os arquivos enviados ainda estão aqui — nada foi descartado. Tente novamente para retomar este mesmo estudo, ou abra-o para ver exatamente o que chegou.",
+    "tryAgain": "Tentar novamente",
+    "creditsUsedOfTotal": "{{used}} de {{total}} usados",
+    "draftExpiredTitle": "Um rascunho guardado expirou",
+    "draftExpiredBody": "Foi removido um rascunho com mais de sete dias, juntamente com os ficheiros que ainda guardava neste navegador. Se já tinha criado um estudo, esse estudo continua em Os meus exames.",
+    "expertReviewTitle": "Revisão por especialista",
+    "expertReviewBlurb": "Opcional. Um especialista da GUSI revê o estudo além dos revisores do grupo. Um crédito por revisão.",
+    "buyCredits": "Comprar créditos",
+    "creditsLoadFailedTitle": "Não foi possível carregar os saldos de créditos",
+    "creditsLoadFailedFallback": "O pedido falhou.",
+    "creditsLoadFailedBody": "Pode submeter o estudo sem revisão por especialista e pedi-la mais tarde a partir do exame.",
+    "noCreditsTitle": "Sem créditos de revisão por especialista disponíveis",
+    "noCreditsBody": "Nem o seu saldo nem nenhum dos seus grupos tem créditos. O estudo será enviado aos seus grupos como habitualmente — a revisão por especialista pode ser pedida mais tarde, assim que houver créditos.",
+    "creditCount_one": "{{count}} crédito",
+    "creditCount_other": "{{count}} créditos",
+    "creditWillBeSpent": "Será usado um crédito de {{label}} ao submeter",
+    "creditSpentOnSubmit": "O crédito só é usado quando o estudo é submetido. Se o pedido falhar será informado, e o estudo fica guardado de qualquer forma."
+  },
+  "scanDetail": {
+    "resetUploadDialogTitle": "Redefinir “{{title}}” para novo envio?",
+    "resetUploadDialogBody": "Isso coloca o estudo de volta em Pendente e zera sua contagem de arquivos. Você será levado a Criar Estudo de Exame com este mesmo estudo aberto — adicione os arquivos novamente e envie para concluí-lo. Nada do que já foi revisado ou respondido neste estudo é afetado.",
+    "resetUploadConfirm": "Redefinir e reenviar",
+    "resetUploadPending": "Redefinindo…",
+    "resetUploadError": "Não foi possível redefinir o exame.",
+    "requestExpertReviewDialogTitle": "Solicitar revisão especializada",
+    "requestExpertReviewDialogBody": "Um especialista da GUSI revisa “{{title}}” além de qualquer revisor do grupo, por um crédito.",
+    "requestExpertReviewAlready": "Uma revisão especializada já foi solicitada para este estudo. Solicitá-la novamente gastaria um segundo crédito pela mesma revisão, por isso está desativado.",
+    "requestExpertReviewSubmit": "Solicitar revisão",
+    "requestExpertReviewPending": "Solicitando…",
+    "requestExpertReviewError": "A solicitação não foi concluída.",
+    "markComplete": "Marcar como completo",
+    "markIncomplete": "Marcar como incompleto",
+    "close": "Fechar",
+    "completionTagErrorTitle": "A marcação não foi guardada",
+    "completionTagError": "Não foi possível alterar a completude do exame. Nada foi guardado — tente novamente."
   }
 }
