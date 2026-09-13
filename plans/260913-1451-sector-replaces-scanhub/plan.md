@@ -70,12 +70,12 @@ endpoint ships in the production route table.
 | 1 | [Name, mark and the nav model](./phase-01-name-mark-and-the-nav-model.md) | 3 | — | **Done** |
 | 2 | [Real data, proven](./phase-02-real-data-proven.md) | 6 | — | **Done** |
 | 3 | [Close the lockout](./phase-03-close-the-lockout.md) | 7 | 1 | **Done** |
-| 4 | [Scan surfaces to parity](./phase-04-scan-surfaces-to-parity.md) | 16 | 2 | **In progress** (reviewed, blockers being fixed) |
-| 5 | [Foundations and question banks](./phase-05-foundations-and-question-banks.md) | 17 | 1, 2 | **In progress** (reviewed, blockers being fixed) |
+| 4 | [Scan surfaces to parity](./phase-04-scan-surfaces-to-parity.md) | 16 | 2 | **Done** |
+| 5 | [Foundations and question banks](./phase-05-foundations-and-question-banks.md) | 17 | 1, 2 | **Done** |
 | 6 | [The course read seam](./phase-06-the-course-read-seam.md) | 11 | 1, 5 | **Done** |
-| 7 | [Taking a course](./phase-07-taking-a-course.md) | 12 | 5, 6 | Pending |
-| 8 | [Group administration](./phase-08-group-administration.md) | 15 | 1 | **In progress** (index + members done; exports + forms in flight) |
-| 9 | [Assignments, gallery and Sage](./phase-09-assignments-gallery-and-sage.md) | 9 | 5, 8 | Pending |
+| 7 | [Taking a course](./phase-07-taking-a-course.md) | 12 | 5, 6 | **In progress** |
+| 8 | [Group administration](./phase-08-group-administration.md) | 15 | 1 | **Done** |
+| 9 | [Assignments, gallery and Sage](./phase-09-assignments-gallery-and-sage.md) | 9 | 5, 8 | **In progress** |
 | 10 | [The home screen](./phase-10-the-home-screen.md) | 22 | 6, 7, 8 | Pending |
 | 11 | [Cutover](./phase-11-cutover.md) | 8 | all | Pending |
 

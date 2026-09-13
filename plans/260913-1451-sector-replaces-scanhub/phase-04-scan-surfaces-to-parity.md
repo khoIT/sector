@@ -1,7 +1,7 @@
 ---
 phase: 4
 title: "Scan surfaces to parity"
-status: in-progress
+status: completed
 priority: P1
 effort: "16 days"
 dependencies: [2]

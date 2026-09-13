@@ -1,7 +1,7 @@
 ---
 phase: 9
 title: "Assignments, gallery and Sage"
-status: pending
+status: in-progress
 priority: P2
 effort: "9 days"
 dependencies: [5, 8]

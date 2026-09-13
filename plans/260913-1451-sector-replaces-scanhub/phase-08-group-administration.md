@@ -1,7 +1,7 @@
 ---
 phase: 8
 title: "Group administration"
-status: in-progress
+status: completed
 priority: P1
 effort: "15 days"
 dependencies: [1]

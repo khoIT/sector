@@ -1,7 +1,7 @@
 ---
 phase: 7
 title: "Taking a course"
-status: pending
+status: in-progress
 priority: P1
 effort: "12 days"
 dependencies: [5, 6]
