@@ -13,7 +13,7 @@ import type { AddScanReviewPayload } from '@sector/api-client';
  * storage throws in a private window and can be full or disabled.
  */
 
-const KEY_PREFIX = 'scanvault.review-draft.';
+export const REVIEW_DRAFT_KEY_PREFIX = 'sector.review-draft.';
 
 export type ReviewDraft = Pick<
   AddScanReviewPayload,
@@ -30,7 +30,7 @@ export type ReviewDraft = Pick<
 };
 
 function keyFor(scanId: string): string {
-  return `${KEY_PREFIX}${scanId}`;
+  return `${REVIEW_DRAFT_KEY_PREFIX}${scanId}`;
 }
 
 export function readReviewDraft(scanId: string): ReviewDraft | null {

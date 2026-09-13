@@ -9,10 +9,10 @@ import type { ScanVaultView } from '../scan-list-views';
  * view's default columns rather than throwing on render.
  */
 
-const KEY_PREFIX = 'scanvault.scan-list.columns.';
+export const COLUMN_VISIBILITY_KEY_PREFIX = 'sector.scan-list.columns.';
 
 function keyFor(userId: string, view: ScanVaultView): string {
-  return `${KEY_PREFIX}${userId}.${view}`;
+  return `${COLUMN_VISIBILITY_KEY_PREFIX}${userId}.${view}`;
 }
 
 export function readHiddenColumns(

@@ -11,6 +11,7 @@
 export { cn } from './lib/cn';
 
 export {
+  THEME_STORAGE_KEY,
   ThemeProvider,
   useTheme,
   type ResolvedTheme,

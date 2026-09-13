@@ -122,7 +122,7 @@ const { theme, resolvedTheme, setTheme, toggleTheme } = useTheme();
 ```
 
 `system` removes `data-theme` from `<html>` so the media query decides; an explicit
-choice stamps it. Persisted under `localStorage['scanvault.theme']`, guarded.
+choice stamps it. Persisted under `localStorage['sector.theme']`, guarded.
 
 ### Primitives
 
@@ -531,9 +531,13 @@ const {
 } = useAuth();
 ```
 
-- The session lives in `localStorage['scanvault.session']` through
+- The session lives in `localStorage['sector.session']` through
   `createSessionStore()`. **One writer.** Do not touch localStorage for auth
   yourself and do not read `localStorage['token']` (the legacy key) — it is unused.
+  The single exception is `app/storage-migration.ts`, which renames the
+  pre-Sector `scanvault.session` key once, in `main.tsx`, before the first
+  render and therefore before anything can read it. It is not a second writer
+  at runtime, and it is the only code that may ever be one.
 - On boot, if a refresh token is stored, `status` is `'restoring'` while
   `GET /api/me` runs. `RequireAuth` renders skeletons during that window, so a
   deep link does not flash the login page.

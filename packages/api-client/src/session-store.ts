@@ -10,7 +10,7 @@ import type { AuthSession } from './schemas/auth';
  * instead, and the client only ever asks this module for the token.
  */
 
-export const SESSION_STORAGE_KEY = 'scanvault.session';
+export const SESSION_STORAGE_KEY = 'sector.session';
 
 export type SessionStore = {
   read(): AuthSession | null;

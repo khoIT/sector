@@ -13,10 +13,10 @@ import type { ScanVaultView } from '../scan-list-views';
  * convenience, never state the app depends on.
  */
 
-const KEY_PREFIX = 'scanvault.scan-list.last-tab.';
+export const LAST_TAB_KEY_PREFIX = 'sector.scan-list.last-tab.';
 
 function keyFor(userId: string): string {
-  return `${KEY_PREFIX}${userId}`;
+  return `${LAST_TAB_KEY_PREFIX}${userId}`;
 }
 
 export function readLastTab(userId: string | undefined): ScanVaultView | null {

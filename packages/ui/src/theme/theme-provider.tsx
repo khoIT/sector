@@ -28,11 +28,11 @@ export type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const STORAGE_KEY = 'scanvault.theme';
+export const THEME_STORAGE_KEY = 'sector.theme';
 
 function readStoredTheme(): ThemePreference {
   try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
     if (stored === 'light' || stored === 'dark' || stored === 'system') return stored;
   } catch {
     // Private windows and blocked site data throw on access. Fall through.
@@ -81,7 +81,7 @@ export function ThemeProvider({ children, defaultTheme = 'system' }: ThemeProvid
   const setTheme = useCallback((next: ThemePreference) => {
     setThemeState(next);
     try {
-      window.localStorage.setItem(STORAGE_KEY, next);
+      window.localStorage.setItem(THEME_STORAGE_KEY, next);
     } catch {
       // Non-fatal: the theme still applies for this session.
     }

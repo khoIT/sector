@@ -118,7 +118,7 @@ describe('a database that exists without the store', () => {
     // this version by something that did not make the store would otherwise
     // leave every call here throwing and swallowing, permanently.
     await new Promise<void>((resolve) => {
-      const request = globalThis.indexedDB.open('scanvault.create-scan', 1);
+      const request = globalThis.indexedDB.open('sector.create-scan', 1);
       request.onsuccess = () => {
         request.result.close();
         resolve();

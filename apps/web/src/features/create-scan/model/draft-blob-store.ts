@@ -26,7 +26,7 @@ import type { MultipartSession } from '@sector/api-client';
  * the file again.
  */
 
-const DATABASE = 'scanvault.create-scan';
+export const DRAFT_BLOB_DATABASE = 'sector.create-scan';
 const STORE = 'draft-files';
 const VERSION = 1;
 
@@ -45,9 +45,10 @@ function open(version?: number): Promise<IDBDatabase | null> {
     let request: IDBOpenDBRequest;
     try {
       if (!globalThis.indexedDB) return resolve(null);
-      request = version === undefined
-        ? globalThis.indexedDB.open(DATABASE)
-        : globalThis.indexedDB.open(DATABASE, version);
+      request =
+        version === undefined
+          ? globalThis.indexedDB.open(DRAFT_BLOB_DATABASE)
+          : globalThis.indexedDB.open(DRAFT_BLOB_DATABASE, version);
     } catch {
       return resolve(null);
     }
@@ -98,8 +99,128 @@ function keyFor(draftId: string, fileId: string): string {
   return `${draftId}:${fileId}`;
 }
 
+/**
+ * The database this store had before the product was named Sector.
+ *
+ * IndexedDB has no rename, so a browser holding an unfinished study under the
+ * old name has to have its records copied across and the old database dropped.
+ * That cannot ride along with the app's synchronous localStorage sweep — this
+ * is asynchronous — and it must finish before anything reads the new database,
+ * or a resume would find an empty store and tell the learner their clips are
+ * gone. Gating it inside the module that owns the database is what guarantees
+ * the ordering; it runs on the first draft-file call rather than at boot, so a
+ * browser that never opens Create Scan never pays for it.
+ */
+const LEGACY_DATABASE = 'scanvault.create-scan';
+
+let legacyMigration: Promise<void> | null = null;
+
+/**
+ * Open the old database, but only if it is actually there.
+ *
+ * `open` creates whatever it cannot find, so merely looking would leave an
+ * empty `scanvault.create-scan` behind on every browser that never ran the old
+ * build — which is nearly all of them. Aborting the upgrade transaction that
+ * would have created it rolls the creation back, and the abort surfaces as an
+ * open error, so "not there" and "cannot be read" arrive as the same null.
+ */
+function openLegacyDatabase(): Promise<IDBDatabase | null> {
+  return new Promise((resolve) => {
+    let request: IDBOpenDBRequest;
+    try {
+      if (!globalThis.indexedDB) return resolve(null);
+      request = globalThis.indexedDB.open(LEGACY_DATABASE);
+    } catch {
+      return resolve(null);
+    }
+
+    request.onupgradeneeded = (event) => {
+      if (event.oldVersion === 0) request.transaction?.abort();
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => resolve(null);
+    request.onblocked = () => resolve(null);
+  });
+}
+
+/**
+ * The old records, or `null` when they could not be read at all.
+ *
+ * The difference matters: an empty store has nothing to lose and the old
+ * database can go, whereas a store that refused to open still holds the only
+ * copy of someone's bytes and must be left exactly where it is.
+ */
+function readLegacyRecords(database: IDBDatabase): Promise<StoredDraftFile[] | null> {
+  return new Promise((resolve) => {
+    let request: IDBRequest<StoredDraftFile[]>;
+    try {
+      request = database.transaction(STORE, 'readonly').objectStore(STORE).getAll();
+    } catch {
+      return resolve(null);
+    }
+
+    request.onsuccess = () => resolve(Array.isArray(request.result) ? request.result : []);
+    request.onerror = () => resolve(null);
+  });
+}
+
+function deleteLegacyDatabase(): Promise<void> {
+  return new Promise((resolve) => {
+    let request: IDBOpenDBRequest;
+    try {
+      if (!globalThis.indexedDB) return resolve();
+      request = globalThis.indexedDB.deleteDatabase(LEGACY_DATABASE);
+    } catch {
+      return resolve();
+    }
+
+    // A delete that is blocked by another tab's open connection is left for
+    // the next load: the copy has already happened, so the only cost is that
+    // the old database lingers one session longer.
+    request.onsuccess = () => resolve();
+    request.onerror = () => resolve();
+    request.onblocked = () => resolve();
+  });
+}
+
+async function copyLegacyRecords(): Promise<void> {
+  const legacy = await openLegacyDatabase();
+  if (!legacy) return;
+
+  const records = legacy.objectStoreNames.contains(STORE) ? await readLegacyRecords(legacy) : [];
+  legacy.close();
+  if (!records) return;
+
+  let arrived = 0;
+  for (const record of records) {
+    // `add` rather than `put`: a record already sitting under the new name was
+    // written after the upgrade and is the newer one, and the duplicate-key
+    // failure that protects it is the intended outcome.
+    await runOnStore('readwrite', (store) => store.add(record), undefined);
+
+    // Then count, because runOnStore swallows every failure into the same
+    // resolved fallback: that intended duplicate-key refusal is indistinguishable
+    // from a full quota, or from a new database another tab is blocking. Only
+    // the presence of the id says the bytes are safely on the other side.
+    arrived += await runOnStore('readonly', (store) => store.count(record.id), 0);
+  }
+
+  // The old database is the only other copy, so it goes only when every record
+  // is provably across. A partial copy leaves it for the next load to retry,
+  // which costs a lingering database and saves a learner's unfinished study.
+  if (arrived === records.length) await deleteLegacyDatabase();
+}
+
+/** Copy once per page load, whatever calls first. */
+function migrateLegacyDatabase(): Promise<void> {
+  // Every call in this module resolves rather than rejects, and a migration
+  // that somehow threw must not take the upload pump with it.
+  legacyMigration ??= copyLegacyRecords().catch(() => undefined);
+  return legacyMigration;
+}
+
 /** Run one transaction, resolving to `fallback` on any failure. */
-async function withStore<T>(
+async function runOnStore<T>(
   mode: IDBTransactionMode,
   run: (store: IDBObjectStore) => IDBRequest,
   fallback: T,
@@ -127,6 +248,19 @@ async function withStore<T>(
   });
 }
 
+/**
+ * Every public call goes through here, so this is the one place that can
+ * promise the pre-rename records are in before a read could miss them.
+ */
+async function withStore<T>(
+  mode: IDBTransactionMode,
+  run: (store: IDBObjectStore) => IDBRequest,
+  fallback: T,
+): Promise<T> {
+  await migrateLegacyDatabase();
+  return runOnStore(mode, run, fallback);
+}
+
 /** Keep the bytes of one unfinished file, with its transfer position. */
 export async function putDraftFile(
   draftId: string,
@@ -134,7 +268,13 @@ export async function putDraftFile(
   blob: Blob,
   session: MultipartSession | null = null,
 ): Promise<void> {
-  const record: StoredDraftFile = { id: keyFor(draftId, fileId), draftId, fileId, blob, session };
+  const record: StoredDraftFile = {
+    id: keyFor(draftId, fileId),
+    draftId,
+    fileId,
+    blob,
+    session,
+  };
   await withStore('readwrite', (store) => store.put(record), undefined);
 }
 

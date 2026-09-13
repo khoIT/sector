@@ -18,7 +18,7 @@ import { isDraftId } from './draft-id';
  * doubles the write and can fail its own quota, and the S3 object is a better
  * store than the browser anyway.
  */
-const STORAGE_KEY = 'scanvault.create-scan.draft';
+export const DRAFT_STORAGE_KEY = 'sector.create-scan.draft';
 
 /** Legacy expiry: a week of inactivity. */
 const EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
@@ -123,7 +123,7 @@ export function writeDraft(state: DraftState, ownerId?: string): void {
   };
 
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload));
   } catch {
     // A private window, a full quota, or blocked site data. The wizard keeps
     // working in memory; only the reload-resume is lost.
@@ -132,7 +132,7 @@ export function writeDraft(state: DraftState, ownerId?: string): void {
 
 export function clearDraft(): void {
   try {
-    window.localStorage.removeItem(STORAGE_KEY);
+    window.localStorage.removeItem(DRAFT_STORAGE_KEY);
   } catch {
     /* see writeDraft */
   }
@@ -142,7 +142,7 @@ export function clearDraft(): void {
 export function readDraft(): PersistedDraft | null {
   let raw: string | null = null;
   try {
-    raw = window.localStorage.getItem(STORAGE_KEY);
+    raw = window.localStorage.getItem(DRAFT_STORAGE_KEY);
   } catch {
     return null;
   }
@@ -203,7 +203,7 @@ export function restoreFiles(persisted: PersistedDraft): DraftFile[] {
  */
 export function currentDraftOwnerId(): string | null {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY);
     if (!raw) return null;
     const parsed: unknown = JSON.parse(raw);
     const owner = (parsed as { ownerId?: unknown }).ownerId;
@@ -215,7 +215,7 @@ export function currentDraftOwnerId(): string | null {
 
 export function currentDraftId(): string | null {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY);
     if (!raw) return null;
     const parsed: unknown = JSON.parse(raw);
     const id = (parsed as { draftId?: unknown }).draftId;

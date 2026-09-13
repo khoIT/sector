@@ -36,7 +36,7 @@ describe('writing the flow preference', () => {
     const written: Array<[string, string]> = [];
     writeCreateScanFlow({ setItem: (key, value) => written.push([key, value]) }, 'classic');
 
-    expect(written).toEqual([['scanvault.create-scan.flow', 'classic']]);
+    expect(written).toEqual([['sector.create-scan.flow', 'classic']]);
   });
 
   it('does not throw when storage refuses', () => {

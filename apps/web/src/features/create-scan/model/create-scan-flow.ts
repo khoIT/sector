@@ -23,7 +23,7 @@ export type CreateScanFlow = (typeof CREATE_SCAN_FLOWS)[number];
 
 export const DEFAULT_CREATE_SCAN_FLOW: CreateScanFlow = 'study';
 
-const STORAGE_KEY = 'scanvault.create-scan.flow';
+export const CREATE_SCAN_FLOW_KEY = 'sector.create-scan.flow';
 
 export function isCreateScanFlow(value: unknown): value is CreateScanFlow {
   return typeof value === 'string' && (CREATE_SCAN_FLOWS as readonly string[]).includes(value);
@@ -39,7 +39,7 @@ export function readCreateScanFlow(
   storage: Pick<Storage, 'getItem'> | null | undefined,
 ): CreateScanFlow {
   try {
-    const stored = storage?.getItem(STORAGE_KEY);
+    const stored = storage?.getItem(CREATE_SCAN_FLOW_KEY);
     return isCreateScanFlow(stored) ? stored : DEFAULT_CREATE_SCAN_FLOW;
   } catch {
     return DEFAULT_CREATE_SCAN_FLOW;
@@ -51,7 +51,7 @@ export function writeCreateScanFlow(
   flow: CreateScanFlow,
 ): void {
   try {
-    storage?.setItem(STORAGE_KEY, flow);
+    storage?.setItem(CREATE_SCAN_FLOW_KEY, flow);
   } catch {
     // A preference that cannot be saved is not a failure worth surfacing:
     // the session still honours the choice, it just will not outlive it.
