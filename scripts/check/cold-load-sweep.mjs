@@ -28,6 +28,10 @@ import { chromium } from 'playwright';
 
 const [secret, fixtureDir] = process.argv.slice(2);
 const SP = fixtureDir ?? fileURLToPath(new URL('.', import.meta.url));
+// Defaults to the documented mirror instance (:3101). Override when that port
+// is already held by another worktree's dev server — several phases can be
+// verified in parallel, each against its own `vite --port`.
+const BASE_URL = process.env.SECTOR_SWEEP_BASE_URL ?? 'http://localhost:3101';
 const b64 = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
 function mint(userId) {
   const now = Math.floor(Date.now() / 1000);
@@ -59,7 +63,6 @@ async function sessionFor(userId) {
   };
 }
 
-const { readFileSync } = await import('node:fs');
 const ids = JSON.parse(readFileSync(`${SP}/sweep-ids.json`, 'utf8'));
 const routes = JSON.parse(readFileSync(`${SP}/sweep-routes.json`, 'utf8'));
 const browser = await chromium.launch({ channel: 'chromium' });
@@ -80,13 +83,13 @@ for (const { path, role, needs } of routes) {
   });
   try {
     if (role) {
-      await page.goto('http://localhost:3101/login', { waitUntil: 'domcontentloaded' });
+      await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
       await page.evaluate(
         (s) => localStorage.setItem('sector.session', JSON.stringify(s)),
         sessions[role],
       );
     }
-    await page.goto(`http://localhost:3101${path}`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${BASE_URL}${path}`, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(5500);
     const seen = await page.evaluate(() => {
       const main = document.querySelector('main') ?? document.body;
