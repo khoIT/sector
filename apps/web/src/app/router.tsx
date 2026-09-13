@@ -10,6 +10,7 @@ import { featureRoutes } from '@/routes/feature-routes';
 import { AppShell } from '@/shell/app-shell';
 
 import { LegacyRedirect } from './legacy-redirect';
+import { LEGACY_ROOTS } from './legacy-route-map';
 import { NotFoundPage } from './not-found-page';
 import { RouteErrorPage } from './route-error-page';
 import { scanVaultRoutes } from './scan-vault-routes';
@@ -28,6 +29,8 @@ import { VaultIndexRedirect } from './vault-index-redirect';
  *        index                  forwards to the first permitted tab
  *        ...scanVaultRoutes     the four tabs, each behind its permission
  *        ...featureRoutes       everything else features register
+ *        /dashboard/*, /register/*, /certificates/*, /store-listing/*, /switch-user
+ *                               every legacy URL, forwarded or explained
  *        *                      404, inside the shell
  *
  * There are two mounting points and they are separate on purpose:
@@ -85,9 +88,12 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
           { index: true, element: <VaultIndexRedirect /> },
           ...scanVaultRoutes,
           ...featureRoutes,
-          // The API writes legacy dashboard paths into every scan
-          // notification, so those URLs have to resolve here.
-          { path: 'dashboard/*', element: <LegacyRedirect /> },
+          // Every URL the dashboard served resolves here — to the surface
+          // that took over, or to a page that says the surface was retired.
+          // The API writes `/dashboard/scans/...` into every scan notification,
+          // and bookmarks keep the rest (app/legacy-route-map.ts).
+          ...LEGACY_ROOTS.map((root) => ({ path: `${root}/*`, element: <LegacyRedirect /> })),
+          ...LEGACY_ROOTS.map((root) => ({ path: root, element: <LegacyRedirect /> })),
           { path: '*', element: <NotFoundPage /> },
         ],
       },
