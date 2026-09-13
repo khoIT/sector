@@ -18,9 +18,15 @@ import { userGroupSchema } from './common';
  *     the production mirror — it was added to the schema after those rows
  *     existed, and nothing has backfilled it. Modelled `.optional()`, not
  *     `.nullish()`, so a group with no type does not print "null".
- *   - `totalSeats` and `isFreeTrial` default to `0` / `false` at write time,
- *     so every row carries them; `.default()` here is a safety net for a
- *     pre-default legacy row rather than the expected case.
+ *   - 336 of 1,476 live groups in the production mirror have no `totalSeats`
+ *     key at all, and 829 have no `isFreeTrial` key — both fields were added
+ *     to the schema after those rows were created. They still arrive on the
+ *     wire today (`0` / `false`) because `groupService.getAll()` queries with
+ *     `.find()`, and Mongoose applies schema defaults on hydration for a
+ *     genuinely-missing path, unlike a `.lean()` read or an aggregation
+ *     pipeline. `.default()` here is not decorative: it is the only thing
+ *     that would still fill these in if that query ever became an
+ *     aggregation (as `groupMemberService.getAll()` already is).
  *   - `expirationDate` is `null` by default, not absent.
  *   - `leaderCount`, `learnerCount` and `courseCount` are Mongoose COUNT
  *     virtuals (`groupSchema.virtual('leaderCount', ...)` etc.), populated on
@@ -56,9 +62,13 @@ export type Group = z.infer<typeof groupSchema>;
  *     group in the system. It must never back a group leader's index.
  *   - `GET /api/groups/manage` (group/manager/manager.controller.ts#getParentGroup)
  *     scopes to `getLedGroupIdsWithDescendants(userId)` UNLESS the caller
- *     holds `admin:full-access` — the CTP-307 helper, shared with
- *     `assertLeadsGroup` below. This is the one to feed a group leader's or
- *     scan reviewer's index from.
+ *     holds `admin:full-access` — the leader-scoping invariant (a group is
+ *     visible to whoever holds an active `GroupMember.role = 'leader'` row on
+ *     it or one of its ancestors), shared with `assertLeadsGroup` below. This
+ *     is the one to feed a group leader's or scan reviewer's index from. Note
+ *     this route, and `/manage/member/:groupId` below, are guarded only by
+ *     `authUser` — the leadership check IS the access control, not a
+ *     `read:group`-shaped permission.
  *   - The seeded `administrator` role carries `full-access`, not
  *     `admin:full-access` (only `superadmin` carries both — confirmed against
  *     `db.roles.find()` on the local database). `getLedGroupIdsWithDescendants`

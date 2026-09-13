@@ -48,9 +48,13 @@ export async function getAllGroups(
 
 /**
  * GET /api/groups/manage — scoped server-side to the caller's led groups and
- * their descendants (`getLedGroupIdsWithDescendants`, CTP-307), unless the
- * caller holds `admin:full-access`. The one to feed a group leader's or scan
- * reviewer's index from.
+ * their descendants (`getLedGroupIdsWithDescendants` — the leader-scoping
+ * invariant: `GroupMember.role = 'leader'` plus every descendant group),
+ * unless the caller holds `admin:full-access`. The one to feed a group
+ * leader's or scan reviewer's index from. Note this route (and
+ * `/manage/member/:groupId` below) is guarded only by `authUser`, not a
+ * `read:group`-shaped permission check — the leadership scoping IS the
+ * access control here, not a permission string.
  */
 export async function getLedGroups(
   client: ApiClient,
