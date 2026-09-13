@@ -38,7 +38,8 @@
     "resetUpload": "Reimposta per ricaricare",
     "requestExpertReview": "Richiedi revisione esperta",
     "markComplete": "Contrassegna come completo",
-    "markIncomplete": "Contrassegna come incompleto"
+    "markIncomplete": "Contrassegna come incompleto",
+    "remove": "Rimuovi"
   },
   "status": {
     "pending": "In sospeso",
@@ -261,7 +262,21 @@
     "submitIncompleteTitle": "{{confirmed}} di {{total}} file allegati — lo studio non è stato inviato completamente",
     "submitIncompleteBody": "La bozza e tutti i file caricati sono ancora qui — niente è andato perso. Riprova per riprendere questo stesso studio, oppure aprilo per vedere esattamente cosa è arrivato.",
     "tryAgain": "Riprova",
-    "creditsUsedOfTotal": "{{used}} di {{total}} usati"
+    "creditsUsedOfTotal": "{{used}} di {{total}} usati",
+    "draftExpiredTitle": "Una bozza salvata è scaduta",
+    "draftExpiredBody": "È stata rimossa una bozza di oltre sette giorni, insieme ai file che conservava ancora in questo browser. Se aveva già creato uno studio, quello studio è ancora in I miei scan.",
+    "expertReviewTitle": "Revisione dell'esperto",
+    "expertReviewBlurb": "Facoltativo. Un esperto GUSI revisiona lo studio oltre ai revisori del gruppo. Un credito per revisione.",
+    "buyCredits": "Acquista crediti",
+    "creditsLoadFailedTitle": "Impossibile caricare i saldi dei crediti",
+    "creditsLoadFailedFallback": "La richiesta non è riuscita.",
+    "creditsLoadFailedBody": "Puoi inviare lo studio senza revisione dell'esperto e richiederla in seguito dallo scan.",
+    "noCreditsTitle": "Nessun credito disponibile per la revisione dell'esperto",
+    "noCreditsBody": "Né il tuo saldo né alcuno dei tuoi gruppi ha ancora crediti. Lo studio sarà inviato ai tuoi gruppi come di consueto: la revisione dell'esperto può essere richiesta più tardi, una volta ricaricati i crediti.",
+    "creditCount_one": "{{count}} credito",
+    "creditCount_other": "{{count}} crediti",
+    "creditWillBeSpent": "All'invio verrà utilizzato un credito di {{label}}",
+    "creditSpentOnSubmit": "Il credito viene utilizzato solo quando lo studio è inviato. Se la richiesta non riesce te lo comunicheremo, e lo studio viene comunque salvato."
   },
   "scanDetail": {
     "resetUploadDialogTitle": "Reimpostare “{{title}}” per il nuovo caricamento?",
@@ -277,6 +292,8 @@
     "requestExpertReviewError": "La richiesta non è andata a buon fine.",
     "markComplete": "Contrassegna come completo",
     "markIncomplete": "Contrassegna come incompleto",
-    "close": "Chiudi"
+    "close": "Chiudi",
+    "completionTagErrorTitle": "Il contrassegno non è stato salvato",
+    "completionTagError": "Non è stato possibile modificare la completezza dello scan. Non è stato salvato nulla: riprova."
   }
 }

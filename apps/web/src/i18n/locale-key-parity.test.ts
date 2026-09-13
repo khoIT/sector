@@ -14,18 +14,22 @@ import pt from './locales/pt.json';
  * real (non-English) translation in all seven locales.
  *
  * This is deliberately scoped to the keys THIS work introduced rather than
- * asserting full parity across the whole resource: 68 pre-existing keys
+ * asserting full parity across the whole resource: 74 pre-existing keys
  * (account, nav, toolbar, row, …) were already missing from every non-English
  * locale before this change, which is its own, separate piece of work — see
  * the create-scan/scan-detail i18n extraction the parity audit calls out.
  * Asserting full parity here would fail on that pre-existing gap regardless
  * of anything in this change, and misattribute it.
+ *
+ * The count is measured, not estimated: 74 in each of the six non-English
+ * locales at the merge base and 74 after this change, so this work adds none.
  */
 const NEW_ACTION_KEYS = [
   'resetUpload',
   'requestExpertReview',
   'markComplete',
   'markIncomplete',
+  'remove',
 ] as const;
 
 const NEW_CREATE_SCAN_KEYS = [
@@ -41,6 +45,20 @@ const NEW_CREATE_SCAN_KEYS = [
   'submitIncompleteBody',
   'tryAgain',
   'creditsUsedOfTotal',
+  'draftExpiredTitle',
+  'draftExpiredBody',
+  'expertReviewTitle',
+  'expertReviewBlurb',
+  'buyCredits',
+  'creditsLoadFailedTitle',
+  'creditsLoadFailedFallback',
+  'creditsLoadFailedBody',
+  'noCreditsTitle',
+  'noCreditsBody',
+  'creditCount_one',
+  'creditCount_other',
+  'creditWillBeSpent',
+  'creditSpentOnSubmit',
 ] as const;
 
 const NEW_SCAN_DETAIL_KEYS = [
@@ -58,6 +76,8 @@ const NEW_SCAN_DETAIL_KEYS = [
   'markComplete',
   'markIncomplete',
   'close',
+  'completionTagErrorTitle',
+  'completionTagError',
 ] as const;
 
 const LOCALES: Record<string, Record<string, unknown>> = { de, es, fil, fr, it: italian, pt };

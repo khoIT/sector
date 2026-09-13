@@ -38,7 +38,8 @@
     "resetUpload": "Réinitialiser pour un nouvel envoi",
     "requestExpertReview": "Demander une revue d'expert",
     "markComplete": "Marquer comme complet",
-    "markIncomplete": "Marquer comme incomplet"
+    "markIncomplete": "Marquer comme incomplet",
+    "remove": "Retirer"
   },
   "status": {
     "pending": "En attente",
@@ -261,7 +262,21 @@
     "submitIncompleteTitle": "{{confirmed}} fichier(s) sur {{total}} rattaché(s) — l'étude n'a pas été entièrement envoyée",
     "submitIncompleteBody": "Le brouillon et tous les fichiers envoyés sont encore là — rien n'a été perdu. Réessayez pour reprendre cette même étude, ou ouvrez-la pour voir exactement ce qui est arrivé.",
     "tryAgain": "Réessayer",
-    "creditsUsedOfTotal": "{{used}} sur {{total}} utilisés"
+    "creditsUsedOfTotal": "{{used}} sur {{total}} utilisés",
+    "draftExpiredTitle": "Un brouillon enregistré a expiré",
+    "draftExpiredBody": "Un brouillon de plus de sept jours a été supprimé, ainsi que les fichiers qu'il conservait encore dans ce navigateur. S'il avait déjà créé une étude, celle-ci reste dans Mes scans.",
+    "expertReviewTitle": "Revue par un expert",
+    "expertReviewBlurb": "Facultatif. Un expert GUSI examine l'étude en plus des relecteurs du groupe. Un crédit par revue.",
+    "buyCredits": "Acheter des crédits",
+    "creditsLoadFailedTitle": "Impossible de charger les soldes de crédits",
+    "creditsLoadFailedFallback": "La requête a échoué.",
+    "creditsLoadFailedBody": "Vous pouvez soumettre l'étude sans revue d'expert et en demander une plus tard depuis le scan.",
+    "noCreditsTitle": "Aucun crédit de revue d'expert disponible",
+    "noCreditsBody": "Ni votre solde ni aucun de vos groupes ne dispose encore d'un crédit. L'étude sera transmise à vos groupes comme d'habitude — une revue d'expert pourra être demandée une fois les crédits rechargés.",
+    "creditCount_one": "{{count}} crédit",
+    "creditCount_other": "{{count}} crédits",
+    "creditWillBeSpent": "Un crédit de {{label}} sera utilisé à la soumission",
+    "creditSpentOnSubmit": "Le crédit n'est utilisé qu'une fois l'étude soumise. En cas d'échec de la demande, vous serez averti, et l'étude est enregistrée dans tous les cas."
   },
   "scanDetail": {
     "resetUploadDialogTitle": "Réinitialiser « {{title}} » pour un nouvel envoi ?",
@@ -277,6 +292,8 @@
     "requestExpertReviewError": "La demande n'a pas abouti.",
     "markComplete": "Marquer comme complet",
     "markIncomplete": "Marquer comme incomplet",
-    "close": "Fermer"
+    "close": "Fermer",
+    "completionTagErrorTitle": "La marque n'a pas été enregistrée",
+    "completionTagError": "L'état de complétude du scan n'a pas pu être modifié. Rien n'a été enregistré — réessayez."
   }
 }

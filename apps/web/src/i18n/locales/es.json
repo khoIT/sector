@@ -38,7 +38,8 @@
     "resetUpload": "Restablecer para volver a subir",
     "requestExpertReview": "Solicitar revisión de experto",
     "markComplete": "Marcar como completo",
-    "markIncomplete": "Marcar como incompleto"
+    "markIncomplete": "Marcar como incompleto",
+    "remove": "Quitar"
   },
   "status": {
     "pending": "Pendiente",
@@ -261,7 +262,21 @@
     "submitIncompleteTitle": "{{confirmed}} de {{total}} archivos adjuntados — el estudio no se envió por completo",
     "submitIncompleteBody": "El borrador y todos los archivos subidos siguen aquí — no se ha perdido nada. Vuelve a intentarlo para retomar este mismo estudio, o ábrelo para ver exactamente qué se guardó.",
     "tryAgain": "Intentar de nuevo",
-    "creditsUsedOfTotal": "{{used}} de {{total}} usados"
+    "creditsUsedOfTotal": "{{used}} de {{total}} usados",
+    "draftExpiredTitle": "Un borrador guardado ha caducado",
+    "draftExpiredBody": "Se ha eliminado un borrador con más de siete días, junto con los archivos que aún conservaba en este navegador. Si ya había creado un estudio, ese estudio sigue en Mis escaneos.",
+    "expertReviewTitle": "Revisión de experto",
+    "expertReviewBlurb": "Opcional. Un experto de GUSI revisa el estudio además de los revisores del grupo. Un crédito por revisión.",
+    "buyCredits": "Comprar créditos",
+    "creditsLoadFailedTitle": "No se han podido cargar los saldos de créditos",
+    "creditsLoadFailedFallback": "La solicitud ha fallado.",
+    "creditsLoadFailedBody": "Puede enviar el estudio sin revisión de experto y solicitarla más tarde desde el escaneo.",
+    "noCreditsTitle": "No hay créditos de revisión de experto disponibles",
+    "noCreditsBody": "Ni su saldo ni ninguno de sus grupos tiene créditos. El estudio se enviará a sus grupos como de costumbre: la revisión de experto puede solicitarse más tarde cuando haya créditos.",
+    "creditCount_one": "{{count}} crédito",
+    "creditCount_other": "{{count}} créditos",
+    "creditWillBeSpent": "Se gastará un crédito de {{label}} al enviar",
+    "creditSpentOnSubmit": "El crédito solo se gasta al enviar el estudio. Si la solicitud falla se le avisará, y el estudio se guarda igualmente."
   },
   "scanDetail": {
     "resetUploadDialogTitle": "¿Restablecer “{{title}}” para volver a subir?",
@@ -277,6 +292,8 @@
     "requestExpertReviewError": "La solicitud no se pudo completar.",
     "markComplete": "Marcar como completo",
     "markIncomplete": "Marcar como incompleto",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "completionTagErrorTitle": "La marca no se ha guardado",
+    "completionTagError": "No se ha podido cambiar el estado de completitud del escaneo. No se ha guardado nada: inténtelo de nuevo."
   }
 }

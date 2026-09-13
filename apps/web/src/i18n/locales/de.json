@@ -38,7 +38,8 @@
     "resetUpload": "Für erneuten Upload zurücksetzen",
     "requestExpertReview": "Expertenprüfung anfordern",
     "markComplete": "Als vollständig markieren",
-    "markIncomplete": "Als unvollständig markieren"
+    "markIncomplete": "Als unvollständig markieren",
+    "remove": "Entfernen"
   },
   "status": {
     "pending": "Ausstehend",
@@ -261,7 +262,21 @@
     "submitIncompleteTitle": "{{confirmed}} von {{total}} Dateien angehängt — das Studium wurde nicht vollständig übermittelt",
     "submitIncompleteBody": "Der Entwurf und alle hochgeladenen Dateien sind noch hier — nichts wurde verworfen. Versuche es erneut, um dasselbe Studium fortzusetzen, oder öffne es, um genau zu sehen, was angekommen ist.",
     "tryAgain": "Erneut versuchen",
-    "creditsUsedOfTotal": "{{used}} von {{total}} verwendet"
+    "creditsUsedOfTotal": "{{used}} von {{total}} verwendet",
+    "draftExpiredTitle": "Ein gespeicherter Entwurf ist abgelaufen",
+    "draftExpiredBody": "Ein Entwurf, der älter als sieben Tage war, wurde entfernt – zusammen mit den Dateien, die er noch in diesem Browser vorgehalten hat. Falls dabei bereits eine Studie angelegt wurde, finden Sie diese weiterhin unter „Meine Scans“.",
+    "expertReviewTitle": "Expertenbewertung",
+    "expertReviewBlurb": "Optional. Eine GUSI-Fachperson bewertet die Studie zusätzlich zu den Gruppenprüfenden. Ein Guthaben pro Bewertung.",
+    "buyCredits": "Guthaben kaufen",
+    "creditsLoadFailedTitle": "Guthaben konnte nicht geladen werden",
+    "creditsLoadFailedFallback": "Die Anfrage ist fehlgeschlagen.",
+    "creditsLoadFailedBody": "Sie können die Studie ohne Expertenbewertung einreichen und diese später beim Scan anfordern.",
+    "noCreditsTitle": "Kein Guthaben für Expertenbewertungen verfügbar",
+    "noCreditsBody": "Weder Ihr Konto noch eine Ihrer Gruppen hat noch Guthaben. Die Studie wird wie gewohnt an Ihre Gruppen übermittelt – eine Expertenbewertung lässt sich später anfordern, sobald Guthaben aufgeladen ist.",
+    "creditCount_one": "{{count}} Guthaben",
+    "creditCount_other": "{{count}} Guthaben",
+    "creditWillBeSpent": "Beim Einreichen wird ein Guthaben von {{label}} verbraucht",
+    "creditSpentOnSubmit": "Das Guthaben wird erst beim Einreichen der Studie verbraucht. Schlägt die Anfrage fehl, werden Sie informiert – die Studie wird in jedem Fall gespeichert."
   },
   "scanDetail": {
     "resetUploadDialogTitle": "„{{title}}“ für erneuten Upload zurücksetzen?",
@@ -277,6 +292,8 @@
     "requestExpertReviewError": "Die Anfrage ist fehlgeschlagen.",
     "markComplete": "Als vollständig markieren",
     "markIncomplete": "Als unvollständig markieren",
-    "close": "Schließen"
+    "close": "Schließen",
+    "completionTagErrorTitle": "Die Markierung wurde nicht gespeichert",
+    "completionTagError": "Die Vollständigkeit des Scans konnte nicht geändert werden. Es wurde nichts gespeichert – bitte erneut versuchen."
   }
 }
