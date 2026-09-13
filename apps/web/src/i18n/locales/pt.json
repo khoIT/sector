@@ -9,6 +9,7 @@
     "courses": "Cursos",
     "questionBanks": "Bancos de questões",
     "groupAdministration": "Administração de grupos",
+    "home": "Início",
     "gallery": "Galeria de Patologia",
     "sage": "Sage AI"
   },
@@ -567,6 +568,71 @@
     "close": "Fechar",
     "completionTagErrorTitle": "A marcação não foi guardada",
     "completionTagError": "Não foi possível alterar a completude do exame. Nada foi guardado — tente novamente."
+  },
+  "home": {
+    "greeting": "Bem-vindo(a) de volta, {{name}}",
+    "courseStatus": {
+      "inProgress": "Em andamento",
+      "completed": "Concluído",
+      "notStarted": "Não iniciado"
+    },
+    "myLearning": {
+      "title": "Meu aprendizado",
+      "course": "Curso",
+      "selectCourse": "Selecione um curso",
+      "courseProgress": "Progresso do curso",
+      "noCourseProgress": "Ainda não há progresso no curso.",
+      "scanProgress": "Minhas digitalizações",
+      "noScanProgress": "Ainda não há digitalizações.",
+      "qbank": "Tentativas no banco de questões",
+      "noQbank": "Ainda não há tentativas no banco de questões.",
+      "attempts_one": "{{count}} tentativa",
+      "attempts_other": "{{count}} tentativas",
+      "timeline": "Progresso ao longo do tempo",
+      "noTimeline": "Ainda não há atividade suficiente para mostrar uma tendência.",
+      "topCourses": "Principais cursos",
+      "noTopCourses": "Ainda não há cursos em andamento.",
+      "topics": "Tópicos",
+      "noTopics": "Ainda não há progresso nos tópicos.",
+      "quizzes": "Questionários",
+      "noQuizzes": "Ainda não há progresso nos questionários."
+    },
+    "leader": {
+      "title": "Painel do líder de grupo",
+      "group": "Grupo",
+      "noGroup": "Você ainda não lidera nenhum grupo",
+      "noGroupHint": "Assim que um grupo o nomear líder, o resumo de cursos e digitalizações aparecerá aqui."
+    },
+    "group": {
+      "title": "{{groupName}}",
+      "viewMembers": "Ver membros",
+      "courseProgress": "Progresso do curso",
+      "noCourseProgress": "Ainda não há progresso de curso para este grupo.",
+      "scanProgress": "Progresso das digitalizações",
+      "noScanProgress": "Ainda não há digitalizações para este grupo.",
+      "qbank": "Tentativas no banco de questões",
+      "noQbank": "Ainda não há tentativas no banco de questões para este grupo.",
+      "averageScore": "{{score}}% melhor pontuação"
+    },
+    "reviewer": {
+      "title": "Painel do revisor de digitalizações",
+      "expertUnreviewed": "Digitalizações especializadas — não revisadas",
+      "expertReviewed": "Digitalizações especializadas — revisadas",
+      "groupUnreviewed": "Digitalizações em grupo — não revisadas",
+      "groupReviewed": "Digitalizações em grupo — revisadas",
+      "credits": "Créditos de revisão especializada",
+      "personalCredits": "Seus créditos",
+      "creditsUnavailable": "Não foi possível carregar os saldos de créditos.",
+      "loading": "Carregando…"
+    },
+    "admin": {
+      "title": "Painel do administrador",
+      "manageGroups": "Gerenciar grupos",
+      "group": "Grupo",
+      "selectGroup": "Selecione um grupo",
+      "noGroups": "Ainda não há grupos",
+      "noGroupsHint": "Assim que um grupo existir, selecione-o aqui para ver seu resumo de cursos e digitalizações."
+    }
   },
   "gallery": {
     "title": "Galeria de Patologia",

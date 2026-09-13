@@ -9,6 +9,7 @@
     "courses": "Kurse",
     "questionBanks": "Fragenkataloge",
     "groupAdministration": "Gruppenverwaltung",
+    "home": "Startseite",
     "gallery": "Pathologie-Galerie",
     "sage": "Sage AI"
   },
@@ -567,6 +568,71 @@
     "close": "Schließen",
     "completionTagErrorTitle": "Die Markierung wurde nicht gespeichert",
     "completionTagError": "Die Vollständigkeit des Scans konnte nicht geändert werden. Es wurde nichts gespeichert – bitte erneut versuchen."
+  },
+  "home": {
+    "greeting": "Willkommen zurück, {{name}}",
+    "courseStatus": {
+      "inProgress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "notStarted": "Nicht begonnen"
+    },
+    "myLearning": {
+      "title": "Mein Lernen",
+      "course": "Kurs",
+      "selectCourse": "Kurs auswählen",
+      "courseProgress": "Kursfortschritt",
+      "noCourseProgress": "Noch kein Kursfortschritt.",
+      "scanProgress": "Meine Scans",
+      "noScanProgress": "Noch keine Scans.",
+      "qbank": "Versuche im Fragenkatalog",
+      "noQbank": "Noch keine Versuche im Fragenkatalog.",
+      "attempts_one": "{{count}} Versuch",
+      "attempts_other": "{{count}} Versuche",
+      "timeline": "Fortschritt im Zeitverlauf",
+      "noTimeline": "Noch nicht genug Aktivität für einen Trend.",
+      "topCourses": "Top-Kurse",
+      "noTopCourses": "Noch keine Kurse in Bearbeitung.",
+      "topics": "Themen",
+      "noTopics": "Noch kein Themenfortschritt.",
+      "quizzes": "Quizze",
+      "noQuizzes": "Noch kein Quizfortschritt."
+    },
+    "leader": {
+      "title": "Gruppenleiter-Dashboard",
+      "group": "Gruppe",
+      "noGroup": "Sie leiten noch keine Gruppe",
+      "noGroupHint": "Sobald eine Gruppe Sie als Leiter benennt, erscheint hier ihre Kurs- und Scan-Übersicht."
+    },
+    "group": {
+      "title": "{{groupName}}",
+      "viewMembers": "Mitglieder anzeigen",
+      "courseProgress": "Kursfortschritt",
+      "noCourseProgress": "Noch kein Kursfortschritt für diese Gruppe.",
+      "scanProgress": "Scan-Fortschritt",
+      "noScanProgress": "Noch keine Scans für diese Gruppe.",
+      "qbank": "Versuche im Fragenkatalog",
+      "noQbank": "Noch keine Versuche im Fragenkatalog für diese Gruppe.",
+      "averageScore": "{{score}}% beste Punktzahl"
+    },
+    "reviewer": {
+      "title": "Scan-Prüfer-Dashboard",
+      "expertUnreviewed": "Experten-Scans — ungeprüft",
+      "expertReviewed": "Experten-Scans — geprüft",
+      "groupUnreviewed": "Gruppen-Scans — ungeprüft",
+      "groupReviewed": "Gruppen-Scans — geprüft",
+      "credits": "Experten-Prüfungsguthaben",
+      "personalCredits": "Ihr Guthaben",
+      "creditsUnavailable": "Guthabenstände konnten nicht geladen werden.",
+      "loading": "Wird geladen…"
+    },
+    "admin": {
+      "title": "Administrator-Dashboard",
+      "manageGroups": "Gruppen verwalten",
+      "group": "Gruppe",
+      "selectGroup": "Gruppe auswählen",
+      "noGroups": "Noch keine Gruppen",
+      "noGroupsHint": "Sobald eine Gruppe existiert, wählen Sie sie hier aus, um ihre Kurs- und Scan-Übersicht zu sehen."
+    }
   },
   "gallery": {
     "title": "Pathologie-Galerie",

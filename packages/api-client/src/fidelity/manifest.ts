@@ -720,6 +720,63 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
     "populated course document directly and the exact populate/projection isn't " +
     'yet verified; modelled minimally against only the fields this list renders',
 
+  // ─── home-screen dashboards: 8 computed aggregate endpoints ──────────────
+  // Every schema below is assembled per request across usercourseprogresses,
+  // scans, v2quizzes/qbankprogresses and groupmembers — the same reason
+  // learnerCourseListItemSchema above has no collection replay. Proved
+  // instead by `fidelity/dashboard-routes.fidelity.test.ts`, which walks all
+  // eight routes through the running mirror API for every seeded role —
+  // stronger than a synthetic projection here would be for a response this
+  // computed, and the only way to reach what no dump holds (a live scan/course
+  // progress mix for the mirror's seeded accounts).
+  // Note: `courseProgressStatusSchema` already has an entry above (shared
+  // with My Courses — see the doc comment on the import in
+  // schemas/dashboard.ts) — not repeated here, since a manifest key can only
+  // ever be excused once.
+  courseProgressSegmentSchema:
+    'one status bucket of course-progress-chart, computed per request from a ' +
+    "learner's course structure and progress items; proved live",
+  courseProgressChartSchema:
+    'GET /api/dashboard/course-progress-chart — a module-completion count ' +
+    'assembled per learner/course pair, not stored; proved live',
+  groupCourseProgressSegmentSchema:
+    'one status bucket of the group course-progress chart, computed per ' +
+    'request by counting group members by course status; proved live',
+  groupCourseProgressChartSchema:
+    "part of GET /api/dashboard/charts — a group's learner counts by course " +
+    'status, assembled per request; proved live',
+  groupScanProgressChartSchema:
+    "part of GET /api/dashboard/charts — a group's scan counts by status, " +
+    'assembled per request from live scanService counts; proved live',
+  dashboardGroupChartsSchema:
+    'GET /api/dashboard/charts — the envelope around the two schemas above; proved live',
+  scanProgressByUserItemSchema:
+    'one status bucket of GET /api/dashboard/scan-progress-by-user, computed ' +
+    'per request from live scanService counts; proved live',
+  scanProgressByUserSchema: 'GET /api/dashboard/scan-progress-by-user; proved live',
+  qbankStatsItemSchema:
+    'one question bank row of GET /api/dashboard/qbank-stats, assembled per ' +
+    'request from qbankprogresses attempts; proved live',
+  qbankStatsSchema: 'GET /api/dashboard/qbank-stats; proved live',
+  topicProgressItemSchema:
+    'one topic row of GET /api/dashboard/topic-progress-by-user, assembled per ' +
+    'request from course structure and progress items; proved live',
+  topicProgressSchema: 'GET /api/dashboard/topic-progress-by-user; proved live',
+  quizProgressItemSchema:
+    'one quiz row of GET /api/dashboard/quiz-progress-by-user, assembled per ' +
+    'request from v2quizzes and progress items; proved live',
+  quizProgressSchema: 'GET /api/dashboard/quiz-progress-by-user; proved live',
+  topCourseProgressItemSchema:
+    'one course row of GET /api/dashboard/top-course-progress, read off ' +
+    'usercourseprogresses and ranked per request rather than stored pre-ranked; proved live',
+  topCourseProgressSchema: 'GET /api/dashboard/top-course-progress; proved live',
+  courseCompletionTimelineEventSchema:
+    'one activity-log entry inside a day of GET /api/dashboard/course-completion-timeline, ' +
+    "built per request from a learner's progress items; proved live",
+  courseCompletionTimelineDaySchema:
+    'one day of GET /api/dashboard/course-completion-timeline, a cumulative ' +
+    'progress computation with no stored per-day record; proved live',
+  courseCompletionTimelineSchema: 'GET /api/dashboard/course-completion-timeline; proved live',
   // Pathology gallery category bar: joins the pathologygalleries.scanTypeId
   // relation (proved directly by pathologyGalleryItemSchema above) against
   // scantypes for a name and a presigned imagePath, plus the small set of

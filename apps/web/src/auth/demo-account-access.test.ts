@@ -118,15 +118,13 @@ describe('sidebar navigation', () => {
     expect(items.find((item) => item.id === 'group-scans')?.path).toBe(SCAN_VAULT_PATH.pending);
   });
 
-  it('lands every account on a surface it is actually allowed to open', () => {
+  it('lands every account on its home dashboard, not a scan surface', () => {
+    // Home is ungated and first in the rail, so `/` no longer forwards into
+    // whichever scan list a role happens to hold — it renders that role's own
+    // dashboard (HomeRoute) directly. See shell/nav-config.test.ts for the
+    // per-section landing assertion this replaced.
     for (const user of [LEARNER, LEADER, REVIEWER, REVIEWER_SOLO]) {
-      const landing = firstVisibleNavItem(user);
-      expect(landing).toBeDefined();
-      expect(visibleScanViews(user)).toContain(
-        (Object.keys(SCAN_VAULT_PATH) as Array<keyof typeof SCAN_VAULT_PATH>).find(
-          (view) => SCAN_VAULT_PATH[view] === landing?.path,
-        ),
-      );
+      expect(firstVisibleNavItem(user)?.path).toBe('/');
     }
   });
 
