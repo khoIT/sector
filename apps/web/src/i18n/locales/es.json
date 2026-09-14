@@ -493,8 +493,7 @@
         "start": "Comenzar: {{title}}",
         "resume": "Continuar: {{title}}",
         "retry": "Reintentar: {{title}}",
-        "review": "Revisar: {{title}}",
-        "jumpsOnly": "Te lleva a ese punto de la lista; el reproductor del curso aún no existe."
+        "review": "Revisar: {{title}}"
       },
       "completedBanner": "Has completado este curso.",
       "empty": {
@@ -520,6 +519,81 @@
       },
       "quiz": {
         "bestPercentage": "Mejor: {{percent}}%"
+      }
+    },
+    "runner": {
+      "courseProgress": "{{percent}}% completado",
+      "sidebar": {
+        "title": "Contenido del curso"
+      },
+      "nav": {
+        "previous": "Anterior",
+        "next": "Siguiente"
+      },
+      "itemNotFound": {
+        "title": "Este elemento no forma parte de este curso",
+        "description": "Puede haber sido eliminado o pertenecer a otra versión de este curso."
+      },
+      "noLongerAvailable": {
+        "title": "Este curso ya no está disponible para ti.",
+        "description": "La inscripción correspondiente ha expirado. Pide acceso a tu líder de grupo o administrador si aún lo necesitas."
+      },
+      "lesson": {
+        "error": {
+          "title": "No se pudo cargar esta lección",
+          "retry": "Intentar de nuevo"
+        }
+      },
+      "topic": {
+        "error": {
+          "title": "No se pudo cargar este tema",
+          "retry": "Intentar de nuevo"
+        }
+      },
+      "quiz": {
+        "blocked": {
+          "title": "Este cuestionario aún no tiene preguntas"
+        },
+        "error": {
+          "title": "No se pudo cargar este cuestionario",
+          "retry": "Intentar de nuevo"
+        },
+        "noQuestions": {
+          "title": "Este cuestionario aún no tiene preguntas y no se puede iniciar"
+        },
+        "questionCount_one": "{{count}} pregunta",
+        "questionCount_other": "{{count}} preguntas",
+        "start": "Comenzar",
+        "continue": "Continuar",
+        "retake": "Repetir",
+        "backToOutline": "Volver al esquema del curso",
+        "saveError": "No se pudo guardar tu última respuesta. Continúa — se volverá a intentar.",
+        "resumeError": "No se pudo cargar tu progreso guardado. Empezando de nuevo."
+      }
+    },
+    "admin": {
+      "title": "Progreso del curso del estudiante",
+      "heading": "Progreso de {{learner}} en {{course}}",
+      "assignmentType": {
+        "personal": "Inscripción personal",
+        "group": "Asignado a través de {{group}}"
+      },
+      "progress": {
+        "title": "Progreso"
+      },
+      "stat": {
+        "completedItems": "Elementos completados",
+        "lessons": "Lecciones completadas",
+        "topics": "Temas completados",
+        "quizzes": "Cuestionarios completados",
+        "lastAccessedAt": "Último acceso",
+        "enrolledAt": "Inscrito",
+        "never": "Nunca"
+      },
+      "expiredBadge": "Expirado",
+      "error": {
+        "title": "No se pudo cargar el curso de este estudiante",
+        "retry": "Intentar de nuevo"
       }
     }
   },

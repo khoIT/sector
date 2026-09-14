@@ -58,7 +58,10 @@ export function CourseCard({ item }: CourseCardProps) {
         </div>
 
         <Button asChild variant="secondary" size="sm">
-          <Link to={coursePathFor(item.course.id)}>
+          {/* `state.title` closes the gap `course-outline-page.tsx` documents
+              (its heading falls back to a generic label without it) and is
+              carried forward again from there into the course runner. */}
+          <Link to={coursePathFor(item.course.id)} state={{ title: item.course.title }}>
             {t(courseActionLabelKey(item.progress.status), { title: item.course.title })}
           </Link>
         </Button>

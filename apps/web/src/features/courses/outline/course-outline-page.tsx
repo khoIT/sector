@@ -4,7 +4,7 @@ import { ChevronLeft, CircleCheck, TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useParams } from 'react-router-dom';
 
-import { COURSES_PATH } from '../courses-links';
+import { COURSES_PATH, courseItemPathFor } from '../courses-links';
 import { roundedProgress } from '../my-courses/course-row-model';
 import { CourseOutlineItemRow } from './course-outline-item-row';
 import {
@@ -95,17 +95,11 @@ export function CourseOutlinePage() {
       </div>
 
       {resumeItem ? (
-        <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1">
-          <Button asChild>
-            <a href={`#item-${resumeItem.id}`}>
-              {t(resumeActionLabelKey(resumeItem.status), { title: resumeItem.title })}
-            </a>
-          </Button>
-          {/* The course runner is the next phase. Until it exists this action
-              moves the page to the item and nothing more, so it says so
-              rather than letting the verb imply an opening. */}
-          <span className="text-[12px] text-ink-dim">{t('courses.outline.resume.jumpsOnly')}</span>
-        </div>
+        <Button asChild className="mb-4">
+          <Link to={courseItemPathFor(courseId, resumeItem.id)} state={{ title }}>
+            {t(resumeActionLabelKey(resumeItem.status), { title: resumeItem.title })}
+          </Link>
+        </Button>
       ) : isComplete ? (
         <div className="mb-4 flex items-center gap-2 rounded-token border border-line bg-ok-soft px-3 py-2 text-body text-ok">
           <CircleCheck className="h-4 w-4" aria-hidden />
@@ -120,6 +114,8 @@ export function CourseOutlinePage() {
           {groups.map((group) => (
             <li key={group.header.id} className="flex flex-col gap-1.5">
               <CourseOutlineItemRow
+                courseId={courseId}
+                courseTitle={title}
                 item={group.header}
                 indent={false}
                 isResumeTarget={group.header.id === resumeItem?.id}
@@ -129,6 +125,8 @@ export function CourseOutlinePage() {
                   {group.children.map((child) => (
                     <li key={child.id}>
                       <CourseOutlineItemRow
+                        courseId={courseId}
+                        courseTitle={title}
                         item={child}
                         indent
                         isResumeTarget={child.id === resumeItem?.id}

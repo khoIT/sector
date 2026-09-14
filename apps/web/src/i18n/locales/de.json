@@ -493,8 +493,7 @@
         "start": "Starten: {{title}}",
         "resume": "Fortsetzen: {{title}}",
         "retry": "Erneut versuchen: {{title}}",
-        "review": "Ansehen: {{title}}",
-        "jumpsOnly": "Springt in der Liste unten dorthin – den Kurs-Player gibt es noch nicht."
+        "review": "Ansehen: {{title}}"
       },
       "completedBanner": "Sie haben diesen Kurs abgeschlossen.",
       "empty": {
@@ -520,6 +519,81 @@
       },
       "quiz": {
         "bestPercentage": "Beste: {{percent}}%"
+      }
+    },
+    "runner": {
+      "courseProgress": "{{percent}}% abgeschlossen",
+      "sidebar": {
+        "title": "Kursinhalt"
+      },
+      "nav": {
+        "previous": "Zurück",
+        "next": "Weiter"
+      },
+      "itemNotFound": {
+        "title": "Dieser Inhalt gehört nicht zu diesem Kurs",
+        "description": "Er wurde möglicherweise entfernt oder gehört zu einer anderen Version dieses Kurses."
+      },
+      "noLongerAvailable": {
+        "title": "Dieser Kurs ist für dich nicht mehr verfügbar.",
+        "description": "Die zugehörige Einschreibung ist abgelaufen. Wende dich an deine Gruppenleitung oder Administration, falls du weiterhin Zugriff benötigst."
+      },
+      "lesson": {
+        "error": {
+          "title": "Diese Lektion konnte nicht geladen werden",
+          "retry": "Erneut versuchen"
+        }
+      },
+      "topic": {
+        "error": {
+          "title": "Dieses Thema konnte nicht geladen werden",
+          "retry": "Erneut versuchen"
+        }
+      },
+      "quiz": {
+        "blocked": {
+          "title": "Dieses Quiz hat noch keine Fragen"
+        },
+        "error": {
+          "title": "Dieses Quiz konnte nicht geladen werden",
+          "retry": "Erneut versuchen"
+        },
+        "noQuestions": {
+          "title": "Dieses Quiz hat noch keine Fragen und kann nicht gestartet werden"
+        },
+        "questionCount_one": "{{count}} Frage",
+        "questionCount_other": "{{count}} Fragen",
+        "start": "Starten",
+        "continue": "Fortsetzen",
+        "retake": "Wiederholen",
+        "backToOutline": "Zurück zur Kursübersicht",
+        "saveError": "Deine letzte Antwort konnte nicht gespeichert werden. Mach weiter — es wird erneut versucht.",
+        "resumeError": "Dein gespeicherter Fortschritt konnte nicht geladen werden. Neustart."
+      }
+    },
+    "admin": {
+      "title": "Lernfortschritt",
+      "heading": "Fortschritt von {{learner}} in {{course}}",
+      "assignmentType": {
+        "personal": "Persönliche Einschreibung",
+        "group": "Zugewiesen über {{group}}"
+      },
+      "progress": {
+        "title": "Fortschritt"
+      },
+      "stat": {
+        "completedItems": "Abgeschlossene Einheiten",
+        "lessons": "Abgeschlossene Lektionen",
+        "topics": "Abgeschlossene Themen",
+        "quizzes": "Abgeschlossene Quizze",
+        "lastAccessedAt": "Zuletzt aufgerufen",
+        "enrolledAt": "Eingeschrieben",
+        "never": "Nie"
+      },
+      "expiredBadge": "Abgelaufen",
+      "error": {
+        "title": "Der Kurs dieses Lernenden konnte nicht geladen werden",
+        "retry": "Erneut versuchen"
       }
     }
   },

@@ -493,8 +493,7 @@
         "start": "Simulan: {{title}}",
         "resume": "Magpatuloy: {{title}}",
         "retry": "Subukan muli: {{title}}",
-        "review": "Suriin: {{title}}",
-        "jumpsOnly": "Dadalhin ka nito doon sa listahan sa ibaba; wala pa ang course player."
+        "review": "Suriin: {{title}}"
       },
       "completedBanner": "Nakumpleto mo na ang kursong ito.",
       "empty": {
@@ -520,6 +519,81 @@
       },
       "quiz": {
         "bestPercentage": "Pinakamataas: {{percent}}%"
+      }
+    },
+    "runner": {
+      "courseProgress": "{{percent}}% nakumpleto",
+      "sidebar": {
+        "title": "Nilalaman ng kurso"
+      },
+      "nav": {
+        "previous": "Nakaraan",
+        "next": "Susunod"
+      },
+      "itemNotFound": {
+        "title": "Hindi bahagi ng kursong ito ang item na ito",
+        "description": "Maaaring natanggal na ito, o kabilang sa ibang bersyon ng kursong ito."
+      },
+      "noLongerAvailable": {
+        "title": "Hindi mo na ma-access ang kursong ito.",
+        "description": "Nag-expire na ang enrolment dito. Makipag-ugnayan sa iyong group leader o administrator kung kailangan mo pa ng access."
+      },
+      "lesson": {
+        "error": {
+          "title": "Hindi ma-load ang lesson na ito",
+          "retry": "Subukang muli"
+        }
+      },
+      "topic": {
+        "error": {
+          "title": "Hindi ma-load ang topic na ito",
+          "retry": "Subukang muli"
+        }
+      },
+      "quiz": {
+        "blocked": {
+          "title": "Wala pang mga tanong ang quiz na ito"
+        },
+        "error": {
+          "title": "Hindi ma-load ang quiz na ito",
+          "retry": "Subukang muli"
+        },
+        "noQuestions": {
+          "title": "Wala pang mga tanong ang quiz na ito kaya hindi ito masisimulan"
+        },
+        "questionCount_one": "{{count}} tanong",
+        "questionCount_other": "{{count}} na tanong",
+        "start": "Simulan",
+        "continue": "Ipagpatuloy",
+        "retake": "Ulitin",
+        "backToOutline": "Bumalik sa outline ng kurso",
+        "saveError": "Hindi na-save ang iyong huling sagot. Magpatuloy — susubukan ulit ito.",
+        "resumeError": "Hindi ma-load ang iyong na-save na progreso. Magsisimula mula sa umpisa."
+      }
+    },
+    "admin": {
+      "title": "Progreso ng mag-aaral sa kurso",
+      "heading": "Progreso ni {{learner}} sa {{course}}",
+      "assignmentType": {
+        "personal": "Personal na pagpapatala",
+        "group": "Itinalaga sa pamamagitan ng {{group}}"
+      },
+      "progress": {
+        "title": "Progreso"
+      },
+      "stat": {
+        "completedItems": "Mga natapos na item",
+        "lessons": "Mga natapos na lesson",
+        "topics": "Mga natapos na topic",
+        "quizzes": "Mga natapos na quiz",
+        "lastAccessedAt": "Huling na-access",
+        "enrolledAt": "Na-enroll",
+        "never": "Hindi pa kailanman"
+      },
+      "expiredBadge": "Nag-expire na",
+      "error": {
+        "title": "Hindi ma-load ang kurso ng mag-aaral na ito",
+        "retry": "Subukang muli"
       }
     }
   },

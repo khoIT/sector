@@ -1,7 +1,7 @@
 ---
 phase: 7
 title: "Taking a course"
-status: in-progress
+status: done
 priority: P1
 effort: "12 days"
 dependencies: [5, 6]
@@ -64,11 +64,11 @@ nothing. Read the reachable 40%; ignore the rest.
 
 ## Success criteria
 
-- [ ] One route serves every nesting shape
-- [ ] The course quiz is the Phase 5 engine plus one adapter file
-- [ ] A real production course can be completed to 100%
-- [ ] Sidebar, breadcrumb and resume agree, by construction
-- [ ] Zero hard-coded English
+- [x] One route serves every nesting shape
+- [x] The course quiz is the Phase 5 engine plus one adapter file
+- [x] A real production course can be completed to 100%
+- [x] Sidebar, breadcrumb and resume agree, by construction
+- [x] Zero hard-coded English
 
 ## Risk / rollback
 

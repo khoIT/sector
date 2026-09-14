@@ -788,6 +788,65 @@ export {
   useGroupLearners,
 } from './react/use-group-assignments';
 
+// ─── course runner: progress writes, per-question quiz submit, content ────
+export {
+  QUIZ_ITEM_PROGRESS_STATUSES,
+  TRACK_CONTENT_TYPES,
+  courseQuizProgressEntrySchema,
+  courseQuizProgressResultSchema,
+  quizAttemptAnswerSchema,
+  quizAttemptSchema,
+  quizItemProgressStatusSchema,
+  retakeCourseQuizResultSchema,
+  trackContentTypeSchema,
+  trackCourseProgressPayloadSchema,
+  trackCourseQuizProgressPayloadSchema,
+  trackCourseQuizProgressResultSchema,
+  type CourseQuizProgressEntry,
+  type CourseQuizProgressResult,
+  type QuizAttempt,
+  type QuizAttemptAnswer,
+  type QuizItemProgressStatus,
+  type RetakeCourseQuizResult,
+  type TrackContentType,
+  type TrackCourseProgressPayload,
+  type TrackCourseQuizProgressPayload,
+  type TrackCourseQuizProgressResult,
+} from './schemas/course-progress';
+export {
+  courseContentBodySchema,
+  courseQuizDetailSchema,
+  courseQuizQuestionSchema,
+  type CourseContentBody,
+  type CourseQuizDetail,
+  type CourseQuizQuestion,
+} from './schemas/course-content';
+export {
+  learnerCourseAdminDetailSchema,
+  learnerCourseAdminResultSchema,
+  type LearnerCourseAdminDetail,
+  type LearnerCourseAdminResult,
+} from './schemas/learner-course-admin';
+export {
+  getCourseQuizProgress,
+  retakeCourseQuiz,
+  trackCourseProgress,
+  trackCourseQuizProgress,
+} from './endpoints/course-progress';
+export {
+  getCourseLessonDetail,
+  getCourseQuizDetail,
+  getCourseTopicDetail,
+} from './endpoints/course-content';
+export { getLearnerCourseAdminDetail } from './endpoints/learner-course-admin';
+export {
+  useCourseLessonDetail,
+  useCourseQuizDetail,
+  useCourseTopicDetail,
+} from './react/use-course-content';
+export { useCourseQuizProgress } from './react/use-course-quiz-progress';
+export { useLearnerCourseAdminDetail } from './react/use-learner-course-admin';
+export { courseContentKeys, courseQuizProgressKeys, learnerCourseAdminKeys } from './query-keys';
 // ─── home-screen dashboards (four role dashboards, one data layer) ────────
 // `COURSE_PROGRESS_STATUSES` / `courseProgressStatusSchema` / `CourseProgressStatus`
 // are already exported above, from './schemas/course' — schemas/dashboard.ts
