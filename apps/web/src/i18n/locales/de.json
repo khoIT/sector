@@ -534,6 +534,10 @@
         "title": "Dieser Inhalt gehört nicht zu diesem Kurs",
         "description": "Er wurde möglicherweise entfernt oder gehört zu einer anderen Version dieses Kurses."
       },
+      "noLongerAvailable": {
+        "title": "Dieser Kurs ist für dich nicht mehr verfügbar.",
+        "description": "Die zugehörige Einschreibung ist abgelaufen. Wende dich an deine Gruppenleitung oder Administration, falls du weiterhin Zugriff benötigst."
+      },
       "lesson": {
         "error": {
           "title": "Diese Lektion konnte nicht geladen werden",

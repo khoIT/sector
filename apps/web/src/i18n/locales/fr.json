@@ -534,6 +534,10 @@
         "title": "Cet élément ne fait pas partie de ce cours",
         "description": "Il a peut-être été supprimé, ou appartient à une autre version de ce cours."
       },
+      "noLongerAvailable": {
+        "title": "Ce cours ne vous est plus accessible.",
+        "description": "L'inscription correspondante a expiré. Adressez-vous à votre responsable de groupe ou à un administrateur si vous avez encore besoin d'y accéder."
+      },
       "lesson": {
         "error": {
           "title": "Cette leçon n'a pas pu être chargée",

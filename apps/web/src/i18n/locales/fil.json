@@ -534,6 +534,10 @@
         "title": "Hindi bahagi ng kursong ito ang item na ito",
         "description": "Maaaring natanggal na ito, o kabilang sa ibang bersyon ng kursong ito."
       },
+      "noLongerAvailable": {
+        "title": "Hindi mo na ma-access ang kursong ito.",
+        "description": "Nag-expire na ang enrolment dito. Makipag-ugnayan sa iyong group leader o administrator kung kailangan mo pa ng access."
+      },
       "lesson": {
         "error": {
           "title": "Hindi ma-load ang lesson na ito",

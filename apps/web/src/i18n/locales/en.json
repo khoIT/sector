@@ -612,6 +612,10 @@
         "title": "This item is not part of this course",
         "description": "It may have been removed, or belong to a different version of this course."
       },
+      "noLongerAvailable": {
+        "title": "This course is no longer available to you",
+        "description": "The enrolment behind it has expired. Ask your group leader or administrator if you still need access."
+      },
       "lesson": {
         "error": {
           "title": "This lesson could not be loaded",

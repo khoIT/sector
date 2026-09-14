@@ -534,6 +534,10 @@
         "title": "Este elemento no forma parte de este curso",
         "description": "Puede haber sido eliminado o pertenecer a otra versión de este curso."
       },
+      "noLongerAvailable": {
+        "title": "Este curso ya no está disponible para ti.",
+        "description": "La inscripción correspondiente ha expirado. Pide acceso a tu líder de grupo o administrador si aún lo necesitas."
+      },
       "lesson": {
         "error": {
           "title": "No se pudo cargar esta lección",
