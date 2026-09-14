@@ -765,12 +765,20 @@ export {
 export { exportFileToBlob } from './export-download';
 
 export {
+  assignmentContentRefSchema,
   createGroupAssignmentPayloadSchema,
+  GROUP_ASSIGNMENT_STATUSES,
+  GROUP_ASSIGNMENT_TYPES,
   groupAssignmentSchema,
+  groupAssignmentStatusSchema,
+  groupAssignmentTypeSchema,
   groupCourseOptionSchema,
   groupLearnerSchema,
+  type AssignmentContentRef,
   type CreateGroupAssignmentPayload,
   type GroupAssignment,
+  type GroupAssignmentStatus,
+  type GroupAssignmentType,
   type GroupCourseOption,
   type GroupLearner,
 } from './schemas/group-assignment';
@@ -955,24 +963,3 @@ export {
 
 export { pathologyKeys } from './query-keys';
 
-// ─── group assignments: read-only surface for a group's assignments ───────
-export {
-  assignmentContentRefSchema,
-  assignmentGroupRefSchema,
-  assignmentListResponseSchema,
-  assignmentSchema,
-  GROUP_ASSIGNMENT_STATUSES,
-  GROUP_ASSIGNMENT_TYPES,
-  groupAssignmentStatusSchema,
-  groupAssignmentTypeSchema,
-  type Assignment,
-  type AssignmentContentRef,
-  type AssignmentGroupRef,
-  type AssignmentListResponse,
-  type GroupAssignmentStatus,
-  type GroupAssignmentType,
-} from './schemas/assignment';
-
-export { getGroupAssignments, type AssignmentListQuery } from './endpoints/assignment';
-export { useGroupAssignments } from './react/use-assignments';
-export { assignmentKeys } from './query-keys';

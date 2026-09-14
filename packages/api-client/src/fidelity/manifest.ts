@@ -842,22 +842,19 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   pathologyCategorySchema:
     'computed per request by joining distinct pathologygalleries.scanTypeId values (and unmapped category names) against scantypes; the relation itself is proved by pathologyGalleryItemSchema',
 
-  // Group assignments: GET /api/group-assignment populates `group`, `user`
-  // and `contentId` (plus courseId/lessonId/topicId) onto a GroupAssignment
-  // row. `contentId` is polymorphic — a V2Course, V2Lesson, V2Topic or
-  // V2Quiz document depending on `contentRefModel` — so proving it needs a
-  // projection that branches per row on that field; verified instead against
-  // a live response from the local production mirror (2026-09-14, a `module`
-  // / `V2Lesson` row) and left as a route-suite concern rather than a
-  // replay, matching the read-only, no-writes scope this surface ported.
-  assignmentGroupRefSchema: 'populated group ref on a GroupAssignment row; see assignmentSchema',
+  // Group assignments: GET /api/group-assignment/group/:groupId populates
+  // `user` and `contentId` (plus courseId/lessonId/topicId) onto a
+  // GroupAssignment row. `contentId` is polymorphic — a V2Course, V2Lesson,
+  // V2Topic or V2Quiz document depending on `contentRefModel` — so proving it
+  // needs a projection that branches per row on that field. Checked instead by
+  // schemas/group-assignment.test.ts against rows captured from the live
+  // route, including the two shapes a replay could not have found because
+  // neither is stored: a `user` that populated to null, and a `contentId`
+  // reduced from a full content document.
   assignmentContentRefSchema:
-    'contentId/courseId/lessonId/topicId are polymorphic (course/lesson/topic/quiz) populated refs on a GroupAssignment row; see assignmentSchema',
-  assignmentSchema:
-    'GET /api/group-assignment row: group, user and a polymorphic contentId populated per request onto groupassignments — no single collection holds the joined shape; verified against a live mirror response instead, see the schema doc comment',
-  assignmentListResponseSchema: 'the pagination envelope around assignmentSchema',
+    'contentId/courseId/lessonId/topicId are polymorphic (course/lesson/topic/quiz) populated refs on a GroupAssignment row; see groupAssignmentSchema',
   groupAssignmentTypeSchema:
-    'the value of groupassignments.assignmentType, assembled into assignmentSchema above',
+    'the value of groupassignments.assignmentType, assembled into groupAssignmentSchema',
   groupAssignmentStatusSchema:
-    'the value of groupassignments.status, assembled into assignmentSchema above',
+    'the value of groupassignments.status, assembled into groupAssignmentSchema',
 };

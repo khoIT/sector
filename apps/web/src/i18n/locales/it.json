@@ -763,43 +763,5 @@
       "title": "Accedi per usare Sage AI",
       "description": "Sage AI richiede un account con sessione avviata per aprirsi."
     }
-  },
-  "assignments": {
-    "title": "Assegnazioni",
-    "searchPlaceholder": "Cerca assegnazioni…",
-    "columns": {
-      "learner": "Discente",
-      "content": "Contenuto",
-      "type": "Tipo",
-      "dueDate": "Scadenza",
-      "status": "Stato"
-    },
-    "type": {
-      "course": "Corso",
-      "module": "Modulo",
-      "topic": "Argomento",
-      "quiz": "Quiz"
-    },
-    "status": {
-      "draft": "Bozza",
-      "active": "Attivo",
-      "in_progress": "In corso",
-      "completed": "Completato",
-      "cancelled": "Annullato"
-    },
-    "filters": {
-      "status": "Stato",
-      "allStatuses": "Tutti gli stati",
-      "type": "Tipo",
-      "allTypes": "Tutti i tipi"
-    },
-    "empty": {
-      "title": "Ancora nessuna assegnazione",
-      "description": "Non è stato ancora assegnato nulla a questo gruppo."
-    },
-    "error": {
-      "title": "Impossibile caricare le assegnazioni",
-      "retry": "Riprova"
-    }
   }
 }
