@@ -183,7 +183,21 @@ The comment is being corrected on the client side, but the check itself is an AP
 Same shape as finding 8's adjacent items: an authorization helper that reads as if it
 gates, placed where it does not.
 
-## 10. The Referrals surface carries an enumerable PII leak
+## 10. `GET /api/group-assignment` trusts the caller's `groupId`
+
+The route applies a permission check and then trusts whatever `groupId` the client
+sends. Proven: a minted `subscriber` token belonging to a user who leads no group got
+HTTP 200 and **8,720 assignment rows carrying real student names and email addresses**.
+The sibling route `/group/:groupId` correctly returns 403 for the same user.
+
+The route file's own comment claims a bare subscriber does not hold
+`read:group-assignment`. The roles collection contradicts it.
+
+This is the same finding as 9 and the group-export items, and it is now the third
+route family where the scoping sits in one sibling and not the other. Worth fixing as
+a class rather than one route at a time.
+
+## 11. The Referrals surface carries an enumerable PII leak
 
 From the Phase 9 analysis: 0 referral documents against 3,152 users. Recommended
 for deletion rather than porting, which also closes the leak.
