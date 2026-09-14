@@ -9,6 +9,7 @@
     "courses": "Corsi",
     "questionBanks": "Banche di domande",
     "groupAdministration": "Amministrazione dei gruppi",
+    "home": "Home",
     "gallery": "Galleria di Patologia",
     "sage": "Sage AI"
   },
@@ -477,8 +478,7 @@
         "completed": "Completato",
         "active": "Attivo",
         "paused": "In pausa",
-        "dropped": "Abbandonato",
-        "expired": "Scaduto"
+        "dropped": "Abbandonato"
       },
       "status": {
         "not_started": "Non avviato",
@@ -497,7 +497,8 @@
       },
       "noMatch": {
         "title": "Nessun corso corrisponde alla tua ricerca",
-        "description": "Nessun titolo di corso corrisponde a «{{keyword}}»."
+        "description": "Nessun titolo di corso corrisponde a «{{keyword}}».",
+        "descriptionFiltered": "Nessun corso ha lo stato selezionato."
       },
       "pagePastEnd": {
         "title": "Niente in questa pagina",
@@ -521,7 +522,9 @@
       "resume": {
         "start": "Inizia: {{title}}",
         "resume": "Continua: {{title}}",
-        "review": "Rivedi: {{title}}"
+        "retry": "Riprova: {{title}}",
+        "review": "Rivedi: {{title}}",
+        "jumpsOnly": "Ti porta a quel punto dell'elenco; il player del corso non esiste ancora."
       },
       "completedBanner": "Hai completato questo corso.",
       "empty": {
@@ -539,7 +542,8 @@
       "itemStatus": {
         "not_started": "Non avviato",
         "in_progress": "In corso",
-        "completed": "Completato"
+        "completed": "Completato",
+        "failed": "Non superato"
       },
       "blocked": {
         "quiz_has_no_questions": "Questo quiz non ha ancora domande e non può essere aperto."
@@ -594,6 +598,71 @@
     "close": "Chiudi",
     "completionTagErrorTitle": "Il contrassegno non è stato salvato",
     "completionTagError": "Non è stato possibile modificare la completezza dello scan. Non è stato salvato nulla: riprova."
+  },
+  "home": {
+    "greeting": "Bentornato, {{name}}",
+    "courseStatus": {
+      "inProgress": "In corso",
+      "completed": "Completato",
+      "notStarted": "Non iniziato"
+    },
+    "myLearning": {
+      "title": "Il mio apprendimento",
+      "course": "Corso",
+      "selectCourse": "Seleziona un corso",
+      "courseProgress": "Progresso del corso",
+      "noCourseProgress": "Ancora nessun progresso nel corso.",
+      "scanProgress": "Le mie scansioni",
+      "noScanProgress": "Ancora nessuna scansione.",
+      "qbank": "Tentativi nella banca di domande",
+      "noQbank": "Ancora nessun tentativo nella banca di domande.",
+      "attempts_one": "{{count}} tentativo",
+      "attempts_other": "{{count}} tentativi",
+      "timeline": "Progresso nel tempo",
+      "noTimeline": "Non c'è ancora abbastanza attività per mostrare una tendenza.",
+      "topCourses": "Corsi principali",
+      "noTopCourses": "Ancora nessun corso in corso.",
+      "topics": "Argomenti",
+      "noTopics": "Ancora nessun progresso sugli argomenti.",
+      "quizzes": "Quiz",
+      "noQuizzes": "Ancora nessun progresso sui quiz."
+    },
+    "leader": {
+      "title": "Dashboard del leader di gruppo",
+      "group": "Gruppo",
+      "noGroup": "Non guidi ancora nessun gruppo",
+      "noGroupHint": "Non appena un gruppo ti nomina leader, qui apparirà il suo riepilogo di corsi e scansioni."
+    },
+    "group": {
+      "title": "{{groupName}}",
+      "viewMembers": "Visualizza membri",
+      "courseProgress": "Progresso del corso",
+      "noCourseProgress": "Ancora nessun progresso del corso per questo gruppo.",
+      "scanProgress": "Progresso delle scansioni",
+      "noScanProgress": "Ancora nessuna scansione per questo gruppo.",
+      "qbank": "Tentativi nella banca di domande",
+      "noQbank": "Ancora nessun tentativo nella banca di domande per questo gruppo.",
+      "averageScore": "{{score}}% punteggio migliore"
+    },
+    "reviewer": {
+      "title": "Dashboard del revisore delle scansioni",
+      "expertUnreviewed": "Scansioni da parte di esperti — non revisionate",
+      "expertReviewed": "Scansioni da parte di esperti — revisionate",
+      "groupUnreviewed": "Scansioni di gruppo — non revisionate",
+      "groupReviewed": "Scansioni di gruppo — revisionate",
+      "credits": "Crediti per revisione esperta",
+      "personalCredits": "I tuoi crediti",
+      "creditsUnavailable": "Impossibile caricare i saldi crediti.",
+      "loading": "Caricamento…"
+    },
+    "admin": {
+      "title": "Dashboard amministratore",
+      "manageGroups": "Gestisci gruppi",
+      "group": "Gruppo",
+      "selectGroup": "Seleziona un gruppo",
+      "noGroups": "Ancora nessun gruppo",
+      "noGroupsHint": "Non appena esiste un gruppo, selezionalo qui per vedere il suo riepilogo di corsi e scansioni."
+    }
   },
   "gallery": {
     "title": "Galleria di Patologia",

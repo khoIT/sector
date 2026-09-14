@@ -9,6 +9,7 @@
     "courses": "Cursos",
     "questionBanks": "Bancos de preguntas",
     "groupAdministration": "Administración de grupos",
+    "home": "Inicio",
     "gallery": "Galería de Patología",
     "sage": "Sage AI"
   },
@@ -477,8 +478,7 @@
         "completed": "Completado",
         "active": "Activo",
         "paused": "Pausado",
-        "dropped": "Abandonado",
-        "expired": "Caducado"
+        "dropped": "Abandonado"
       },
       "status": {
         "not_started": "No iniciado",
@@ -497,7 +497,8 @@
       },
       "noMatch": {
         "title": "Ningún curso coincide con tu búsqueda",
-        "description": "Ningún título de curso coincide con «{{keyword}}»."
+        "description": "Ningún título de curso coincide con «{{keyword}}».",
+        "descriptionFiltered": "Ningún curso tiene el estado seleccionado."
       },
       "pagePastEnd": {
         "title": "No hay nada en esta página",
@@ -521,7 +522,9 @@
       "resume": {
         "start": "Comenzar: {{title}}",
         "resume": "Continuar: {{title}}",
-        "review": "Revisar: {{title}}"
+        "retry": "Reintentar: {{title}}",
+        "review": "Revisar: {{title}}",
+        "jumpsOnly": "Te lleva a ese punto de la lista; el reproductor del curso aún no existe."
       },
       "completedBanner": "Has completado este curso.",
       "empty": {
@@ -539,7 +542,8 @@
       "itemStatus": {
         "not_started": "No iniciado",
         "in_progress": "En progreso",
-        "completed": "Completado"
+        "completed": "Completado",
+        "failed": "No aprobado"
       },
       "blocked": {
         "quiz_has_no_questions": "Este cuestionario aún no tiene preguntas y no se puede abrir."
@@ -594,6 +598,71 @@
     "close": "Cerrar",
     "completionTagErrorTitle": "La marca no se ha guardado",
     "completionTagError": "No se ha podido cambiar el estado de completitud del escaneo. No se ha guardado nada: inténtelo de nuevo."
+  },
+  "home": {
+    "greeting": "Bienvenido de nuevo, {{name}}",
+    "courseStatus": {
+      "inProgress": "En curso",
+      "completed": "Completado",
+      "notStarted": "No iniciado"
+    },
+    "myLearning": {
+      "title": "Mi aprendizaje",
+      "course": "Curso",
+      "selectCourse": "Selecciona un curso",
+      "courseProgress": "Progreso del curso",
+      "noCourseProgress": "Todavía no hay progreso en el curso.",
+      "scanProgress": "Mis escaneos",
+      "noScanProgress": "Todavía no hay escaneos.",
+      "qbank": "Intentos del banco de preguntas",
+      "noQbank": "Todavía no hay intentos del banco de preguntas.",
+      "attempts_one": "{{count}} intento",
+      "attempts_other": "{{count}} intentos",
+      "timeline": "Progreso en el tiempo",
+      "noTimeline": "Todavía no hay suficiente actividad para mostrar una tendencia.",
+      "topCourses": "Cursos principales",
+      "noTopCourses": "Todavía no hay cursos en curso.",
+      "topics": "Temas",
+      "noTopics": "Todavía no hay progreso de temas.",
+      "quizzes": "Cuestionarios",
+      "noQuizzes": "Todavía no hay progreso de cuestionarios."
+    },
+    "leader": {
+      "title": "Panel del líder de grupo",
+      "group": "Grupo",
+      "noGroup": "Todavía no lideras ningún grupo",
+      "noGroupHint": "En cuanto un grupo te nombre líder, su resumen de cursos y escaneos aparecerá aquí."
+    },
+    "group": {
+      "title": "{{groupName}}",
+      "viewMembers": "Ver miembros",
+      "courseProgress": "Progreso del curso",
+      "noCourseProgress": "Todavía no hay progreso de curso para este grupo.",
+      "scanProgress": "Progreso de escaneos",
+      "noScanProgress": "Todavía no hay escaneos para este grupo.",
+      "qbank": "Intentos del banco de preguntas",
+      "noQbank": "Todavía no hay intentos del banco de preguntas para este grupo.",
+      "averageScore": "{{score}}% mejor puntuación"
+    },
+    "reviewer": {
+      "title": "Panel del revisor de escaneos",
+      "expertUnreviewed": "Escaneos de expertos — sin revisar",
+      "expertReviewed": "Escaneos de expertos — revisados",
+      "groupUnreviewed": "Escaneos grupales — sin revisar",
+      "groupReviewed": "Escaneos grupales — revisados",
+      "credits": "Créditos de revisión experta",
+      "personalCredits": "Tus créditos",
+      "creditsUnavailable": "No se pudieron cargar los saldos de créditos.",
+      "loading": "Cargando…"
+    },
+    "admin": {
+      "title": "Panel del administrador",
+      "manageGroups": "Gestionar grupos",
+      "group": "Grupo",
+      "selectGroup": "Selecciona un grupo",
+      "noGroups": "Todavía no hay grupos",
+      "noGroupsHint": "En cuanto exista un grupo, selecciónalo aquí para ver su resumen de cursos y escaneos."
+    }
   },
   "gallery": {
     "title": "Galería de Patología",

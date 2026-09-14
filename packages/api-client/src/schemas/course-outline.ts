@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { courseProgressStatusSchema } from './course';
+import { courseItemProgressStatusSchema, courseProgressStatusSchema } from './course';
 
 /**
  * The resolved course outline — GET /api/v2/learners/courses/:courseId/outline.
@@ -30,6 +30,12 @@ import { courseProgressStatusSchema } from './course';
  * kinds) for the same reason — a lesson is still a legal resume target for
  * the edge case where a lesson genuinely has no leaf under it, even though
  * no sampled course exercises that case today.
+ *
+ * `resume` is the server's SUGGESTION, not a guarantee that the item can be
+ * opened: the route's own selection filters on "not completed" and "is a
+ * leaf" but not on `blockedReason`, so it can name a quiz with no questions.
+ * Callers resolve it through `resolveResumeTarget` (apps/web) rather than
+ * trusting it directly.
  */
 
 export const COURSE_OUTLINE_ITEM_KINDS = ['lesson', 'topic', 'quiz'] as const;
@@ -71,7 +77,13 @@ export const courseOutlineItemSchema = z.object({
   topicId: z.string().nullable(),
   prevId: z.string().nullable(),
   nextId: z.string().nullable(),
-  status: courseProgressStatusSchema,
+  /**
+   * The item's OWN stored status, which is the four-value set — a quiz
+   * answered in full below its passing mark is stored `failed` and served
+   * `failed`. The course-level `status` below is derived by the route from
+   * these and can only be one of the three.
+   */
+  status: courseItemProgressStatusSchema,
   completedAt: z.string().nullable(),
   lastAccessedAt: z.string().nullable(),
   blockedReason: courseOutlineBlockedReasonSchema.nullable(),
@@ -93,8 +105,15 @@ export const courseOutlineSchema = z.object({
    * A bare version NUMBER on this route — unlike the object of the same
    * field name on the My Courses item (`learnerCourseMetaVersionSummarySchema`
    * in `./course.ts`). Do not reuse one type for both.
+   *
+   * Nullable, because the controller deliberately reports null rather than
+   * claim precision it does not have: a progress row with no recorded
+   * `courseMetaVersionNumber` (the legacy shape) and a pinned version whose
+   * snapshot has since been deleted both resolve a structure without
+   * resolving a version number. Read it as "this outline was not resolved
+   * from a pinned version", not as "no version exists".
    */
-  courseMetaVersion: z.number(),
+  courseMetaVersion: z.number().nullable(),
   status: courseProgressStatusSchema,
   progress: z.number(),
   totalItems: z.number(),

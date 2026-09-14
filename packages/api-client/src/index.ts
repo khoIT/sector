@@ -608,10 +608,12 @@ export { notificationPreferenceKeys } from './query-keys';
 // ─── courses: My Courses + the resolved course outline ────────────────────
 export {
   ASSIGNMENT_TYPES,
+  COURSE_ITEM_PROGRESS_STATUSES,
   COURSE_PROGRESS_STATUSES,
   ENROLLMENT_STATUSES,
   EXPIRATION_TYPES,
   assignmentTypeSchema,
+  courseItemProgressStatusSchema,
   courseProgressStatusSchema,
   enrollmentStatusSchema,
   expirationTypeSchema,
@@ -623,6 +625,7 @@ export {
   learnerCourseSummarySchema,
   learnerCoursesPageSchema,
   type AssignmentType,
+  type CourseItemProgressStatus,
   type CourseProgressStatus,
   type EnrollmentStatus,
   type ExpirationType,
@@ -785,6 +788,87 @@ export {
   useGroupLearners,
 } from './react/use-group-assignments';
 
+// ─── home-screen dashboards (four role dashboards, one data layer) ────────
+// `COURSE_PROGRESS_STATUSES` / `courseProgressStatusSchema` / `CourseProgressStatus`
+// are already exported above, from './schemas/course' — schemas/dashboard.ts
+// reuses that exact enum rather than redeclaring it.
+export {
+  GROUP_SCAN_PROGRESS_STATUS_ORDER,
+  courseCompletionTimelineDaySchema,
+  courseCompletionTimelineEventSchema,
+  courseCompletionTimelineSchema,
+  courseProgressChartSchema,
+  courseProgressSegmentSchema,
+  courseProgressStatusLabelKey,
+  courseProgressStatusTone,
+  dashboardGroupChartsSchema,
+  groupCourseProgressChartSchema,
+  groupCourseProgressSegmentSchema,
+  groupScanProgressChartSchema,
+  qbankStatsItemSchema,
+  qbankStatsSchema,
+  quizProgressItemSchema,
+  quizProgressSchema,
+  scanProgressByUserItemSchema,
+  scanProgressByUserSchema,
+  scanProgressStatusLabelKey,
+  topCourseProgressItemSchema,
+  topCourseProgressSchema,
+  topicProgressItemSchema,
+  topicProgressSchema,
+  type CourseCompletionTimeline,
+  type CourseCompletionTimelineDay,
+  type CourseCompletionTimelineEvent,
+  type CourseCompletionTimelineQuery,
+  type CourseProgressChart,
+  type CourseProgressSegment,
+  type DashboardGroupCharts,
+  type DashboardGroupChartsQuery,
+  type GroupCourseProgressChart,
+  type GroupCourseProgressSegment,
+  type GroupScanProgressChart,
+  type QBankStats,
+  type QBankStatsItem,
+  type QBankStatsQuery,
+  type QuizProgress,
+  type QuizProgressItem,
+  type QuizProgressQuery,
+  type ScanProgressByUser,
+  type ScanProgressByUserItem,
+  type ScanProgressByUserQuery,
+  type TopCourseProgress,
+  type TopCourseProgressItem,
+  type TopCourseProgressQuery,
+  type TopicProgress,
+  type TopicProgressItem,
+  type TopicProgressQuery,
+} from './schemas/dashboard';
+
+export {
+  getDashboardCourseCompletionTimeline,
+  getDashboardCourseProgress,
+  getDashboardTopCourseProgress,
+} from './endpoints/dashboard-course-charts';
+export { getDashboardGroupCharts } from './endpoints/dashboard-group-charts';
+export {
+  getDashboardQBankStats,
+  getDashboardQuizProgress,
+  getDashboardTopicProgress,
+} from './endpoints/dashboard-learning-progress';
+export { getDashboardScanProgress } from './endpoints/dashboard-scan-progress';
+
+export {
+  useDashboardCourseCompletionTimeline,
+  useDashboardCourseProgress,
+  useDashboardGroupCharts,
+  useDashboardQBankStats,
+  useDashboardQuizProgress,
+  useDashboardScanProgress,
+  useDashboardTopCourseProgress,
+  useDashboardTopicProgress,
+} from './react/use-dashboard';
+
+export { dashboardKeys } from './query-keys';
 // ─── pathology gallery: category bar, sub-category rail, card grid ────────
 export {
   pathologyCategorySchema,

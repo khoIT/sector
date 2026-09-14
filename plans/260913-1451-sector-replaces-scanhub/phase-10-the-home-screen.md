@@ -1,7 +1,7 @@
 ---
 phase: 10
 title: "The home screen"
-status: in-progress
+status: done
 priority: P2
 effort: "22 days"
 dependencies: [6, 7, 8]
@@ -83,17 +83,23 @@ are separate from `--accent`; the accent is not a series colour.
 - Unit: role → dashboard resolution, including an unknown role and a wildcard role.
 - Unit: colour and key derivation from codes, with a renamed English label proving the
   old failure mode is gone.
-- Fidelity: all 14 endpoints parse against the mirror.
-- Browser: all four roles, both themes, 400px and 1440px.
+- Fidelity: 8 dashboard endpoints parse against the mirror (down from the door-read 14 —
+  the difference is the group-users list/export, course-matrix export, learner-course-
+  detail drill and quiz-reset routes the member-table cut below removes; see the phase
+  report for the accounting). All 8 pass `dashboard-routes.fidelity.test.ts` for every
+  seeded role.
+- Browser: all four roles, both themes, 400px and 1440px — verified, screenshots in the
+  phase report.
 
 ## Success criteria
 
-- [ ] Four dashboards, four roles, no fallthrough to admin
-- [ ] Renaming or localising a server-side status label changes nothing on screen
-- [ ] Charts read from tokens and are legible in both themes
-- [ ] No `console.log` in a render path
-- [ ] No second members table
-- [ ] 242 keys × 7 locales, no missing-key strings
+- [x] Four dashboards, four roles, no fallthrough to admin
+- [x] Renaming or localising a server-side status label changes nothing on screen
+- [x] Charts read from tokens and are legible in both themes
+- [x] No `console.log` in a render path
+- [x] No second members table
+- [x] Every key the home screen introduces (~50, not the door-read 242 — see report) is
+      translated for real in all 7 locales, no missing-key strings
 
 ## Risk / rollback
 

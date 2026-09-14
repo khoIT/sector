@@ -222,8 +222,10 @@ through the running mirror API for all four accounts when
 `SECTOR_MIRROR_JWT_SECRET` is set to the secret the `:5002` instance was
 started with, minting sessions rather than spending the auth rate limit.
 
-Without it the replay half silently skips, which is easy to mistake for a pass.
-Read it back off the running instance rather than hunting for where it was set:
+Normally it comes from `.env.local` at the repo root, which is gitignored and
+holds the two local secrets, so the replay just runs. If that file is missing,
+read the secret back off the running instance rather than hunting for where it
+was set:
 
 ```bash
 PID=$(lsof -nP -iTCP:5002 -sTCP:LISTEN -t | head -1)
@@ -231,8 +233,12 @@ export SECTOR_MIRROR_JWT_SECRET=$(ps -Eww -p "$PID" | tr ' ' '\n' |
   grep -m1 '^JWT_SECRET_KEY=' | cut -d= -f2-)
 ```
 
-With it set the suite runs 46 tests rather than 21; a run reporting 21 passed
-and 21 skipped has not touched a route.
+A run that cannot reach the mirror, or has no secret, prints `route replay
+skipped` and reports only the collection half. That line is the thing to look
+for: the count alone will not tell you, because a skipped half still reads as a
+pass. Note that `turbo.json` must list the variable under `passThroughEnv` or it
+never reaches the task at all, which is how the replay went unnoticed for a
+while.
 
 ## Layout of the app
 

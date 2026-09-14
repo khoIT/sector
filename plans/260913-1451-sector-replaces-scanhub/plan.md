@@ -76,8 +76,8 @@ endpoint ships in the production route table.
 | 7 | [Taking a course](./phase-07-taking-a-course.md) | 12 | 5, 6 | **In progress** |
 | 8 | [Group administration](./phase-08-group-administration.md) | 15 | 1 | **Done** |
 | 9 | [Assignments, gallery and Sage](./phase-09-assignments-gallery-and-sage.md) | 9 | 5, 8 | **Done** |
-| 10 | [The home screen](./phase-10-the-home-screen.md) | 22 | 6, 7, 8 | **In progress** |
-| 11 | [Cutover](./phase-11-cutover.md) | 8 | all | Pending |
+| 10 | [The home screen](./phase-10-the-home-screen.md) | 22 | 6, 7, 8 | **Done** |
+| 11 | [Cutover](./phase-11-cutover.md) | 8 | all | **In progress** (route map, auth fixes, i18n gate, flag decision, session handoff and deploy pipeline done; staged rollout and decommission wait on 7) |
 
 Two-engineer shape: one runs 1 → 3 → 4 → 8 → 10, the other 2 → 5 → 6 → 7 → 9,
 converging on 11. Phases 4 and 5 touch disjoint directories and can be parallel;

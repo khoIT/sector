@@ -1,4 +1,4 @@
-import type { CourseOutlineItem } from '@sector/api-client';
+import type { CourseOutline, CourseOutlineItem } from '@sector/api-client';
 
 /**
  * Pure shaping for the outline surface: visual grouping and label lookups,
@@ -50,10 +50,50 @@ export function findOutlineItem(
 }
 
 /**
+ * Which item the resume action should actually open.
+ *
+ * The route's `resume` pointer is a suggestion: its own selection rule is
+ * "first incomplete leaf", with no test for `blockedReason`, so on a course
+ * whose next leaf is a quiz with no questions it names an item the learner
+ * cannot open — and on a course where every openable item is already done it
+ * names the leftover blocked quiz instead of reporting completion. Both are
+ * the same mistake seen from two ends, and both are visible to the learner as
+ * a Start button that leads nowhere.
+ *
+ * So the pointer is honoured when it names something openable, and otherwise
+ * the first unfinished, unblocked item in the server's own order is used.
+ * This re-derives no navigation: `order` still decides, and an outline with
+ * nothing openable left returns nothing rather than inventing a target.
+ */
+/**
+ * Whether the course is finished, as the outline itself reports it.
+ *
+ * Deliberately not "there is nothing to resume": a course with no published
+ * content has an empty item list, no resume pointer and nothing completed,
+ * and the two states must not render the same sentence.
+ */
+export function isOutlineComplete(
+  outline: Pick<CourseOutline, 'totalItems' | 'completedItems'>,
+): boolean {
+  return outline.totalItems > 0 && outline.completedItems >= outline.totalItems;
+}
+
+export function resolveResumeTarget(
+  items: readonly CourseOutlineItem[],
+  resumeId: string | null,
+): CourseOutlineItem | undefined {
+  const openable = (item: CourseOutlineItem) => !item.blockedReason && item.status !== 'completed';
+  const suggested = findOutlineItem(items, resumeId);
+  if (suggested && openable(suggested)) return suggested;
+  return items.find(openable);
+}
+
+/**
  * The verb on the resume action, matching the item's OWN status — not the
  * course's. A quiz is complete only once every question is answered, so an
  * item can sit `in_progress` (opened, not finished) for a long time; this
- * never claims "Start" for something the learner has already opened.
+ * never claims "Start" for something the learner has already opened, and
+ * never claims it for a quiz they have already failed either.
  */
 export function resumeActionLabelKey(status: CourseOutlineItem['status']): string {
   switch (status) {
@@ -61,6 +101,10 @@ export function resumeActionLabelKey(status: CourseOutlineItem['status']): strin
       return 'courses.outline.resume.start';
     case 'in_progress':
       return 'courses.outline.resume.resume';
+    case 'failed':
+      // A quiz answered in full below its passing mark. The learner is going
+      // back to retake it, which is neither starting nor resuming.
+      return 'courses.outline.resume.retry';
     case 'completed':
       return 'courses.outline.resume.review';
   }

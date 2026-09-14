@@ -8,8 +8,9 @@ import { COURSES_PATH } from '../courses-links';
 import { roundedProgress } from '../my-courses/course-row-model';
 import { CourseOutlineItemRow } from './course-outline-item-row';
 import {
-  findOutlineItem,
   groupOutlineItemsForDisplay,
+  isOutlineComplete,
+  resolveResumeTarget,
   resumeActionLabelKey,
 } from './course-outline-model';
 
@@ -66,7 +67,12 @@ export function CourseOutlinePage() {
   const outline = query.data;
   const percent = roundedProgress(outline.progress);
   const groups = groupOutlineItemsForDisplay(outline.items);
-  const resumeItem = findOutlineItem(outline.items, outline.resume?.itemId ?? null);
+  const resumeItem = resolveResumeTarget(outline.items, outline.resume?.itemId ?? null);
+  // Completion is something the outline REPORTS, not something the absence of
+  // a resume pointer implies. A course with no published content has nothing
+  // to resume and nothing completed either, and telling that learner they had
+  // finished it was the plainest thing on the page that was untrue.
+  const isComplete = isOutlineComplete(outline);
 
   return (
     <section aria-label={t('courses.outline.title')}>
@@ -89,17 +95,23 @@ export function CourseOutlinePage() {
       </div>
 
       {resumeItem ? (
-        <Button asChild className="mb-4">
-          <a href={`#item-${resumeItem.id}`}>
-            {t(resumeActionLabelKey(resumeItem.status), { title: resumeItem.title })}
-          </a>
-        </Button>
-      ) : (
+        <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <Button asChild>
+            <a href={`#item-${resumeItem.id}`}>
+              {t(resumeActionLabelKey(resumeItem.status), { title: resumeItem.title })}
+            </a>
+          </Button>
+          {/* The course runner is the next phase. Until it exists this action
+              moves the page to the item and nothing more, so it says so
+              rather than letting the verb imply an opening. */}
+          <span className="text-[12px] text-ink-dim">{t('courses.outline.resume.jumpsOnly')}</span>
+        </div>
+      ) : isComplete ? (
         <div className="mb-4 flex items-center gap-2 rounded-token border border-line bg-ok-soft px-3 py-2 text-body text-ok">
           <CircleCheck className="h-4 w-4" aria-hidden />
           {t('courses.outline.completedBanner')}
         </div>
-      )}
+      ) : null}
 
       {groups.length === 0 ? (
         <EmptyState title={t('courses.outline.empty.title')} />
