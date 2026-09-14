@@ -211,12 +211,23 @@
         "retry": "Intentar de nuevo"
       },
       "actions": {
-        "changeRole": "Cambiar rol",
         "remove": "Eliminar",
         "removeConfirmTitle": "¿Eliminar a este miembro?",
-        "removeConfirmDescription": "Perderá el acceso a los cursos y escaneos de este grupo.",
+        "removeConfirmDescription": "<strong>{{name}}</strong> se eliminará de este grupo de forma permanente, junto con su fecha de ingreso y cualquier caducidad de la membresía. Esto no se puede deshacer; habría que volver a invitarle.",
         "removeError": "No se pudo eliminar a este miembro.",
-        "removing": "Eliminando…"
+        "removing": "Eliminando…",
+        "changeRoleFor": "Cambiar el rol de {{name}}",
+        "removeFor": "Quitar a {{name}}",
+        "resend": "Reenviar invitación",
+        "resendFor": "Reenviar la invitación a {{name}}",
+        "resendSent": "Invitación reenviada",
+        "resendError": "No se pudo reenviar la invitación.",
+        "roleConfirmTitle": "¿Cambiar el rol de este miembro?",
+        "roleConfirmToLeader": "<strong>{{name}}</strong> pasará a ser responsable de este grupo, con acceso a las ecografías de todos los miembros y a la gestión de la lista.",
+        "roleConfirmToLearner": "<strong>{{name}}</strong> pasará a ser estudiante y dejará de poder gestionar este grupo.",
+        "roleConfirm": "Cambiar rol",
+        "roleSaving": "Cambiando…",
+        "roleError": "No se pudo cambiar este rol."
       }
     },
     "tabs": {
@@ -246,7 +257,8 @@
       "isFreeTrialLabel": "Este es un grupo de prueba gratuita",
       "error": "No se pudo guardar este grupo.",
       "saving": "Guardando…",
-      "submit": "Guardar"
+      "submit": "Guardar",
+      "typeHint": "Se define después de crear el grupo: al crearlo siempre es un grupo simple."
     },
     "invite": {
       "trigger": "Invitar miembro",
@@ -277,7 +289,11 @@
       "empty": {
         "title": "Sin cursos inscritos",
         "description": "Añade un curso para inscribir a todos los miembros de este grupo."
-      }
+      },
+      "removeFor": "Quitar {{title}}",
+      "removeConfirmTitle": "¿Quitar este curso?",
+      "removeConfirmDescription": "Todos los miembros de este grupo perderán el acceso a <strong>{{title}}</strong>. Su progreso se conserva y se restaura al volver a añadir el curso.",
+      "removing": "Quitando…"
     },
     "assignments": {
       "loadError": "No se pudieron cargar las tareas de este grupo.",
@@ -285,7 +301,7 @@
       "noDueDate": "Sin fecha de vencimiento",
       "empty": {
         "title": "Aún no hay tareas",
-        "description": "Asigna un curso a miembros específicos con una fecha de vencimiento."
+        "description": "Todavía no se ha asignado ningún curso, módulo, tema ni cuestionario a nadie de este grupo."
       },
       "status": {
         "draft": "Borrador",
@@ -308,6 +324,16 @@
         "error": "No se pudo crear esta tarea.",
         "saving": "Guardando…",
         "submit": "Crear tarea"
+      },
+      "readsAllTypesNotice": "Se muestran todas las asignaciones de este grupo. Las nuevas asignaciones creadas aquí son de curso completo.",
+      "loadErrorDetail": "No se pudo cargar la lista.",
+      "unknownContent": "Contenido sin título",
+      "unknownMember": "Miembro desconocido",
+      "type": {
+        "course": "Curso",
+        "module": "Módulo",
+        "topic": "Tema",
+        "quiz": "Cuestionario"
       }
     },
     "exports": {
@@ -334,13 +360,17 @@
         "description": "Los mismos datos de finalización como archivo CSV o JSON.",
         "csv": "Descargar CSV",
         "json": "Descargar JSON"
-      }
+      },
+      "decodeError": "La exportación se descargó pero no se pudo abrir. Inténtalo de nuevo."
     },
     "settings": {
       "detailsTitle": "Detalles del grupo",
       "detailsDescription": "Nombre, slug, descripción, tipo, plazas y vencimiento.",
       "loadError": "No se pudieron cargar los detalles de este grupo.",
       "notLeaderNotice": "Las preferencias de notificación de escaneos solo están disponibles para quien lidera este grupo."
+    },
+    "detail": {
+      "untitled": "Grupo"
     }
   },
   "auth": {

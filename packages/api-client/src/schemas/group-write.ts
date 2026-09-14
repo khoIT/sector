@@ -11,9 +11,16 @@ import { GROUP_TYPES } from './group';
  * own — omitting them here means the server keeps whatever it already has for
  * a group, since both are optional in `updateGroupByIdSchema` too.
  *
- * `organization` is CREATE-only: `updateGroupByIdSchema` (gusi_nodejs_api) has
- * no `organization` field, so a group cannot be moved to a different
- * organization after creation from this client, matching the server.
+ * `organization` is CREATE-only here as a deliberate choice, NOT because the
+ * server refuses it: `updateGroupByIdSchema` does accept an optional
+ * `organization`, and `updateGroupById` passes it straight through. Moving a
+ * group between organizations changes who can see it and is not something the
+ * edit form should offer in passing, so it is omitted. (The previous comment
+ * claimed the field did not exist server-side; it does.)
+ *
+ * `type` is edit-only, the other way round: `createGroup` parses it and then
+ * never reads it, so a create form that offered it would discard the choice.
+ * See the field's own comment in `groups/forms/group-form-dialog.tsx`.
  */
 export const createGroupPayloadSchema = z.object({
   organization: z.string().min(1, 'Choose an organization'),
@@ -51,16 +58,25 @@ export const updateGroupPayloadSchema = z.object({
 export type UpdateGroupPayload = z.infer<typeof updateGroupPayloadSchema>;
 
 /**
- * `POST /api/groups`, `PUT /api/groups/:id` AND `GET /api/groups/:id` all
- * answer `group.toObject()` — the plain document, without the
- * `leaderCount`/`learnerCount`/`courseCount` aggregation `groupService.getAll()`
- * adds for the index (see the doc comment on `groupSchema`). One schema for
- * all three rather than reusing `groupSchema`: `parent` on a plain
- * `toObject()` is a bare id, not the populated `{id,name,slug}` shape
- * `userGroupSchema` requires, so parsing this response with the full read
- * schema would throw on any group that has one. Modelled against exactly the
- * fields the edit form reads back (it does not need `parent`, so that field
- * is dropped rather than mistyped).
+ * `POST /api/groups`, `PUT /api/groups/:id` and `GET /api/groups/:id` all
+ * answer `group.toObject()`.
+ *
+ * Modelled against exactly the fields the edit form and the detail heading
+ * read back, and no more. The response carries a great deal this client does
+ * not want: verified against the mirror, `GET /api/groups/:id` for group
+ * `6a6ae3d759ab84398c7cee4f` is 62 kB, of which almost all is a `members`
+ * array with one entry per membership (201 of them), alongside populated
+ * `author` and `parent` objects and the `courseCount`/`leaderCount`/
+ * `learnerCount` virtuals. A non-strict `z.object` drops every one of them,
+ * so the surface reads five fields off a payload the route insists on
+ * sending. Trimming that payload is an API-side change, noted rather than
+ * worked around here.
+ *
+ * (An earlier version of this comment said `parent` comes back as a bare id
+ * and that reusing `groupSchema` would therefore throw. It does not — the
+ * route populates `parent` to `{id, name, slug, totalSeats}`. The narrow
+ * schema is still the right shape for a write result; the reason given for it
+ * was simply wrong.)
  */
 export const groupWriteResultSchema = z.object({
   id: z.string(),
