@@ -169,7 +169,21 @@ open.
 That last one is the most directly exploitable item in this document. Group ids are
 not secret; they appear in URLs.
 
-## 9. The Referrals surface carries an enumerable PII leak
+## 9. Dashboard aggregates are readable for any group by any signed-in user
+
+`checkUserAccess` short-circuits on its self-check before it reaches the group check, so
+an authenticated caller passing any `groupId` gets that group's dashboard aggregates —
+scan counts, course progress, learner totals. The seeded `subscriber` role, the lowest
+in the system, is enough.
+
+Found while reviewing the new home screen, which is the first client to call these
+endpoints. The endpoint's own doc comment claims the access check works; it does not.
+The comment is being corrected on the client side, but the check itself is an API fix.
+
+Same shape as finding 8's adjacent items: an authorization helper that reads as if it
+gates, placed where it does not.
+
+## 10. The Referrals surface carries an enumerable PII leak
 
 From the Phase 9 analysis: 0 referral documents against 3,152 users. Recommended
 for deletion rather than porting, which also closes the leak.
@@ -186,3 +200,5 @@ for deletion rather than porting, which also closes the leak.
    no permission gate behind it. Is that flag meant to be flippable? (finding 8)
 5. Is reset-upload meant to be a learner action at all? The API logs it as an
    admin action and checks no ownership. (finding 3)
+6. `checkUserAccess` gates several endpoints, not just the dashboard ones. Does the
+   same short-circuit affect the others? I checked only the dashboard path. (finding 9)
