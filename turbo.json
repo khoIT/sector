@@ -26,7 +26,16 @@
     "fidelity": {
       "dependsOn": ["^build"],
       "cache": false,
-      "outputs": []
+      "outputs": [],
+      // Without this the route-replay half of the suite silently skips: turbo
+      // filters the child environment, so `SECTOR_MIRROR_JWT_SECRET=... pnpm
+      // fidelity` reached the shell but never vitest, and the run reported
+      // "21 skipped" while looking like it had passed.
+      "passThroughEnv": [
+        "SECTOR_MIRROR_JWT_SECRET",
+        "SECTOR_MIRROR_API_URL",
+        "SECTOR_FIDELITY_MONGODB_URI"
+      ]
     }
   }
 }
