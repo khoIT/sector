@@ -962,4 +962,3 @@ export {
 } from './react/use-pathology-gallery';
 
 export { pathologyKeys } from './query-keys';
-

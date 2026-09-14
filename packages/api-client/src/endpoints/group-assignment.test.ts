@@ -33,8 +33,9 @@ describe('getAssignmentsForGroup', () => {
     await getAssignmentsForGroup(client, '6a6ae3d759ab84398c7cee4f');
 
     expect(calls).toHaveLength(1);
-    expect(calls[0].path).toBe('/api/group-assignment/group/6a6ae3d759ab84398c7cee4f');
-    expect(calls[0].query).not.toHaveProperty('groupId');
+    const [call] = calls;
+    expect(call?.path).toBe('/api/group-assignment/group/6a6ae3d759ab84398c7cee4f');
+    expect(call?.query).not.toHaveProperty('groupId');
   });
 
   it('does not filter the list to one assignment type', async () => {
@@ -42,8 +43,9 @@ describe('getAssignmentsForGroup', () => {
 
     await getAssignmentsForGroup(client, 'g1', { page: 2, limit: 50 });
 
-    expect(calls[0].query).toMatchObject({ page: '2', limit: '50' });
-    expect(calls[0].query).not.toHaveProperty('assignmentType');
+    const [call] = calls;
+    expect(call?.query).toMatchObject({ page: '2', limit: '50' });
+    expect(call?.query).not.toHaveProperty('assignmentType');
   });
 });
 
