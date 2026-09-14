@@ -52,7 +52,9 @@
     "reviewed": "Revisado",
     "failed": "Falló",
     "unopened": "Sin abrir",
-    "opened": "Abierto"
+    "opened": "Abierto",
+    "failedUpload": "Error de carga",
+    "partiallyUploaded": "Carga parcial"
   },
   "outcome": {
     "achieved": "Logrado",
@@ -710,13 +712,17 @@
     "group": {
       "title": "{{groupName}}",
       "viewMembers": "Ver miembros",
+      "course": "Curso",
+      "selectCourse": "Seleccione un curso",
+      "noCourses": "Aún no hay cursos asignados a este grupo.",
+      "coursesRestricted": "El progreso del curso solo se muestra a los líderes de este grupo.",
       "courseProgress": "Progreso del curso",
       "noCourseProgress": "Todavía no hay progreso de curso para este grupo.",
       "scanProgress": "Progreso de escaneos",
       "noScanProgress": "Todavía no hay escaneos para este grupo.",
       "qbank": "Intentos del banco de preguntas",
       "noQbank": "Todavía no hay intentos del banco de preguntas para este grupo.",
-      "averageScore": "{{score}}% mejor puntuación"
+      "bestScore": "{{score}}% mejor puntuación"
     },
     "reviewer": {
       "title": "Panel del revisor de escaneos",
@@ -736,6 +742,10 @@
       "selectGroup": "Selecciona un grupo",
       "noGroups": "Todavía no hay grupos",
       "noGroupsHint": "En cuanto exista un grupo, selecciónalo aquí para ver su resumen de cursos y escaneos."
+    },
+    "error": {
+      "title": "No se pudo cargar esta tarjeta",
+      "retry": "Reintentar"
     }
   },
   "gallery": {

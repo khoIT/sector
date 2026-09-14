@@ -52,7 +52,9 @@
     "reviewed": "Recensito",
     "failed": "Fallito",
     "unopened": "Non aperto",
-    "opened": "Aperta"
+    "opened": "Aperta",
+    "failedUpload": "Caricamento non riuscito",
+    "partiallyUploaded": "Caricamento parziale"
   },
   "outcome": {
     "achieved": "Raggiunto",
@@ -710,13 +712,17 @@
     "group": {
       "title": "{{groupName}}",
       "viewMembers": "Visualizza membri",
+      "course": "Corso",
+      "selectCourse": "Seleziona un corso",
+      "noCourses": "Nessun corso è ancora assegnato a questo gruppo.",
+      "coursesRestricted": "L'avanzamento dei corsi è visibile solo ai leader di questo gruppo.",
       "courseProgress": "Progresso del corso",
       "noCourseProgress": "Ancora nessun progresso del corso per questo gruppo.",
       "scanProgress": "Progresso delle scansioni",
       "noScanProgress": "Ancora nessuna scansione per questo gruppo.",
       "qbank": "Tentativi nella banca di domande",
       "noQbank": "Ancora nessun tentativo nella banca di domande per questo gruppo.",
-      "averageScore": "{{score}}% punteggio migliore"
+      "bestScore": "{{score}}% punteggio migliore"
     },
     "reviewer": {
       "title": "Dashboard del revisore delle scansioni",
@@ -736,6 +742,10 @@
       "selectGroup": "Seleziona un gruppo",
       "noGroups": "Ancora nessun gruppo",
       "noGroupsHint": "Non appena esiste un gruppo, selezionalo qui per vedere il suo riepilogo di corsi e scansioni."
+    },
+    "error": {
+      "title": "Impossibile caricare questa scheda",
+      "retry": "Riprova"
     }
   },
   "gallery": {

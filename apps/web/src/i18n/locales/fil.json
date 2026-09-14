@@ -52,7 +52,9 @@
     "reviewed": "Sinuri",
     "failed": "Nabigo",
     "unopened": "Hindi binuksan",
-    "opened": "Binuksan"
+    "opened": "Binuksan",
+    "failedUpload": "Nabigo ang pag-upload",
+    "partiallyUploaded": "Bahagyang na-upload"
   },
   "outcome": {
     "achieved": "Nakamit",
@@ -710,13 +712,17 @@
     "group": {
       "title": "{{groupName}}",
       "viewMembers": "Tingnan ang mga miyembro",
+      "course": "Kurso",
+      "selectCourse": "Pumili ng kurso",
+      "noCourses": "Wala pang kursong nakatalaga sa grupong ito.",
+      "coursesRestricted": "Ang progreso ng kurso ay ipinapakita lamang sa mga lider ng grupong ito.",
       "courseProgress": "Progreso ng kurso",
       "noCourseProgress": "Wala pang progreso ng kurso para sa grupong ito.",
       "scanProgress": "Progreso ng scan",
       "noScanProgress": "Wala pang scan para sa grupong ito.",
       "qbank": "Mga pagsubok sa bangko ng tanong",
       "noQbank": "Wala pang pagsubok sa bangko ng tanong para sa grupong ito.",
-      "averageScore": "{{score}}% pinakamataas na iskor"
+      "bestScore": "{{score}}% pinakamataas na iskor"
     },
     "reviewer": {
       "title": "Dashboard ng scan reviewer",
@@ -736,6 +742,10 @@
       "selectGroup": "Pumili ng grupo",
       "noGroups": "Wala pang grupo",
       "noGroupsHint": "Kapag may grupo na, piliin ito dito para makita ang buod ng kurso at scan nito."
+    },
+    "error": {
+      "title": "Hindi ma-load ang card na ito",
+      "retry": "Subukan muli"
     }
   },
   "gallery": {

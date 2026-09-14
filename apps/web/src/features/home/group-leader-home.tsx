@@ -46,7 +46,11 @@ export function GroupLeaderHome() {
       {!groups.isLoading && !activeGroupId ? (
         <EmptyState title={t('home.leader.noGroup')} description={t('home.leader.noGroupHint')} />
       ) : activeGroup ? (
-        <GroupLearningSnapshot groupId={activeGroup.id} groupName={activeGroup.name} />
+        <GroupLearningSnapshot
+          groupId={activeGroup.id}
+          groupName={activeGroup.name}
+          viewerLeadsGroup
+        />
       ) : null}
 
       <div className="h-px bg-line" />

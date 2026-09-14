@@ -100,7 +100,9 @@ export function ScanReviewerHome() {
         </CardContent>
       </Card>
 
-      {ledGroup ? <GroupLearningSnapshot groupId={ledGroup.id} groupName={ledGroup.name} /> : null}
+      {ledGroup ? (
+        <GroupLearningSnapshot groupId={ledGroup.id} groupName={ledGroup.name} viewerLeadsGroup />
+      ) : null}
 
       <div className="h-px bg-line" />
       <MyLearningPanel />

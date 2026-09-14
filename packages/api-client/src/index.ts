@@ -512,6 +512,7 @@ export {
 // ─── group administration (groups index + members surface) ──────────────────
 export {
   GROUP_ADMIN_BYPASS_PERMISSIONS,
+  GROUP_LEADERSHIP_BYPASS_PERMISSION,
   GROUP_TYPES,
   groupSchema,
   groupTypeSchema,
@@ -852,7 +853,6 @@ export { courseContentKeys, courseQuizProgressKeys, learnerCourseAdminKeys } fro
 // are already exported above, from './schemas/course' — schemas/dashboard.ts
 // reuses that exact enum rather than redeclaring it.
 export {
-  GROUP_SCAN_PROGRESS_STATUS_ORDER,
   courseCompletionTimelineDaySchema,
   courseCompletionTimelineEventSchema,
   courseCompletionTimelineSchema,
@@ -863,7 +863,6 @@ export {
   dashboardGroupChartsSchema,
   groupCourseProgressChartSchema,
   groupCourseProgressSegmentSchema,
-  groupScanProgressChartSchema,
   qbankStatsItemSchema,
   qbankStatsSchema,
   quizProgressItemSchema,
@@ -885,7 +884,6 @@ export {
   type DashboardGroupChartsQuery,
   type GroupCourseProgressChart,
   type GroupCourseProgressSegment,
-  type GroupScanProgressChart,
   type QBankStats,
   type QBankStatsItem,
   type QBankStatsQuery,

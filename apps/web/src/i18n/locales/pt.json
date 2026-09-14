@@ -52,7 +52,9 @@
     "reviewed": "Revisado",
     "failed": "Falhou",
     "unopened": "Fechadas",
-    "opened": "Aberto"
+    "opened": "Aberto",
+    "failedUpload": "Falha no envio",
+    "partiallyUploaded": "Envio parcial"
   },
   "outcome": {
     "achieved": "Alcançado",
@@ -710,13 +712,17 @@
     "group": {
       "title": "{{groupName}}",
       "viewMembers": "Ver membros",
+      "course": "Curso",
+      "selectCourse": "Selecione um curso",
+      "noCourses": "Ainda não há cursos atribuídos a este grupo.",
+      "coursesRestricted": "O progresso do curso só é mostrado aos líderes deste grupo.",
       "courseProgress": "Progresso do curso",
       "noCourseProgress": "Ainda não há progresso de curso para este grupo.",
       "scanProgress": "Progresso das digitalizações",
       "noScanProgress": "Ainda não há digitalizações para este grupo.",
       "qbank": "Tentativas no banco de questões",
       "noQbank": "Ainda não há tentativas no banco de questões para este grupo.",
-      "averageScore": "{{score}}% melhor pontuação"
+      "bestScore": "{{score}}% melhor pontuação"
     },
     "reviewer": {
       "title": "Painel do revisor de digitalizações",
@@ -736,6 +742,10 @@
       "selectGroup": "Selecione um grupo",
       "noGroups": "Ainda não há grupos",
       "noGroupsHint": "Assim que um grupo existir, selecione-o aqui para ver seu resumo de cursos e digitalizações."
+    },
+    "error": {
+      "title": "Não foi possível carregar este cartão",
+      "retry": "Tentar novamente"
     }
   },
   "gallery": {

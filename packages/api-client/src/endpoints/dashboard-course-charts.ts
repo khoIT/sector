@@ -14,9 +14,18 @@ import {
  * The "my learning" charts: one caller's own module breakdown for one
  * course, their top courses by progress, and one course's daily completion
  * trend. All three take an optional `userId`/`groupId` so a group leader or
- * administrator can point them at a member instead of themself — the server
- * enforces the same leadership scoping `checkUserAccess` applies everywhere
- * else in this domain (gusi_nodejs_api's dashboard.controller.ts).
+ * administrator can point them at a member instead of themself.
+ *
+ * What the server actually enforces, since an earlier version of this comment
+ * claimed more: `checkUserAccess` (dashboard.controller.ts) returns true as
+ * soon as `requestUserId === targetUserId`, and every handler in that file
+ * derives `userId = query.userId || req.user.id`. So a request that names
+ * ANOTHER user is checked and refused, while a request that names only a
+ * `groupId` never reaches the group check at all — a plain subscriber gets a
+ * 200 for any group id. Verified against the mirror API. That is an API bug
+ * on the findings list, not a guarantee to build on: treat a group id sent
+ * from here as unverified by the server, and send only ids the UI itself
+ * obtained from a scoped list.
  */
 
 function definedQuery(query: Record<string, string | undefined>): Record<string, string> {

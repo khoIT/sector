@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  GROUP_SCAN_PROGRESS_STATUS_ORDER,
+  dashboardGroupChartsSchema,
   courseProgressChartSchema,
   courseProgressStatusLabelKey,
-  groupScanProgressChartSchema,
   scanProgressByUserSchema,
   scanProgressStatusLabelKey,
 } from './dashboard';
@@ -132,27 +131,51 @@ describe('course/scan progress: colour and i18n key come from the code, not the 
     expect(parsed.chartData.map((item) => item.status)).toEqual(['reviewed', 'pending']);
   });
 
-  it('reads the group scan chart by fixed position, not by the mismatched labels array', () => {
-    // The real bug this schema works around: the wire's `data` has one entry
-    // per GROUP_SCAN_PROGRESS_STATUS_ORDER (7), but `labels` only ever has 5 —
-    // see dashboard.controller.ts#getChartsData. A schema keyed on `labels[i]`
-    // would silently drop the submitted/reviewed counts (indices 5 and 6).
-    const parsed = groupScanProgressChartSchema.parse({
-      labels: ['Pending', 'Processing', 'Failed', 'Submitted', 'Reviewed'],
-      data: [10, 2, 1, 0, 3, 40, 12],
+  it('drops the group charts scan array instead of parsing it', () => {
+    // GET /api/dashboard/charts carries a scanProgressChart whose counts are
+    // NOT scoped to the group: getChartsData only narrows its scan query
+    // `if (groupUserIds.length > 0)`, so a group with no learners is counted
+    // across every scan in the database. A group's scan figures come from
+    // scan-progress-by-user?groupId= instead, and the field is left out of the
+    // parsed shape so no caller can reach the wrong numbers by accident.
+    const parsed = dashboardGroupChartsSchema.parse({
+      courseProgressChart: {
+        data: [1, 2, 3],
+        totalLearners: 6,
+        segments: [
+          {
+            key: 'in_progress',
+            count: 1,
+            totalLearners: 6,
+            percentage: 17,
+            tooltipLabel: '',
+            legendLabel: '',
+          },
+          {
+            key: 'completed',
+            count: 2,
+            totalLearners: 6,
+            percentage: 33,
+            tooltipLabel: '',
+            legendLabel: '',
+          },
+          {
+            key: 'not_started',
+            count: 3,
+            totalLearners: 6,
+            percentage: 50,
+            tooltipLabel: '',
+            legendLabel: '',
+          },
+        ],
+      },
+      scanProgressChart: {
+        labels: ['Pending', 'Processing', 'Failed', 'Submitted', 'Reviewed'],
+        data: [453, 662, 1965, 2, 3, 11576, 15499],
+      },
     });
-    const byCode = Object.fromEntries(
-      GROUP_SCAN_PROGRESS_STATUS_ORDER.map((code, index) => [code, parsed.data[index]]),
-    );
-    expect(byCode.submitted).toBe(40);
-    expect(byCode.reviewed).toBe(12);
-    // The mismatched `labels` array never survives parsing — reading it back
-    // off the parsed value is a compile error, which is the point.
-    expect(Object.keys(parsed)).toEqual(['data']);
-  });
 
-  it('rejects a data array of the wrong length rather than silently mis-mapping it', () => {
-    const result = groupScanProgressChartSchema.safeParse({ data: [1, 2, 3] });
-    expect(result.success).toBe(false);
+    expect(Object.keys(parsed)).toEqual(['courseProgressChart']);
+    expect(JSON.stringify(parsed)).not.toContain('11576');
   });
 });

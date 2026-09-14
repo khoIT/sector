@@ -55,7 +55,11 @@ export function AdminHome() {
       {!groups.isLoading && !activeGroupId ? (
         <EmptyState title={t('home.admin.noGroups')} description={t('home.admin.noGroupsHint')} />
       ) : activeGroup ? (
-        <GroupLearningSnapshot groupId={activeGroup.id} groupName={activeGroup.name} />
+        <GroupLearningSnapshot
+          groupId={activeGroup.id}
+          groupName={activeGroup.name}
+          viewerLeadsGroup={false}
+        />
       ) : null}
 
       <div className="h-px bg-line" />

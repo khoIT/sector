@@ -79,22 +79,10 @@ export {
   type TableRowProps,
 } from './components/table';
 
-// ─── charts (recharts wrapped so the library stays swappable and every
-// colour comes from the design tokens) ─────────────────────────────────────
-export {
-  CHART_AXIS_TEXT_COLOR,
-  CHART_GRID_COLOR,
-  CHART_SERIES_PRIMARY,
-  CHART_TOOLTIP_BACKGROUND,
-  CHART_TOOLTIP_BORDER,
-  CHART_TOOLTIP_TEXT,
-  chartToneColor,
-  type ChartTone,
-} from './charts/chart-colors';
-export { Donut, type DonutDatum, type DonutProps } from './charts/donut';
-export { Bars, type BarsDatum, type BarsProps } from './charts/bars';
-export { LineTrend, type LinePoint, type LineTrendProps } from './charts/line';
-export { Sparkline, type SparklineProps } from './charts/sparkline';
+// Charts are NOT exported here. recharts and d3 are 160 kB gzipped, and this
+// barrel is imported by every screen; a root export put them in the entry
+// chunk for accounts that never see a chart. Import them from
+// `@sector/ui/charts`, dynamically, from the one surface that draws them.
 
 export {
   Dialog,

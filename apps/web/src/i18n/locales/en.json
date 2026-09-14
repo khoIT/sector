@@ -788,13 +788,17 @@
     "group": {
       "title": "{{groupName}}",
       "viewMembers": "View members",
+      "course": "Course",
+      "selectCourse": "Select a course",
+      "noCourses": "No courses are assigned to this group yet.",
+      "coursesRestricted": "Course progress is shown to this group's leaders.",
       "courseProgress": "Course progress",
       "noCourseProgress": "No course progress yet for this group.",
       "scanProgress": "Scan progress",
       "noScanProgress": "No scans yet for this group.",
       "qbank": "Question bank attempts",
       "noQbank": "No question bank attempts yet for this group.",
-      "averageScore": "{{score}}% best score"
+      "bestScore": "{{score}}% best score"
     },
     "reviewer": {
       "title": "Scan reviewer dashboard",
@@ -814,6 +818,10 @@
       "selectGroup": "Select a group",
       "noGroups": "No groups yet",
       "noGroupsHint": "Once a group exists, pick it here to see its course and scan snapshot."
+    },
+    "error": {
+      "title": "This card could not be loaded",
+      "retry": "Try again"
     }
   },
   "gallery": {
