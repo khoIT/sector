@@ -1,5 +1,4 @@
 import {
-  isApiError,
   useCreateGroupAssignmentMutation,
   useAssignmentsForGroup,
   useGroupCourseOptions,
@@ -29,11 +28,13 @@ import {
 import { ClipboardList, Plus, TriangleAlert } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
+import { errorMessage } from '@/lib/error-message';
 import { formatDate } from '@/lib/format';
 
-import { GroupDetailTabs, type GroupDetailLocationState } from '../group-detail-tabs';
+import { GroupDetailTabs } from '../group-detail-tabs';
+import { useGroupDetailTitle } from '../use-group-detail-title';
 
 /** `GroupAssignment.status` -> the closest existing badge tone. */
 function assignmentStatusTone(status: GroupAssignment['status']) {
@@ -50,16 +51,24 @@ function assignmentStatusTone(status: GroupAssignment['status']) {
 }
 
 /**
- * Per-member course assignments with a due date — course-level only. See the
- * module doc on `schemas/group-assignment.ts` for why lesson/topic/quiz
- * assignment is out of scope here.
+ * Per-member assignments for one group.
+ *
+ * The LIST shows every assignment on the group, whatever its type. It used to
+ * be filtered to `assignmentType=course` to match what the form below can
+ * create, which meant the group the cold-load sweep opens — 1,367 assignments,
+ * none of them course-level — rendered "No assignments yet" to its leader.
+ * Course-level rows are 376 of 8,734 across the production mirror, so that
+ * filter hid the surface's own subject matter from most groups that use it.
+ *
+ * The FORM still creates course-level assignments only; assigning a single
+ * module, topic or quiz needs a content picker over a course's structure. The
+ * notice under the heading says so, rather than the list quietly implying the
+ * other three types do not exist.
  */
 export function GroupAssignmentsPanel() {
   const { t } = useTranslation();
   const { groupId } = useParams<{ groupId: string }>();
-  const location = useLocation();
-  const groupName = (location.state as GroupDetailLocationState)?.groupName;
-  const title = groupName ?? t('groups.members.title');
+  const title = useGroupDetailTitle(groupId);
 
   const assignments = useAssignmentsForGroup(groupId);
 
@@ -67,9 +76,10 @@ export function GroupAssignmentsPanel() {
 
   return (
     <section aria-label={title}>
-      <GroupDetailTabs groupId={groupId} title={title} active="assignments" />
+      <GroupDetailTabs groupId={groupId} active="assignments" />
 
-      <div className="mb-4 flex justify-end">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-[12px] text-ink-dim">{t('groups.assignments.readsAllTypesNotice')}</p>
         <CreateAssignmentDialog groupId={groupId} />
       </div>
 
@@ -80,7 +90,7 @@ export function GroupAssignmentsPanel() {
           tone="crit"
           icon={<TriangleAlert className="h-5 w-5" aria-hidden />}
           title={t('groups.assignments.loadError')}
-          description={isApiError(assignments.error) ? assignments.error.message : undefined}
+          description={errorMessage(assignments.error, t('groups.assignments.loadErrorDetail'))}
         />
       ) : (assignments.data?.items.length ?? 0) === 0 ? (
         <EmptyState
@@ -95,11 +105,20 @@ export function GroupAssignmentsPanel() {
               key={assignment.id}
               className="flex flex-wrap items-center justify-between gap-3 rounded-token border border-line p-3"
             >
-              <div>
+              <div className="min-w-0">
                 <div className="font-medium text-ink">
-                  {typeof assignment.user === 'string'
-                    ? assignment.user
-                    : userDisplayName(assignment.user)}
+                  {assignment.contentId?.title ?? t('groups.assignments.unknownContent')}
+                </div>
+                <div className="text-[12px] text-ink-dim">
+                  {/* The assignee, not the content owner. `user` is null when
+                      the populate found no such user document, which must read
+                      as unknown rather than blank. */}
+                  {assignment.user
+                    ? userDisplayName(assignment.user)
+                    : t('groups.assignments.unknownMember')}
+                  {assignment.courseId && assignment.assignmentType !== 'course'
+                    ? ` · ${assignment.courseId.title}`
+                    : ''}
                 </div>
                 <div className="text-[12px] text-ink-dim">
                   {assignment.dueDate
@@ -107,10 +126,17 @@ export function GroupAssignmentsPanel() {
                     : t('groups.assignments.noDueDate')}
                 </div>
               </div>
-              <StatusPill
-                tone={assignmentStatusTone(assignment.status)}
-                label={t(`groups.assignments.status.${assignment.status}`)}
-              />
+              <div className="flex shrink-0 items-center gap-2">
+                <StatusPill
+                  dot={false}
+                  tone="neutral"
+                  label={t(`groups.assignments.type.${assignment.assignmentType}`)}
+                />
+                <StatusPill
+                  tone={assignmentStatusTone(assignment.status)}
+                  label={t(`groups.assignments.status.${assignment.status}`)}
+                />
+              </div>
             </li>
           ))}
         </ul>
@@ -258,10 +284,7 @@ function CreateAssignmentDialog({ groupId }: { groupId: string }) {
 
         {formError || createAssignment.isError ? (
           <p className="text-[12px] text-crit">
-            {formError ??
-              (isApiError(createAssignment.error)
-                ? createAssignment.error.message
-                : t('groups.assignments.form.error'))}
+            {formError ?? errorMessage(createAssignment.error, t('groups.assignments.form.error'))}
           </p>
         ) : null}
 

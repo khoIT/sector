@@ -1,4 +1,5 @@
 import { Badge, Button, Card, CardContent, RichText, Ring, Stat } from '@sector/ui';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { QuizQuestion, QuizResult, QuizResultQuestion } from '@/features/quiz/engine/types';
@@ -10,6 +11,11 @@ type QuizResultsProps = {
   questions: readonly QuizQuestion[];
   onTakeAgain: () => void;
   onBackToList: () => void;
+  /** The label on the "back" button, since where it goes back TO is not
+   *  part of what this component knows — the course-quiz runner
+   *  (`features/courses/runner/quiz-view.tsx`) reuses this exact screen and
+   *  goes back to the course outline, not to the question-bank list. */
+  backToListLabel: ReactNode;
 };
 
 /**
@@ -20,7 +26,13 @@ type QuizResultsProps = {
  * only the first, unconditionally; clinician authors write the second and no
  * learner ever saw it.
  */
-export function QuizResults({ result, questions, onTakeAgain, onBackToList }: QuizResultsProps) {
+export function QuizResults({
+  result,
+  questions,
+  onTakeAgain,
+  onBackToList,
+  backToListLabel,
+}: QuizResultsProps) {
   const { t } = useTranslation();
   const byId = new Map(questions.map((question) => [question.id, question] as const));
 
@@ -60,7 +72,7 @@ export function QuizResults({ result, questions, onTakeAgain, onBackToList }: Qu
 
       <div className="flex gap-2">
         <Button variant="secondary" onClick={onBackToList}>
-          {t('questionBanks.backToBanks')}
+          {backToListLabel}
         </Button>
         <Button onClick={onTakeAgain}>{t('quiz.takeAgain')}</Button>
       </div>

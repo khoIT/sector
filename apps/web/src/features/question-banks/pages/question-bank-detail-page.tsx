@@ -160,6 +160,7 @@ function QuestionBankRunnerSection({ bank, slug }: { bank: QuestionBankDetail; s
           questions={questions}
           onTakeAgain={() => void takeAgain()}
           onBackToList={() => void backToList()}
+          backToListLabel={t('questionBanks.backToBanks')}
         />
       ) : runner.state.phase === 'failed' && runner.state.failureKind === 'submit-error' ? (
         <EmptyState

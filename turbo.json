@@ -27,6 +27,9 @@
       "dependsOn": ["^build"],
       "cache": false,
       "outputs": [],
+      // Without this the route-replay half of the suite silently skips: turbo
+      // filters the child environment, so a secret exported into the shell
+      // never reaches vitest, and the run still reports a pass.
       "passThroughEnv": [
         "SECTOR_MIRROR_API_URL",
         "SECTOR_MIRROR_JWT_SECRET",

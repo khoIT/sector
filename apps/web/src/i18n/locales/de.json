@@ -214,12 +214,23 @@
         "retry": "Erneut versuchen"
       },
       "actions": {
-        "changeRole": "Rolle ändern",
         "remove": "Entfernen",
         "removeConfirmTitle": "Dieses Mitglied entfernen?",
-        "removeConfirmDescription": "Der Zugriff auf die Kurse und Scans dieser Gruppe geht verloren.",
+        "removeConfirmDescription": "<strong>{{name}}</strong> wird dauerhaft aus dieser Gruppe entfernt, samt Beitrittsdatum und etwaigem Ablaufdatum der Mitgliedschaft. Das lässt sich nicht rückgängig machen; eine erneute Einladung wäre nötig.",
         "removeError": "Dieses Mitglied konnte nicht entfernt werden.",
-        "removing": "Wird entfernt…"
+        "removing": "Wird entfernt…",
+        "changeRoleFor": "Rolle von {{name}} ändern",
+        "removeFor": "{{name}} entfernen",
+        "resend": "Einladung erneut senden",
+        "resendFor": "Einladung erneut an {{name}} senden",
+        "resendSent": "Einladung erneut gesendet",
+        "resendError": "Die Einladung konnte nicht erneut gesendet werden.",
+        "roleConfirmTitle": "Rolle dieses Mitglieds ändern?",
+        "roleConfirmToLeader": "<strong>{{name}}</strong> wird Leitung dieser Gruppe und kann dann die Scans aller Mitglieder sehen und die Mitgliederliste verwalten.",
+        "roleConfirmToLearner": "<strong>{{name}}</strong> wird Lernende:r und kann diese Gruppe nicht mehr verwalten.",
+        "roleConfirm": "Rolle ändern",
+        "roleSaving": "Wird geändert…",
+        "roleError": "Diese Rolle konnte nicht geändert werden."
       }
     },
     "tabs": {
@@ -249,7 +260,8 @@
       "isFreeTrialLabel": "Dies ist eine kostenlose Testgruppe",
       "error": "Diese Gruppe konnte nicht gespeichert werden.",
       "saving": "Wird gespeichert…",
-      "submit": "Speichern"
+      "submit": "Speichern",
+      "typeHint": "Wird nach dem Anlegen gesetzt — neu erstellte Gruppen sind immer einfache Gruppen."
     },
     "invite": {
       "trigger": "Mitglied einladen",
@@ -280,7 +292,11 @@
       "empty": {
         "title": "Keine Kurse zugewiesen",
         "description": "Einen Kurs hinzufügen, um jedes Mitglied dieser Gruppe einzuschreiben."
-      }
+      },
+      "removeFor": "{{title}} entfernen",
+      "removeConfirmTitle": "Diesen Kurs entfernen?",
+      "removeConfirmDescription": "Alle Mitglieder dieser Gruppe verlieren den Zugang zu <strong>{{title}}</strong>. Der Lernfortschritt bleibt erhalten und wird beim erneuten Hinzufügen wiederhergestellt.",
+      "removing": "Wird entfernt…"
     },
     "assignments": {
       "loadError": "Die Aufgaben dieser Gruppe konnten nicht geladen werden.",
@@ -288,7 +304,7 @@
       "noDueDate": "Kein Fälligkeitsdatum",
       "empty": {
         "title": "Noch keine Aufgaben",
-        "description": "Einen Kurs bestimmten Mitgliedern mit einem Fälligkeitsdatum zuweisen."
+        "description": "Niemandem in dieser Gruppe wurde bisher ein Kurs, Modul, Thema oder Quiz zugewiesen."
       },
       "status": {
         "draft": "Entwurf",
@@ -311,6 +327,16 @@
         "error": "Diese Aufgabe konnte nicht erstellt werden.",
         "saving": "Wird gespeichert…",
         "submit": "Aufgabe erstellen"
+      },
+      "readsAllTypesNotice": "Zeigt alle Zuweisungen dieser Gruppe. Hier neu erstellte Zuweisungen gelten für ganze Kurse.",
+      "loadErrorDetail": "Die Liste konnte nicht geladen werden.",
+      "unknownContent": "Inhalt ohne Titel",
+      "unknownMember": "Unbekanntes Mitglied",
+      "type": {
+        "course": "Kurs",
+        "module": "Modul",
+        "topic": "Thema",
+        "quiz": "Quiz"
       }
     },
     "exports": {
@@ -337,13 +363,17 @@
         "description": "Dieselben Abschlussdaten als CSV- oder JSON-Datei.",
         "csv": "CSV herunterladen",
         "json": "JSON herunterladen"
-      }
+      },
+      "decodeError": "Der Export wurde geladen, konnte aber nicht geöffnet werden. Bitte erneut versuchen."
     },
     "settings": {
       "detailsTitle": "Gruppendetails",
       "detailsDescription": "Name, Slug, Beschreibung, Typ, Plätze und Ablaufdatum.",
       "loadError": "Die Details dieser Gruppe konnten nicht geladen werden.",
       "notLeaderNotice": "Scan-Benachrichtigungseinstellungen stehen nur einer Leitung dieser Gruppe zur Verfügung."
+    },
+    "detail": {
+      "untitled": "Gruppe"
     }
   },
   "auth": {
@@ -495,8 +525,7 @@
         "start": "Starten: {{title}}",
         "resume": "Fortsetzen: {{title}}",
         "retry": "Erneut versuchen: {{title}}",
-        "review": "Ansehen: {{title}}",
-        "jumpsOnly": "Springt in der Liste unten dorthin – den Kurs-Player gibt es noch nicht."
+        "review": "Ansehen: {{title}}"
       },
       "completedBanner": "Sie haben diesen Kurs abgeschlossen.",
       "empty": {
@@ -522,6 +551,81 @@
       },
       "quiz": {
         "bestPercentage": "Beste: {{percent}}%"
+      }
+    },
+    "runner": {
+      "courseProgress": "{{percent}}% abgeschlossen",
+      "sidebar": {
+        "title": "Kursinhalt"
+      },
+      "nav": {
+        "previous": "Zurück",
+        "next": "Weiter"
+      },
+      "itemNotFound": {
+        "title": "Dieser Inhalt gehört nicht zu diesem Kurs",
+        "description": "Er wurde möglicherweise entfernt oder gehört zu einer anderen Version dieses Kurses."
+      },
+      "noLongerAvailable": {
+        "title": "Dieser Kurs ist für dich nicht mehr verfügbar.",
+        "description": "Die zugehörige Einschreibung ist abgelaufen. Wende dich an deine Gruppenleitung oder Administration, falls du weiterhin Zugriff benötigst."
+      },
+      "lesson": {
+        "error": {
+          "title": "Diese Lektion konnte nicht geladen werden",
+          "retry": "Erneut versuchen"
+        }
+      },
+      "topic": {
+        "error": {
+          "title": "Dieses Thema konnte nicht geladen werden",
+          "retry": "Erneut versuchen"
+        }
+      },
+      "quiz": {
+        "blocked": {
+          "title": "Dieses Quiz hat noch keine Fragen"
+        },
+        "error": {
+          "title": "Dieses Quiz konnte nicht geladen werden",
+          "retry": "Erneut versuchen"
+        },
+        "noQuestions": {
+          "title": "Dieses Quiz hat noch keine Fragen und kann nicht gestartet werden"
+        },
+        "questionCount_one": "{{count}} Frage",
+        "questionCount_other": "{{count}} Fragen",
+        "start": "Starten",
+        "continue": "Fortsetzen",
+        "retake": "Wiederholen",
+        "backToOutline": "Zurück zur Kursübersicht",
+        "saveError": "Deine letzte Antwort konnte nicht gespeichert werden. Mach weiter — es wird erneut versucht.",
+        "resumeError": "Dein gespeicherter Fortschritt konnte nicht geladen werden. Neustart."
+      }
+    },
+    "admin": {
+      "title": "Lernfortschritt",
+      "heading": "Fortschritt von {{learner}} in {{course}}",
+      "assignmentType": {
+        "personal": "Persönliche Einschreibung",
+        "group": "Zugewiesen über {{group}}"
+      },
+      "progress": {
+        "title": "Fortschritt"
+      },
+      "stat": {
+        "completedItems": "Abgeschlossene Einheiten",
+        "lessons": "Abgeschlossene Lektionen",
+        "topics": "Abgeschlossene Themen",
+        "quizzes": "Abgeschlossene Quizze",
+        "lastAccessedAt": "Zuletzt aufgerufen",
+        "enrolledAt": "Eingeschrieben",
+        "never": "Nie"
+      },
+      "expiredBadge": "Abgelaufen",
+      "error": {
+        "title": "Der Kurs dieses Lernenden konnte nicht geladen werden",
+        "retry": "Erneut versuchen"
       }
     }
   },

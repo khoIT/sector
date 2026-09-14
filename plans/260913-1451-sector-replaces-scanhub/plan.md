@@ -73,11 +73,11 @@ endpoint ships in the production route table.
 | 4 | [Scan surfaces to parity](./phase-04-scan-surfaces-to-parity.md) | 16 | 2 | **Done** |
 | 5 | [Foundations and question banks](./phase-05-foundations-and-question-banks.md) | 17 | 1, 2 | **Done** |
 | 6 | [The course read seam](./phase-06-the-course-read-seam.md) | 11 | 1, 5 | **Done** |
-| 7 | [Taking a course](./phase-07-taking-a-course.md) | 12 | 5, 6 | **In progress** |
+| 7 | [Taking a course](./phase-07-taking-a-course.md) | 12 | 5, 6 | **Done** |
 | 8 | [Group administration](./phase-08-group-administration.md) | 15 | 1 | **Done** |
 | 9 | [Assignments, gallery and Sage](./phase-09-assignments-gallery-and-sage.md) | 9 | 5, 8 | **Done** |
 | 10 | [The home screen](./phase-10-the-home-screen.md) | 22 | 6, 7, 8 | **Done** |
-| 11 | [Cutover](./phase-11-cutover.md) | 8 | all | **In progress** (route map, auth fixes, i18n gate, flag decision, session handoff and deploy pipeline done; staged rollout and decommission wait on 7) |
+| 11 | [Cutover](./phase-11-cutover.md) | 8 | all | **In progress** (route map, auth fixes, i18n gate, flag decision, session handoff and deploy pipeline done; staged rollout and decommission remain) |
 
 Two-engineer shape: one runs 1 → 3 → 4 → 8 → 10, the other 2 → 5 → 6 → 7 → 9,
 converging on 11. Phases 4 and 5 touch disjoint directories and can be parallel;

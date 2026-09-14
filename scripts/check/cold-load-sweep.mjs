@@ -121,21 +121,47 @@ for (const { path, role, needs } of routes) {
       );
     }
     await page.goto(`${WEB_ORIGIN}${path}`, { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(5500);
+    // Wait for the page to actually settle rather than for a stopwatch. A flat
+    // timeout has to be long enough for the slowest route on the busiest
+    // machine, or it reports a route as broken when it was only slow — which
+    // is exactly what a fixed 5.5s did to the course runner under load. This
+    // returns as soon as the text stops growing, so quick routes stay quick.
+    const read = () =>
+      page.evaluate(() =>
+        ((document.querySelector('main') ?? document.body).innerText || '')
+          .replace(/\s+/g, ' ')
+          .trim(),
+      );
+    let settled = '';
+    for (let i = 0; i < 24; i += 1) {
+      await page.waitForTimeout(1000);
+      const now = await read();
+      const ready =
+        now.length > 40 && now === settled && (!needs || new RegExp(needs, 'i').test(now));
+      settled = now;
+      if (ready) break;
+    }
     const seen = await page.evaluate(() => {
       const main = document.querySelector('main') ?? document.body;
       const text = (main.innerText || '').replace(/\s+/g, ' ').trim();
       return {
         chars: text.length,
+        // `head` is for the report line. `needs` matches against the whole
+        // page, because a route's distinguishing text is often well below the
+        // first line — matching only the head is how four tabs that all
+        // titled themselves "Members" passed this sweep.
         head: text.slice(0, 70),
+        text,
         rows: document.querySelectorAll('table tbody tr').length,
         url: location.pathname,
       };
     });
+    // A route that declares `needs` must show that text. There is deliberately
+    // no escape hatch: an earlier version passed the route when the page
+    // happened to render a table row, which let a page satisfy its own
+    // assertion by rendering anything at all.
     const ok =
-      seen.chars > 40 &&
-      errors.length === 0 &&
-      (!needs || new RegExp(needs, 'i').test(seen.head) || seen.rows > 0);
+      seen.chars > 40 && errors.length === 0 && (!needs || new RegExp(needs, 'i').test(seen.text));
     rows.push({
       path,
       role: role ?? 'anon',

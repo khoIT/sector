@@ -116,7 +116,7 @@ export function GroupFormDialog(props: GroupFormDialogProps) {
     try {
       const created = await createGroup.mutateAsync(result.value);
       setOpen(false);
-      navigate(groupMembersPathFor(created.id), { state: { groupName: created.name } });
+      navigate(groupMembersPathFor(created.id));
     } catch {
       // Rendered from mutation.error below.
     }
@@ -205,22 +205,35 @@ export function GroupFormDialog(props: GroupFormDialogProps) {
             />
           </AccountField>
 
-          <AccountField label={t('groups.form.typeLabel')} htmlFor="group-type">
-            <Select
-              value={draft.type || undefined}
-              onValueChange={(value) =>
-                setDraft((prev) => ({ ...prev, type: value as GroupFormDraft['type'] }))
-              }
+          {/* Edit only. `POST /api/groups` parses `type` and then never reads
+              it — `groupService.create()` is called without the field, so
+              `body.type` appears nowhere outside `updateGroupById` — and a
+              control that discards what you chose is worse than no control.
+              391 of 1,520 groups on the mirror already have no type; this form
+              was adding to them. `PUT /api/groups/:id` does apply it, so the
+              field lives here, where it works. */}
+          {isEdit ? (
+            <AccountField
+              label={t('groups.form.typeLabel')}
+              htmlFor="group-type"
+              hint={t('groups.form.typeHint')}
             >
-              <SelectTrigger id="group-type" placeholder={t('groups.form.typePlaceholder')}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="group">{t('groups.index.type.group')}</SelectItem>
-                <SelectItem value="class">{t('groups.index.type.class')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </AccountField>
+              <Select
+                value={draft.type || undefined}
+                onValueChange={(value) =>
+                  setDraft((prev) => ({ ...prev, type: value as GroupFormDraft['type'] }))
+                }
+              >
+                <SelectTrigger id="group-type" placeholder={t('groups.form.typePlaceholder')}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="group">{t('groups.index.type.group')}</SelectItem>
+                  <SelectItem value="class">{t('groups.index.type.class')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </AccountField>
+          ) : null}
 
           <div className="grid grid-cols-2 gap-3">
             <AccountField
