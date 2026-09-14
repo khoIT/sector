@@ -727,8 +727,15 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   // instead by `fidelity/dashboard-routes.fidelity.test.ts`, which walks all
   // eight routes through the running mirror API for every seeded role —
   // stronger than a synthetic projection here would be for a response this
-  // computed, and the only way to reach what no dump holds (a live scan/course
-  // progress mix for the mirror's seeded accounts).
+  // computed.
+  //
+  // What that replay does and does not reach, measured rather than assumed:
+  // every ENVELOPE is parsed for all four seeded accounts, but only
+  // learner@sector.test has learning history in the mirror, so each ROW schema
+  // below is proved by that one account's rows (9 courses, 1 question bank,
+  // 17 topics, 10 quizzes) while the other three contribute empty lists, which
+  // satisfy an item schema without exercising it. Where a shape has no live
+  // instance at all, the entry says so rather than claiming otherwise.
   // Note: `courseProgressStatusSchema` already has an entry above (shared
   // with My Courses — see the doc comment on the import in
   // schemas/dashboard.ts) — not repeated here, since a manifest key can only
@@ -745,11 +752,10 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   groupCourseProgressChartSchema:
     "part of GET /api/dashboard/charts — a group's learner counts by course " +
     'status, assembled per request; proved live',
-  groupScanProgressChartSchema:
-    "part of GET /api/dashboard/charts — a group's scan counts by status, " +
-    'assembled per request from live scanService counts; proved live',
   dashboardGroupChartsSchema:
-    'GET /api/dashboard/charts — the envelope around the two schemas above; proved live',
+    'GET /api/dashboard/charts — the envelope around the course chart above; its ' +
+    'scanProgressChart field is deliberately not parsed, being unscoped for a group ' +
+    'with no learners (see the schema); proved live',
   scanProgressByUserItemSchema:
     'one status bucket of GET /api/dashboard/scan-progress-by-user, computed ' +
     'per request from live scanService counts; proved live',
@@ -772,7 +778,10 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   topCourseProgressSchema: 'GET /api/dashboard/top-course-progress; proved live',
   courseCompletionTimelineEventSchema:
     'one activity-log entry inside a day of GET /api/dashboard/course-completion-timeline, ' +
-    "built per request from a learner's progress items; proved live",
+    "built per request from a learner's progress items. NOT proved live: every day " +
+    'the replay has ever returned carries an empty events array (checked across all ' +
+    "nine of the seeded learner's courses), so this shape is modelled from the " +
+    'controller only and no live instance has been parsed',
   courseCompletionTimelineDaySchema:
     'one day of GET /api/dashboard/course-completion-timeline, a cumulative ' +
     'progress computation with no stored per-day record; proved live',

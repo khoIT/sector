@@ -61,6 +61,17 @@ const ACCOUNTS = [
 let mirror: Mirror;
 const clients = new Map<string, ApiClient>();
 const results: ReplayResult[] = [];
+/**
+ * How many accounts got as far as replaying the two course-scoped routes.
+ *
+ * Finding a course to ask about goes through `getLearnerCourses`, which
+ * belongs to another schema file, so a failure there is tolerated per account
+ * rather than failing this suite. Tolerated silently, though, it would let
+ * course-progress-chart and course-completion-timeline stop being replayed at
+ * all while the file still reported eight green tests — so the run asserts at
+ * the end that at least one account reached them.
+ */
+let courseScopedAccounts = 0;
 
 async function reachable(): Promise<boolean> {
   try {
@@ -139,6 +150,11 @@ describe.skipIf(!enabled)('dashboard route replay against the mirror API', () =>
   afterAll(async () => {
     process.stdout.write(formatReplayReport(results));
     await mirror?.close();
+    expect(
+      courseScopedAccounts,
+      'no account reached course-progress-chart or course-completion-timeline: ' +
+        'getLearnerCourses failed for all four, so two of the eight routes went unreplayed',
+    ).toBeGreaterThan(0);
   });
 
   describe.each(ACCOUNTS)('%s', (email) => {
@@ -165,6 +181,7 @@ describe.skipIf(!enabled)('dashboard route replay against the mirror API', () =>
           .catch(() => undefined);
 
         if (courseId) {
+          courseScopedAccounts += 1;
           const progress = tally();
           record(
             progress,

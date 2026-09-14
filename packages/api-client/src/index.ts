@@ -793,7 +793,6 @@ export {
 // are already exported above, from './schemas/course' — schemas/dashboard.ts
 // reuses that exact enum rather than redeclaring it.
 export {
-  GROUP_SCAN_PROGRESS_STATUS_ORDER,
   courseCompletionTimelineDaySchema,
   courseCompletionTimelineEventSchema,
   courseCompletionTimelineSchema,
@@ -804,7 +803,6 @@ export {
   dashboardGroupChartsSchema,
   groupCourseProgressChartSchema,
   groupCourseProgressSegmentSchema,
-  groupScanProgressChartSchema,
   qbankStatsItemSchema,
   qbankStatsSchema,
   quizProgressItemSchema,
@@ -826,7 +824,6 @@ export {
   type DashboardGroupChartsQuery,
   type GroupCourseProgressChart,
   type GroupCourseProgressSegment,
-  type GroupScanProgressChart,
   type QBankStats,
   type QBankStatsItem,
   type QBankStatsQuery,

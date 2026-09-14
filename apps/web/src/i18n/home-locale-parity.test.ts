@@ -52,7 +52,13 @@ const NEW_HOME_KEYS = [
   'group.noScanProgress',
   'group.qbank',
   'group.noQbank',
-  'group.averageScore',
+  'group.course',
+  'group.selectCourse',
+  'group.noCourses',
+  'group.coursesRestricted',
+  'group.bestScore',
+  'error.title',
+  'error.retry',
   'reviewer.title',
   'reviewer.expertUnreviewed',
   'reviewer.expertReviewed',
@@ -68,6 +74,22 @@ const NEW_HOME_KEYS = [
   'admin.selectGroup',
   'admin.noGroups',
   'admin.noGroupsHint',
+] as const;
+
+/**
+ * The scan statuses the group chart draws. Not new keys — `status.*` is the
+ * Scan Vault's own namespace, reused rather than duplicated — but the two the
+ * legacy chart silently dropped existed in English only, so the two buckets
+ * this screen exists to show correctly were the two nobody could read.
+ */
+const SCAN_STATUS_KEYS = [
+  'pending',
+  'processing',
+  'failed',
+  'failedUpload',
+  'partiallyUploaded',
+  'submitted',
+  'reviewed',
 ] as const;
 
 const LOCALES: Record<string, Record<string, unknown>> = { de, es, fil, fr, it: italian, pt };
@@ -102,6 +124,14 @@ describe('i18n key parity for the home-screen dashboards', () => {
           const value = getPath(resource, 'home', key);
           expect(value, `home.${key}`).toBeTypeOf('string');
           expect((value as string).length, `home.${key}`).toBeGreaterThan(0);
+        }
+      });
+
+      it('translates every scan status the group chart can draw', () => {
+        for (const key of SCAN_STATUS_KEYS) {
+          const value = getPath(resource, 'status', key);
+          expect(value, `status.${key}`).toBeTypeOf('string');
+          expect((value as string).length, `status.${key}`).toBeGreaterThan(0);
         }
       });
 

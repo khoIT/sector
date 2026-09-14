@@ -52,7 +52,9 @@
     "reviewed": "Überprüft",
     "failed": "Fehlgeschlagen",
     "unopened": "Ungeöffnet",
-    "opened": "Eröffnet"
+    "opened": "Eröffnet",
+    "failedUpload": "Upload fehlgeschlagen",
+    "partiallyUploaded": "Teilweise hochgeladen"
   },
   "outcome": {
     "achieved": "Erreicht",
@@ -606,13 +608,17 @@
     "group": {
       "title": "{{groupName}}",
       "viewMembers": "Mitglieder anzeigen",
+      "course": "Kurs",
+      "selectCourse": "Kurs auswählen",
+      "noCourses": "Dieser Gruppe sind noch keine Kurse zugewiesen.",
+      "coursesRestricted": "Der Kursfortschritt wird nur den Leitern dieser Gruppe angezeigt.",
       "courseProgress": "Kursfortschritt",
       "noCourseProgress": "Noch kein Kursfortschritt für diese Gruppe.",
       "scanProgress": "Scan-Fortschritt",
       "noScanProgress": "Noch keine Scans für diese Gruppe.",
       "qbank": "Versuche im Fragenkatalog",
       "noQbank": "Noch keine Versuche im Fragenkatalog für diese Gruppe.",
-      "averageScore": "{{score}}% beste Punktzahl"
+      "bestScore": "{{score}}% beste Punktzahl"
     },
     "reviewer": {
       "title": "Scan-Prüfer-Dashboard",
@@ -632,6 +638,10 @@
       "selectGroup": "Gruppe auswählen",
       "noGroups": "Noch keine Gruppen",
       "noGroupsHint": "Sobald eine Gruppe existiert, wählen Sie sie hier aus, um ihre Kurs- und Scan-Übersicht zu sehen."
+    },
+    "error": {
+      "title": "Diese Karte konnte nicht geladen werden",
+      "retry": "Erneut versuchen"
     }
   },
   "gallery": {

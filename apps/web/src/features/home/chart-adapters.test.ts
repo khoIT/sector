@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import {
   courseSegmentsToChartData,
-  groupScanChartToChartData,
+  groupCourseChartQuery,
+  groupScanBars,
   scanItemsToChartData,
+  selectedOptionValue,
 } from './chart-adapters';
 
 /** Echoes the key back, so a test failure names the exact i18n key involved. */
@@ -63,11 +65,88 @@ describe('scanItemsToChartData', () => {
   });
 });
 
-describe('groupScanChartToChartData', () => {
-  it('reads every one of the 7 positions, including the two a label-zip would drop', () => {
-    const result = groupScanChartToChartData(identity, { data: [1, 0, 0, 0, 0, 5, 2] });
-    expect(result.map((d) => d.code)).toEqual(['pending', 'submitted', 'reviewed']);
-    expect(result.find((d) => d.code === 'submitted')?.value).toBe(5);
-    expect(result.find((d) => d.code === 'reviewed')?.value).toBe(2);
+describe('groupScanBars', () => {
+  it('reads the group-scoped route, including the statuses a label-zip would drop', () => {
+    const bars = groupScanBars(identity, {
+      chartData: [
+        { name: 'Pending', value: 8, status: 'pending' },
+        { name: 'Failed Upload', value: 1, status: 'failed_upload' },
+        { name: 'Partially Uploaded', value: 0, status: 'partially_uploaded' },
+        { name: 'Submitted', value: 3776, status: 'submitted' },
+        { name: 'Reviewed', value: 3065, status: 'reviewed' },
+      ],
+      summary: {
+        totalScans: 6850,
+        completedScans: 3065,
+        failedScans: 1,
+        pendingScans: 3784,
+        successRate: 45,
+        failureRate: 0,
+      },
+    });
+
+    expect(bars.map((bar) => bar.code)).toEqual([
+      'pending',
+      'failed_upload',
+      'submitted',
+      'reviewed',
+    ]);
+    expect(bars.find((bar) => bar.code === 'submitted')?.value).toBe(3776);
+    expect(bars.find((bar) => bar.code === 'reviewed')?.value).toBe(3065);
+    expect(bars.find((bar) => bar.code === 'failed_upload')?.label).toBe('status.failedUpload');
+  });
+
+  it('shows nothing when the scoped route has nothing to show', () => {
+    // A group with no members scopes to zero scans. The instance-wide counts
+    // that GET /api/dashboard/charts would return for the same group must not
+    // appear in their place.
+    expect(groupScanBars(identity, undefined)).toEqual([]);
+    expect(
+      groupScanBars(identity, {
+        chartData: [
+          { name: 'Pending', value: 0, status: 'pending' },
+          { name: 'Submitted', value: 0, status: 'submitted' },
+        ],
+        summary: {
+          totalScans: 0,
+          completedScans: 0,
+          failedScans: 0,
+          pendingScans: 0,
+          successRate: 0,
+          failureRate: 0,
+        },
+      }),
+    ).toEqual([]);
+  });
+});
+
+describe('groupCourseChartQuery', () => {
+  it('asks for the group charts only once a course is chosen', () => {
+    // Without a courseId the route answers [0,0,0] for every group, however
+    // many learners it has — a donut that can never draw.
+    expect(groupCourseChartQuery('group-1', undefined)).toBeUndefined();
+    expect(groupCourseChartQuery('group-1', '')).toBeUndefined();
+    expect(groupCourseChartQuery('', 'course-1')).toBeUndefined();
+    expect(groupCourseChartQuery('group-1', 'course-1')).toEqual({
+      groupId: 'group-1',
+      courseId: 'course-1',
+    });
+  });
+});
+
+describe('selectedOptionValue', () => {
+  const options = [{ value: 'a' }, { value: 'b' }];
+
+  it('keeps a choice that is still in the list', () => {
+    expect(selectedOptionValue(options, 'b')).toBe('b');
+  });
+
+  it('falls back to the first option when the choice is stale or unset', () => {
+    expect(selectedOptionValue(options, 'gone')).toBe('a');
+    expect(selectedOptionValue(options, undefined)).toBe('a');
+  });
+
+  it('is empty when there is nothing to choose', () => {
+    expect(selectedOptionValue([], 'a')).toBe('');
   });
 });

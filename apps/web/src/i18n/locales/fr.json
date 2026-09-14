@@ -52,7 +52,9 @@
     "reviewed": "Révisé",
     "failed": "Échoué",
     "unopened": "Non ouvert",
-    "opened": "Ouvert"
+    "opened": "Ouvert",
+    "failedUpload": "Échec du téléversement",
+    "partiallyUploaded": "Téléversement partiel"
   },
   "outcome": {
     "achieved": "Atteint",
@@ -606,13 +608,17 @@
     "group": {
       "title": "{{groupName}}",
       "viewMembers": "Voir les membres",
+      "course": "Cours",
+      "selectCourse": "Sélectionnez un cours",
+      "noCourses": "Aucun cours n'est encore attribué à ce groupe.",
+      "coursesRestricted": "La progression des cours n'est visible que par les responsables de ce groupe.",
       "courseProgress": "Progression du cours",
       "noCourseProgress": "Aucune progression de cours pour ce groupe pour l'instant.",
       "scanProgress": "Progression des scans",
       "noScanProgress": "Aucun scan pour ce groupe pour l'instant.",
       "qbank": "Tentatives dans la banque de questions",
       "noQbank": "Aucune tentative dans la banque de questions pour ce groupe pour l'instant.",
-      "averageScore": "{{score}} % meilleur score"
+      "bestScore": "{{score}} % meilleur score"
     },
     "reviewer": {
       "title": "Tableau de bord de l'évaluateur de scans",
@@ -632,6 +638,10 @@
       "selectGroup": "Sélectionner un groupe",
       "noGroups": "Aucun groupe pour l'instant",
       "noGroupsHint": "Dès qu'un groupe existe, sélectionnez-le ici pour voir son aperçu des cours et des scans."
+    },
+    "error": {
+      "title": "Cette carte n'a pas pu être chargée",
+      "retry": "Réessayer"
     }
   },
   "gallery": {

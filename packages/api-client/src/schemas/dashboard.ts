@@ -25,9 +25,8 @@ import { courseProgressStatusSchema, type CourseProgressStatus } from './course'
  *      zipping `labels[i]` with `data[i]` (every legacy dashboard did this)
  *      pairs "Submitted" with the `failed_upload` count, "Reviewed" with the
  *      `partially_uploaded` count, and silently drops the real submitted and
- *      reviewed counts entirely. `GROUP_SCAN_PROGRESS_STATUS_ORDER` below is
- *      that same fixed order, read by POSITION instead of by label, so all
- *      seven counts survive.
+ *      reviewed counts entirely. That array is not parsed here at all; see
+ *      `dashboardGroupChartsSchema` for the second, worse reason.
  *   2. Course-progress segments already carry a status `key` alongside the
  *      display `label` (`in_progress` / `completed` / `not_started`, always in
  *      that order) — the legacy dashboards read `label` anyway. Every
@@ -86,33 +85,35 @@ export const groupCourseProgressChartSchema = z.object({
 });
 export type GroupCourseProgressChart = z.infer<typeof groupCourseProgressChartSchema>;
 
-// ─── group scan progress (part of GET /api/dashboard/charts) ──────────────
+// ─── GET /api/dashboard/charts ─────────────────────────────────────────────
 
 /**
- * The exact order `getChartsData` builds `scanProgressChart.data` in — see
- * bug (1) in the module doc comment above. `.length()` on the schema turns a
- * future change to that order (or count) into a loud parse failure instead of
- * a silent relabelling.
+ * One group's course standing.
+ *
+ * The response also carries `scanProgressChart`, and this schema deliberately
+ * does not parse it, so it cannot reach a screen. Two reasons, the second
+ * decisive:
+ *
+ *   1. its `data` is 7 entries and its `labels` 5, so anything that zips them
+ *      mislabels five statuses and drops two — bug (1) above;
+ *   2. it is not scoped to the group. `getChartsData` narrows the scan query
+ *      `if (groupUserIds.length > 0)`, and those ids are the group's
+ *      LEARNERS — so a group with no learners (a new one, or one holding only
+ *      leaders) is counted across every scan in the database. Verified
+ *      against the mirror: two different empty groups both returned the
+ *      instance totals, 11,576 submitted and 15,499 reviewed.
+ *
+ * A group's scan counts come from `GET /api/dashboard/scan-progress-by-user`
+ * with a `groupId`, which the server scopes properly and which already sends
+ * a status code per bucket. Dropping the field here rather than parsing and
+ * ignoring it means no future caller can reach for the wrong numbers.
+ *
+ * `courseProgressChart` is only populated when the REQUEST carries a
+ * `courseId`; without one every group answers `[0,0,0]`. Callers must send
+ * one — there is nothing to draw otherwise.
  */
-export const GROUP_SCAN_PROGRESS_STATUS_ORDER = [
-  'pending',
-  'processing',
-  'failed',
-  'failed_upload',
-  'partially_uploaded',
-  'submitted',
-  'reviewed',
-] as const satisfies readonly ScanStatus[];
-
-export const groupScanProgressChartSchema = z.object({
-  data: z.array(z.number()).length(GROUP_SCAN_PROGRESS_STATUS_ORDER.length),
-});
-export type GroupScanProgressChart = z.infer<typeof groupScanProgressChartSchema>;
-
-/** One group's course + scan snapshot (`GET /api/dashboard/charts`). */
 export const dashboardGroupChartsSchema = z.object({
   courseProgressChart: groupCourseProgressChartSchema,
-  scanProgressChart: groupScanProgressChartSchema,
 });
 export type DashboardGroupCharts = z.infer<typeof dashboardGroupChartsSchema>;
 
