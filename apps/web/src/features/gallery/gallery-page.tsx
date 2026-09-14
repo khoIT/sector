@@ -18,7 +18,10 @@ const PAGE_SIZE = 20;
  * Three legacy defects, not repeated here:
  *  1. The default category and the category bar now read the SAME query
  *     (`usePathologyCategories`), so a first visit cannot land on a
- *     highlighted-nothing, empty-grid state — see `category-bar.tsx`.
+ *     highlighted-nothing, empty-grid state — see `category-bar.tsx`. Nor can
+ *     a bookmark: a `?category=` the server no longer returns resolves to a
+ *     real category instead of to no selection (`gallery-selection.ts`), which
+ *     is the same dead end arriving through a link rather than a first visit.
  *  2. The categories endpoint is cached server-side (see the API's
  *     `pathology-gallery.controller.ts`), so this page no longer pays for a
  *     collection scan and a presign per scan type on every load.
@@ -37,6 +40,12 @@ export function GalleryPage() {
   const selectedCategory = categoriesQuery.data?.find((entry) => entry.name === params.category);
   const canFetchList =
     Boolean(params.category) && categoriesQuery.isSuccess && Boolean(selectedCategory);
+
+  // Placeholders mean "a grid is coming". It is, unless the server returned no
+  // categories at all — then the bar says so and there is nothing to wait for.
+  // Any other unresolved selection is corrected by the bar within a render.
+  const hasCategories = (categoriesQuery.data?.length ?? 0) > 0;
+  const isResolving = !canFetchList && !categoriesQuery.isError && hasCategories;
 
   const listQuery = usePathologyGalleryList({
     query: {
@@ -72,7 +81,7 @@ export function GalleryPage() {
         </aside>
 
         <div>
-          {!canFetchList && !categoriesQuery.isError && (
+          {(isResolving || categoriesQuery.isPending) && (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: PAGE_SIZE }, (_, index) => (
                 <Skeleton key={index} className="aspect-video w-full rounded-token" />

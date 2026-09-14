@@ -11,13 +11,17 @@ import italian from './locales/it.json';
 import pt from './locales/pt.json';
 
 /**
- * Key parity for the `gallery`, `sage` and `assignments` namespaces across
- * all seven locales — same reasoning and pattern as
- * `groups-namespace-parity.test.ts`: these are new namespaces, so every
- * locale ships the complete set from day one.
+ * Key parity for the `gallery` and `sage` namespaces across all seven locales
+ * — same reasoning and pattern as `groups-namespace-parity.test.ts`: these are
+ * new namespaces, so every locale ships the complete set from day one.
+ *
+ * A third namespace, `assignments`, was translated here for a surface that
+ * could never render: it and the group-administration assignments tab had
+ * registered the same route path. The surface and its keys are gone; the tab
+ * translates under `groups.assignments`, covered by that file's parity test.
  */
 const LOCALES: Record<string, unknown> = { en, de, es, fil, fr, it: italian, pt };
-const NAMESPACES = ['gallery', 'sage', 'assignments'] as const;
+const NAMESPACES = ['gallery', 'sage'] as const;
 
 /** Every leaf key path under an object, dot-joined (arrays are not used here). */
 function leafKeyPaths(value: unknown, prefix = ''): string[] {

@@ -149,12 +149,6 @@ export const pathologyKeys = {
   subCategories: (category: string) => ['get-pathology-sub-categories', category] as const,
 } as const;
 
-export const assignmentKeys = {
-  /** Prefix for every page of one group's assignments, across every filter. */
-  listRoot: (groupId: string) => ['get-group-assignments', groupId] as const,
-  list: (groupId: string, params: unknown) => ['get-group-assignments', groupId, params] as const,
-} as const;
-
 export const authKeys = {
   session: () => ['auth-session'] as const,
 } as const;

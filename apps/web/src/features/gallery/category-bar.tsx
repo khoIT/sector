@@ -4,6 +4,8 @@ import { TriangleAlert } from 'lucide-react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { categoryToSelect } from './gallery-selection';
+
 export type CategoryBarProps = {
   selected: string;
   onSelect: (categoryName: string) => void;
@@ -30,14 +32,19 @@ export function CategoryBar({ selected, onSelect }: CategoryBarProps) {
   const categories = query.data ?? [];
 
   useEffect(() => {
-    const first = categories[0];
-    if (!selected && first) {
-      onSelect(first.name);
-    }
-    // Only re-run when the category list itself changes shape; `onSelect` and
-    // `selected` would otherwise re-fire this on every selection.
+    // Covers a first visit with no category chosen AND a URL naming one the
+    // server no longer returns — see `categoryToSelect` for why the second is
+    // a real path rather than a typo. Left uncorrected it highlighted no tab
+    // and fetched nothing, so the grid sat on loading placeholders forever:
+    // the dead end this bar was rebuilt to remove, reached through a bookmark
+    // instead of a first visit.
+    const next = categoryToSelect(categories, selected);
+    if (next) onSelect(next);
+    // Re-runs when the category list changes, and when the selection moves
+    // outside it. `onSelect` replaces the URL in place, and settling on a real
+    // category makes the next run a no-op, so this cannot loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories]);
+  }, [categories, selected]);
 
   if (query.isPending) {
     return (

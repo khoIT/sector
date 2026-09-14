@@ -849,43 +849,5 @@
       "title": "Sign in to use Sage AI",
       "description": "Sage AI needs a signed-in account to open."
     }
-  },
-  "assignments": {
-    "title": "Assignments",
-    "searchPlaceholder": "Search assignments…",
-    "columns": {
-      "learner": "Learner",
-      "content": "Content",
-      "type": "Type",
-      "dueDate": "Due date",
-      "status": "Status"
-    },
-    "type": {
-      "course": "Course",
-      "module": "Module",
-      "topic": "Topic",
-      "quiz": "Quiz"
-    },
-    "status": {
-      "draft": "Draft",
-      "active": "Active",
-      "in_progress": "In progress",
-      "completed": "Completed",
-      "cancelled": "Cancelled"
-    },
-    "filters": {
-      "status": "Status",
-      "allStatuses": "All statuses",
-      "type": "Type",
-      "allTypes": "All types"
-    },
-    "empty": {
-      "title": "No assignments yet",
-      "description": "Nothing has been assigned to this group yet."
-    },
-    "error": {
-      "title": "Couldn't load assignments",
-      "retry": "Try again"
-    }
   }
 }

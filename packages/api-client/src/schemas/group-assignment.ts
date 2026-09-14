@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-import { assignmentContentRefSchema } from './assignment';
 import { userBasicSchema } from './common';
 
 /**
@@ -20,12 +19,41 @@ import { userBasicSchema } from './common';
  * "no assignments yet", which is a false statement rather than a missing
  * feature.
  */
-// The assignment type and status vocabularies are declared once, beside the
-// read model in ./assignment, and imported here. They were written twice while
-// the read and write sides were built in parallel; the values were identical,
-// so this keeps the single copy rather than two that can drift apart.
-export { groupAssignmentStatusSchema, groupAssignmentTypeSchema } from './assignment';
-import { groupAssignmentStatusSchema, groupAssignmentTypeSchema } from './assignment';
+/**
+ * The assignment type and status vocabularies. Written twice while a read-only
+ * surface and this write-capable one were built in parallel, then deduplicated
+ * into a module the read side owned — which has since been deleted, because it
+ * and this one had registered the same route path and only one of them could
+ * ever render. They live here now, beside the only model that uses them.
+ */
+export const GROUP_ASSIGNMENT_TYPES = ['course', 'module', 'topic', 'quiz'] as const;
+export const groupAssignmentTypeSchema = z.enum(GROUP_ASSIGNMENT_TYPES);
+export type GroupAssignmentType = z.infer<typeof groupAssignmentTypeSchema>;
+
+export const GROUP_ASSIGNMENT_STATUSES = [
+  'draft',
+  'active',
+  'in_progress',
+  'completed',
+  'cancelled',
+] as const;
+export const groupAssignmentStatusSchema = z.enum(GROUP_ASSIGNMENT_STATUSES);
+export type GroupAssignmentStatus = z.infer<typeof groupAssignmentStatusSchema>;
+
+/**
+ * The course/lesson/topic/quiz a row points at.
+ *
+ * On the wire this is the FULL populated content document, of whichever type
+ * `contentRefModel` names — dozens of fields, including a lesson's entire HTML
+ * body. Modelled as the two fields the list renders: a non-strict `z.object`
+ * drops the rest rather than rejecting it.
+ */
+export const assignmentContentRefSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+});
+
+export type AssignmentContentRef = z.infer<typeof assignmentContentRefSchema>;
 
 /** `GET /group-assignment/learners?groupId=` — active learners eligible to be assigned. */
 export const groupLearnerSchema = z.object({

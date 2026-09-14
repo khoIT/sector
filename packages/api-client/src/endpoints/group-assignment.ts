@@ -20,6 +20,20 @@ const paginatedGroupAssignmentSchema = paginatedSchema(groupAssignmentSchema);
  * `getGroupLearners`, `getGroupCourses` and `createGroupAssignment` do not
  * check membership at all. That is a server gap, not something this client
  * can close — flagged, not worked around.
+ *
+ * `read:group-assignment` is NOT an administrative permission. In the mirror's
+ * `roles` collection it is held by `subscriber` and `scan reviewer` as well as
+ * `group leader`, and NOT by `administrator` or `Superadmin`, who reach these
+ * routes through `full-access` instead. So the permission cannot stand in for
+ * "leads this group", and a comment claiming a bare subscriber lacks it —
+ * there was one, on a route file since deleted — is worse than no comment.
+ * Prefer the group-scoped read below; it is the only route in this domain that
+ * checks anything about the caller's relationship to the group.
+ *
+ * There is also a LIST route, `GET /api/group-assignment?groupId=`, which
+ * applies the permission and then filters on whatever `groupId` it is handed —
+ * and returns every assignment in the product when handed none. This client
+ * deliberately does not call it.
  */
 
 /** GET /group-assignment/learners?groupId= — active learners eligible to be assigned. */

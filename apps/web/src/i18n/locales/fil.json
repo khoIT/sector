@@ -773,43 +773,5 @@
       "title": "Mag-sign in upang magamit ang Sage AI",
       "description": "Kailangan ng naka-sign-in na account ang Sage AI bago ito mabuksan."
     }
-  },
-  "assignments": {
-    "title": "Mga Assignment",
-    "searchPlaceholder": "Maghanap ng mga assignment…",
-    "columns": {
-      "learner": "Mag-aaral",
-      "content": "Nilalaman",
-      "type": "Uri",
-      "dueDate": "Deadline",
-      "status": "Status"
-    },
-    "type": {
-      "course": "Kurso",
-      "module": "Module",
-      "topic": "Paksa",
-      "quiz": "Pagsusulit"
-    },
-    "status": {
-      "draft": "Draft",
-      "active": "Aktibo",
-      "in_progress": "Isinasagawa",
-      "completed": "Nakumpleto",
-      "cancelled": "Kinansela"
-    },
-    "filters": {
-      "status": "Status",
-      "allStatuses": "Lahat ng status",
-      "type": "Uri",
-      "allTypes": "Lahat ng uri"
-    },
-    "empty": {
-      "title": "Wala pang assignment",
-      "description": "Wala pang naitatalagang gawain sa grupong ito."
-    },
-    "error": {
-      "title": "Hindi ma-load ang mga assignment",
-      "retry": "Subukang muli"
-    }
   }
 }
