@@ -1,4 +1,6 @@
 import {
+  GROUP_LEADERSHIP_BYPASS_PERMISSION,
+  hasPermission,
   isApiError,
   useDashboardGroupCharts,
   useDashboardQBankStats,
@@ -19,6 +21,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
+import { useAuth } from '@/auth/auth-context';
 import { groupMembersPathFor } from '@/features/groups/groups-links';
 
 import { CardError } from './card-error';
@@ -33,6 +36,18 @@ import { Bars, Donut } from './lazy-charts';
 export type GroupLearningSnapshotProps = {
   groupId: string;
   groupName: string;
+  /**
+   * Whether the viewer holds leadership of this group, which the caller knows
+   * and this component cannot work out: a leader's and a reviewer's group list
+   * comes from the led-groups route, while the administrator home offers every
+   * group in the system.
+   *
+   * It decides whether the course card is part of this dashboard at all. The
+   * group's course list is behind `assertLeadsGroup`, so for a full-access
+   * administrator who leads nothing it is a guaranteed 403 — a wasted request
+   * and a console error on a screen that is otherwise fine.
+   */
+  viewerLeadsGroup: boolean;
 };
 
 /**
@@ -54,11 +69,18 @@ export type GroupLearningSnapshotProps = {
  *     the same `charts` response, whose scan array is unscoped for a group
  *     with no learners. See `groupScanBars`.
  */
-export function GroupLearningSnapshot({ groupId, groupName }: GroupLearningSnapshotProps) {
+export function GroupLearningSnapshot({
+  groupId,
+  groupName,
+  viewerLeadsGroup,
+}: GroupLearningSnapshotProps) {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [chosenCourseId, setChosenCourseId] = useState<string>('');
 
-  const courses = useGroupCourses(groupId, { limit: 50 });
+  const canReadGroupCourses =
+    viewerLeadsGroup || hasPermission(user, GROUP_LEADERSHIP_BYPASS_PERMISSION);
+  const courses = useGroupCourses(canReadGroupCourses ? groupId : undefined, { limit: 50 });
   const courseOptions = useMemo(
     () => (courses.data?.items ?? []).map((course) => ({ value: course.id, label: course.title })),
     [courses.data],
@@ -87,45 +109,54 @@ export function GroupLearningSnapshot({ groupId, groupName }: GroupLearningSnaps
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <CardTitle>{t('home.group.courseProgress')}</CardTitle>
-              {courseOptions.length > 0 ? (
-                <Combobox
-                  label={t('home.group.course')}
-                  options={courseOptions}
-                  selected={courseId ? [courseId] : []}
-                  onSelect={setChosenCourseId}
-                  placeholder={t('home.group.selectCourse')}
-                  className="w-full sm:w-56"
+      <div
+        className={
+          canReadGroupCourses ? 'grid grid-cols-1 gap-4 md:grid-cols-2' : 'grid grid-cols-1 gap-4'
+        }
+      >
+        {canReadGroupCourses ? (
+          <Card>
+            <CardHeader>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <CardTitle>{t('home.group.courseProgress')}</CardTitle>
+                {courseOptions.length > 0 ? (
+                  <Combobox
+                    label={t('home.group.course')}
+                    options={courseOptions}
+                    selected={courseId ? [courseId] : []}
+                    onSelect={setChosenCourseId}
+                    placeholder={t('home.group.selectCourse')}
+                    className="w-full sm:w-56"
+                  />
+                ) : null}
+              </div>
+            </CardHeader>
+            <CardContent>
+              {courses.isPending || (courseId && charts.isPending) ? (
+                <Skeleton className="h-[240px] w-full" />
+              ) : coursesForbidden ? (
+                <EmptyState title={t('home.group.coursesRestricted')} />
+              ) : courses.isError ? (
+                <CardError error={courses.error} onRetry={() => void courses.refetch()} />
+              ) : charts.isError ? (
+                <CardError error={charts.error} onRetry={() => void charts.refetch()} />
+              ) : courseOptions.length === 0 ? (
+                <EmptyState title={t('home.group.noCourses')} />
+              ) : (
+                <Donut
+                  data={courseSegmentsToChartData(
+                    t,
+                    charts.data?.courseProgressChart.segments ?? [],
+                  )}
+                  totalLabel={
+                    charts.data ? `${charts.data.courseProgressChart.totalLearners}` : undefined
+                  }
+                  emptyTitle={t('home.group.noCourseProgress')}
                 />
-              ) : null}
-            </div>
-          </CardHeader>
-          <CardContent>
-            {courses.isPending || (courseId && charts.isPending) ? (
-              <Skeleton className="h-[240px] w-full" />
-            ) : coursesForbidden ? (
-              <EmptyState title={t('home.group.coursesRestricted')} />
-            ) : courses.isError ? (
-              <CardError error={courses.error} onRetry={() => void courses.refetch()} />
-            ) : charts.isError ? (
-              <CardError error={charts.error} onRetry={() => void charts.refetch()} />
-            ) : courseOptions.length === 0 ? (
-              <EmptyState title={t('home.group.noCourses')} />
-            ) : (
-              <Donut
-                data={courseSegmentsToChartData(t, charts.data?.courseProgressChart.segments ?? [])}
-                totalLabel={
-                  charts.data ? `${charts.data.courseProgressChart.totalLearners}` : undefined
-                }
-                emptyTitle={t('home.group.noCourseProgress')}
-              />
-            )}
-          </CardContent>
-        </Card>
+              )}
+            </CardContent>
+          </Card>
+        ) : null}
 
         <Card>
           <CardHeader>

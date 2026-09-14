@@ -13,7 +13,11 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { CardError } from './card-error';
-import { courseSegmentsToChartData, scanItemsToChartData, selectedOptionValue } from './chart-adapters';
+import {
+  courseSegmentsToChartData,
+  scanItemsToChartData,
+  selectedOptionValue,
+} from './chart-adapters';
 import { Bars, Donut, LineTrend, Sparkline } from './lazy-charts';
 
 /**
@@ -37,7 +41,9 @@ export function MyLearningPanel() {
   const courseOptions = useMemo(
     () =>
       [...(courses.data?.items ?? [])]
-        .sort((a, b) => (b.progress.lastAccessedAt ?? '').localeCompare(a.progress.lastAccessedAt ?? ''))
+        .sort((a, b) =>
+          (b.progress.lastAccessedAt ?? '').localeCompare(a.progress.lastAccessedAt ?? ''),
+        )
         .map((item) => ({
           value: item.course.id,
           label: item.course.title,

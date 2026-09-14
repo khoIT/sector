@@ -89,3 +89,21 @@ export type Group = z.infer<typeof groupSchema>;
  * same constant.
  */
 export const GROUP_ADMIN_BYPASS_PERMISSIONS = ['full-access', 'admin:full-access'] as const;
+
+/**
+ * The one permission that bypasses `assertLeadsGroup` itself.
+ *
+ * Narrower than the constant above, and the difference is load bearing: a
+ * plain `administrator` holds `full-access`, so it may LIST every group
+ * (`GET /api/groups`), while every per-group management route —
+ * `/api/groups/manage/course/:groupId`, `/manage/member/:groupId` — refuses
+ * it with a 403 unless it leads that group. Verified against the mirror API:
+ * `admin@sector.test` gets 200 from the group index and 403 from the group's
+ * own course list.
+ *
+ * So a surface that offers any group to a full-access account must not assume
+ * it can then open that group. Ask with this permission before spending a
+ * request that will be refused: a 403 is not only a wasted round trip, it is
+ * a console error on a screen that is otherwise working.
+ */
+export const GROUP_LEADERSHIP_BYPASS_PERMISSION = 'admin:full-access';

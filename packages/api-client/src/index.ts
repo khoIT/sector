@@ -512,6 +512,7 @@ export {
 // ─── group administration (groups index + members surface) ──────────────────
 export {
   GROUP_ADMIN_BYPASS_PERMISSIONS,
+  GROUP_LEADERSHIP_BYPASS_PERMISSION,
   GROUP_TYPES,
   groupSchema,
   groupTypeSchema,
