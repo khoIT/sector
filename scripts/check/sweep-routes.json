@@ -14,19 +14,23 @@
   },
   {
     "path": "/",
-    "role": "learner"
+    "role": "learner",
+    "needs": "Welcome back"
   },
   {
     "path": "/",
-    "role": "leader"
+    "role": "leader",
+    "needs": "Group leader dashboard"
   },
   {
     "path": "/",
-    "role": "reviewer"
+    "role": "reviewer",
+    "needs": "Scan reviewer dashboard"
   },
   {
     "path": "/",
-    "role": "admin"
+    "role": "admin",
+    "needs": "Administrator dashboard"
   },
   {
     "path": "/scans/my",
