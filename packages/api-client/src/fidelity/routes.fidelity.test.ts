@@ -8,6 +8,7 @@ import { SCAN_LIST_VIEWS } from '../query-keys';
 import { userGroupSchema } from '../schemas/common';
 import { learnerCoursesPageSchema } from '../schemas/course';
 import { courseOutlineSchema } from '../schemas/course-outline';
+import { groupAssignmentSchema } from '../schemas/group-assignment';
 import { scanNoteListSchema, scanSchema, scanUserSchema } from '../schemas/scan';
 import { sharedScanListItemSchema } from '../schemas/shared-scan-list';
 import { scanDetailPath, scanListPath } from '../endpoints/scan';
@@ -331,5 +332,62 @@ describe.skipIf(!enabled)('route replay against the mirror API', () => {
       }
     },
     5 * 60_000,
+  );
+
+  /**
+   * The assignments tab, over the groups that actually hold assignments.
+   *
+   * A collection replay cannot prove this row: `user` and `contentId` are
+   * populated per request, and the shape that broke the tab — `user: null`,
+   * from a populate whose target is soft-deleted or absent — exists only on
+   * the wire. The busiest mirror groups are precisely where it appears, so
+   * they are what this walks.
+   */
+  it(
+    'parses every assignment of the busiest groups, including rows whose user did not resolve',
+    async () => {
+      const client = clients.get('admin@sector.test')!;
+      const started = Date.now();
+      const rows = tally();
+
+      const busiest = (await mirror.db
+        .collection('groupassignments')
+        .aggregate([
+          { $match: { deletedAt: null } },
+          { $group: { _id: '$group', n: { $sum: 1 } } },
+          { $sort: { n: -1 } },
+          { $limit: 5 },
+        ])
+        .toArray()) as Array<{ _id: ObjectId | null }>;
+
+      let nullUsers = 0;
+      for (const { _id } of busiest) {
+        if (!_id) continue;
+        const groupId = _id.toHexString();
+        let page = 0;
+        for (;;) {
+          const raw = (await client.get(`/api/group-assignment/group/${groupId}`, {
+            query: { page, limit: 100 },
+          })) as { items?: unknown[]; totalPages?: number };
+
+          for (const item of raw.items ?? []) {
+            record(rows, groupAssignmentSchema, item, String((item as { id?: unknown }).id ?? '?'));
+            if ((item as { user?: unknown }).user === null) nullUsers += 1;
+          }
+
+          page += 1;
+          if (page >= (raw.totalPages ?? 1)) break;
+        }
+      }
+
+      const result = finish('admin group assignments', rows, started);
+      expect(result.shapes.map((shape) => `${shape.count}× ${shape.signature}`)).toEqual([]);
+      expect(result.total).toBeGreaterThan(0);
+      // Not an assertion about production — the mirror's users collection is
+      // partial. It states what this replay actually exercised, so the test
+      // cannot silently stop covering the shape it exists for.
+      process.stdout.write(`\n  (${nullUsers} of ${result.total} rows had user: null)\n`);
+    },
+    10 * 60_000,
   );
 });
