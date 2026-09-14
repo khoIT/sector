@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { assignmentContentRefSchema } from './assignment';
 import { userBasicSchema } from './common';
 
 /**
@@ -8,14 +9,16 @@ import { userBasicSchema } from './common';
  * (`/api/group-assignment`, `group-assignment.controller.ts`), not the
  * whole-group course enrolment `endpoints/group-course.ts` manages.
  *
- * Scoped to COURSE-level assignments only. The API also supports assigning a
- * single module, topic or quiz (`assignmentType: 'module' | 'topic' |
- * 'quiz'`), each needing its own content picker sourced from
- * `GET /group-assignment/course-details`'s nested lesson/topic/quiz tree.
- * That picker is a real, separate piece of work — course-level assignment is
- * what a group leader creating an assignment does most, and lesson/topic/quiz
- * assignment is left for the surface that actually browses a course's
- * structure (course authoring, not group administration).
+ * READING is all four assignment types. WRITING, from this client, is
+ * course-level only: assigning a single module, topic or quiz needs a content
+ * picker over `GET /group-assignment/course-details`'s nested tree, which
+ * belongs to a surface that browses a course's structure. The read side does
+ * not inherit that limit, and must not — on the production mirror only 376 of
+ * 8,734 assignment rows are course-level, and the group the cold-load sweep
+ * uses (`6a6ae3d759ab84398c7cee4f`) has 1,367 assignments of which zero are.
+ * Filtering the list to `assignmentType=course` made that group's tab report
+ * "no assignments yet", which is a false statement rather than a missing
+ * feature.
  */
 // The assignment type and status vocabularies are declared once, beside the
 // read model in ./assignment, and imported here. They were written twice while
@@ -47,22 +50,41 @@ export type GroupCourseOption = z.infer<typeof groupCourseOptionSchema>;
 /**
  * `GET /group-assignment/group/:groupId` list item.
  *
- * `user` is modelled as `string | UserBasic` — the same defensive shape
- * CONTRACTS.md documents for `scannotes[].user` — because
- * `groupAssignmentService.getAll(..., { populate: true })`'s populated paths
- * are not yet verified closely enough to assert `user` is always the full
- * document rather than a bare id on every code path. Narrowing this to
- * `userBasicSchema` alone risks throwing on a shape this client has not
- * actually seen.
+ * Now modelled against the live route rather than guessed at. The controller
+ * passes `{ populate: true }`, so `groupAssignmentService`'s default populate
+ * paths always apply: `user` and `author` become
+ * `{id, userName, email, firstName, lastName}`, `contentId` becomes the FULL
+ * content document, and `courseId`/`lessonId`/`topicId` become
+ * `{id, title, slug}`. A bare id is therefore NOT a shape this route can
+ * return, and the old `string | UserBasic` union defended against the wrong
+ * thing.
+ *
+ * `user` is nullable because a populate whose target document is missing
+ * yields `null`, not an id — 14 of 18 rows on mirror group
+ * `68790e75c39d8b562b939d5f` come back with `user: null`. On the mirror that
+ * is an artifact of its partial `users` collection (1,070 of 1,461 assignee
+ * ids are not in it), so this is not evidence of orphaned rows in production;
+ * it IS evidence that one unresolvable reference must not take the whole tab
+ * down, which is what a non-nullable `user` did.
+ *
+ * `contentId` is what the row is actually FOR. It is the populated document,
+ * of whichever type `contentRefModel` names, and is reduced here to the two
+ * fields the list renders — extra keys are dropped by a non-strict
+ * `z.object`, not rejected. Without it the list could only say who and when,
+ * never what.
  */
 export const groupAssignmentSchema = z.object({
   id: z.string(),
   assignmentType: groupAssignmentTypeSchema,
-  courseId: z.union([z.string(), z.object({ id: z.string(), title: z.string() })]).nullish(),
-  user: z.union([z.string(), userBasicSchema]),
+  /** The assigned course/module/topic/quiz itself. */
+  contentId: assignmentContentRefSchema.nullish(),
+  /** The course the content sits under; null on a bare course assignment. */
+  courseId: assignmentContentRefSchema.nullish(),
+  user: userBasicSchema.nullish(),
   dueDate: z.string().nullish(),
   status: groupAssignmentStatusSchema,
   completedAt: z.string().nullish(),
+  assignedAt: z.string().optional(),
   createdAt: z.string().optional(),
 });
 
@@ -72,7 +94,7 @@ export type GroupAssignment = z.infer<typeof groupAssignmentSchema>;
  * `POST /group-assignment` — course-level, single or bulk (`userIds`).
  * `contentRefModel` is always `'V2Course'` here because `assignmentType` is
  * pinned to `'course'` — see the module doc comment for why the other three
- * are out of scope.
+ * are out of scope for the WRITE side. The list above reads all four.
  */
 export const createGroupAssignmentPayloadSchema = z.object({
   group: z.string().min(1),

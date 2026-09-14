@@ -1,5 +1,4 @@
 import {
-  isApiError,
   useExportGroupCourseDataMutation,
   useExportGroupCourseProgressMutation,
   useExportGroupScansMutation,
@@ -18,9 +17,12 @@ import {
 import { Download } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-import { GroupDetailTabs, type GroupDetailLocationState } from '../group-detail-tabs';
+import { errorMessage } from '@/lib/error-message';
+
+import { GroupDetailTabs } from '../group-detail-tabs';
+import { useGroupDetailTitle } from '../use-group-detail-title';
 import { downloadExportFile, downloadTextFile } from './download-export-file';
 
 /**
@@ -29,12 +31,13 @@ import { downloadExportFile, downloadTextFile } from './download-export-file';
  * workbook in the browser, unlike the 1,189-line table the dashboard shipped
  * for this.
  */
+/** Which card a post-success download failure belongs to. */
+type ExportCardId = 'scans' | 'userScans' | 'courseProgress' | 'courseData';
+
 export function GroupExportsPanel() {
   const { t } = useTranslation();
   const { groupId } = useParams<{ groupId: string }>();
-  const location = useLocation();
-  const groupName = (location.state as GroupDetailLocationState)?.groupName;
-  const title = groupName ?? t('groups.members.title');
+  const title = useGroupDetailTitle(groupId);
 
   const exportScans = useExportGroupScansMutation(groupId ?? '');
   const exportUserScans = useExportGroupUserScansMutation(groupId ?? '');
@@ -45,18 +48,43 @@ export function GroupExportsPanel() {
   const [courseIdInput, setCourseIdInput] = useState('');
   const [reportBusy, setReportBusy] = useState<'json' | 'csv' | null>(null);
   const [reportError, setReportError] = useState<string | undefined>();
+  /**
+   * A failure that happened AFTER the request succeeded — decoding the base64
+   * workbook, or handing the blob to the browser. Kept separate from each
+   * mutation's own `isError`, because on this path the mutation SUCCEEDED:
+   * reporting through it would have meant reporting through a flag that is
+   * false, which is why a malformed payload used to produce no file, no
+   * message and no trace of any kind.
+   */
+  const [downloadError, setDownloadError] = useState<{
+    card: ExportCardId;
+    message: string;
+  } | null>(null);
 
   if (!groupId) return null;
 
   async function runExport(
+    card: ExportCardId,
     mutate: () => Promise<{ filename: string; buffer: string; contentType: string }>,
   ) {
+    setDownloadError(null);
+    let result;
     try {
-      const result = await mutate();
-      downloadExportFile(result);
+      result = await mutate();
     } catch {
-      // Surfaced via each mutation's own isError below.
+      // The request itself failed; rendered from the mutation's own isError.
+      return;
     }
+    try {
+      downloadExportFile(result);
+    } catch (error) {
+      setDownloadError({ card, message: errorMessage(error, t('groups.exports.decodeError')) });
+    }
+  }
+
+  /** The post-success failure for one card, or undefined if it was another card's. */
+  function decodeErrorFor(card: ExportCardId): string | undefined {
+    return downloadError?.card === card ? downloadError.message : undefined;
   }
 
   async function downloadReport(format: 'json' | 'csv') {
@@ -75,7 +103,7 @@ export function GroupExportsPanel() {
         );
       }
     } catch (error) {
-      setReportError(isApiError(error) ? error.message : t('groups.exports.error'));
+      setReportError(errorMessage(error, t('groups.exports.error')));
     } finally {
       setReportBusy(null);
     }
@@ -83,23 +111,31 @@ export function GroupExportsPanel() {
 
   return (
     <section aria-label={title}>
-      <GroupDetailTabs groupId={groupId} title={title} active="exports" />
+      <GroupDetailTabs groupId={groupId} active="exports" />
 
       <div className="flex flex-col gap-4">
         <ExportCard
           title={t('groups.exports.scans.title')}
           description={t('groups.exports.scans.description')}
           busy={exportScans.isPending}
-          error={isApiError(exportScans.error) ? exportScans.error.message : undefined}
-          onDownload={() => void runExport(() => exportScans.mutateAsync({}))}
+          error={
+            exportScans.isError
+              ? errorMessage(exportScans.error, t('groups.exports.error'))
+              : decodeErrorFor('scans')
+          }
+          onDownload={() => void runExport('scans', () => exportScans.mutateAsync({}))}
         />
 
         <ExportCard
           title={t('groups.exports.userScans.title')}
           description={t('groups.exports.userScans.description')}
           busy={exportUserScans.isPending}
-          error={isApiError(exportUserScans.error) ? exportUserScans.error.message : undefined}
-          onDownload={() => void runExport(() => exportUserScans.mutateAsync({}))}
+          error={
+            exportUserScans.isError
+              ? errorMessage(exportUserScans.error, t('groups.exports.error'))
+              : decodeErrorFor('userScans')
+          }
+          onDownload={() => void runExport('userScans', () => exportUserScans.mutateAsync({}))}
         />
 
         <ExportCard
@@ -107,9 +143,13 @@ export function GroupExportsPanel() {
           description={t('groups.exports.courseProgress.description')}
           busy={exportCourseProgress.isPending}
           error={
-            isApiError(exportCourseProgress.error) ? exportCourseProgress.error.message : undefined
+            exportCourseProgress.isError
+              ? errorMessage(exportCourseProgress.error, t('groups.exports.error'))
+              : decodeErrorFor('courseProgress')
           }
-          onDownload={() => void runExport(() => exportCourseProgress.mutateAsync([groupId]))}
+          onDownload={() =>
+            void runExport('courseProgress', () => exportCourseProgress.mutateAsync([groupId]))
+          }
         />
 
         <Card>
@@ -128,18 +168,20 @@ export function GroupExportsPanel() {
               size="sm"
               disabled={exportCourseData.isPending || !courseIdInput.trim()}
               onClick={() =>
-                void runExport(() => exportCourseData.mutateAsync(courseIdInput.trim()))
+                void runExport('courseData', () =>
+                  exportCourseData.mutateAsync(courseIdInput.trim()),
+                )
               }
             >
               <Download className="h-3.5 w-3.5" aria-hidden />
               {exportCourseData.isPending ? t('actions.downloading') : t('actions.download')}
             </Button>
           </CardContent>
-          {exportCourseData.isError ? (
+          {exportCourseData.isError || decodeErrorFor('courseData') ? (
             <CardContent className="pt-0 text-[12px] text-crit">
-              {isApiError(exportCourseData.error)
-                ? exportCourseData.error.message
-                : t('groups.exports.error')}
+              {exportCourseData.isError
+                ? errorMessage(exportCourseData.error, t('groups.exports.error'))
+                : decodeErrorFor('courseData')}
             </CardContent>
           ) : null}
         </Card>

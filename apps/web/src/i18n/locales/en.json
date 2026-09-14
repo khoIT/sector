@@ -290,12 +290,23 @@
         "retry": "Try again"
       },
       "actions": {
-        "changeRole": "Change role",
         "remove": "Remove",
         "removeConfirmTitle": "Remove this member?",
-        "removeConfirmDescription": "They will lose access to this group's courses and scans.",
+        "removeConfirmDescription": "<strong>{{name}}</strong> will be removed from this group permanently, along with their join date and any membership expiry. This cannot be undone; they would have to be invited again.",
         "removeError": "This member could not be removed.",
-        "removing": "Removing…"
+        "removing": "Removing…",
+        "changeRoleFor": "Change role for {{name}}",
+        "removeFor": "Remove {{name}}",
+        "resend": "Resend invitation",
+        "resendFor": "Resend the invitation to {{name}}",
+        "resendSent": "Invitation resent",
+        "resendError": "The invitation could not be resent.",
+        "roleConfirmTitle": "Change this member’s role?",
+        "roleConfirmToLeader": "<strong>{{name}}</strong> will become a leader of this group, able to see every member’s scans and manage the roster.",
+        "roleConfirmToLearner": "<strong>{{name}}</strong> will become a learner, and will lose the ability to manage this group.",
+        "roleConfirm": "Change role",
+        "roleSaving": "Changing…",
+        "roleError": "This role could not be changed."
       }
     },
     "tabs": {
@@ -325,7 +336,8 @@
       "isFreeTrialLabel": "This is a free trial group",
       "error": "This group could not be saved.",
       "saving": "Saving…",
-      "submit": "Save"
+      "submit": "Save",
+      "typeHint": "Set after the group exists — creating one always makes a plain group."
     },
     "invite": {
       "trigger": "Invite member",
@@ -356,7 +368,11 @@
       "empty": {
         "title": "No courses enrolled",
         "description": "Add a course to enrol every member of this group."
-      }
+      },
+      "removeFor": "Remove {{title}}",
+      "removeConfirmTitle": "Remove this course?",
+      "removeConfirmDescription": "Every member of this group loses access to <strong>{{title}}</strong>. Their progress is kept, and adding the course back restores it.",
+      "removing": "Removing…"
     },
     "assignments": {
       "loadError": "This group's assignments could not be loaded.",
@@ -364,7 +380,7 @@
       "noDueDate": "No due date",
       "empty": {
         "title": "No assignments yet",
-        "description": "Assign a course to specific members with a due date."
+        "description": "Nobody in this group has been assigned a course, module, topic or quiz yet."
       },
       "status": {
         "draft": "Draft",
@@ -387,6 +403,16 @@
         "error": "This assignment could not be created.",
         "saving": "Saving…",
         "submit": "Create assignment"
+      },
+      "readsAllTypesNotice": "Showing every assignment on this group. New assignments made here are course-level.",
+      "loadErrorDetail": "The list could not be loaded.",
+      "unknownContent": "Untitled content",
+      "unknownMember": "Unknown member",
+      "type": {
+        "course": "Course",
+        "module": "Module",
+        "topic": "Topic",
+        "quiz": "Quiz"
       }
     },
     "exports": {
@@ -413,13 +439,17 @@
         "description": "The same completion data as a CSV or JSON file.",
         "csv": "Download CSV",
         "json": "Download JSON"
-      }
+      },
+      "decodeError": "The export downloaded but could not be opened. Try again."
     },
     "settings": {
       "detailsTitle": "Group details",
       "detailsDescription": "Name, slug, description, type, seats and expiration.",
       "loadError": "This group's details could not be loaded.",
       "notLeaderNotice": "Scan-notification preferences are only available to a leader of this group."
+    },
+    "detail": {
+      "untitled": "Group"
     }
   },
   "auth": {

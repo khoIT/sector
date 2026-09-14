@@ -212,12 +212,23 @@
         "retry": "Réessayer"
       },
       "actions": {
-        "changeRole": "Changer le rôle",
         "remove": "Retirer",
         "removeConfirmTitle": "Retirer ce membre ?",
-        "removeConfirmDescription": "Il perdra l'accès aux cours et scans de ce groupe.",
+        "removeConfirmDescription": "<strong>{{name}}</strong> sera retiré·e définitivement de ce groupe, avec sa date d’adhésion et toute échéance d’adhésion. Cette action est irréversible ; il faudrait l’inviter à nouveau.",
         "removeError": "Ce membre n'a pas pu être retiré.",
-        "removing": "Retrait en cours…"
+        "removing": "Retrait en cours…",
+        "changeRoleFor": "Modifier le rôle de {{name}}",
+        "removeFor": "Retirer {{name}}",
+        "resend": "Renvoyer l’invitation",
+        "resendFor": "Renvoyer l’invitation à {{name}}",
+        "resendSent": "Invitation renvoyée",
+        "resendError": "L’invitation n’a pas pu être renvoyée.",
+        "roleConfirmTitle": "Modifier le rôle de ce membre ?",
+        "roleConfirmToLeader": "<strong>{{name}}</strong> deviendra responsable de ce groupe et pourra voir les échographies de tous les membres et gérer la liste.",
+        "roleConfirmToLearner": "<strong>{{name}}</strong> deviendra apprenant·e et ne pourra plus gérer ce groupe.",
+        "roleConfirm": "Modifier le rôle",
+        "roleSaving": "Modification…",
+        "roleError": "Ce rôle n’a pas pu être modifié."
       }
     },
     "tabs": {
@@ -247,7 +258,8 @@
       "isFreeTrialLabel": "Ceci est un groupe d'essai gratuit",
       "error": "Ce groupe n'a pas pu être enregistré.",
       "saving": "Enregistrement…",
-      "submit": "Enregistrer"
+      "submit": "Enregistrer",
+      "typeHint": "Défini après la création : un groupe créé ici est toujours un groupe simple."
     },
     "invite": {
       "trigger": "Inviter un membre",
@@ -278,7 +290,11 @@
       "empty": {
         "title": "Aucun cours inscrit",
         "description": "Ajoutez un cours pour inscrire chaque membre de ce groupe."
-      }
+      },
+      "removeFor": "Retirer {{title}}",
+      "removeConfirmTitle": "Retirer ce cours ?",
+      "removeConfirmDescription": "Tous les membres de ce groupe perdront l’accès à <strong>{{title}}</strong>. Leur progression est conservée et rétablie si le cours est rajouté.",
+      "removing": "Retrait…"
     },
     "assignments": {
       "loadError": "Les devoirs de ce groupe n'ont pas pu être chargés.",
@@ -286,7 +302,7 @@
       "noDueDate": "Aucune échéance",
       "empty": {
         "title": "Aucun devoir pour l'instant",
-        "description": "Assignez un cours à des membres précis avec une échéance."
+        "description": "Personne dans ce groupe n’a encore reçu de cours, module, sujet ou quiz."
       },
       "status": {
         "draft": "Brouillon",
@@ -309,6 +325,16 @@
         "error": "Ce devoir n'a pas pu être créé.",
         "saving": "Enregistrement…",
         "submit": "Créer le devoir"
+      },
+      "readsAllTypesNotice": "Toutes les affectations de ce groupe sont affichées. Celles créées ici portent sur un cours entier.",
+      "loadErrorDetail": "La liste n’a pas pu être chargée.",
+      "unknownContent": "Contenu sans titre",
+      "unknownMember": "Membre inconnu",
+      "type": {
+        "course": "Cours",
+        "module": "Module",
+        "topic": "Sujet",
+        "quiz": "Quiz"
       }
     },
     "exports": {
@@ -335,13 +361,17 @@
         "description": "Les mêmes données d'achèvement en fichier CSV ou JSON.",
         "csv": "Télécharger le CSV",
         "json": "Télécharger le JSON"
-      }
+      },
+      "decodeError": "L’export a été téléchargé mais n’a pas pu être ouvert. Réessayez."
     },
     "settings": {
       "detailsTitle": "Détails du groupe",
       "detailsDescription": "Nom, slug, description, type, places et expiration.",
       "loadError": "Les détails de ce groupe n'ont pas pu être chargés.",
       "notLeaderNotice": "Les préférences de notification de scan ne sont disponibles que pour un responsable de ce groupe."
+    },
+    "detail": {
+      "untitled": "Groupe"
     }
   },
   "auth": {

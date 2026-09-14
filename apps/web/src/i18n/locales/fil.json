@@ -212,12 +212,23 @@
         "retry": "Subukan muli"
       },
       "actions": {
-        "changeRole": "Baguhin ang tungkulin",
         "remove": "Alisin",
         "removeConfirmTitle": "Alisin ang miyembrong ito?",
-        "removeConfirmDescription": "Mawawalan sila ng access sa mga kurso at scan ng grupong ito.",
+        "removeConfirmDescription": "Permanenteng aalisin si <strong>{{name}}</strong> sa grupong ito, kasama ang petsa ng pagsali at anumang pag-expire ng pagiging miyembro. Hindi ito maibabalik; kakailanganin siyang imbitahan muli.",
         "removeError": "Hindi maalis ang miyembrong ito.",
-        "removing": "Inaalis…"
+        "removing": "Inaalis…",
+        "changeRoleFor": "Baguhin ang tungkulin ni {{name}}",
+        "removeFor": "Alisin si {{name}}",
+        "resend": "Ipadala muli ang imbitasyon",
+        "resendFor": "Ipadala muli ang imbitasyon kay {{name}}",
+        "resendSent": "Naipadala muli ang imbitasyon",
+        "resendError": "Hindi naipadala muli ang imbitasyon.",
+        "roleConfirmTitle": "Baguhin ang tungkulin ng miyembrong ito?",
+        "roleConfirmToLeader": "Magiging lider ng grupong ito si <strong>{{name}}</strong>, at makikita niya ang mga scan ng bawat miyembro at mapapamahalaan ang listahan.",
+        "roleConfirmToLearner": "Magiging mag-aaral si <strong>{{name}}</strong> at hindi na mapapamahalaan ang grupong ito.",
+        "roleConfirm": "Baguhin ang tungkulin",
+        "roleSaving": "Binabago…",
+        "roleError": "Hindi nabago ang tungkuling ito."
       }
     },
     "tabs": {
@@ -247,7 +258,8 @@
       "isFreeTrialLabel": "Ito ay isang libreng trial na grupo",
       "error": "Hindi na-save ang grupong ito.",
       "saving": "Sine-save…",
-      "submit": "I-save"
+      "submit": "I-save",
+      "typeHint": "Itinatakda pagkatapos malikha — laging simpleng grupo ang nalilikha rito."
     },
     "invite": {
       "trigger": "Mag-imbita ng miyembro",
@@ -278,7 +290,11 @@
       "empty": {
         "title": "Walang naka-enrol na kurso",
         "description": "Magdagdag ng kurso para ma-enrol ang bawat miyembro ng grupong ito."
-      }
+      },
+      "removeFor": "Alisin ang {{title}}",
+      "removeConfirmTitle": "Alisin ang kursong ito?",
+      "removeConfirmDescription": "Mawawalan ng access sa <strong>{{title}}</strong> ang bawat miyembro ng grupong ito. Nananatili ang kanilang progreso at maibabalik kapag idinagdag muli ang kurso.",
+      "removing": "Inaalis…"
     },
     "assignments": {
       "loadError": "Hindi na-load ang mga takdang-gawain ng grupong ito.",
@@ -286,7 +302,7 @@
       "noDueDate": "Walang deadline",
       "empty": {
         "title": "Wala pang takdang-gawain",
-        "description": "Mag-assign ng kurso sa mga partikular na miyembro na may deadline."
+        "description": "Wala pang sinuman sa grupong ito ang binigyan ng kurso, module, paksa o pagsusulit."
       },
       "status": {
         "draft": "Draft",
@@ -309,6 +325,16 @@
         "error": "Hindi nagawa ang takdang-gawaing ito.",
         "saving": "Sine-save…",
         "submit": "Gumawa ng takdang-gawain"
+      },
+      "readsAllTypesNotice": "Ipinapakita ang lahat ng atas sa grupong ito. Ang bagong atas dito ay para sa buong kurso.",
+      "loadErrorDetail": "Hindi na-load ang listahan.",
+      "unknownContent": "Nilalamang walang pamagat",
+      "unknownMember": "Hindi kilalang miyembro",
+      "type": {
+        "course": "Kurso",
+        "module": "Module",
+        "topic": "Paksa",
+        "quiz": "Pagsusulit"
       }
     },
     "exports": {
@@ -335,13 +361,17 @@
         "description": "Ang parehong datos ng pagkumpleto bilang CSV o JSON file.",
         "csv": "I-download ang CSV",
         "json": "I-download ang JSON"
-      }
+      },
+      "decodeError": "Na-download ang export ngunit hindi ito nabuksan. Subukan muli."
     },
     "settings": {
       "detailsTitle": "Detalye ng grupo",
       "detailsDescription": "Pangalan, slug, paglalarawan, uri, upuan at petsa ng pag-expire.",
       "loadError": "Hindi na-load ang mga detalye ng grupong ito.",
       "notLeaderNotice": "Available lamang ang mga preference sa abiso ng scan sa lider ng grupong ito."
+    },
+    "detail": {
+      "untitled": "Grupo"
     }
   },
   "auth": {

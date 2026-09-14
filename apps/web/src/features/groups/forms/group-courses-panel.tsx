@@ -3,20 +3,30 @@ import {
   useAddCourseToGroupMutation,
   useGroupCourses,
   useRemoveCourseFromGroupMutation,
+  type GroupCourse,
 } from '@sector/api-client';
 import { Button, EmptyState, Input, Skeleton } from '@sector/ui';
 import { BookOpen, Plus, Trash2, TriangleAlert } from 'lucide-react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
-import { GroupDetailTabs, type GroupDetailLocationState } from '../group-detail-tabs';
+import { errorMessage } from '@/lib/error-message';
+
+import { ConfirmActionDialog } from '../confirm-action-dialog';
+import { GroupDetailTabs } from '../group-detail-tabs';
+import { useGroupDetailTitle } from '../use-group-detail-title';
 
 /**
  * A group's whole-roster course enrolment — add/remove a course for every
  * member of the group. A different concern from a per-member assignment
  * (the `assignments` tab): this is `groupCourseService`'s many-to-many
  * `GroupCourse` join, not a `GroupAssignment` row with its own due date.
+ *
+ * Removing confirms first and reports its failure. It used to be a single
+ * unguarded click that un-enrolled every member of the group from a course,
+ * and `removeCourse.isError` was never read anywhere in this file, so a 403
+ * or a 404 left the row sitting there with no explanation.
  *
  * Adding a course takes a pasted course id: no course-catalog browser exists
  * in Sector yet (course authoring is its own domain), so this is the honest
@@ -26,12 +36,11 @@ import { GroupDetailTabs, type GroupDetailLocationState } from '../group-detail-
 export function GroupCoursesPanel() {
   const { t } = useTranslation();
   const { groupId } = useParams<{ groupId: string }>();
-  const location = useLocation();
-  const groupName = (location.state as GroupDetailLocationState)?.groupName;
-  const title = groupName ?? t('groups.members.title');
+  const title = useGroupDetailTitle(groupId);
 
   const [courseIdInput, setCourseIdInput] = useState('');
   const [addError, setAddError] = useState<string | undefined>();
+  const [pendingRemoval, setPendingRemoval] = useState<GroupCourse | null>(null);
 
   const query = useGroupCourses(groupId);
   const addCourse = useAddCourseToGroupMutation(groupId ?? '');
@@ -54,9 +63,26 @@ export function GroupCoursesPanel() {
     }
   }
 
+  function closeRemoveDialog(open: boolean) {
+    if (!open) {
+      setPendingRemoval(null);
+      removeCourse.reset();
+    }
+  }
+
+  async function applyRemove() {
+    if (!pendingRemoval) return;
+    try {
+      await removeCourse.mutateAsync(pendingRemoval.id);
+      setPendingRemoval(null);
+    } catch {
+      // Held open; rendered from removeCourse.error inside the dialog.
+    }
+  }
+
   return (
     <section aria-label={title}>
-      <GroupDetailTabs groupId={groupId} title={title} active="courses" />
+      <GroupDetailTabs groupId={groupId} active="courses" />
 
       <div className="mb-4 flex flex-wrap items-end gap-2">
         <div className="flex flex-col gap-1.5">
@@ -79,8 +105,7 @@ export function GroupCoursesPanel() {
 
       {addError || addCourse.isError ? (
         <p className="mb-3 text-[12px] text-crit">
-          {addError ??
-            (isApiError(addCourse.error) ? addCourse.error.message : t('groups.courses.addError'))}
+          {addError ?? errorMessage(addCourse.error, t('groups.courses.addError'))}
         </p>
       ) : null}
 
@@ -110,9 +135,8 @@ export function GroupCoursesPanel() {
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label={t('groups.courses.remove')}
-                disabled={removeCourse.isPending}
-                onClick={() => removeCourse.mutate(course.id)}
+                aria-label={t('groups.courses.removeFor', { title: course.title })}
+                onClick={() => setPendingRemoval(course)}
               >
                 <Trash2 className="h-3.5 w-3.5 text-crit" aria-hidden />
               </Button>
@@ -120,6 +144,28 @@ export function GroupCoursesPanel() {
           ))}
         </ul>
       )}
+
+      <ConfirmActionDialog
+        open={pendingRemoval !== null}
+        onOpenChange={closeRemoveDialog}
+        title={t('groups.courses.removeConfirmTitle')}
+        description={
+          <Trans
+            i18nKey="groups.courses.removeConfirmDescription"
+            values={{ title: pendingRemoval?.title ?? '' }}
+            components={{ strong: <strong className="font-semibold text-ink" /> }}
+          />
+        }
+        error={
+          removeCourse.isError
+            ? errorMessage(removeCourse.error, t('groups.courses.removeError'))
+            : undefined
+        }
+        isPending={removeCourse.isPending}
+        pendingLabel={t('groups.courses.removing')}
+        confirmLabel={t('groups.courses.remove')}
+        onConfirm={() => void applyRemove()}
+      />
     </section>
   );
 }

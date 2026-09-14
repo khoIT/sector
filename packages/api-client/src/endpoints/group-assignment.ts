@@ -44,7 +44,21 @@ export type GetGroupAssignmentsQuery = {
   courseId?: string;
 };
 
-/** GET /group-assignment/group/:groupId — this group's assignments, course-type only. */
+/**
+ * GET /group-assignment/group/:groupId — every assignment on this group,
+ * whatever its type.
+ *
+ * Deliberately NOT filtered to `assignmentType=course`. It was, to match what
+ * this client can create, and that made the list assert something false:
+ * course-level rows are 376 of 8,734 on the production mirror, and the group
+ * the sweep opens has 1,367 assignments and zero course-level ones, so the tab
+ * said "no assignments yet" to a leader with 1,367 of them. A read surface
+ * reports what exists; the write form says separately what it can add.
+ *
+ * `page` is 0-indexed here, unlike every other list route in this client —
+ * `getAssignmentsByGroupId` computes `skip = page * limit` directly rather
+ * than going through `getPagination`.
+ */
 export async function getAssignmentsForGroup(
   client: ApiClient,
   groupId: string,
@@ -54,7 +68,6 @@ export async function getAssignmentsForGroup(
     query: {
       page: String(query.page ?? 0),
       limit: String(query.limit ?? 20),
-      assignmentType: 'course',
       courseId: query.courseId,
     },
     schema: paginatedGroupAssignmentSchema,

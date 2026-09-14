@@ -212,12 +212,23 @@
         "retry": "Tentar novamente"
       },
       "actions": {
-        "changeRole": "Alterar função",
         "remove": "Remover",
         "removeConfirmTitle": "Remover este membro?",
-        "removeConfirmDescription": "Ele perderá o acesso aos cursos e exames deste grupo.",
+        "removeConfirmDescription": "<strong>{{name}}</strong> será removido deste grupo de forma permanente, juntamente com a data de entrada e qualquer validade da adesão. Esta ação não pode ser anulada; seria preciso convidar novamente.",
         "removeError": "Não foi possível remover este membro.",
-        "removing": "Removendo…"
+        "removing": "Removendo…",
+        "changeRoleFor": "Alterar a função de {{name}}",
+        "removeFor": "Remover {{name}}",
+        "resend": "Reenviar convite",
+        "resendFor": "Reenviar o convite para {{name}}",
+        "resendSent": "Convite reenviado",
+        "resendError": "Não foi possível reenviar o convite.",
+        "roleConfirmTitle": "Alterar a função deste membro?",
+        "roleConfirmToLeader": "<strong>{{name}}</strong> passará a liderar este grupo, com acesso às ecografias de todos os membros e à gestão da lista.",
+        "roleConfirmToLearner": "<strong>{{name}}</strong> passará a ser formando e deixará de poder gerir este grupo.",
+        "roleConfirm": "Alterar função",
+        "roleSaving": "A alterar…",
+        "roleError": "Não foi possível alterar esta função."
       }
     },
     "tabs": {
@@ -247,7 +258,8 @@
       "isFreeTrialLabel": "Este é um grupo de teste gratuito",
       "error": "Não foi possível salvar este grupo.",
       "saving": "Salvando…",
-      "submit": "Salvar"
+      "submit": "Salvar",
+      "typeHint": "Definido depois de criar: um grupo criado aqui é sempre um grupo simples."
     },
     "invite": {
       "trigger": "Convidar membro",
@@ -278,7 +290,11 @@
       "empty": {
         "title": "Nenhum curso matriculado",
         "description": "Adicione um curso para matricular todos os membros deste grupo."
-      }
+      },
+      "removeFor": "Remover {{title}}",
+      "removeConfirmTitle": "Remover este curso?",
+      "removeConfirmDescription": "Todos os membros deste grupo perdem o acesso a <strong>{{title}}</strong>. O progresso é mantido e restaurado se o curso for adicionado de novo.",
+      "removing": "A remover…"
     },
     "assignments": {
       "loadError": "Não foi possível carregar as tarefas deste grupo.",
@@ -286,7 +302,7 @@
       "noDueDate": "Sem prazo definido",
       "empty": {
         "title": "Ainda não há tarefas",
-        "description": "Atribua um curso a membros específicos com um prazo."
+        "description": "Ainda ninguém neste grupo recebeu um curso, módulo, tópico ou questionário."
       },
       "status": {
         "draft": "Rascunho",
@@ -309,6 +325,16 @@
         "error": "Não foi possível criar esta tarefa.",
         "saving": "Salvando…",
         "submit": "Criar tarefa"
+      },
+      "readsAllTypesNotice": "A mostrar todas as atribuições deste grupo. As criadas aqui abrangem um curso inteiro.",
+      "loadErrorDetail": "Não foi possível carregar a lista.",
+      "unknownContent": "Conteúdo sem título",
+      "unknownMember": "Membro desconhecido",
+      "type": {
+        "course": "Curso",
+        "module": "Módulo",
+        "topic": "Tópico",
+        "quiz": "Questionário"
       }
     },
     "exports": {
@@ -335,13 +361,17 @@
         "description": "Os mesmos dados de conclusão como arquivo CSV ou JSON.",
         "csv": "Baixar CSV",
         "json": "Baixar JSON"
-      }
+      },
+      "decodeError": "A exportação foi transferida mas não foi possível abri-la. Tente novamente."
     },
     "settings": {
       "detailsTitle": "Detalhes do grupo",
       "detailsDescription": "Nome, slug, descrição, tipo, vagas e expiração.",
       "loadError": "Não foi possível carregar os detalhes deste grupo.",
       "notLeaderNotice": "As preferências de notificação de exames só estão disponíveis para quem lidera este grupo."
+    },
+    "detail": {
+      "untitled": "Grupo"
     }
   },
   "auth": {
