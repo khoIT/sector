@@ -9,7 +9,7 @@ import {
 import { Button, EmptyState, StatusPill } from '@sector/ui';
 import { TriangleAlert, Users2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/auth-context';
 import { formatDate } from '@/lib/format';
@@ -21,7 +21,8 @@ import { hasActiveNarrowing } from '../../scan-list/table/list-url-state';
 import { useDebouncedValue } from '../../scan-list/table/use-debounced-value';
 import { useListUrlState } from '../../scan-list/table/use-list-url-state';
 import { InviteMemberDialog } from '../forms/invite-member-dialog';
-import { GroupDetailTabs, type GroupDetailLocationState } from '../group-detail-tabs';
+import { GroupDetailTabs } from '../group-detail-tabs';
+import { useGroupDetailTitle } from '../use-group-detail-title';
 import { GroupsSearchField } from '../groups-search-field';
 import { memberColumnsFor, type MemberColumnDef } from './columns';
 import { memberRoleTone, memberStatusTone } from './member-badge-tone';
@@ -88,8 +89,6 @@ export function MembersSurface() {
   const { t } = useTranslation();
   const { user, canAny } = useAuth();
   const { groupId } = useParams<{ groupId: string }>();
-  const location = useLocation();
-  const groupName = (location.state as GroupDetailLocationState)?.groupName;
 
   const url = useListUrlState([]);
   const debouncedKeyword = useDebouncedValue(url.keyword, LIST_SEARCH_DEBOUNCE_MS);
@@ -98,7 +97,10 @@ export function MembersSurface() {
   const canEditRole = canAny(['edit:group-member']);
   const canRemove = canAny(['delete:group-member']);
   const canInvite = canAny(['create:group-member']);
-  const showActions = canEditRole || canRemove;
+  // `canInvite` also gates the per-row resend, so it counts towards showing
+  // the column at all: on this data every member is `pending` or `active` and
+  // resending is the action a leader needs most on the first of those.
+  const showActions = canEditRole || canRemove || canInvite;
 
   const baseColumns = memberColumnsFor(viewerRole).map((def) => toListColumn(def, t));
   const columns: ListColumn<GroupMember>[] = showActions
@@ -113,6 +115,7 @@ export function MembersSurface() {
               groupId={groupId ?? ''}
               canEditRole={canEditRole}
               canRemove={canRemove}
+              canInvite={canInvite}
             />
           ),
         },
@@ -128,14 +131,14 @@ export function MembersSurface() {
   const rows = query.data?.items ?? [];
   const narrowed = hasActiveNarrowing({ keyword: url.keyword, filters: [] });
   const pagePastEnd = rows.length === 0 && !query.isPending && (query.data?.totalItems ?? 0) > 0;
-  const title = groupName ?? t('groups.members.title');
+  const title = useGroupDetailTitle(groupId);
 
   if (!groupId) return null;
 
   if (query.isError) {
     return (
       <section aria-label={title}>
-        <GroupDetailTabs groupId={groupId} title={title} active="members" />
+        <GroupDetailTabs groupId={groupId} active="members" />
         <EmptyState
           tone="crit"
           icon={<TriangleAlert className="h-5 w-5" aria-hidden />}
@@ -180,7 +183,7 @@ export function MembersSurface() {
 
   return (
     <section aria-label={title}>
-      <GroupDetailTabs groupId={groupId} title={title} active="members" />
+      <GroupDetailTabs groupId={groupId} active="members" />
 
       <div className="mb-3 flex flex-wrap items-baseline gap-2">
         <span className="sv-num text-body text-ink-dim">

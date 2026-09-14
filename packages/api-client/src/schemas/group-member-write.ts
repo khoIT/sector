@@ -63,9 +63,23 @@ export type ReInviteGroupMemberPayload = z.infer<typeof reInviteGroupMemberPaylo
  * system-managed (invitation acceptance, expiry), and the one member-facing
  * action this form needs — leaving the group — already has its own route
  * (`DELETE /api/group-members/:id`).
+ *
+ * `expiresAt` IS required in the payload, and callers must echo the member's
+ * current value, because the handler does not treat this as a partial update:
+ *
+ *   expiresAt: body.expiresAt ? new Date(body.expiresAt) : null
+ *
+ * Mongoose strips `undefined` from a `findOneAndUpdate`, but that expression
+ * yields an explicit `null`, which is written. So omitting the field clears
+ * the member's expiry instead of leaving it alone — silently converting a
+ * time-limited membership into a permanent one. 500 `groupmembers` rows on
+ * the production mirror hold a real `expiresAt` date. The proper fix is
+ * server-side; echoing the current value is what this client can do without
+ * it, and `groupMemberSchema.expiresAt` already carries the value to echo.
  */
 export const updateGroupMemberRolePayloadSchema = z.object({
   role: groupMemberRoleSchema,
+  expiresAt: z.string().nullish(),
 });
 
 export type UpdateGroupMemberRolePayload = z.infer<typeof updateGroupMemberRolePayloadSchema>;
