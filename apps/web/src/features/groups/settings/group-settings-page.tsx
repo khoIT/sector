@@ -10,10 +10,11 @@ import {
 } from '@sector/ui';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { GroupFormDialog } from '../forms/group-form-dialog';
-import { GroupDetailTabs, type GroupDetailLocationState } from '../group-detail-tabs';
+import { GroupDetailTabs } from '../group-detail-tabs';
+import { useGroupDetailTitle } from '../use-group-detail-title';
 import { GroupNotificationRow } from './group-notification-row';
 
 /**
@@ -29,9 +30,7 @@ import { GroupNotificationRow } from './group-notification-row';
 export function GroupSettingsPage() {
   const { t } = useTranslation();
   const { groupId } = useParams<{ groupId: string }>();
-  const location = useLocation();
-  const groupName = (location.state as GroupDetailLocationState)?.groupName;
-  const title = groupName ?? t('groups.members.title');
+  const title = useGroupDetailTitle(groupId);
 
   const group = useGroupById(groupId);
   const notificationPreferences = useGroupNotificationPreferences();
@@ -42,7 +41,7 @@ export function GroupSettingsPage() {
 
   return (
     <section aria-label={title}>
-      <GroupDetailTabs groupId={groupId} title={title} active="settings" />
+      <GroupDetailTabs groupId={groupId} active="settings" />
 
       <div className="flex flex-col gap-4">
         <Card>

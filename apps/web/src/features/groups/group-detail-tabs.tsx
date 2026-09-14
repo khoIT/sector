@@ -14,11 +14,11 @@ import {
   groupSettingsPathFor,
   type GroupDetailTab,
 } from './groups-links';
-
-export type GroupDetailLocationState = { groupName?: string } | null | undefined;
+import { useGroupDetailTitle } from './use-group-detail-title';
 
 /**
- * The tab bar every one of a group's five surfaces shares.
+ * The tab bar every one of a group's five surfaces shares, and the owner of
+ * the page heading.
  *
  * Route-driven, not Radix-state-driven — see the doc comment on `Tabs` in
  * `@sector/ui`: each tab is its own URL (`groups-links.ts`), so a direct link
@@ -26,24 +26,30 @@ export type GroupDetailLocationState = { groupName?: string } | null | undefined
  * can open each tab on its own rather than only ever seeing whichever one a
  * client-side switch defaulted to.
  *
+ * The heading is resolved from the route's `:groupId`, NOT carried in
+ * `location.state`. It was carried, and every tab switch dropped it, because
+ * `navigate(path)` sends no state: each of the four non-member tabs then fell
+ * back to the generic string and titled itself "Members" over a list of
+ * courses, exports or settings. A direct link did the same, which is why the
+ * cold-load sweep could not see it — the sweep navigates by URL, so it only
+ * ever saw the fallback and matched it. A route parameter is present on every
+ * entry path to the page; navigation state is present on one of them.
+ *
+ * `useGroupById` is cached per group across all five tabs, so this costs one
+ * request for the whole section, and the settings tab's own `useGroupById`
+ * call hits the same cache entry rather than refetching.
+ *
  * `settings` (edit + notification preferences) only renders for a caller who
  * holds `edit:group` — a group leader manages members, courses and
  * assignments but does not necessarily hold the group's own write permission,
  * matching `updateGroupByIdSchema` being gated on `edit:group` specifically
  * rather than the leadership check the member/course/assignment routes use.
  */
-export function GroupDetailTabs({
-  groupId,
-  title,
-  active,
-}: {
-  groupId: string;
-  title: string;
-  active: GroupDetailTab;
-}) {
+export function GroupDetailTabs({ groupId, active }: { groupId: string; active: GroupDetailTab }) {
   const { t } = useTranslation();
   const { can } = useAuth();
   const navigate = useNavigate();
+  const title = useGroupDetailTitle(groupId);
 
   const tabs: { id: GroupDetailTab; path: string; labelKey: string }[] = [
     { id: 'members', path: groupMembersPathFor(groupId), labelKey: 'groups.tabs.members' },

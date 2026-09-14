@@ -51,9 +51,7 @@ export function GroupsIndexPage() {
       cell: (group) => (
         <button
           type="button"
-          onClick={() =>
-            navigate(groupMembersPathFor(group.id), { state: { groupName: group.name } })
-          }
+          onClick={() => navigate(groupMembersPathFor(group.id))}
           className="flex items-center gap-1.5 text-left font-medium text-ink outline-none hover:text-accent-ink focus-visible:ring-2 focus-visible:ring-accent-ink"
         >
           {group.name}
