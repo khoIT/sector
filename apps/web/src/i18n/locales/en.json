@@ -597,6 +597,7 @@
       "title": "Course outline",
       "backToCourses": "My Courses",
       "progress": "{{completed}}/{{total}} completed ({{percent}}%)",
+      "remaining": "{{duration}} left to watch",
       "resume": {
         "start": "Start: {{title}}",
         "resume": "Resume: {{title}}",
@@ -753,6 +754,12 @@
   },
   "home": {
     "greeting": "Welcome back, {{name}}",
+    "continueLearning": {
+      "title": "Pick up where you left off",
+      "empty": "Nothing in progress yet. Start a course and it will appear here.",
+      "resumeAt": "{{title}} · {{timestamp}}",
+      "percent": "{{percent}}%"
+    },
     "courseStatus": {
       "inProgress": "In progress",
       "completed": "Completed",

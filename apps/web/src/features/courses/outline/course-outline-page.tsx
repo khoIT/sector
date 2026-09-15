@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { COURSES_PATH, courseItemPathFor } from '../courses-links';
-import { roundedProgress } from '../my-courses/course-row-model';
+import { CourseShellHeader } from '../shell/course-shell-header';
 import { CourseOutlineItemRow } from './course-outline-item-row';
 import {
   groupOutlineItemsForDisplay,
@@ -65,7 +65,6 @@ export function CourseOutlinePage() {
   }
 
   const outline = query.data;
-  const percent = roundedProgress(outline.progress);
   const groups = groupOutlineItemsForDisplay(outline.items);
   const resumeItem = resolveResumeTarget(outline.items, outline.resume?.itemId ?? null);
   // Completion is something the outline REPORTS, not something the absence of
@@ -77,22 +76,7 @@ export function CourseOutlinePage() {
   return (
     <section aria-label={t('courses.outline.title')}>
       <BackLink />
-      <h2 className="mb-1 text-[17px] font-semibold text-ink">
-        {title ?? t('courses.outline.title')}
-      </h2>
-
-      <div className="mb-4 flex flex-wrap items-center gap-3">
-        <div className="h-1.5 w-40 overflow-hidden rounded-full bg-surface-2">
-          <div className="h-full rounded-full bg-accent" style={{ width: `${percent}%` }} />
-        </div>
-        <p className="sv-num text-body text-ink-dim">
-          {t('courses.outline.progress', {
-            completed: outline.completedItems,
-            total: outline.totalItems,
-            percent,
-          })}
-        </p>
-      </div>
+      <CourseShellHeader courseTitle={title} outline={outline} />
 
       {resumeItem ? (
         <Button asChild className="mb-4">

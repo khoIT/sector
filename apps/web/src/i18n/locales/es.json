@@ -521,6 +521,7 @@
       "title": "Esquema del curso",
       "backToCourses": "Mis cursos",
       "progress": "{{completed}}/{{total}} completado ({{percent}}%)",
+      "remaining": "Quedan {{duration}} por ver",
       "resume": {
         "start": "Comenzar: {{title}}",
         "resume": "Continuar: {{title}}",
@@ -677,6 +678,12 @@
   },
   "home": {
     "greeting": "Bienvenido de nuevo, {{name}}",
+    "continueLearning": {
+      "title": "Continúa donde lo dejaste",
+      "empty": "Aún no hay nada en curso. Empieza un curso y aparecerá aquí.",
+      "resumeAt": "{{title}} · {{timestamp}}",
+      "percent": "{{percent}} %"
+    },
     "courseStatus": {
       "inProgress": "En curso",
       "completed": "Completado",

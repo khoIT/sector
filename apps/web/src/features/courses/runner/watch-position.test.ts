@@ -40,9 +40,9 @@ describe('clampPosition', () => {
 
 describe('shouldWritePosition', () => {
   it('writes the first position it sees', () => {
-    expect(
-      shouldWritePosition(initialWatchWriteState, { positionSeconds: 3, nowMs: T0 }),
-    ).toBe(true);
+    expect(shouldWritePosition(initialWatchWriteState, { positionSeconds: 3, nowMs: T0 })).toBe(
+      true,
+    );
   });
 
   it('stays quiet inside the interval', () => {
@@ -104,9 +104,9 @@ describe('shouldWritePosition', () => {
 
   it('forces a write on pause or page-hide regardless of cadence', () => {
     const state = stateAfterWrite();
-    expect(
-      shouldWritePosition(state, { positionSeconds: 103, nowMs: T0 + 100, force: true }),
-    ).toBe(true);
+    expect(shouldWritePosition(state, { positionSeconds: 103, nowMs: T0 + 100, force: true })).toBe(
+      true,
+    );
   });
 
   it('retries a failed write on the next tick, ahead of the interval', () => {
@@ -126,9 +126,9 @@ describe('shouldWritePosition', () => {
     // before throwing; a position write is the cheaper of the two to move.
     const state = suppressAround(stateAfterWrite(), T0);
     expect(shouldWritePosition(state, { positionSeconds: 400, nowMs: T0 + 100 })).toBe(false);
-    expect(
-      shouldWritePosition(state, { positionSeconds: 400, nowMs: T0 + 100, force: true }),
-    ).toBe(false);
+    expect(shouldWritePosition(state, { positionSeconds: 400, nowMs: T0 + 100, force: true })).toBe(
+      false,
+    );
   });
 
   it('resumes once the suppression window has passed', () => {

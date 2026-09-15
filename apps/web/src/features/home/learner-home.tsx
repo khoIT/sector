@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/auth/auth-context';
 
+import { ContinueLearningRow } from './continue-learning-row';
 import { MyLearningPanel } from './my-learning-panel';
 
 /**
@@ -20,6 +21,7 @@ export function LearnerHome() {
       <h1 className="text-2xl font-semibold text-ink">
         {t('home.greeting', { name: user ? userDisplayName(user) : '' })}
       </h1>
+      <ContinueLearningRow />
       <MyLearningPanel />
     </div>
   );

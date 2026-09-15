@@ -535,6 +535,11 @@ export const REPLAY_ENTRIES: readonly ReplayEntry[] = [
     // `if (!course) continue` — an enrolment whose course document is gone is
     // never serialised.
     include: personalCourseReachesTheList,
+    // `progress.lastItemAccessed` is the one field here the replay cannot
+    // prove: the route resolves it from a `usercourseprogresses` document the
+    // production dumps do not carry (see the section note on that collection),
+    // and it is `.nullish()` precisely because a row written before the field
+    // existed has no key at all.
     project: projectPersonalCourse,
   },
   {

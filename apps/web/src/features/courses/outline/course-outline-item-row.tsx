@@ -11,6 +11,7 @@ import {
   itemKindLabelKey,
   itemStatusLabelKey,
 } from './course-outline-model';
+import { formatDurationShort } from './outline-summary';
 
 const KIND_ICON = {
   lesson: PlayCircle,
@@ -62,6 +63,14 @@ export function CourseOutlineItemRow({
       </span>
 
       <span className="flex-1 text-body text-ink">{item.title}</span>
+
+      {/* Null for a lesson, a quiz, and for the private videos Vimeo will not
+          describe — the chip is absent rather than showing a wrong number. */}
+      {formatDurationShort(item.durationSeconds) ? (
+        <span className="sv-num text-[12px] text-ink-dim">
+          {formatDurationShort(item.durationSeconds)}
+        </span>
+      ) : null}
 
       {item.quiz && item.quiz.attempts > 0 ? (
         <span className="sv-num text-[12px] text-ink-dim">

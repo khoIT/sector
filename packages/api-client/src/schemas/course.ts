@@ -152,6 +152,20 @@ export const learnerCourseProgressSchema = z.object({
   startedAt: z.string().nullable(),
   completedAt: z.string().nullable(),
   lastAccessedAt: z.string().nullable(),
+  /**
+   * The item to reopen, resolved server-side to something a learner would
+   * recognise. `.nullish()` rather than `.nullable()`: a stored progress
+   * document written before this field existed has no key at all, and a My
+   * Courses row is not worth failing to parse over a missing resume pointer.
+   */
+  lastItemAccessed: z
+    .object({
+      id: z.string(),
+      title: z.string(),
+      /** The playhead, for a topic carrying a video. Null for everything else. */
+      positionSeconds: z.number().nullable(),
+    })
+    .nullish(),
 });
 export type LearnerCourseProgress = z.infer<typeof learnerCourseProgressSchema>;
 

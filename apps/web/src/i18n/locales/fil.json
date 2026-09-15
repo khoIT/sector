@@ -521,6 +521,7 @@
       "title": "Balangkas ng Kurso",
       "backToCourses": "Aking Mga Kurso",
       "progress": "{{completed}}/{{total}} nakumpleto ({{percent}}%)",
+      "remaining": "{{duration}} pa ang panonoorin",
       "resume": {
         "start": "Simulan: {{title}}",
         "resume": "Magpatuloy: {{title}}",
@@ -677,6 +678,12 @@
   },
   "home": {
     "greeting": "Maligayang pagbabalik, {{name}}",
+    "continueLearning": {
+      "title": "Ipagpatuloy kung saan ka huminto",
+      "empty": "Wala pang isinasagawa. Magsimula ng kurso at lilitaw ito rito.",
+      "resumeAt": "{{title}} · {{timestamp}}",
+      "percent": "{{percent}}%"
+    },
     "courseStatus": {
       "inProgress": "Kasalukuyang ginagawa",
       "completed": "Nakumpleto",

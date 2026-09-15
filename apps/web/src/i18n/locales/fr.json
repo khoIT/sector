@@ -521,6 +521,7 @@
       "title": "Plan du cours",
       "backToCourses": "Mes cours",
       "progress": "{{completed}}/{{total}} terminés ({{percent}} %)",
+      "remaining": "Il reste {{duration}} à regarder",
       "resume": {
         "start": "Commencer : {{title}}",
         "resume": "Poursuivre : {{title}}",
@@ -677,6 +678,12 @@
   },
   "home": {
     "greeting": "Content de vous revoir, {{name}}",
+    "continueLearning": {
+      "title": "Reprendre où vous en étiez",
+      "empty": "Rien en cours pour l’instant. Commencez un cours et il apparaîtra ici.",
+      "resumeAt": "{{title}} · {{timestamp}}",
+      "percent": "{{percent}} %"
+    },
     "courseStatus": {
       "inProgress": "En cours",
       "completed": "Terminé",

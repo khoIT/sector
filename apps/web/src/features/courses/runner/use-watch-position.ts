@@ -83,7 +83,13 @@ export function useWatchPosition(
       // that each carry an older position than the one before it.
       if (inFlightRef.current && !options?.force) return;
 
-      if (!shouldWritePosition(stateRef.current, { positionSeconds: seconds, nowMs, force: options?.force })) {
+      if (
+        !shouldWritePosition(stateRef.current, {
+          positionSeconds: seconds,
+          nowMs,
+          force: options?.force,
+        })
+      ) {
         return;
       }
 

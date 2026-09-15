@@ -12,6 +12,7 @@ import {
   itemKindLabelKey,
   itemStatusLabelKey,
 } from '../outline/course-outline-model';
+import { formatDurationShort } from '../outline/outline-summary';
 
 export type OutlineSidebarProps = {
   courseId: string;
@@ -110,7 +111,13 @@ function OutlineSidebarRow({
       )}
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="truncate text-ink">{item.title}</span>
-        <span className="text-[12px] text-ink-dim">{t(itemKindLabelKey(item.kind))}</span>
+        <span className="text-[12px] text-ink-dim">
+          {t(itemKindLabelKey(item.kind))}
+          {/* Absent rather than wrong when Vimeo will not describe the video. */}
+          {formatDurationShort(item.durationSeconds)
+            ? ` · ${formatDurationShort(item.durationSeconds)}`
+            : null}
+        </span>
       </div>
       <StatusPill
         tone={courseProgressTone(item.status)}
