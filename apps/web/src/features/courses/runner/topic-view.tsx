@@ -2,12 +2,13 @@ import type { CourseOutlineItem } from '@sector/api-client';
 import { useCourseTopicDetail } from '@sector/api-client';
 import { Button, EmptyState, RichText, Skeleton } from '@sector/ui';
 import { AlertTriangle } from 'lucide-react';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { CourseItemNav } from './course-item-nav';
 import { useTrackCourseItemView } from './use-track-course-item-view';
 import { useVimeoWatchTracking } from './use-vimeo-watch-tracking';
+import { useWatchPosition } from './use-watch-position';
 
 export type TopicViewProps = {
   courseId: string;
@@ -15,15 +16,13 @@ export type TopicViewProps = {
 };
 
 /**
- * A topic, through the same rich-text renderer as a lesson. The API's
- * progress model carries no numeric watch position — only `hasVideo` /
- * `videoCompleted` booleans (`learners.process.topic.ts#determineTopicStatus`:
- * a topic with no video completes on view; one with a video stays
- * `in_progress` until `videoCompleted: true` arrives). "Writing the watch
- * position back" therefore means: detect the embedded Vimeo player (if any)
- * and report ITS `ended` event as that second call — the only watch signal
- * this API can record, and the one the outline's resume pointer actually
- * reads.
+ * A topic, through the same rich-text renderer as a lesson.
+ *
+ * If the content embeds a Vimeo player, this reports the playhead back as it
+ * moves. It reports only that: the server holds the runtime and decides
+ * completion from the marks these reports leave behind. This component used to
+ * send `videoCompleted: true` on the player's `ended` event, which is the
+ * claim that made a finished course forgeable from the browser.
  */
 export function TopicView({ courseId, item }: TopicViewProps) {
   const { t } = useTranslation();
@@ -34,17 +33,19 @@ export function TopicView({ courseId, item }: TopicViewProps) {
   // Deferred until the content query settles: see the hook's own doc comment
   // on `enabled` for why firing on an unresolved query would always read
   // `hasVideo` as false and complete a video topic on sight.
-  const { trackNow } = useTrackCourseItemView(
-    courseId,
-    'topic',
-    item.id,
-    { hasVideo },
-    detail.isSuccess,
-  );
+  useTrackCourseItemView(courseId, 'topic', item.id, { hasVideo }, detail.isSuccess);
 
-  useVimeoWatchTracking(contentRef, detail.data?.content, () => {
-    void trackNow({ hasVideo: true, videoCompleted: true });
-  });
+  const { reportPosition, suppressForTrack } = useWatchPosition(courseId, item.id);
+
+  // The mount ping goes out the moment the content query settles. `/track`
+  // opens a transaction and retries a write conflict three times before
+  // throwing, so hold the playhead writes off for a moment rather than have
+  // the two race for the same document.
+  useEffect(() => {
+    if (detail.isSuccess) suppressForTrack();
+  }, [detail.isSuccess, suppressForTrack]);
+
+  useVimeoWatchTracking(contentRef, detail.data?.content, reportPosition);
 
   if (detail.isPending) {
     return (

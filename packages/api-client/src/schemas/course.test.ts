@@ -179,6 +179,41 @@ const FAILED_QUIZ_ITEM = {
   order: 14,
   prevId: '681a4d62acc6f28eaec5e1e7',
   nextId: null,
+  // A quiz carries no video, so all three stay null.
+  positionSeconds: null,
+  durationSeconds: null,
+  imageUrl: null,
+};
+
+/** A topic the learner stopped partway through a video. */
+const PARTLY_WATCHED_TOPIC_ITEM = {
+  id: '681a4e2c82414b2fcc5af816',
+  kind: 'topic',
+  title: 'Physics and Probes',
+  depth: 1,
+  parentId: '681a4d62acc6f28eaec5e1e7',
+  lessonId: '681a4d62acc6f28eaec5e1e7',
+  topicId: '681a4e2c82414b2fcc5af816',
+  status: 'in_progress',
+  completedAt: null,
+  lastAccessedAt: '2026-09-13T18:41:24.296Z',
+  blockedReason: null,
+  quiz: null,
+  order: 2,
+  prevId: '681a4d62acc6f28eaec5e1e7',
+  nextId: '681a4ee04bc509ae575979c3',
+  positionSeconds: 412,
+  durationSeconds: 1084,
+  imageUrl: 'https://i.vimeocdn.com/video/1234567890-abc.jpg',
+};
+
+/** A topic whose video is private, so Vimeo will not describe it. */
+const UNRESOLVED_RUNTIME_TOPIC_ITEM = {
+  ...PARTLY_WATCHED_TOPIC_ITEM,
+  id: '681a4e2c82414b2fcc5af817',
+  positionSeconds: 90,
+  durationSeconds: null,
+  imageUrl: null,
 };
 
 /** An outline resolved without a version pin (items trimmed for length). */
@@ -235,6 +270,21 @@ describe('the resolved outline', () => {
     const parsed = courseOutlineItemSchema.parse(FAILED_QUIZ_ITEM);
     expect(parsed.status).toBe('failed');
     expect(parsed.quiz?.passed).toBe(false);
+  });
+
+  it('carries a resume point and a runtime on a part-watched topic', () => {
+    const parsed = courseOutlineItemSchema.parse(PARTLY_WATCHED_TOPIC_ITEM);
+    expect(parsed.positionSeconds).toBe(412);
+    expect(parsed.durationSeconds).toBe(1084);
+    expect(parsed.imageUrl).toContain('vimeocdn');
+  });
+
+  it('keeps the resume point when the runtime is unknown', () => {
+    // 43 videos in the library are private; oEmbed will not describe them, so
+    // the outline has a playhead but nothing to show it against.
+    const parsed = courseOutlineItemSchema.parse(UNRESOLVED_RUNTIME_TOPIC_ITEM);
+    expect(parsed.positionSeconds).toBe(90);
+    expect(parsed.durationSeconds).toBeNull();
   });
 
   it('parses an outline that resolved no version pin', () => {

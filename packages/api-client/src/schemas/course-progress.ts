@@ -29,19 +29,52 @@ export type TrackContentType = z.infer<typeof trackContentTypeSchema>;
  * Request body for the course/lesson/topic/quiz "viewed" ping. There is no
  * `isCompleted` flag here on purpose — unlike the legacy v1
  * `POST /api/lms/create-user-progress` the reachable dashboard code still
- * calls, this v2 route (the one the Phase 6 outline actually reads back)
- * derives completion server-side from the course structure and, for a topic,
- * from `hasVideo`/`videoCompleted` — the client only reports what happened,
- * never what it thinks the result should be.
+ * calls, this v2 route derives completion server-side: from the course
+ * structure, and for a topic from the watch mark the server itself wrote
+ * against the runtime it cached from Vimeo.
+ *
+ * `hasVideo` and `videoCompleted` below are the old client-asserted answer and
+ * are deprecated. Sending `hasVideo: false` used to complete a topic outright,
+ * which made a finished course forgeable from the browser; the server now
+ * ignores both for any video whose runtime it knows. Nothing in this app sends
+ * them — report the position and let the server decide.
  */
 export const trackCourseProgressPayloadSchema = z.object({
   contentType: trackContentTypeSchema,
   contentId: z.string(),
   timeSpent: z.number().optional(),
+  /** @deprecated Ignored by the server whenever it knows the video's runtime. */
   hasVideo: z.boolean().optional(),
+  /** @deprecated See `hasVideo`. */
   videoCompleted: z.boolean().optional(),
 });
 export type TrackCourseProgressPayload = z.infer<typeof trackCourseProgressPayloadSchema>;
+
+/**
+ * Request body for the playhead write —
+ * `POST /api/v2/learners/courses/:courseId/items/:itemId/position`.
+ *
+ * Seconds observed, and nothing else. No duration: a runtime the client
+ * supplied could be inflated until any position looked legitimate, which would
+ * hand back the trust boundary the server-side rule exists to hold. No
+ * completion flag either — the server decides that from the mark.
+ */
+export const trackItemPositionPayloadSchema = z.object({
+  positionSeconds: z.number().min(0),
+});
+export type TrackItemPositionPayload = z.infer<typeof trackItemPositionPayloadSchema>;
+
+/**
+ * What the playhead write answers with: the seconds the server actually
+ * stored (floored, and clamped to zero), and whether that write completed the
+ * topic. `completed` is how the player learns a topic ticked over mid-video
+ * without refetching the whole outline.
+ */
+export const trackItemPositionResultSchema = z.object({
+  positionSeconds: z.number(),
+  completed: z.boolean(),
+});
+export type TrackItemPositionResult = z.infer<typeof trackItemPositionResultSchema>;
 
 /**
  * The response echoes the full `UserCourseProgress`/`UserCourseActivity`

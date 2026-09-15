@@ -59,6 +59,15 @@ export type RequestOptions<TOut> = {
   requireAuth?: boolean;
   signal?: AbortSignal;
   headers?: Record<string, string>;
+  /**
+   * Let the request outlive the page that started it.
+   *
+   * For the final write on the way out of a video: React does not unmount on a
+   * tab close, and a `fetch` issued from `pagehide` is cancelled with the
+   * document unless it is marked this way. Browsers cap keepalive bodies at
+   * 64 KB, so it suits small pings and nothing else.
+   */
+  keepalive?: boolean;
 };
 
 export interface ApiClient {
@@ -119,6 +128,7 @@ export function createClient(options: CreateClientOptions = {}): ApiClient {
       requireAuth = true,
       signal,
       headers = {},
+      keepalive,
     } = requestOptions;
 
     const url = `${baseUrl}${path}${encodeQuery(query)}`;
@@ -139,6 +149,7 @@ export function createClient(options: CreateClientOptions = {}): ApiClient {
         method,
         headers: finalHeaders,
         signal,
+        keepalive,
         body:
           body === undefined ? undefined : isFormData ? (body as FormData) : JSON.stringify(body),
       });

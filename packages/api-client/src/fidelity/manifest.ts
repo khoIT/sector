@@ -738,6 +738,13 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   // sessions below.
   trackContentTypeSchema: 'request body enum of POST /api/v2/learners/courses/:courseId/track',
   trackCourseProgressPayloadSchema: 'request body of POST /api/v2/learners/courses/:courseId/track',
+  trackItemPositionPayloadSchema:
+    'request body of POST /api/v2/learners/courses/:courseId/items/:itemId/position — ' +
+    'one field, seconds observed; the server reads the runtime from v2topicmedia rather ' +
+    'than trusting a duration from the client',
+  trackItemPositionResultSchema:
+    'minted per request by the position route: the seconds it actually stored, floored, ' +
+    'plus whether that write crossed the watched threshold — nothing persists this shape',
   trackCourseQuizProgressPayloadSchema:
     'request body of POST /api/v2/learners/courses/:courseId/quizzes/:quizId/track',
   trackCourseQuizProgressResultSchema:

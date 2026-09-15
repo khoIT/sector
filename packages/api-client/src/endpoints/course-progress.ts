@@ -3,11 +3,14 @@ import {
   courseQuizProgressResultSchema,
   retakeCourseQuizResultSchema,
   trackCourseQuizProgressResultSchema,
+  trackItemPositionResultSchema,
   type CourseQuizProgressResult,
   type RetakeCourseQuizResult,
   type TrackCourseProgressPayload,
   type TrackCourseQuizProgressPayload,
   type TrackCourseQuizProgressResult,
+  type TrackItemPositionPayload,
+  type TrackItemPositionResult,
 } from '../schemas/course-progress';
 
 const BASE_PATH = (courseId: string) => `/api/v2/learners/courses/${courseId}`;
@@ -25,6 +28,37 @@ export async function trackCourseProgress(
   signal?: AbortSignal,
 ): Promise<void> {
   await client.post(`${BASE_PATH(courseId)}/track`, { body: payload, signal });
+}
+
+/**
+ * `POST /api/v2/learners/courses/:courseId/items/:itemId/position` — where the
+ * learner's playhead is, written every twelve seconds or so of playback.
+ *
+ * `keepalive` because the write that matters most is the last one, issued from
+ * `pagehide` as the tab closes; without it the browser cancels the request
+ * along with the document. The bodies here are a few dozen bytes, far inside
+ * the 64 KB keepalive cap.
+ *
+ * Answers `204` with no body when the learner has no progress row for the item
+ * yet — the caller gets `null` and should stop sending until `/track` has run.
+ */
+export async function trackItemPosition(
+  client: ApiClient,
+  courseId: string,
+  itemId: string,
+  payload: TrackItemPositionPayload,
+  options?: { signal?: AbortSignal; keepalive?: boolean },
+): Promise<TrackItemPositionResult | null> {
+  const result = await client.post<TrackItemPositionResult | null>(
+    `${BASE_PATH(courseId)}/items/${itemId}/position`,
+    {
+      body: payload,
+      schema: trackItemPositionResultSchema.nullable(),
+      signal: options?.signal,
+      keepalive: options?.keepalive,
+    },
+  );
+  return result;
 }
 
 /** `POST /api/v2/learners/courses/:courseId/quizzes/:quizId/track` — one

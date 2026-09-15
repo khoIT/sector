@@ -3,9 +3,13 @@ import { useEffect, useRef, type RefObject } from 'react';
 
 /**
  * Detects a `player.vimeo.com` iframe inside rendered topic content and
- * writes the learner's watch position back through `onEnded` — the only
- * video signal the API's progress model carries (`hasVideo`/`videoCompleted`
- * booleans, not a numeric position; see `topic-view.tsx`'s doc comment).
+ * reports the learner's playhead as it moves.
+ *
+ * It reports seconds observed and nothing else. It used to call back on
+ * `ended` alone, and the caller turned that into `videoCompleted: true` — a
+ * completion the browser asserted and the server took on trust. Completion is
+ * now decided server-side from the marks these reports leave behind, so there
+ * is no "fire once" state here any more: every event is just another position.
  *
  * `RichText`'s sanitiser (`packages/ui/src/components/sanitize-rich-text.ts`)
  * only ever allows a `player.vimeo.com` iframe with
@@ -15,13 +19,13 @@ import { useEffect, useRef, type RefObject } from 'react';
 export function useVimeoWatchTracking(
   containerRef: RefObject<HTMLElement | null>,
   html: string | null | undefined,
-  onEnded: () => void,
+  onPosition: (seconds: number, options?: { force?: boolean }) => void,
 ): void {
-  // Stored in a ref so a new `onEnded` closure on every render (the common
+  // Stored in a ref so a new callback closure on every render (the common
   // case for an inline arrow function) never tears down and re-attaches the
   // player — only a real change of container/content should do that.
-  const onEndedRef = useRef(onEnded);
-  onEndedRef.current = onEnded;
+  const onPositionRef = useRef(onPosition);
+  onPositionRef.current = onPosition;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -29,11 +33,28 @@ export function useVimeoWatchTracking(
     if (!iframe) return;
 
     const player = new Player(iframe);
-    const handleEnded = () => onEndedRef.current();
-    player.on('ended', handleEnded);
+
+    // `timeupdate` fires several times a second; the throttle in
+    // `watch-position.ts` decides which of those earns a request.
+    const handleTimeUpdate = (data: { seconds: number }) => {
+      onPositionRef.current(data.seconds);
+    };
+    // A pause, a seek or the end of the video are each a moment worth
+    // recording exactly, rather than up to twelve seconds later.
+    const handleSettled = (data: { seconds: number }) => {
+      onPositionRef.current(data.seconds, { force: true });
+    };
+
+    player.on('timeupdate', handleTimeUpdate);
+    player.on('pause', handleSettled);
+    player.on('seeked', handleSettled);
+    player.on('ended', handleSettled);
 
     return () => {
-      player.off('ended', handleEnded);
+      player.off('timeupdate', handleTimeUpdate);
+      player.off('pause', handleSettled);
+      player.off('seeked', handleSettled);
+      player.off('ended', handleSettled);
       // `.destroy()` returns a promise the Vimeo SDK rejects if the iframe
       // was already removed from the DOM (a route change unmounting this
       // component); swallow it — there is nothing this caller can do about
@@ -44,7 +65,7 @@ export function useVimeoWatchTracking(
     // Re-run whenever the rendered content changes (a different topic's
     // body swapped in without unmounting this component — depth-first
     // client-side navigation between two video topics can do exactly that).
-    // `onEndedRef` is read via `.current`, never itself, so it is
+    // `onPositionRef` is read via `.current`, never itself, so it is
     // deliberately not listed.
   }, [containerRef, html]);
 }

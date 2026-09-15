@@ -28,6 +28,9 @@ function item(
     lastAccessedAt: null,
     blockedReason: null,
     quiz: null,
+    positionSeconds: null,
+    durationSeconds: null,
+    imageUrl: null,
     ...overrides,
   };
 }

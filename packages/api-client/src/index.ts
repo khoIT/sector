@@ -811,6 +811,8 @@ export {
   trackCourseProgressPayloadSchema,
   trackCourseQuizProgressPayloadSchema,
   trackCourseQuizProgressResultSchema,
+  trackItemPositionPayloadSchema,
+  trackItemPositionResultSchema,
   type CourseQuizProgressEntry,
   type CourseQuizProgressResult,
   type QuizAttempt,
@@ -821,6 +823,8 @@ export {
   type TrackCourseProgressPayload,
   type TrackCourseQuizProgressPayload,
   type TrackCourseQuizProgressResult,
+  type TrackItemPositionPayload,
+  type TrackItemPositionResult,
 } from './schemas/course-progress';
 export {
   courseContentBodySchema,
@@ -841,6 +845,7 @@ export {
   retakeCourseQuiz,
   trackCourseProgress,
   trackCourseQuizProgress,
+  trackItemPosition,
 } from './endpoints/course-progress';
 export {
   getCourseLessonDetail,

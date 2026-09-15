@@ -89,6 +89,21 @@ export const courseOutlineItemSchema = z.object({
   blockedReason: courseOutlineBlockedReasonSchema.nullable(),
   /** Populated for `kind: 'quiz'` only; `null` for a lesson or a topic. */
   quiz: courseOutlineQuizSummarySchema.nullable(),
+  /**
+   * Where this learner's playhead was, in seconds — the resume point. `null`
+   * for anything that is not a topic with a video, and for a video topic the
+   * learner has never opened.
+   */
+  positionSeconds: z.number().nullable(),
+  /**
+   * Runtime in seconds, from the server's Vimeo metadata cache. `null` when
+   * the topic has no video AND when Vimeo would not describe it: 43 videos in
+   * the library are private, and the outline shows no runtime rather than a
+   * wrong one.
+   */
+  durationSeconds: z.number().nullable(),
+  /** Poster frame from the same cache, `null` for the same two reasons. */
+  imageUrl: z.string().nullable(),
 });
 export type CourseOutlineItem = z.infer<typeof courseOutlineItemSchema>;
 
