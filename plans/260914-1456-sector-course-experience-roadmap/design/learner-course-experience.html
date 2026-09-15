@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sector Learner Flow</title>
+<!--
+JUNIOR PASS · ASSUMPTIONS, REASONING, OPEN QUESTIONS
+====================================================
+What this is: an interactive hi-fi prototype of the learner flow the roadmap builds —
+  ① Home "Continue where you left off"  →  ② Course landing  →  ③ Persistent player shell
+  →  ④ Generated module page  →  ⑤ Cohort "due this week".
+Grounded in: plans/260914-1456-sector-course-experience-roadmap/ (phases 1–8) and the brainstorm report.
+
+Design context I am building FROM (not inventing):
+  - Sector's real tokens, verbatim from packages/ui/src/styles/tokens.css — paper bg #efe7da, surface #fdfaf4,
+    ink #22201c, ink-dim #5e574c, line #ddd2be, accent #ee7625 (one action per screen), accent-ink teal #2f6b73,
+    ok #2e6b41, warn #8a5300, crit #b3261e, radius 8px. Dark palette included; the Tweaks panel flips it.
+  - Sector's real type: system sans at 13px body (tokens.css). I kept it. The anti-slop rule prefers a display face,
+    but the brand spec IS system sans — overriding it would make this look like a different product.
+  - Sector's real shell: left nav (Home · Scan Vault · Learn · user chip), top bar with page title + locale — copied
+    from live screenshots of :3101 on 14 Sep 2026.
+  - Real content: course "GUSI Additional Topics" (6 modules · 35 topics · 24 quizzes) from gusi_prod_mirror;
+    real topic titles; real quiz text (FASH Introduction quiz, Q2 with its stored explanation);
+    real cohort assignment (WCUCOM OMS II, module FAST/E-FAST due 2026-10-16).
+  - Real durations + thumbnails: fetched today from Vimeo's PUBLIC oEmbed endpoint, no token — all 35 topics
+    resolved, course total 5h 31m. (This is a finding for Phase 1: durations/thumbnails do NOT need the API token;
+    only captions do.) Module-1 thumbnails are inlined; other modules reference Vimeo's CDN URL.
+
+Assumptions (change these first if the direction is wrong):
+  A1. The learner in the demo is RETURNING mid-course: module 1 complete, module 2 topic 2 paused at 6:12.
+      That is the state the production numbers say matters (58% stall under 25%, and do not return).
+      Tweaks → "Learner state: New" shows the 0% first-visit version of every screen.
+  A2. Tri-state item status: ○ not started · ◔ started · ● complete. Completion auto-fires at 80% watched
+      (dashboard parity; LinkedIn uses 70% — Tweaks lets you preview the label at 70).
+  A3. Contents pane sits LEFT of the video (LinkedIn/Udemy convention). The legacy ScanHub had it RIGHT.
+      Tweaks → "Contents pane: right" shows the alternative.
+  A4. "Continue" is the ONE orange action per screen. Everything else is ink/teal.
+  A5. The existing home charts (course donut, scans, question banks, progress over time) stay as they are —
+      shown here as a labelled grey block so the new Continue row is judged in context, not in isolation.
+
+Honest placeholders (data that does not exist yet — do not read these as fabricated content):
+  P1. Transcript lines — depend on Vimeo captions; coverage is measured in Phase 1. Structure shown, text bracketed.
+  P2. Notes — user content; one bracketed example to show the timestamp affordance.
+  P3. Learning objectives / level on the landing page — authored by the content team in Phase 7.
+  P4. CME — this course carries none in the data, so the landing page says so rather than inventing credits.
+  P5. Reminder email copy — pending sign-off (Phase 4); preview shows structure only.
+  P6. Chapter markers on the scrub bar — authored in Vimeo (Phase 6); ticks shown at illustrative positions.
+
+Open questions for the manager (answer in chat; nothing here is final):
+  Q1. Is the Continue row the FIRST thing on Home, above the charts? (I assumed yes — it is the re-entry lever.)
+  Q2. Should the module page keep a card grid (the WP-era pattern learners know) or become a list like the outline?
+  Q3. Contents pane left or right?
+-->
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="learner-course-experience-data.js"></script>
+
+<style>
+  /* ===== Sector tokens — verbatim from packages/ui/src/styles/tokens.css ===== */
+  :root {
+    --bg: #efe7da; --surface: #fdfaf4; --surface-2: #f6f0e5;
+    --ink: #22201c; --ink-dim: #5e574c; --line: #ddd2be;
+    --accent: #ee7625; --accent-ink: #2f6b73; --accent-soft: #fce9d8;
+    --ok: #2e6b41; --ok-soft: #dcede1; --warn: #8a5300; --warn-soft: #faebcd;
+    --crit: #b3261e; --crit-soft: #f9dedb; --radius: 8px; --scan-ground: #14120f;
+  }
+  :root[data-theme='dark'] {
+    --bg: #17150f; --surface: #211e17; --surface-2: #2b271d;
+    --ink: #f2eadc; --ink-dim: #b3a996; --line: #3d3729;
+    --accent: #ee7625; --accent-ink: #6ec3cd; --accent-soft: #382718;
+    --ok: #79d09a; --ok-soft: #1b2d22; --warn: #e8b45e; --warn-soft: #33260f;
+    --crit: #f0928a; --crit-soft: #351d1b; --scan-ground: #0b0a08;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { color-scheme: light dark; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px; line-height: 1.5; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+  :root[data-density='compact'] body { font-size: 12px; }
+  .num { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  a { color: inherit; text-decoration: none; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+  .muted { color: var(--ink-dim); }
+  .eyebrow { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); font-weight: 600; }
+  .row { display: flex; align-items: center; gap: 8px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); font-weight: 500; }
+  .btn:hover { background: var(--surface-2); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #1b120a; font-weight: 600; }
+  .btn.primary:hover { filter: brightness(1.04); }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; border: 1px solid var(--line); background: var(--surface); }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+  .pill.crit { background: var(--crit-soft); color: var(--crit); border-color: transparent; }
+  .pill.soft { background: var(--accent-soft); color: var(--ink); border-color: transparent; }
+  .placeholder { border: 1px dashed var(--line); border-radius: var(--radius); background: var(--surface-2); color: var(--ink-dim); display: grid; place-items: center; text-align: center; padding: 16px; font-size: 12px; }
+  .ph-text { color: var(--ink-dim); font-style: italic; }
+  .navitem { display: flex; align-items: center; gap: 10px; padding: 7px 12px; border-radius: var(--radius); color: var(--ink); border-left: 3px solid transparent; }
+  .navitem.active { background: var(--surface); border-left-color: var(--accent); font-weight: 600; box-shadow: 0 0 0 1px var(--line); }
+  .navitem:hover { background: var(--surface); }
+  .tab { padding: 10px 2px; margin-right: 18px; border-bottom: 2px solid transparent; color: var(--ink-dim); font-weight: 500; }
+  .tab.active { color: var(--ink); border-bottom-color: var(--accent); }
+  .item-row { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 6px; width: 100%; text-align: left; }
+  .item-row:hover { background: var(--surface-2); }
+  .item-row.current { background: var(--accent-soft); }
+  .thumb { background: var(--scan-ground); border-radius: 6px; overflow: hidden; position: relative; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .dur { position: absolute; right: 6px; bottom: 6px; background: rgba(0,0,0,.72); color: #fff; font-size: 11px; padding: 1px 6px; border-radius: 4px; }
+  .answer { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); width: 100%; text-align: left; }
+  .answer:hover { background: var(--surface-2); }
+  .answer.ok { border-color: var(--ok); background: var(--ok-soft); }
+  .answer.bad { border-color: var(--crit); background: var(--crit-soft); }
+  .flowstrip { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 50; display: flex; gap: 4px; background: #1b1916; color: #e9e2d4; padding: 6px; border-radius: 999px; box-shadow: 0 8px 30px rgba(0,0,0,.25); font-size: 12px; }
+  .flowstrip button { padding: 5px 12px; border-radius: 999px; color: #cfc6b5; }
+  .flowstrip button.active { background: var(--accent); color: #1b120a; font-weight: 600; }
+  .tweaks { position: fixed; right: 16px; bottom: 16px; z-index: 50; background: #1b1916; color: #e9e2d4; border-radius: 12px; padding: 14px 16px; width: 260px; box-shadow: 0 12px 40px rgba(0,0,0,.3); font-size: 12px; }
+  .tweaks label { display: block; margin: 10px 0 4px; color: #a89f8d; }
+  .tweaks .seg { display: flex; gap: 4px; }
+  .tweaks .seg button { flex: 1; padding: 5px 0; border-radius: 6px; background: #2a2723; color: #cfc6b5; }
+  .tweaks .seg button.on { background: var(--accent); color: #1b120a; font-weight: 600; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useEffect } = React;
+const DATA = window.SECTOR_PROTO_DATA;
+const COURSE = DATA.course;
+const COHORT = DATA.cohort;
+
+/* ---------- helpers ---------- */
+const mmss = (s) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
+const hm = (s) => { const h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60); return h ? `${h}h ${String(m).padStart(2,'0')}m` : `${m} min`; };
+
+/* ---------- learner state (A1) ----------
+   returning: module 0 complete (topics + quizzes), module 1 topic 0 complete, topic 1 paused at 6:12.
+   new: nothing started. Status per item: 'done' | 'started' | 'todo'. */
+function buildLearner(kind) {
+  const status = {}; let position = null;
+  COURSE.modules.forEach((m, mi) => m.topics.forEach((t, ti) => {
+    let s = 'todo';
+    if (kind === 'returning') {
+      if (mi === 0) s = 'done';
+      if (mi === 1 && ti === 0) s = 'done';
+      if (mi === 1 && ti === 1) { s = 'started'; position = { id: t.id, at: 372 }; }
+    }
+    status[t.id] = s;
+    if (t.quiz) status[t.id + 'q'] = (kind === 'returning' && mi === 0) ? 'done' : 'todo';
+  }));
+  return { kind, status, position };
+}
+
+function useProgress(learner) {
+  return useMemo(() => {
+    let topics = 0, quizzes = 0, modules = 0, secondsLeft = 0, topicsTotal = 0, quizzesTotal = 0;
+    COURSE.modules.forEach((m) => {
+      let allDone = true;
+      m.topics.forEach((t) => {
+        topicsTotal++;
+        const s = learner.status[t.id];
+        if (s === 'done') topics++; else { allDone = false; secondsLeft += t.dur - (learner.position && learner.position.id === t.id ? learner.position.at : 0); }
+        if (t.quiz) { quizzesTotal++; if (learner.status[t.id + 'q'] === 'done') quizzes++; else allDone = false; }
+      });
+      if (allDone) modules++;
+    });
+    const items = topics + quizzes, total = topicsTotal + quizzesTotal;
+    return { modules, topics, quizzes, topicsTotal, quizzesTotal, items, total, pct: Math.round(items / total * 100), secondsLeft };
+  }, [learner]);
+}
+
+/* the "next" item: the paused topic, else first todo */
+function nextItem(learner) {
+  for (const m of COURSE.modules) for (const t of m.topics) {
+    if (learner.status[t.id] !== 'done') return { module: m, topic: t, at: learner.position && learner.position.id === t.id ? learner.position.at : 0 };
+    if (t.quiz && learner.status[t.id + 'q'] !== 'done') return { module: m, topic: t, quiz: true, at: 0 };
+  }
+  return null;
+}
+
+/* ---------- tri-state glyph (A2) ---------- */
+function StatusGlyph({ s, size = 16 }) {
+  const r = (size - 2) / 2, c = size / 2;
+  if (s === 'done') return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-label="Complete"><circle cx={c} cy={c} r={r} fill="var(--ok)"/><path d={`M${c-4} ${c} l3 3 l5 -6`} stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>);
+  if (s === 'started') return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-label="Started"><circle cx={c} cy={c} r={r} fill="none" stroke="var(--line)" strokeWidth="1.5"/><path d={`M${c} 1 A${r} ${r} 0 0 1 ${size-1} ${c} L${c} ${c} Z`} fill="var(--accent)"/></svg>);
+  return <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-label="Not started"><circle cx={c} cy={c} r={r} fill="none" stroke="var(--line)" strokeWidth="1.5"/></svg>;
+}
+
+/* ---------- Sector shell (copied from live :3101) ---------- */
+function Shell({ title, active, children, wide }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', minHeight: '100vh' }}>
+      <aside style={{ padding: '18px 14px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div className="row" style={{ padding: '2px 4px 14px', gap: 10 }}>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: '#1b1916', display: 'grid', placeItems: 'center' }}>
+            <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 2 L14 13 H2 Z" fill="var(--accent)"/></svg>
+          </div>
+          <strong style={{ fontSize: 15 }}>Sector</strong>
+        </div>
+        <a className={'navitem' + (active === 'home' ? ' active' : '')}>⌂ Home</a>
+        <div className="eyebrow" style={{ padding: '14px 12px 6px' }}>Scan Vault</div>
+        <a className="navitem">▤ My Scans</a>
+        <a className="navitem">⇢ Shared Scans</a>
+        <div className="eyebrow" style={{ padding: '14px 12px 6px' }}>Learn</div>
+        <a className={'navitem' + (active === 'courses' ? ' active' : '')}>⌕ Courses</a>
+        <a className="navitem">▦ Pathology Gallery</a>
+        <a className="navitem">✦ Sage AI</a>
+        <a className="navitem">☰ Question Banks</a>
+        <div style={{ marginTop: 'auto', borderTop: '1px solid var(--line)', paddingTop: 12 }} className="row">
+          <div style={{ width: 28, height: 28, borderRadius: 999, background: 'var(--accent-soft)', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 600 }}>SL</div>
+          <div><div style={{ fontWeight: 600 }}>Sector Learner</div><div className="muted" style={{ fontSize: 11 }}>Subscriber</div></div>
+        </div>
+      </aside>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <header className="row" style={{ justifyContent: 'space-between', padding: '16px 24px', height: 58 }}>
+          <strong style={{ fontSize: 15 }}>{title}</strong>
+          <span className="muted">🇺🇸 English</span>
+        </header>
+        <main className="card" style={{ margin: '0 24px 24px 0', flex: 1, padding: wide ? 0 : 24, overflow: 'hidden' }}>
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+/* ================= ① HOME ================= */
+function HomeScreen({ learner, go }) {
+  const p = useProgress(learner); const nx = nextItem(learner);
+  const due = COHORT.due[0];
+  return (
+    <Shell title="Home" active="home">
+      <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 18 }}>Welcome back, Sector Learner</h1>
+
+      {/* Continue row — THE re-entry lever. Q1: first thing on the page? */}
+      <div className="eyebrow" style={{ marginBottom: 8 }}>Continue where you left off</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 16, marginBottom: 24 }}>
+        <div className="card row" style={{ padding: 14, gap: 16, alignItems: 'stretch' }}>
+          {nx ? (<>
+            <div className="thumb" style={{ width: 208, height: 117, flexShrink: 0 }}>
+              <img src={nx.topic.thumb} alt="" />
+              <span className="dur num">{mmss(nx.topic.dur)}</span>
+              {nx.at > 0 && <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 3, background: 'rgba(255,255,255,.3)' }}><div style={{ width: `${nx.at / nx.topic.dur * 100}%`, height: '100%', background: 'var(--accent)' }}/></div>}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
+              <div className="muted" style={{ fontSize: 12 }}>{COURSE.title} · {nx.module.title}</div>
+              <div style={{ fontSize: 16, fontWeight: 600 }}>{nx.quiz ? nx.topic.title + ' Quiz' : nx.topic.title}</div>
+              <div className="muted num">{learner.kind === 'new' ? 'Not started' : `${p.pct}% · ${hm(p.secondsLeft)} left`}{nx.at > 0 && ` · resume at ${mmss(nx.at)}`}</div>
+              <div style={{ marginTop: 'auto' }}>
+                <button className="btn primary" onClick={() => go('player')}>{learner.kind === 'new' ? 'Start course' : (nx.at > 0 ? `Resume at ${mmss(nx.at)}` : 'Continue')} →</button>
+              </div>
+            </div>
+          </>) : <div className="placeholder" style={{ flex: 1 }}>All caught up</div>}
+        </div>
+
+        {/* Due this week — the cohort loop, learner side (Phase 8) */}
+        <div className="card" style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className="row" style={{ justifyContent: 'space-between' }}>
+            <span className="eyebrow">Due this week</span>
+            <span className="pill warn">1 due</span>
+          </div>
+          <div style={{ fontWeight: 600 }}>{due.title} <span className="muted" style={{ fontWeight: 400 }}>· module</span></div>
+          <div className="muted" style={{ fontSize: 12 }}>{due.courseTitle} · assigned by {COHORT.group}</div>
+          <div className="row" style={{ justifyContent: 'space-between', marginTop: 'auto' }}>
+            <span className="num" style={{ color: 'var(--warn)', fontWeight: 600 }}>Due Fri 16 Oct</span>
+            <button className="btn" onClick={() => go('cohort')}>Open</button>
+          </div>
+        </div>
+      </div>
+
+      {/* A5: existing dashboard stays — placeholder so the new row is judged in context */}
+      <div className="eyebrow" style={{ marginBottom: 8 }}>My learning</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        <div className="placeholder" style={{ height: 200 }}>Course progress donut<br/><span style={{ fontSize: 11 }}>existing · unchanged</span></div>
+        <div className="placeholder" style={{ height: 200 }}>My scans<br/><span style={{ fontSize: 11 }}>existing · unchanged</span></div>
+        <div className="placeholder" style={{ height: 200 }}>Question bank attempts<br/><span style={{ fontSize: 11 }}>existing · unchanged</span></div>
+      </div>
+    </Shell>
+  );
+}
+
+/* ================= ② COURSE LANDING ================= */
+function LandingScreen({ learner, go }) {
+  const p = useProgress(learner); const nx = nextItem(learner);
+  const total = COURSE.modules.reduce((a, m) => a + m.topics.reduce((b, t) => b + t.dur, 0), 0);
+  return (
+    <Shell title="Courses" active="courses">
+      <div className="muted" style={{ marginBottom: 10 }}>‹ My Courses</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 28 }}>
+        <div>
+          <div className="eyebrow">Individual course</div>
+          <h1 style={{ fontSize: 26, fontWeight: 700, margin: '4px 0 6px' }}>{COURSE.title}</h1>
+          <p className="muted" style={{ fontSize: 14, maxWidth: 620 }}>{COURSE.desc}</p>
+
+          {/* facts row — what / how long / what I get */}
+          <div className="row num" style={{ gap: 18, margin: '16px 0 20px', fontSize: 13 }}>
+            <span><strong>{COURSE.modules.length}</strong> modules</span>
+            <span><strong>{p.topicsTotal}</strong> topics</span>
+            <span><strong>{p.quizzesTotal}</strong> quizzes</span>
+            <span><strong>{hm(total)}</strong> of video</span>
+            <span className="pill">{COURSE.cme ? `${COURSE.cme} CME credits` : 'No CME credit'}</span>
+          </div>
+
+          <div className="card" style={{ padding: 16, marginBottom: 16 }}>
+            <div className="eyebrow" style={{ marginBottom: 6 }}>What you'll learn</div>
+            <div className="ph-text">[Learning objectives — authored by the content team in the console (Phase 7). Nothing exists in the data today.]</div>
+            <div className="row" style={{ marginTop: 10, gap: 14 }}>
+              <span className="muted">Level: <span className="ph-text">[not set]</span></span>
+              <span className="muted">Last reviewed: <span className="ph-text">[not set]</span></span>
+            </div>
+          </div>
+
+          <div className="eyebrow" style={{ marginBottom: 8 }}>Modules</div>
+          <div className="card">
+            {COURSE.modules.map((m, i) => {
+              const secs = m.topics.reduce((a, t) => a + t.dur, 0);
+              const done = m.topics.filter((t) => learner.status[t.id] === 'done').length;
+              const q = m.topics.filter((t) => t.quiz).length;
+              const st = done === m.topics.length ? 'done' : done > 0 || m.topics.some((t) => learner.status[t.id] === 'started') ? 'started' : 'todo';
+              return (
+                <button key={m.id} className="item-row" style={{ padding: '12px 14px', borderTop: i ? '1px solid var(--line)' : 0, borderRadius: 0 }} onClick={() => go('module', m.id)}>
+                  <StatusGlyph s={st} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 600 }}>{m.title}</div>
+                    <div className="muted num" style={{ fontSize: 12 }}>{m.topics.length} topics · {q} {q === 1 ? 'quiz' : 'quizzes'} · {hm(secs)}</div>
+                  </div>
+                  <span className="muted num">{done}/{m.topics.length}</span>
+                  <span className="muted">›</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* sticky action column */}
+        <div>
+          <div className="card" style={{ padding: 16, position: 'sticky', top: 16 }}>
+            <div className="thumb" style={{ height: 160, marginBottom: 12 }}><img src={COURSE.modules[1].topics[1].thumb} alt="" /></div>
+            <div className="row" style={{ justifyContent: 'space-between', marginBottom: 6 }}>
+              <span style={{ fontWeight: 600 }} className="num">{p.pct}% complete</span>
+              <span className="muted num">{hm(p.secondsLeft)} left</span>
+            </div>
+            <div style={{ height: 6, background: 'var(--surface-2)', borderRadius: 999, overflow: 'hidden', marginBottom: 12 }}><div style={{ width: `${p.pct}%`, height: '100%', background: 'var(--accent)' }}/></div>
+            <div className="muted num" style={{ fontSize: 12, marginBottom: 14 }}>{p.modules}/{COURSE.modules.length} modules · {p.topics}/{p.topicsTotal} topics · {p.quizzes}/{p.quizzesTotal} quizzes</div>
+            {nx && <button className="btn primary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => go('player')}>
+              {learner.kind === 'new' ? 'Start: ' : 'Continue: '}{nx.quiz ? nx.topic.title + ' Quiz' : nx.topic.title}{nx.at > 0 && <span className="num"> · {mmss(nx.at)}</span>}
+            </button>}
+          </div>
+        </div>
+      </div>
+    </Shell>
+  );
+}
+
+/* ================= ③ PLAYER SHELL ================= */
+function ContentsPane({ learner, current, onPick, threshold }) {
+  const p = useProgress(learner);
+  const [open, setOpen] = useState(() => Object.fromEntries(COURSE.modules.map((m) => [m.id, m.topics.some((t) => t.id === current.id)])));
+  return (
+    <div style={{ borderRight: '1px solid var(--line)', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+      <div style={{ padding: '14px 14px 10px', borderBottom: '1px solid var(--line)' }}>
+        <div className="row" style={{ justifyContent: 'space-between' }}>
+          <strong>Contents</strong>
+          <span className="muted num" style={{ fontSize: 12 }}>{p.items}/{p.total} · {hm(p.secondsLeft)} left</span>
+        </div>
+        <div style={{ height: 4, background: 'var(--surface-2)', borderRadius: 999, overflow: 'hidden', marginTop: 8 }}><div style={{ width: `${p.pct}%`, height: '100%', background: 'var(--accent)' }}/></div>
+      </div>
+      <div style={{ overflow: 'auto', flex: 1, padding: 8 }}>
+        {COURSE.modules.map((m) => {
+          const done = m.topics.filter((t) => learner.status[t.id] === 'done').length;
+          const secs = m.topics.reduce((a, t) => a + t.dur, 0);
+          return (
+            <div key={m.id} style={{ marginBottom: 4 }}>
+              <button className="item-row" onClick={() => setOpen({ ...open, [m.id]: !open[m.id] })} style={{ fontWeight: 600 }}>
+                <span className="muted" style={{ width: 10, display: 'inline-block' }}>{open[m.id] ? '▾' : '▸'}</span>
+                <span style={{ flex: 1 }}>{m.title}</span>
+                <span className="muted num" style={{ fontWeight: 400, fontSize: 11 }}>{done}/{m.topics.length} · {hm(secs)}</span>
+              </button>
+              {open[m.id] && m.topics.map((t) => (
+                <React.Fragment key={t.id}>
+                  <button className={'item-row' + (current.id === t.id && !current.quiz ? ' current' : '')} style={{ paddingLeft: 26 }} onClick={() => onPick({ id: t.id, quiz: false })}>
+                    <StatusGlyph s={learner.status[t.id]} />
+                    <span style={{ flex: 1 }}>{t.title}</span>
+                    <span className="muted num" style={{ fontSize: 11 }}>{mmss(t.dur)}</span>
+                  </button>
+                  {t.quiz && (
+                    <button className={'item-row' + (current.id === t.id && current.quiz ? ' current' : '')} style={{ paddingLeft: 26 }} onClick={() => onPick({ id: t.id, quiz: true })}>
+                      <StatusGlyph s={learner.status[t.id + 'q']} />
+                      <span style={{ flex: 1 }} className="muted">Quiz</span>
+                      <span className="pill" style={{ fontSize: 10 }}>3 q</span>
+                    </button>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+      <div className="muted" style={{ padding: '10px 14px', borderTop: '1px solid var(--line)', fontSize: 11 }}>Topics complete automatically at {threshold}% watched.</div>
+    </div>
+  );
+}
+
+function QuizInPlace({ onDone }) {
+  const q = COURSE.quiz.q; const [picked, setPicked] = useState(null);
+  const correct = picked != null && q.answers[picked].ok;
+  return (
+    <div style={{ padding: 24, maxWidth: 720 }}>
+      <div className="eyebrow">{COURSE.quiz.title} · question {q.i} of {COURSE.quiz.n}</div>
+      <h2 style={{ fontSize: 18, fontWeight: 600, margin: '6px 0 16px' }}>{q.stem}</h2>
+      <div style={{ display: 'grid', gap: 8 }}>
+        {q.answers.map((a, i) => (
+          <button key={i} className={'answer' + (picked === i ? (a.ok ? ' ok' : ' bad') : picked != null && a.ok ? ' ok' : '')} onClick={() => picked == null && setPicked(i)}>
+            <span style={{ width: 18, height: 18, borderRadius: 999, border: '1.5px solid var(--line)', display: 'inline-grid', placeItems: 'center', fontSize: 10, flexShrink: 0 }}>{picked != null && a.ok ? '✓' : picked === i ? '✕' : ''}</span>
+            <span>{a.t}</span>
+          </button>
+        ))}
+      </div>
+      {picked != null && (
+        <div className="card" style={{ marginTop: 16, padding: 14, borderColor: correct ? 'var(--ok)' : 'var(--crit)' }}>
+          <div style={{ fontWeight: 600, color: correct ? 'var(--ok)' : 'var(--crit)', marginBottom: 6 }}>{correct ? 'Correct' : 'Not quite'}</div>
+          <p>{q.explain}</p>
+          <div className="row" style={{ justifyContent: 'flex-end', marginTop: 12 }}>
+            <button className="btn primary" onClick={onDone}>Next question →</button>
+          </div>
+        </div>
+      )}
+      <p className="muted" style={{ marginTop: 18, fontSize: 12 }}>Explanation shown after each answer, right or wrong — the stored `correctMessage` on 1,701 of 2,341 questions. No page navigation; the Contents pane stays where it is.</p>
+    </div>
+  );
+}
+
+function PlayerScreen({ learner, go, tweaks }) {
+  const nx = nextItem(learner);
+  const [current, setCurrent] = useState(() => nx ? { id: nx.topic.id, quiz: !!nx.quiz } : { id: COURSE.modules[0].topics[0].id, quiz: false });
+  const [tab, setTab] = useState('overview');
+  const topic = COURSE.modules.flatMap((m) => m.topics).find((t) => t.id === current.id);
+  const module = COURSE.modules.find((m) => m.topics.includes(topic));
+  const at = learner.position && learner.position.id === topic.id ? learner.position.at : 0;
+  const flat = COURSE.modules.flatMap((m) => m.topics.flatMap((t) => t.quiz ? [{ id: t.id, quiz: false }, { id: t.id, quiz: true }] : [{ id: t.id, quiz: false }]));
+  const idx = flat.findIndex((x) => x.id === current.id && x.quiz === current.quiz);
+  const contents = <ContentsPane learner={learner} current={current} onPick={setCurrent} threshold={tweaks.threshold} />;
+  return (
+    <Shell title="Courses" active="courses" wide>
+      <div style={{ display: 'grid', gridTemplateColumns: tweaks.paneSide === 'left' ? '300px 1fr' : '1fr 300px', height: 'calc(100vh - 82px)' }}>
+        {tweaks.paneSide === 'left' && contents}
+        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'auto' }}>
+          {/* breadcrumb */}
+          <div className="row muted" style={{ padding: '12px 24px 0', fontSize: 12, gap: 6 }}>
+            <button onClick={() => go('landing')} style={{ color: 'var(--accent-ink)' }}>{COURSE.title}</button><span>›</span>
+            <button onClick={() => go('module', module.id)} style={{ color: 'var(--accent-ink)' }}>{module.title}</button>
+          </div>
+          {current.quiz ? <QuizInPlace onDone={() => idx < flat.length - 1 && setCurrent(flat[idx + 1])} /> : (
+            <>
+              {/* video */}
+              <div style={{ padding: '12px 24px 0' }}>
+                <div className="thumb" style={{ aspectRatio: '16/9', borderRadius: 8 }}>
+                  <img src={topic.thumb} alt="" style={{ opacity: .85 }} />
+                  <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
+                    <div style={{ width: 64, height: 64, borderRadius: 999, background: 'rgba(0,0,0,.6)', display: 'grid', placeItems: 'center', color: '#fff', fontSize: 22 }}>▶</div>
+                  </div>
+                  {/* scrub bar with position + illustrative chapter ticks (P6) */}
+                  <div style={{ position: 'absolute', left: 16, right: 16, bottom: 14 }}>
+                    <div className="row" style={{ justifyContent: 'space-between', color: '#fff', fontSize: 11, marginBottom: 6 }} >
+                      <span className="num">{mmss(at)}</span><span className="num">{mmss(topic.dur)}</span>
+                    </div>
+                    <div style={{ position: 'relative', height: 4, background: 'rgba(255,255,255,.35)', borderRadius: 2 }}>
+                      <div style={{ width: `${at / topic.dur * 100}%`, height: '100%', background: 'var(--accent)', borderRadius: 2 }}/>
+                      {[0.22, 0.48, 0.71].map((x) => <div key={x} style={{ position: 'absolute', left: `${x * 100}%`, top: -3, width: 2, height: 10, background: '#fff', opacity: .7 }} title="[chapter marker — authored in Vimeo, Phase 6]"/>)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style={{ padding: '14px 24px 0' }}>
+                <div className="row" style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <h1 style={{ fontSize: 20, fontWeight: 700 }}>{topic.title}</h1>
+                    <div className="row muted num" style={{ fontSize: 12, gap: 10, marginTop: 4 }}>
+                      <StatusGlyph s={learner.status[topic.id]} size={14} />
+                      <span>{learner.status[topic.id] === 'done' ? 'Complete' : learner.status[topic.id] === 'started' ? `Started · ${Math.round(at / topic.dur * 100)}% watched` : 'Not started'}</span>
+                      <span>·</span><span>{mmss(topic.dur)}</span>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <button className="btn" disabled={idx === 0} onClick={() => setCurrent(flat[idx - 1])}>‹ Prev</button>
+                    <button className="btn" onClick={() => idx < flat.length - 1 && setCurrent(flat[idx + 1])}>Next ›</button>
+                  </div>
+                </div>
+                {/* tabs */}
+                <div style={{ borderBottom: '1px solid var(--line)', marginTop: 12 }}>
+                  {['overview', 'transcript', 'notes'].map((t) => <button key={t} className={'tab' + (tab === t ? ' active' : '')} onClick={() => setTab(t)}>{t[0].toUpperCase() + t.slice(1)}</button>)}
+                </div>
+                <div style={{ padding: '16px 0 24px', maxWidth: 760 }}>
+                  {tab === 'overview' && <div className="ph-text">[Topic HTML from `content`, rendered with RichText — as today.]</div>}
+                  {tab === 'transcript' && (
+                    <div>
+                      <div className="row" style={{ marginBottom: 12 }}><input placeholder="Search transcript" style={{ flex: 1, padding: '7px 10px', border: '1px solid var(--line)', borderRadius: 6, background: 'var(--surface)', color: 'inherit' }} /></div>
+                      {[0, 41, 97, 152, 230, 318].map((s) => (
+                        <button key={s} className="item-row" style={{ alignItems: 'flex-start', gap: 14 }}>
+                          <span className="num" style={{ color: 'var(--accent-ink)', width: 40, flexShrink: 0 }}>{mmss(s)}</span>
+                          <span className="ph-text">[caption line — from Vimeo text tracks; coverage measured in Phase 1]</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {tab === 'notes' && (
+                    <div>
+                      <div className="card row" style={{ padding: 12, gap: 14, alignItems: 'flex-start', marginBottom: 10 }}>
+                        <button className="num" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>4:02</button>
+                        <span className="ph-text">[your note — clicking the time seeks the video]</span>
+                      </div>
+                      <button className="btn">+ Add note at <span className="num">{mmss(at)}</span></button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+        {tweaks.paneSide === 'right' && contents}
+      </div>
+    </Shell>
+  );
+}
+
+/* ================= ④ MODULE PAGE (generated; replaces the WP table) ================= */
+function ModuleScreen({ learner, moduleId, go }) {
+  const m = COURSE.modules.find((x) => x.id === moduleId) || COURSE.modules[0];
+  const secs = m.topics.reduce((a, t) => a + t.dur, 0);
+  const done = m.topics.filter((t) => learner.status[t.id] === 'done').length;
+  const q = m.topics.filter((t) => t.quiz).length;
+  return (
+    <Shell title="Courses" active="courses">
+      <div className="row muted" style={{ fontSize: 12, gap: 6, marginBottom: 10 }}><button onClick={() => go('landing')} style={{ color: 'var(--accent-ink)' }}>{COURSE.title}</button><span>›</span><span>{m.title}</span></div>
+      <div className="row" style={{ justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 18 }}>
+        <div>
+          <div className="eyebrow">Module {COURSE.modules.indexOf(m) + 1} of {COURSE.modules.length}</div>
+          <h1 style={{ fontSize: 24, fontWeight: 700 }}>{m.title}</h1>
+          <div className="muted num">{m.topics.length} topics · {q} {q === 1 ? 'quiz' : 'quizzes'} · {hm(secs)} · {done}/{m.topics.length} complete</div>
+        </div>
+        <button className="btn primary" onClick={() => go('player')}>{done === 0 ? 'Start module' : done === m.topics.length ? 'Review' : 'Continue'} →</button>
+      </div>
+      {/* Q2: card grid (WP-era pattern, generated from Vimeo) vs list */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        {m.topics.map((t, i) => (
+          <button key={t.id} className="card" style={{ padding: 0, overflow: 'hidden', textAlign: 'left' }} onClick={() => go('player')}>
+            <div className="thumb" style={{ aspectRatio: '16/9', borderRadius: 0 }}>
+              <img src={t.thumb} alt="" />
+              <span className="dur num">{mmss(t.dur)}</span>
+              {learner.status[t.id] === 'started' && learner.position && <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 3, background: 'rgba(255,255,255,.3)' }}><div style={{ width: `${learner.position.at / t.dur * 100}%`, height: '100%', background: 'var(--accent)' }}/></div>}
+            </div>
+            <div style={{ padding: 12 }}>
+              <div className="row" style={{ justifyContent: 'space-between', marginBottom: 4 }}>
+                <span className="eyebrow">Topic {i + 1}</span>
+                <StatusGlyph s={learner.status[t.id]} size={14} />
+              </div>
+              <div style={{ fontWeight: 600 }}>{t.title}</div>
+              {t.quiz && <div className="row" style={{ marginTop: 8 }}><StatusGlyph s={learner.status[t.id + 'q']} size={12} /><span className="muted" style={{ fontSize: 12 }}>Quiz · 3 questions</span></div>}
+            </div>
+          </button>
+        ))}
+      </div>
+      <p className="muted" style={{ marginTop: 18, fontSize: 12 }}>Generated from the course structure and Vimeo thumbnails. Replaces the hand-written WordPress table (155 modules) whose links break at cutover.</p>
+    </Shell>
+  );
+}
+
+/* ================= ⑤ COHORT — learner's assignments ================= */
+function CohortScreen({ go }) {
+  const due = COHORT.due[0];
+  return (
+    <Shell title="Courses" active="courses">
+      <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>My assignments</h1>
+      <div className="muted" style={{ marginBottom: 18 }}>Set by your group leader · {COHORT.group}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24 }}>
+        <div>
+          {[['Due this week', 'warn', [{ ...due, when: 'Fri 16 Oct' }]],
+            ['Overdue', 'crit', [{ title: '[assignment]', kind: 'topic', courseTitle: '[course]', when: '[date]', status: 'active', ph: true }]],
+            ['Later', null, [{ title: '[assignment]', kind: 'module', courseTitle: '[course]', when: '[date]', status: 'active', ph: true }, { title: '[assignment]', kind: 'topic', courseTitle: '[course]', when: '[date]', status: 'completed', ph: true }]]
+          ].map(([label, tone, rows]) => (
+            <div key={label} style={{ marginBottom: 20 }}>
+              <div className="row" style={{ marginBottom: 8 }}><span className="eyebrow">{label}</span>{tone && <span className={'pill ' + tone}>{rows.length}</span>}</div>
+              <div className="card">
+                {rows.map((r, i) => (
+                  <div key={i} className="row" style={{ padding: '12px 14px', borderTop: i ? '1px solid var(--line)' : 0, gap: 14 }}>
+                    <StatusGlyph s={r.status === 'completed' ? 'done' : r.status === 'in_progress' ? 'started' : 'todo'} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600 }} className={r.ph ? 'ph-text' : ''}>{r.title} <span className="muted" style={{ fontWeight: 400 }}>· {r.kind}</span></div>
+                      <div className={'muted ' + (r.ph ? 'ph-text' : '')} style={{ fontSize: 12 }}>{r.courseTitle}</div>
+                    </div>
+                    <span className={'num ' + (r.ph ? 'ph-text' : '')} style={{ color: tone === 'crit' ? 'var(--crit)' : tone === 'warn' ? 'var(--warn)' : 'var(--ink-dim)', fontWeight: 600 }}>{r.when}</span>
+                    {!r.ph && <button className="btn primary" onClick={() => go('player')}>Continue</button>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* P5: reminder email — structure only, copy pending sign-off */}
+        <div>
+          <div className="eyebrow" style={{ marginBottom: 8 }}>Reminder email · 3 days before</div>
+          <div className="card" style={{ padding: 16, fontSize: 12 }}>
+            <div className="muted">From Sector · to you</div>
+            <div style={{ fontWeight: 600, margin: '6px 0 10px' }}>{due.title} is due Friday</div>
+            <p className="ph-text">[Copy pending sign-off — Phase 4. Names the assignment, the course, the due date, and one button.]</p>
+            <div style={{ marginTop: 12 }}><span className="btn primary" style={{ fontSize: 12 }}>Continue {due.title}</span></div>
+            <div className="muted" style={{ marginTop: 14, fontSize: 11 }}>Sent once. Overdue digest weekly. <span className="ph-text">[Opt-out per learner — new preference, Phase 4.]</span></div>
+          </div>
+        </div>
+      </div>
+    </Shell>
+  );
+}
+
+/* ================= prototype chrome: flow strip + tweaks ================= */
+const STEPS = [['home', '① Home'], ['landing', '② Course'], ['player', '③ Player'], ['module', '④ Module'], ['cohort', '⑤ Cohort']];
+const TWEAK_DEFAULTS = { theme: 'light', density: 'comfortable', learner: 'returning', paneSide: 'left', threshold: 80 };
+
+function App() {
+  const [tweaks, setTweaks] = useState(() => { try { return { ...TWEAK_DEFAULTS, ...JSON.parse(localStorage.getItem('sector-proto-tweaks') || '{}') }; } catch { return TWEAK_DEFAULTS; } });
+  const [screen, setScreen] = useState('home'); const [moduleId, setModuleId] = useState('m0'); const [tw, setTw] = useState(true);
+  const learner = useMemo(() => buildLearner(tweaks.learner), [tweaks.learner]);
+  useEffect(() => { document.documentElement.dataset.theme = tweaks.theme; document.documentElement.dataset.density = tweaks.density; try { localStorage.setItem('sector-proto-tweaks', JSON.stringify(tweaks)); } catch {} }, [tweaks]);
+  const go = (s, id) => { if (id) setModuleId(id); setScreen(s); window.scrollTo(0, 0); };
+  const set = (k, v) => setTweaks({ ...tweaks, [k]: v });
+  const Seg = ({ k, opts }) => <div className="seg">{opts.map(([v, l]) => <button key={v} className={tweaks[k] === v ? 'on' : ''} onClick={() => set(k, v)}>{l}</button>)}</div>;
+  return (
+    <>
+      <div className="flowstrip">{STEPS.map(([s, l]) => <button key={s} className={screen === s ? 'active' : ''} onClick={() => go(s)}>{l}</button>)}</div>
+      {screen === 'home' && <HomeScreen learner={learner} go={go} />}
+      {screen === 'landing' && <LandingScreen learner={learner} go={go} />}
+      {screen === 'player' && <PlayerScreen key={tweaks.learner + tweaks.paneSide} learner={learner} go={go} tweaks={tweaks} />}
+      {screen === 'module' && <ModuleScreen learner={learner} moduleId={moduleId} go={go} />}
+      {screen === 'cohort' && <CohortScreen go={go} />}
+      <div className="tweaks">
+        <div className="row" style={{ justifyContent: 'space-between' }}><strong>Tweaks</strong><button onClick={() => setTw(!tw)} style={{ color: '#a89f8d' }}>{tw ? '—' : '+'}</button></div>
+        {tw && (<>
+          <label>Learner state</label><Seg k="learner" opts={[['returning', 'Returning'], ['new', 'New (0%)']]} />
+          <label>Theme</label><Seg k="theme" opts={[['light', 'Light'], ['dark', 'Dark']]} />
+          <label>Contents pane</label><Seg k="paneSide" opts={[['left', 'Left'], ['right', 'Right (legacy)']]} />
+          <label>Completion threshold</label><Seg k="threshold" opts={[[80, '80% (dashboard)'], [70, '70% (LinkedIn)']]} />
+          <label>Density</label><Seg k="density" opts={[['comfortable', 'Comfortable'], ['compact', 'Compact']]} />
+        </>)}
+      </div>
+    </>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
