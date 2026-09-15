@@ -313,6 +313,13 @@
         "completed": "Concluída",
         "cancelled": "Cancelada"
       },
+      "lifecycle": {
+        "not_started": "Não iniciado",
+        "in_progress": "Em andamento",
+        "overdue": "Atrasado",
+        "completed": "Concluído"
+      },
+      "lifecycleCount": "{{count}} {{label}}",
       "form": {
         "trigger": "Nova tarefa",
         "title": "Atribuir um curso",
@@ -322,6 +329,7 @@
         "dueDateLabel": "Prazo",
         "learnersLabel": "Alunos",
         "noLearners": "Este grupo ainda não tem alunos ativos.",
+        "optionsRefused": "Apenas um líder deste grupo pode criar tarefas para ele.",
         "courseRequired": "Escolha um curso.",
         "learnersRequired": "Escolha pelo menos um aluno.",
         "error": "Não foi possível criar esta tarefa.",

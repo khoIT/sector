@@ -313,6 +313,13 @@
         "completed": "Nakumpleto na",
         "cancelled": "Kinansela"
       },
+      "lifecycle": {
+        "not_started": "Hindi pa nasisimulan",
+        "in_progress": "Isinasagawa",
+        "overdue": "Lampas na sa takdang araw",
+        "completed": "Tapos na"
+      },
+      "lifecycleCount": "{{count}} {{label}}",
       "form": {
         "trigger": "Bagong takdang-gawain",
         "title": "Mag-assign ng kurso",
@@ -322,6 +329,7 @@
         "dueDateLabel": "Deadline",
         "learnersLabel": "Mga mag-aaral",
         "noLearners": "Wala pang aktibong mag-aaral ang grupong ito.",
+        "optionsRefused": "Tanging pinuno ng grupong ito ang makakagawa ng mga takdang-aralin para dito.",
         "courseRequired": "Pumili ng kurso.",
         "learnersRequired": "Pumili ng kahit isang mag-aaral.",
         "error": "Hindi nagawa ang takdang-gawaing ito.",

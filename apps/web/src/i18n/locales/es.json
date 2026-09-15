@@ -313,6 +313,13 @@
         "completed": "Completada",
         "cancelled": "Cancelada"
       },
+      "lifecycle": {
+        "not_started": "Sin empezar",
+        "in_progress": "En curso",
+        "overdue": "Vencido",
+        "completed": "Completado"
+      },
+      "lifecycleCount": "{{count}} {{label}}",
       "form": {
         "trigger": "Nueva tarea",
         "title": "Asignar un curso",
@@ -322,6 +329,7 @@
         "dueDateLabel": "Fecha de vencimiento",
         "learnersLabel": "Estudiantes",
         "noLearners": "Este grupo aún no tiene estudiantes activos.",
+        "optionsRefused": "Solo un líder de este grupo puede crear tareas para él.",
         "courseRequired": "Elige un curso.",
         "learnersRequired": "Elige al menos un estudiante.",
         "error": "No se pudo crear esta tarea.",

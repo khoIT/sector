@@ -4,7 +4,6 @@ import {
   useGroupCourseOptions,
   useGroupLearners,
   userDisplayName,
-  type GroupAssignment,
 } from '@sector/api-client';
 import {
   Button,
@@ -35,20 +34,13 @@ import { formatDate } from '@/lib/format';
 
 import { GroupDetailTabs } from '../group-detail-tabs';
 import { useGroupDetailTitle } from '../use-group-detail-title';
-
-/** `GroupAssignment.status` -> the closest existing badge tone. */
-function assignmentStatusTone(status: GroupAssignment['status']) {
-  switch (status) {
-    case 'completed':
-      return 'ok' as const;
-    case 'cancelled':
-      return 'crit' as const;
-    case 'in_progress':
-      return 'accent' as const;
-    default:
-      return 'neutral' as const;
-  }
-}
+import {
+  ASSIGNMENT_LIFECYCLES,
+  assignmentLifecycle,
+  assignmentLifecycleLabelKey,
+  assignmentLifecycleTone,
+  countAssignmentLifecycles,
+} from './assignment-status-model';
 
 /**
  * Per-member assignments for one group.
@@ -72,6 +64,12 @@ export function GroupAssignmentsPanel() {
 
   const assignments = useAssignmentsForGroup(groupId);
 
+  // One clock for the whole render, so a row cannot tip from due to overdue
+  // between the summary line and the row beneath it.
+  const now = new Date();
+  const rows = assignments.data?.items ?? [];
+  const counts = countAssignmentLifecycles(rows, now);
+
   if (!groupId) return null;
 
   return (
@@ -82,6 +80,22 @@ export function GroupAssignmentsPanel() {
         <p className="text-[12px] text-ink-dim">{t('groups.assignments.readsAllTypesNotice')}</p>
         <CreateAssignmentDialog groupId={groupId} />
       </div>
+
+      {rows.length > 0 ? (
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          {ASSIGNMENT_LIFECYCLES.map((lifecycle) => (
+            <StatusPill
+              key={lifecycle}
+              dot={false}
+              tone={assignmentLifecycleTone(lifecycle)}
+              label={t('groups.assignments.lifecycleCount', {
+                count: counts[lifecycle],
+                label: t(assignmentLifecycleLabelKey(lifecycle)),
+              })}
+            />
+          ))}
+        </div>
+      ) : null}
 
       {assignments.isPending ? (
         <Skeleton className="h-40 w-full" />
@@ -100,7 +114,7 @@ export function GroupAssignmentsPanel() {
         />
       ) : (
         <ul className="flex flex-col gap-2">
-          {assignments.data?.items.map((assignment) => (
+          {rows.map((assignment) => (
             <li
               key={assignment.id}
               className="flex flex-wrap items-center justify-between gap-3 rounded-token border border-line p-3"
@@ -132,9 +146,11 @@ export function GroupAssignmentsPanel() {
                   tone="neutral"
                   label={t(`groups.assignments.type.${assignment.assignmentType}`)}
                 />
+                {/* The lifecycle, not the stored status: a row a month past
+                    its date reads `active` on the wire. */}
                 <StatusPill
-                  tone={assignmentStatusTone(assignment.status)}
-                  label={t(`groups.assignments.status.${assignment.status}`)}
+                  tone={assignmentLifecycleTone(assignmentLifecycle(assignment, now))}
+                  label={t(assignmentLifecycleLabelKey(assignmentLifecycle(assignment, now)))}
                 />
               </div>
             </li>
@@ -156,6 +172,12 @@ function CreateAssignmentDialog({ groupId }: { groupId: string }) {
   const [dueDate, setDueDate] = useState('');
   const [selectedLearners, setSelectedLearners] = useState<Set<string>>(new Set());
   const [formError, setFormError] = useState<string | undefined>();
+
+  // Both lists are leader-scoped on the server, while the assignment list
+  // above is not. Someone can therefore see this tab and still be refused the
+  // options needed to add to it — in which case say so, rather than render an
+  // empty picker that reads as "this group has no learners".
+  const optionsRefused = courseOptions.isError || learners.isError;
 
   function handleOpenChange(next: boolean) {
     if (createAssignment.isPending) return;
@@ -258,6 +280,8 @@ function CreateAssignmentDialog({ groupId }: { groupId: string }) {
             <div className="max-h-48 overflow-y-auto rounded-token border border-line p-2">
               {learners.isPending ? (
                 <Skeleton className="h-20 w-full" />
+              ) : optionsRefused ? (
+                <p className="text-body text-crit">{t('groups.assignments.form.optionsRefused')}</p>
               ) : (learners.data ?? []).length === 0 ? (
                 <p className="text-body text-ink-dim">{t('groups.assignments.form.noLearners')}</p>
               ) : (

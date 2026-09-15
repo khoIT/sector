@@ -313,6 +313,13 @@
         "completed": "Terminé",
         "cancelled": "Annulé"
       },
+      "lifecycle": {
+        "not_started": "Non commencé",
+        "in_progress": "En cours",
+        "overdue": "En retard",
+        "completed": "Terminé"
+      },
+      "lifecycleCount": "{{count}} {{label}}",
       "form": {
         "trigger": "Nouveau devoir",
         "title": "Assigner un cours",
@@ -322,6 +329,7 @@
         "dueDateLabel": "Échéance",
         "learnersLabel": "Apprenants",
         "noLearners": "Ce groupe n'a pas encore d'apprenants actifs.",
+        "optionsRefused": "Seul un responsable de ce groupe peut y créer des devoirs.",
         "courseRequired": "Choisissez un cours.",
         "learnersRequired": "Choisissez au moins un apprenant.",
         "error": "Ce devoir n'a pas pu être créé.",

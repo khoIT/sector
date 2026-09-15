@@ -337,5 +337,6 @@ describe('every persisted name is accounted for', () => {
     const unused = [...declaredNames].filter((name) => !found.has(name));
 
     expect(unused).toEqual([]);
-  });
+    // Third reader of the same three source trees; same timeout reasoning.
+  }, 30_000);
 });

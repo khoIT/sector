@@ -313,6 +313,13 @@
         "completed": "Completato",
         "cancelled": "Annullato"
       },
+      "lifecycle": {
+        "not_started": "Non iniziato",
+        "in_progress": "In corso",
+        "overdue": "In ritardo",
+        "completed": "Completato"
+      },
+      "lifecycleCount": "{{count}} {{label}}",
       "form": {
         "trigger": "Nuovo compito",
         "title": "Assegna un corso",
@@ -322,6 +329,7 @@
         "dueDateLabel": "Scadenza",
         "learnersLabel": "Discenti",
         "noLearners": "Questo gruppo non ha ancora discenti attivi.",
+        "optionsRefused": "Solo un responsabile di questo gruppo può creare assegnazioni al suo interno.",
         "courseRequired": "Scegli un corso.",
         "learnersRequired": "Scegli almeno un discente.",
         "error": "Impossibile creare questo compito.",

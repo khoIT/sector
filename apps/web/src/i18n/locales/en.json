@@ -389,6 +389,13 @@
         "completed": "Completed",
         "cancelled": "Cancelled"
       },
+      "lifecycle": {
+        "not_started": "Not started",
+        "in_progress": "In progress",
+        "overdue": "Overdue",
+        "completed": "Completed"
+      },
+      "lifecycleCount": "{{count}} {{label}}",
       "form": {
         "trigger": "New assignment",
         "title": "Assign a course",
@@ -398,6 +405,7 @@
         "dueDateLabel": "Due date",
         "learnersLabel": "Learners",
         "noLearners": "This group has no active learners yet.",
+        "optionsRefused": "Only a leader of this group can create assignments for it.",
         "courseRequired": "Choose a course.",
         "learnersRequired": "Choose at least one learner.",
         "error": "This assignment could not be created.",

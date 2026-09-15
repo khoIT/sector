@@ -313,6 +313,13 @@
         "completed": "Abgeschlossen",
         "cancelled": "Storniert"
       },
+      "lifecycle": {
+        "not_started": "Nicht begonnen",
+        "in_progress": "In Bearbeitung",
+        "overdue": "Überfällig",
+        "completed": "Abgeschlossen"
+      },
+      "lifecycleCount": "{{count}} {{label}}",
       "form": {
         "trigger": "Neue Aufgabe",
         "title": "Kurs zuweisen",
@@ -322,6 +329,7 @@
         "dueDateLabel": "Fälligkeitsdatum",
         "learnersLabel": "Lernende",
         "noLearners": "Diese Gruppe hat noch keine aktiven Lernenden.",
+        "optionsRefused": "Nur eine Leitung dieser Gruppe kann Aufgaben dafür erstellen.",
         "courseRequired": "Bitte einen Kurs auswählen.",
         "learnersRequired": "Mindestens eine lernende Person auswählen.",
         "error": "Diese Aufgabe konnte nicht erstellt werden.",
