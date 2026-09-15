@@ -73,9 +73,10 @@ export async function exportGroupCourseData(
 export async function getGroupScanReportJson(
   client: ApiClient,
   groupId: string,
+  courseId?: string,
 ): Promise<GroupScanReportEntry[]> {
   return client.get(`/api/groups/manage/report/${groupId}`, {
-    query: { type: 'json' },
+    query: { type: 'json', ...(courseId ? { courseId } : {}) },
     schema: z.array(groupScanReportEntrySchema),
   });
 }
@@ -86,9 +87,13 @@ export async function getGroupScanReportJson(
  * with commas server-side (`getGroupReport`'s csv branch), so there is
  * nothing structural to validate beyond "this is a string".
  */
-export async function getGroupScanReportCsv(client: ApiClient, groupId: string): Promise<string> {
+export async function getGroupScanReportCsv(
+  client: ApiClient,
+  groupId: string,
+  courseId?: string,
+): Promise<string> {
   return client.get(`/api/groups/manage/report/${groupId}`, {
-    query: { type: 'csv' },
+    query: { type: 'csv', ...(courseId ? { courseId } : {}) },
     schema: z.string(),
   });
 }

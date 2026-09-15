@@ -458,6 +458,25 @@
       },
       "decodeError": "The export downloaded but could not be opened. Try again."
     },
+    "report": {
+      "title": "Course completion",
+      "description": "Who has done what, and who has fallen behind.",
+      "courseFilter": "Filter by course",
+      "allCourses": "All courses",
+      "neverActive": "Never",
+      "column": {
+        "learner": "Learner",
+        "course": "Course",
+        "completion": "Complete",
+        "steps": "Steps",
+        "lastActive": "Last active",
+        "overdue": "Overdue"
+      },
+      "empty": {
+        "group": "No active members in this group yet",
+        "course": "No one has started this course yet"
+      }
+    },
     "settings": {
       "detailsTitle": "Group details",
       "detailsDescription": "Name, slug, description, type, seats and expiration.",

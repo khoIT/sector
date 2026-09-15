@@ -382,6 +382,25 @@
       },
       "decodeError": "A exportação foi transferida mas não foi possível abri-la. Tente novamente."
     },
+    "report": {
+      "title": "Conclusão do curso",
+      "description": "Quem fez o quê e quem ficou para trás.",
+      "courseFilter": "Filtrar por curso",
+      "allCourses": "Todos os cursos",
+      "neverActive": "Nunca",
+      "column": {
+        "learner": "Formando",
+        "course": "Curso",
+        "completion": "Concluído",
+        "steps": "Passos",
+        "lastActive": "Última atividade",
+        "overdue": "Em atraso"
+      },
+      "empty": {
+        "group": "Ainda não há membros ativos neste grupo",
+        "course": "Ainda ninguém começou este curso"
+      }
+    },
     "settings": {
       "detailsTitle": "Detalhes do grupo",
       "detailsDescription": "Nome, slug, descrição, tipo, vagas e expiração.",

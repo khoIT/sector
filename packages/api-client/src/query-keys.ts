@@ -96,6 +96,9 @@ export const groupKeys = {
   /** Prefix for every page of one group's member list. */
   membersRoot: (groupId: string) => ['get-group-members', groupId] as const,
   members: (groupId: string, params: unknown) => ['get-group-members', groupId, params] as const,
+  /** The per-learner completion report, optionally narrowed to one course. */
+  progressReport: (groupId: string, courseId: string | undefined) =>
+    ['get-group-progress-report', groupId, courseId ?? null] as const,
   /** One group's course roster (`/api/groups/manage/course/:groupId`). */
   coursesRoot: (groupId: string) => ['get-group-courses', groupId] as const,
   courses: (groupId: string, params: unknown) => ['get-group-courses', groupId, params] as const,

@@ -408,3 +408,24 @@ So all three of this phase's deliverables are now blocked or empty:
 Recommendation: drop chapters from the phase rather than schedule it, and treat
 Phase 6 as fully blocked rather than partly startable. If chapters are wanted,
 they are a content-authoring request to GUSI first, not engineering work.
+
+## Decision — 2026-09-15: chapters dropped, phase held
+
+The recommendation above is accepted. Chapters leave this phase entirely: with
+0 chapter markers across every readable video, the rail would render empty on
+every topic in the library. Restoring it is a content-authoring request to GUSI,
+not engineering work, and it should be re-opened only once someone has authored
+chapters on real videos.
+
+That leaves Transcript and Notes, both gated on decisions nobody has taken:
+
+| Slice | Gate | Who |
+| --- | --- | --- |
+| Transcript | Widen the Vimeo seat, then re-measure. 59% English-track coverage on a Contributor seat; 128 videos are readable in public but not shared with it | GUSI Vimeo owner |
+| Notes | Its own go/no-go — what observable would show this was worth building | Plan owner |
+| Chapters | **Dropped** | — |
+
+The phase stays **Pending** with no startable slice. Phase 5's tab strip
+(requirements 3 and 6) stays unbuilt for the same reason: the strip exists to
+hold Transcript and Notes, and a strip with one Overview tab is scaffolding with
+no reader.

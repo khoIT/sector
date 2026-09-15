@@ -382,6 +382,25 @@
       },
       "decodeError": "La exportación se descargó pero no se pudo abrir. Inténtalo de nuevo."
     },
+    "report": {
+      "title": "Finalización del curso",
+      "description": "Quién ha hecho qué y quién se ha quedado atrás.",
+      "courseFilter": "Filtrar por curso",
+      "allCourses": "Todos los cursos",
+      "neverActive": "Nunca",
+      "column": {
+        "learner": "Estudiante",
+        "course": "Curso",
+        "completion": "Completado",
+        "steps": "Pasos",
+        "lastActive": "Última actividad",
+        "overdue": "Atrasado"
+      },
+      "empty": {
+        "group": "Aún no hay miembros activos en este grupo",
+        "course": "Nadie ha empezado este curso todavía"
+      }
+    },
     "settings": {
       "detailsTitle": "Detalles del grupo",
       "detailsDescription": "Nombre, slug, descripción, tipo, plazas y vencimiento.",

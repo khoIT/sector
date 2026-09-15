@@ -22,6 +22,7 @@ import { useParams } from 'react-router-dom';
 import { errorMessage } from '@/lib/error-message';
 
 import { GroupDetailTabs } from '../group-detail-tabs';
+import { GroupProgressTable } from '../report/group-progress-table';
 import { useGroupDetailTitle } from '../use-group-detail-title';
 import { downloadExportFile, downloadTextFile } from './download-export-file';
 
@@ -114,6 +115,19 @@ export function GroupExportsPanel() {
       <GroupDetailTabs groupId={groupId} active="exports" />
 
       <div className="flex flex-col gap-4">
+        {/* The report reads on screen before it is downloaded: a leader
+            chasing one learner should not have to open a spreadsheet. It
+            calls the same route the download cards below call. */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('groups.report.title')}</CardTitle>
+            <CardDescription>{t('groups.report.description')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <GroupProgressTable groupId={groupId ?? ''} />
+          </CardContent>
+        </Card>
+
         <ExportCard
           title={t('groups.exports.scans.title')}
           description={t('groups.exports.scans.description')}

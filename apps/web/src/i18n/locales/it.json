@@ -382,6 +382,25 @@
       },
       "decodeError": "L’export è stato scaricato ma non è stato possibile aprirlo. Riprova."
     },
+    "report": {
+      "title": "Completamento del corso",
+      "description": "Chi ha fatto cosa e chi è rimasto indietro.",
+      "courseFilter": "Filtra per corso",
+      "allCourses": "Tutti i corsi",
+      "neverActive": "Mai",
+      "column": {
+        "learner": "Studente",
+        "course": "Corso",
+        "completion": "Completato",
+        "steps": "Passaggi",
+        "lastActive": "Ultima attività",
+        "overdue": "In ritardo"
+      },
+      "empty": {
+        "group": "Nessun membro attivo in questo gruppo",
+        "course": "Nessuno ha ancora iniziato questo corso"
+      }
+    },
     "settings": {
       "detailsTitle": "Dettagli del gruppo",
       "detailsDescription": "Nome, slug, descrizione, tipo, posti e scadenza.",

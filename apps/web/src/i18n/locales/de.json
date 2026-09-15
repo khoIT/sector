@@ -382,6 +382,25 @@
       },
       "decodeError": "Der Export wurde geladen, konnte aber nicht geöffnet werden. Bitte erneut versuchen."
     },
+    "report": {
+      "title": "Kursabschluss",
+      "description": "Wer was erledigt hat und wer zurückliegt.",
+      "courseFilter": "Nach Kurs filtern",
+      "allCourses": "Alle Kurse",
+      "neverActive": "Nie",
+      "column": {
+        "learner": "Lernende:r",
+        "course": "Kurs",
+        "completion": "Abgeschlossen",
+        "steps": "Schritte",
+        "lastActive": "Zuletzt aktiv",
+        "overdue": "Überfällig"
+      },
+      "empty": {
+        "group": "Noch keine aktiven Mitglieder in dieser Gruppe",
+        "course": "Noch niemand hat diesen Kurs begonnen"
+      }
+    },
     "settings": {
       "detailsTitle": "Gruppendetails",
       "detailsDescription": "Name, Slug, Beschreibung, Typ, Plätze und Ablaufdatum.",

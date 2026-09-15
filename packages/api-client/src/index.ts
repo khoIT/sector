@@ -773,6 +773,7 @@ export {
   useExportGroupCourseProgressMutation,
   useExportGroupScansMutation,
   useExportGroupUserScansMutation,
+  useGroupProgressReport,
   useGroupScanReportDownload,
 } from './react/use-group-export';
 export { exportFileToBlob } from './export-download';

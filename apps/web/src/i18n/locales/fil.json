@@ -382,6 +382,25 @@
       },
       "decodeError": "Na-download ang export ngunit hindi ito nabuksan. Subukan muli."
     },
+    "report": {
+      "title": "Pagtatapos ng kurso",
+      "description": "Sino ang nakatapos at sino ang naiwan.",
+      "courseFilter": "Salain ayon sa kurso",
+      "allCourses": "Lahat ng kurso",
+      "neverActive": "Hindi kailanman",
+      "column": {
+        "learner": "Mag-aaral",
+        "course": "Kurso",
+        "completion": "Tapos",
+        "steps": "Hakbang",
+        "lastActive": "Huling aktibo",
+        "overdue": "Lampas na sa takda"
+      },
+      "empty": {
+        "group": "Wala pang aktibong miyembro sa grupong ito",
+        "course": "Wala pang nagsisimula sa kursong ito"
+      }
+    },
     "settings": {
       "detailsTitle": "Detalye ng grupo",
       "detailsDescription": "Pangalan, slug, paglalarawan, uri, upuan at petsa ng pag-expire.",

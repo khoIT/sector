@@ -382,6 +382,25 @@
       },
       "decodeError": "L’export a été téléchargé mais n’a pas pu être ouvert. Réessayez."
     },
+    "report": {
+      "title": "Achèvement du cours",
+      "description": "Qui a fait quoi, et qui a pris du retard.",
+      "courseFilter": "Filtrer par cours",
+      "allCourses": "Tous les cours",
+      "neverActive": "Jamais",
+      "column": {
+        "learner": "Apprenant",
+        "course": "Cours",
+        "completion": "Terminé",
+        "steps": "Étapes",
+        "lastActive": "Dernière activité",
+        "overdue": "En retard"
+      },
+      "empty": {
+        "group": "Aucun membre actif dans ce groupe",
+        "course": "Personne n'a encore commencé ce cours"
+      }
+    },
     "settings": {
       "detailsTitle": "Détails du groupe",
       "detailsDescription": "Nom, slug, description, type, places et expiration.",

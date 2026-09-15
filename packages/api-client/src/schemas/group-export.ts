@@ -54,6 +54,24 @@ export const groupScanReportEntrySchema = z.object({
   'Completed Steps': z.string(),
   'Completion Date': z.string(),
   'Completion Percentage': z.string(),
+  /**
+   * When this learner last opened the course. Null — not absent — for a
+   * learner with no progress document at all, who still gets a row: an
+   * omitted row is how a leader concludes a learner is not in the group.
+   */
+  lastAccessedAt: z.string().nullable(),
+  /**
+   * How much this learner has been ASSIGNED in the group, which is a
+   * different question from how far they are through this course. `overdue`
+   * counts only assignments still owed, using the same definition of "open"
+   * as the reminder job, so a learner's chasing emails and their leader's
+   * report cannot disagree about what is late.
+   */
+  assignments: z.object({
+    total: z.number(),
+    completed: z.number(),
+    overdue: z.number(),
+  }),
 });
 
 export type GroupScanReportEntry = z.infer<typeof groupScanReportEntrySchema>;
