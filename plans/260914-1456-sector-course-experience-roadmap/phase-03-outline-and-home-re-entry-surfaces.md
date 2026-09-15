@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: "Outline and home re-entry surfaces"
-status: pending
+status: completed
 priority: P1
 effort: "6 days"
 dependencies: [2]
@@ -341,3 +341,62 @@ the DOM.
 - Legacy S3 thumbnails are public, unsigned, https URLs. Render them; do not proxy them, and
   do not assume they will keep resolving after the bucket is retired — the fallback chain
   ends at "no image", which is the correct terminal state.
+
+## Outcome — 2026-09-15
+
+Shipped. Gates at the head: typecheck 0, lint 0, **1,283 tests** (927 web, 133 ui, 223
+api-client), **35/35 routes healthy on a cold load with 0 console errors**.
+
+**Two steps were changed by measurement, both against the plan as written.**
+
+**Step 8's thumbnail fallback was dropped.** The plan's precedence was
+`child.imageUrl` → the lesson's own `imageUrl` → no image. The lesson image is real —
+`GET /api/lms/courses/:courseId/lessons/:lessonId` sends one — but it is a *single*
+presigned URL shared by every child, and `generateLessonImageUrl` never returns null: a
+lesson with no image of its own gets a generic default photo. So the fallback would paint a
+grid of identical, often unrelated pictures. Measured against it: 843 of 894 video topics
+(94%) carry a real thumbnail of their own, so the gap being papered over is small. The
+precedence is now `child.imageUrl` → no image, and only an `https://` poster is used, so a
+mixed-content URL shows the kind icon instead of a broken-image box.
+
+**Step 9's wholesale replacement would have deleted teaching content.** The plan said the
+module page renders *instead of* the authored body. Measured over all 606 non-deleted
+lessons, discounting text inside links:
+
+| Body | Lessons |
+| --- | --- |
+| Under 100 non-link characters — a navigation table, nothing more | 399 |
+| Real teaching prose (scanning technique, probe selection, series overviews; up to 2,192 chars) | 207 |
+
+Replacing every body would have removed instructional text from a third of the library.
+`lesson-body.ts` splits the two populations on one threshold — they barely overlap in
+length, so no tuning is involved — and the body renders when it teaches something and is
+suppressed when it is only a worse copy of the list printed underneath it.
+
+**Step 7(a) taken.** All 1,060 absolute links to the app's own host in lesson, topic and
+question bodies are `scanhub.upscan.com/dashboard/*` — one host, one path prefix, measured.
+They are rewritten to relative paths and stay in this tab; every other absolute link
+(PubMed, WHO, journals) still opens in a new one. The allow-list is a whole-hostname
+comparison, so `scanhub.upscan.com.evil.test` does not match, and there is a test for it.
+
+**A gate was found lying, and tightened.** The lesson route had been reporting healthy while
+its panel sat on a loading placeholder the whole time: the sweep settles on *stable text*,
+and a skeleton's text is perfectly stable, so `needs: "Ultrasound Basics"` was satisfied by
+the breadcrumb alone. The sweep now refuses to settle — or to pass a route — while any
+`.sv-skeleton` is on screen, and the two lesson rows assert something only the panel can
+produce (`echogenicity` from the prose, a child's title from the cards). Re-running the full
+sweep under the stricter rule found no other route in the same state.
+
+**Verified in a browser against real content**, not only in unit tests:
+
+- A lesson with prose and children (`681a4d96acc6f28eaec5e30b`): the body renders, then 10
+  cards — 5 topics with runtimes (`10m`, `7m`, `5m`) and 5 quizzes — with **5 Vimeo
+  thumbnails decoded** (`naturalWidth` 295), every link internal, 0 errors.
+- A lesson whose body is only a link table (`681a4d9eacc6f28eaec5e337`): no prose, **12
+  cards**, 6 thumbnails decoded, 0 errors.
+
+**Also fixed, not mine:** two source-tree-walking tests (`group-assignment.test.ts`,
+`storage-migration.test.ts`) inherited vitest's 5s default and timed out under a
+four-package parallel run — 34.7s vs 1.2s in isolation. The assertions are untouched; they
+now declare a timeout that matches the I/O they actually do. This had produced a false red
+twice.
