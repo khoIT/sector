@@ -1,11 +1,10 @@
-import { isApiError, useCourseOutline } from '@sector/api-client';
-import { Button, EmptyState, Skeleton } from '@sector/ui';
-import { ChevronLeft, CircleCheck, TriangleAlert } from 'lucide-react';
+import { Button, EmptyState } from '@sector/ui';
+import { CircleCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import { COURSES_PATH, courseItemPathFor } from '../courses-links';
-import { CourseShellHeader } from '../shell/course-shell-header';
+import { courseItemPathFor } from '../courses-links';
+import { useCourseShell } from '../shell/course-shell-context';
 import { CourseOutlineItemRow } from './course-outline-item-row';
 import {
   groupOutlineItemsForDisplay,
@@ -14,57 +13,18 @@ import {
   resumeActionLabelKey,
 } from './course-outline-model';
 
-/** `my-courses-page.tsx` does not currently carry the course title into
- *  navigation (My Courses links by id, not by `<Link state>`), and the
- *  outline route itself has no title field — `courseId` is all it resolves.
- *  A future link from My Courses can add `state.title` the way
- *  `groups-index-page.tsx` does for a group name; until then the heading
- *  falls back to a generic label rather than a fetch of its own just to
- *  name the page. */
-type OutlineLocationState = { title?: string } | null | undefined;
-
+/**
+ * The course's index route: the full ordered outline, with the resume action
+ * at the top.
+ *
+ * The back link, the progress header and the outline fetch all moved up into
+ * `CourseShell`, which mounts this as a child — so opening an item from here
+ * swaps this list for the item view and leaves the chrome standing.
+ */
 export function CourseOutlinePage() {
   const { t } = useTranslation();
-  const { courseId = '' } = useParams<{ courseId: string }>();
-  const location = useLocation();
-  const title = (location.state as OutlineLocationState)?.title;
+  const { courseId, courseTitle, outline } = useCourseShell();
 
-  const query = useCourseOutline({ courseId });
-
-  if (query.isPending) {
-    return (
-      <section aria-label={t('courses.outline.title')}>
-        <BackLink />
-        <Skeleton className="mb-4 h-6 w-2/3" />
-        <div className="flex flex-col gap-2">
-          {Array.from({ length: 8 }, (_, index) => (
-            <Skeleton key={index} className="h-10 w-full rounded-token" />
-          ))}
-        </div>
-      </section>
-    );
-  }
-
-  if (query.isError) {
-    return (
-      <section aria-label={t('courses.outline.title')}>
-        <BackLink />
-        <EmptyState
-          tone="crit"
-          icon={<TriangleAlert className="h-5 w-5" aria-hidden />}
-          title={t('courses.outline.error.title')}
-          description={isApiError(query.error) ? query.error.message : undefined}
-          action={
-            <Button variant="secondary" size="sm" onClick={() => void query.refetch()}>
-              {t('courses.outline.error.retry')}
-            </Button>
-          }
-        />
-      </section>
-    );
-  }
-
-  const outline = query.data;
   const groups = groupOutlineItemsForDisplay(outline.items);
   const resumeItem = resolveResumeTarget(outline.items, outline.resume?.itemId ?? null);
   // Completion is something the outline REPORTS, not something the absence of
@@ -74,13 +34,10 @@ export function CourseOutlinePage() {
   const isComplete = isOutlineComplete(outline);
 
   return (
-    <section aria-label={t('courses.outline.title')}>
-      <BackLink />
-      <CourseShellHeader courseTitle={title} outline={outline} />
-
+    <>
       {resumeItem ? (
         <Button asChild className="mb-4">
-          <Link to={courseItemPathFor(courseId, resumeItem.id)} state={{ title }}>
+          <Link to={courseItemPathFor(courseId, resumeItem.id)} state={{ title: courseTitle }}>
             {t(resumeActionLabelKey(resumeItem.status), { title: resumeItem.title })}
           </Link>
         </Button>
@@ -99,7 +56,7 @@ export function CourseOutlinePage() {
             <li key={group.header.id} className="flex flex-col gap-1.5">
               <CourseOutlineItemRow
                 courseId={courseId}
-                courseTitle={title}
+                courseTitle={courseTitle}
                 item={group.header}
                 indent={false}
                 isResumeTarget={group.header.id === resumeItem?.id}
@@ -110,7 +67,7 @@ export function CourseOutlinePage() {
                     <li key={child.id}>
                       <CourseOutlineItemRow
                         courseId={courseId}
-                        courseTitle={title}
+                        courseTitle={courseTitle}
                         item={child}
                         indent
                         isResumeTarget={child.id === resumeItem?.id}
@@ -123,19 +80,6 @@ export function CourseOutlinePage() {
           ))}
         </ol>
       )}
-    </section>
-  );
-}
-
-function BackLink() {
-  const { t } = useTranslation();
-  return (
-    <Link
-      to={COURSES_PATH}
-      className="mb-2 inline-flex items-center gap-1 text-body text-accent-ink outline-none hover:underline focus-visible:ring-2 focus-visible:ring-accent-ink"
-    >
-      <ChevronLeft className="h-3.5 w-3.5" aria-hidden />
-      {t('courses.outline.backToCourses')}
-    </Link>
+    </>
   );
 }

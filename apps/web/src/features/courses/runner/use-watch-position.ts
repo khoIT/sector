@@ -2,6 +2,7 @@ import { courseKeys, trackItemPosition, useApiClient } from '@sector/api-client'
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef } from 'react';
 
+import { patchItemPosition } from '../shell/patch-item-position';
 import {
   clampPosition,
   initialWatchWriteState,
@@ -58,6 +59,16 @@ export function useWatchPosition(
       void trackItemPosition(client, courseId, itemId, { positionSeconds }, { keepalive })
         .then((result) => {
           inFlightRef.current = false;
+          // Patch the cached outline in place rather than invalidating it.
+          // The shell holds one outline for the whole course visit and does
+          // not remount between items, so without this an A -> B -> A round
+          // trip inside the shell resumes A from a stale playhead. A blanket
+          // invalidate on every twelve-second tick would undo the write-volume
+          // work this throttle exists for.
+          queryClient.setQueryData(
+            courseKeys.outline(courseId),
+            patchItemPosition(itemId, positionSeconds),
+          );
           // A completion reached from the player, not from a `/track` ping:
           // the sidebar's tick and the progress bar both read the outline.
           if (result?.completed) {

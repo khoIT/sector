@@ -42,3 +42,8 @@ export const COURSE_ADMIN_ROUTE_PATH = 'learn/course-progress/:learnerId/:course
 export function courseAdminPathFor(learnerId: string, courseId: string): string {
   return `/learn/course-progress/${learnerId}/${courseId}`;
 }
+
+/** The item route as a CHILD of `COURSE_OUTLINE_ROUTE_PATH`, which is where
+ *  it is now mounted. Joined with its parent it still resolves to
+ *  `COURSE_ITEM_ROUTE_PATH`, the URL `legacy-route-map.ts` redirects to. */
+export const COURSE_ITEM_CHILD_ROUTE_PATH = ':itemId';

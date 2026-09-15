@@ -3,7 +3,7 @@ import type { RouteObject } from 'react-router-dom';
 
 import {
   COURSE_ADMIN_ROUTE_PATH,
-  COURSE_ITEM_ROUTE_PATH,
+  COURSE_ITEM_CHILD_ROUTE_PATH,
   COURSE_OUTLINE_ROUTE_PATH,
   COURSES_INDEX_ROUTE_PATH,
 } from './courses-links';
@@ -29,8 +29,11 @@ const MyCoursesPage = lazy(() =>
 const CourseOutlinePage = lazy(() =>
   import('./outline/course-outline-page').then((module) => ({ default: module.CourseOutlinePage })),
 );
-const CourseRunnerPage = lazy(() =>
-  import('./runner/course-runner-page').then((module) => ({ default: module.CourseRunnerPage })),
+const CourseShell = lazy(() =>
+  import('./shell/course-shell').then((module) => ({ default: module.CourseShell })),
+);
+const CourseItemRoute = lazy(() =>
+  import('./shell/course-item-route').then((module) => ({ default: module.CourseItemRoute })),
 );
 const CourseReadOnlyAdminPage = lazy(() =>
   import('./admin/course-read-only').then((module) => ({
@@ -40,7 +43,17 @@ const CourseReadOnlyAdminPage = lazy(() =>
 
 export const coursesRoutes: RouteObject[] = [
   { path: COURSES_INDEX_ROUTE_PATH, element: <MyCoursesPage /> },
-  { path: COURSE_OUTLINE_ROUTE_PATH, element: <CourseOutlinePage /> },
-  { path: COURSE_ITEM_ROUTE_PATH, element: <CourseRunnerPage /> },
+  // One layout route owns the outline query and the course chrome; the
+  // outline page and the item views are its children, so moving between two
+  // items never unmounts the contents pane. `COURSE_ITEM_ROUTE_PATH` is still
+  // the URL this resolves to — the child path is the same last segment.
+  {
+    path: COURSE_OUTLINE_ROUTE_PATH,
+    element: <CourseShell />,
+    children: [
+      { index: true, element: <CourseOutlinePage /> },
+      { path: COURSE_ITEM_CHILD_ROUTE_PATH, element: <CourseItemRoute /> },
+    ],
+  },
   { path: COURSE_ADMIN_ROUTE_PATH, element: <CourseReadOnlyAdminPage /> },
 ];
