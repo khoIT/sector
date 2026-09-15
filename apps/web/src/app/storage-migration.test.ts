@@ -318,7 +318,8 @@ describe('every persisted name is accounted for', () => {
 
     expect(found.get('sector.session')).toEqual(['packages/api-client/src/session-store.ts']);
     expect(found.size).toBeGreaterThanOrEqual(declaredNames.size);
-  });
+    // Reads three package source trees; see the timeout note below.
+  }, 30_000);
 
   it('has a migration entry for each one', () => {
     const undeclared = [...persistedNamesInSource()]
@@ -326,7 +327,10 @@ describe('every persisted name is accounted for', () => {
       .map(([name, files]) => `${name} (${files.join(', ')})`);
 
     expect(undeclared).toEqual([]);
-  });
+    // Reads three package source trees. ~0.5s alone, but this suite runs
+    // alongside three other packages and the default 5s times out on a busy
+    // machine — which fails the gate for load, not for a real defect.
+  }, 30_000);
 
   it('declares nothing the app has stopped using', () => {
     const found = persistedNamesInSource();

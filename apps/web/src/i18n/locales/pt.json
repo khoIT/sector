@@ -554,6 +554,12 @@
         "bestPercentage": "Melhor: {{percent}}%"
       }
     },
+    "module": {
+      "empty": {
+        "title": "Esta lição ainda não tem tópicos ou questionários",
+        "description": "Nada foi publicado abaixo dela. Use a estrutura do curso para continuar."
+      }
+    },
     "runner": {
       "courseProgress": "{{percent}}% concluído",
       "sidebar": {

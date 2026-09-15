@@ -630,6 +630,12 @@
         "bestPercentage": "Best: {{percent}}%"
       }
     },
+    "module": {
+      "empty": {
+        "title": "This lesson has no topics or quizzes yet",
+        "description": "Nothing has been published under it. Use the course outline to move on."
+      }
+    },
     "runner": {
       "courseProgress": "{{percent}}% complete",
       "sidebar": {

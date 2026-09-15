@@ -68,6 +68,16 @@ import createDOMPurify, { type WindowLike } from 'dompurify';
  *     GUSI. A relative link (the nested-table fixture links back into
  *     `/dashboard/...`) is left alone — it is internal navigation, not an
  *     external hop, and does not need a new tab.
+ *   - EXCEPT a link back to this product's own former hostname, which is
+ *     rewritten to a relative path first and then treated as internal.
+ *     Authored bodies carry 1,060 such links (measured across every
+ *     non-deleted lesson, topic and question body), and every one of them is
+ *     `scanhub.upscan.com/dashboard/...` — a page this app serves. Left
+ *     absolute they are "external", so they open a new tab on a host that is
+ *     being retired and the router never sees the click; rewritten, they
+ *     resolve through `app/legacy-route-map.ts` like any other legacy URL.
+ *     The match is on the WHOLE hostname against a one-entry allow-list, so
+ *     `scanhub.upscan.com.evil.test` is not this host and does not qualify.
  *   - `javascript:` (and every other unsafe) URL scheme never reaches an
  *     attribute in the first place: DOMPurify's own default
  *     `ALLOWED_URI_REGEXP` only accepts a fixed set of safe schemes for
@@ -147,6 +157,34 @@ const ALLOWED_EMBED_HOSTS = new Set([
   'www.youtube-nocookie.com',
 ]);
 
+/**
+ * This product's own former hostname. A link to it is internal navigation
+ * wearing an absolute URL, not an external hop.
+ *
+ * One entry, matched on the entire hostname. Every absolute link to it in the
+ * content is under `/dashboard/`, which `app/legacy-route-map.ts` already
+ * routes; a path outside that prefix would land on this app's own
+ * "page not found", which is still this product rather than a dead host.
+ */
+const LEGACY_APP_HOSTS = new Set(['scanhub.upscan.com']);
+
+/**
+ * The relative path for a link back to this app, or null if the href points
+ * anywhere else. Query and fragment are preserved — a legacy deep link can
+ * carry both.
+ */
+function internalPathFor(href: string): string | null {
+  const value = href.trim();
+  if (!isExternalHref(value)) return null;
+  try {
+    const url = new URL(value);
+    if (!LEGACY_APP_HOSTS.has(url.hostname.toLowerCase())) return null;
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return null;
+  }
+}
+
 /** `https://…` only. Relative, `http://`, `data:` and protocol-relative all fail. */
 function isHttpsUrl(value: string): boolean {
   return /^https:\/\//i.test(value.trim());
@@ -201,6 +239,15 @@ function purifyFor(window: WindowLike): ReturnType<typeof createDOMPurify> {
 
     if (node.tagName === 'A') {
       const href = node.getAttribute('href');
+      // An absolute link back to this app becomes relative BEFORE the
+      // external test below, so it keeps the router instead of a new tab.
+      const internalPath = href ? internalPathFor(href) : null;
+      if (internalPath) {
+        node.setAttribute('href', internalPath);
+        node.removeAttribute('target');
+        node.removeAttribute('rel');
+        return;
+      }
       if (href && isExternalHref(href)) {
         node.setAttribute('target', '_blank');
         node.setAttribute('rel', 'noopener noreferrer');

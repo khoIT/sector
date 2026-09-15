@@ -182,3 +182,60 @@ describe('sanitizeRichText edge cases', () => {
     expect(sanitize(html)).toBe(html);
   });
 });
+
+/**
+ * Authored bodies carry 1,060 absolute links back to this product's own
+ * former hostname — every one of them under `/dashboard/`. Left as external
+ * links they open a retired host in a new tab and the router never sees the
+ * click, which is the whole reason lesson bodies stopped being the module
+ * page's navigation.
+ */
+describe('sanitizeRichText on links back to this app', () => {
+  it('rewrites an absolute link to the old host into a relative path', () => {
+    const clean = sanitize(
+      '<p><a href="https://scanhub.upscan.com/dashboard/my-courses/681a4b63">Course</a></p>',
+    );
+
+    expect(clean).toContain('href="/dashboard/my-courses/681a4b63"');
+    expect(clean).not.toContain('scanhub.upscan.com');
+  });
+
+  it('leaves a rewritten link in this tab', () => {
+    const clean = sanitize('<a href="https://scanhub.upscan.com/dashboard/account">Account</a>');
+
+    expect(clean).not.toContain('_blank');
+    expect(clean).not.toContain('rel=');
+  });
+
+  it('keeps the query string and fragment of a legacy deep link', () => {
+    const clean = sanitize(
+      '<a href="https://scanhub.upscan.com/dashboard/scans?filter=mine#results">Scans</a>',
+    );
+
+    expect(clean).toContain('href="/dashboard/scans?filter=mine#results"');
+  });
+
+  it('is not fooled by a hostname that merely starts with the real one', () => {
+    const clean = sanitize(
+      '<a href="https://scanhub.upscan.com.evil.test/dashboard/account">Account</a>',
+    );
+
+    // Still absolute, still treated as what it is: somewhere else entirely.
+    expect(clean).toContain('href="https://scanhub.upscan.com.evil.test/dashboard/account"');
+    expect(clean).toContain('_blank');
+  });
+
+  it('still sends a genuinely external link to a new tab', () => {
+    const clean = sanitize('<a href="https://pubmed.ncbi.nlm.nih.gov/12345678/">Reference</a>');
+
+    expect(clean).toMatch(/href="https:\/\/pubmed\.ncbi\.nlm\.nih\.gov\/12345678\/"/);
+    expect(clean).toContain('_blank');
+    expect(clean).toContain('rel="noopener noreferrer"');
+  });
+
+  it('leaves an already-relative link alone', () => {
+    const clean = sanitize('<a href="/learn/courses">My Courses</a>');
+
+    expect(clean).toBe('<a href="/learn/courses">My Courses</a>');
+  });
+});

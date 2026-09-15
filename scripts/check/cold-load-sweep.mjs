@@ -126,19 +126,30 @@ for (const { path, role, needs } of routes) {
     // machine, or it reports a route as broken when it was only slow — which
     // is exactly what a fixed 5.5s did to the course runner under load. This
     // returns as soon as the text stops growing, so quick routes stay quick.
+    //
+    // Stable text is NOT the same as a finished page. A panel showing a
+    // loading placeholder has stable text for as long as it is loading, so a
+    // route whose header satisfies `needs` could settle and pass while the
+    // panel under it had never rendered — which is exactly how a lesson page
+    // reported healthy for a whole phase with its body still on a skeleton.
+    // So a placeholder on screen means not settled, and not healthy either.
     const read = () =>
-      page.evaluate(() =>
-        ((document.querySelector('main') ?? document.body).innerText || '')
+      page.evaluate(() => ({
+        text: ((document.querySelector('main') ?? document.body).innerText || '')
           .replace(/\s+/g, ' ')
           .trim(),
-      );
+        pending: document.querySelectorAll('.sv-skeleton').length,
+      }));
     let settled = '';
     for (let i = 0; i < 24; i += 1) {
       await page.waitForTimeout(1000);
       const now = await read();
       const ready =
-        now.length > 40 && now === settled && (!needs || new RegExp(needs, 'i').test(now));
-      settled = now;
+        now.text.length > 40 &&
+        now.pending === 0 &&
+        now.text === settled &&
+        (!needs || new RegExp(needs, 'i').test(now.text));
+      settled = now.text;
       if (ready) break;
     }
     const seen = await page.evaluate(() => {
@@ -153,6 +164,7 @@ for (const { path, role, needs } of routes) {
         head: text.slice(0, 70),
         text,
         rows: document.querySelectorAll('table tbody tr').length,
+        pending: document.querySelectorAll('.sv-skeleton').length,
         url: location.pathname,
       };
     });
@@ -161,13 +173,17 @@ for (const { path, role, needs } of routes) {
     // happened to render a table row, which let a page satisfy its own
     // assertion by rendering anything at all.
     const ok =
-      seen.chars > 40 && errors.length === 0 && (!needs || new RegExp(needs, 'i').test(seen.text));
+      seen.chars > 40 &&
+      seen.pending === 0 &&
+      errors.length === 0 &&
+      (!needs || new RegExp(needs, 'i').test(seen.text));
     rows.push({
       path,
       role: role ?? 'anon',
       landed: seen.url,
       chars: seen.chars,
       rows: seen.rows,
+      pending: seen.pending,
       ok,
       head: seen.head,
       errors: errors.slice(0, 2),
@@ -188,6 +204,7 @@ for (const r of rows) {
   console.log(
     `${r.ok ? 'ok  ' : 'FAIL'} ${String(r.role).padEnd(9)} ${r.path.padEnd(42)} → ${String(r.landed ?? '').padEnd(40)} ${String(r.chars ?? 0).padStart(5)}ch ${String(r.rows ?? 0).padStart(3)}r  ${r.head}`,
   );
+  if (r.pending) console.log(`       ! still loading: ${r.pending} placeholder(s) on screen`);
   if (r.errors?.length) r.errors.forEach((e) => console.log(`       ! ${e}`));
 }
 console.log(`\n${rows.filter((r) => r.ok).length}/${rows.length} routes healthy on a cold load`);

@@ -554,6 +554,12 @@
         "bestPercentage": "Pinakamataas: {{percent}}%"
       }
     },
+    "module": {
+      "empty": {
+        "title": "Wala pang mga paksa o pagsusulit ang araling ito",
+        "description": "Wala pang nailathala sa ilalim nito. Gamitin ang Balangkas ng Kurso upang magpatuloy."
+      }
+    },
     "runner": {
       "courseProgress": "{{percent}}% nakumpleto",
       "sidebar": {

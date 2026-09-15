@@ -111,7 +111,14 @@ export function CourseRunnerPage() {
       progress={outline.progress}
       sidebar={<OutlineSidebar courseId={courseId} items={outline.items} currentItemId={item.id} />}
     >
-      {item.kind === 'lesson' ? <LessonView courseId={courseId} item={item} /> : null}
+      {item.kind === 'lesson' ? (
+        <LessonView
+          courseId={courseId}
+          courseTitle={courseTitle}
+          item={item}
+          items={outline.items}
+        />
+      ) : null}
       {item.kind === 'topic' ? <TopicView courseId={courseId} item={item} /> : null}
       {item.kind === 'quiz' ? <QuizView courseId={courseId} item={item} /> : null}
     </CourseLayout>

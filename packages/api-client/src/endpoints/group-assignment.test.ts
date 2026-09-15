@@ -72,5 +72,8 @@ describe('the group-assignment list route', () => {
     );
 
     expect(offenders).toEqual([]);
-  });
+    // Walks every source file in this package. ~1s alone, but the whole
+    // workspace tests in parallel and the default 5s is not enough patience
+    // for the disk contention that causes.
+  }, 30_000);
 });

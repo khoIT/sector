@@ -134,7 +134,12 @@
   {
     "path": "/learn/courses/681a4b63779a0d9e6c9cc55b/681a4d96acc6f28eaec5e30b",
     "role": "learner",
-    "needs": "Ultrasound Basics"
+    "needs": "echogenicity"
+  },
+  {
+    "path": "/learn/courses/681a4b63779a0d9e6c9cc55b/681a4d9eacc6f28eaec5e337",
+    "role": "learner",
+    "needs": "Pediatric FAST Pearls and Pitfalls"
   },
   {
     "path": "/learn/courses/681a4b63779a0d9e6c9cc55b/681a4e2c82414b2fcc5af816",
