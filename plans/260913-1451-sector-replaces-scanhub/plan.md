@@ -1,12 +1,12 @@
 ---
 title: "Sector replaces the ScanHub dashboard"
 description: "Turn ScanVault into Sector — the learner platform that replaces gusi_web_dashboard at :3000, proven against real production data."
-status: pending
+status: in-progress
 priority: P1
-branch: "main"
+branch: "feat/sector"
 tags: [port, rebrand, lms, scan-vault, data-fidelity]
 blockedBy: []
-blocks: []
+blocks: [260914-1456-sector-course-experience-roadmap]
 created: "2026-09-13T08:30:32.895Z"
 createdBy: "ck:plan"
 source: skill
