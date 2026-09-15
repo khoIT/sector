@@ -385,3 +385,26 @@ Manual pass:
   must not add them. A note on a POCUS topic can carry clinical or patient-adjacent detail.
 - The iframe sandbox is unchanged. This phase adds SDK calls over the existing postMessage
   bridge and must not relax `sandbox` or widen `ALLOWED_EMBED_HOSTS`.
+
+## Measured — 2026-09-15: there are no chapters to show
+
+Chapters were this phase's one **ungated** slice. They have no source data.
+
+`GET /videos/{id}/chapters` over a random 60-video sample of the 465 distinct
+Vimeo ids in the course content, using the account token: **22 readable, 0 with
+any chapter marker.** Not "few" — none. The remaining 38 were unreadable to the
+current contributor seat, which is the same seat limit the transcript gate is
+about; widening it would add videos to check but there is no reason yet to
+expect a different answer, since nobody at GUSI has been authoring chapters.
+
+So all three of this phase's deliverables are now blocked or empty:
+
+| Slice | State |
+| --- | --- |
+| Transcript | Gated on the seat — 59% English-track coverage, and the caption link is signed and server-side only |
+| Notes | Gated on its own go/no-go, which the plan owner has not answered |
+| Chapters | **No data.** Building the rail would render an empty rail on every video |
+
+Recommendation: drop chapters from the phase rather than schedule it, and treat
+Phase 6 as fully blocked rather than partly startable. If chapters are wanted,
+they are a content-authoring request to GUSI first, not engineering work.
