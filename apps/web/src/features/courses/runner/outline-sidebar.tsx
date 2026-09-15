@@ -13,6 +13,7 @@ import {
   itemStatusLabelKey,
 } from '../outline/course-outline-model';
 import { formatDurationShort } from '../outline/outline-summary';
+import { isGroupOpen } from './sidebar-groups';
 
 export type OutlineSidebarProps = {
   courseId: string;
@@ -46,7 +47,7 @@ export function OutlineSidebar({ courseId, items, currentItemId }: OutlineSideba
               item={group.header}
               current={currentItemId === group.header.id}
             />
-            {group.children.length > 0 ? (
+            {group.children.length > 0 && isGroupOpen(group, currentItemId) ? (
               <ol className="flex flex-col gap-1.5 pl-3">
                 {group.children.map((child) => (
                   <li key={child.id}>

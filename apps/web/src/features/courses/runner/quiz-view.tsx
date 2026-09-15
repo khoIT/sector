@@ -189,7 +189,6 @@ function QuizRunnerSection({
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-[16px] font-semibold text-ink">{quiz.title}</h2>
       {quiz.content ? <RichText html={quiz.content} /> : null}
 
       {!startable ? (
