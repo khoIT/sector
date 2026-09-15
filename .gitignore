@@ -22,3 +22,6 @@ pnpm-debug.log*
 # any depth: a pattern with an interior slash is anchored to this directory, so
 # the unglobbed form missed the copies written under packages/*/.claude/.
 **/.claude/agent-memory/
+
+# Netlify CLI local state
+.netlify/
