@@ -5,10 +5,11 @@ import { updateGroupMemberRolePayloadSchema } from './group-member-write';
 
 /**
  * Shapes taken from `GET /api/group-assignment/group/:groupId` against the
- * local production mirror, group `68790e75c39d8b562b939d5f`, trimmed to the
- * fields this client models. Extra keys the route really sends (the full
- * `contentId` document, `author`, `contentRefModel`, `userActivityId`) are
- * dropped by the non-strict object, not rejected.
+ * local production mirror, trimmed to the fields this client models. Identities
+ * here are synthetic: never paste a real user's name, email or id into a
+ * fixture. Extra keys the route really sends (the full `contentId` document,
+ * `author`, `contentRefModel`, `userActivityId`) are dropped by the non-strict
+ * object, not rejected.
  */
 const populatedRow = {
   id: '698e38f3973b3e9b2cf550d5',
@@ -23,11 +24,11 @@ const populatedRow = {
   lessonId: { id: '681a4d84acc6f28eaec5e2a7', title: 'Wrist', slug: 'wrist' },
   topicId: null,
   user: {
-    id: '68791356394bf4d1c0f8b8e0',
-    userName: 'jonathon.mccann',
-    email: 'JMcCann1@mercy.com',
-    firstName: 'Jonathon',
-    lastName: 'McCann',
+    id: '6879135600000000000000a1',
+    userName: 'r.mensah',
+    email: 'r.mensah@nw.edu',
+    firstName: 'Rita',
+    lastName: 'Mensah',
   },
   status: 'active',
   dueDate: null,

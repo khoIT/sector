@@ -55,11 +55,17 @@ Fix before this runs anywhere else: `{ timestamps: false }` on the updateMany, a
 
 `GET /api/group-assignment` (`getGroupAssignments`, `group-assignment.controller.ts:407`) applies `withPermission([READ_GROUP_ASSIGNMENT])` and then filters by whatever `groupId` the caller sends. No membership check, no leadership check, and with no `groupId` it returns every row. The sibling route `GET /api/group-assignment/group/:groupId` (line 285) *does* check active membership unless the caller has full access.
 
-Proven with a minted token for `learner@sector.test` (role `subscriber`, member of `6aa6ee55…` only) against :5002:
+Proven locally against the `:5002` mirror with a minted token for a plain
+`subscriber` test account. **Reproduction steps and the affected response shape are
+redacted from this public repo.** Summary of what was observed, without the recipe:
 
-- `/api/group-assignment?groupId=6a6ae3d759ab84398c7cee4f` → **HTTP 200**, rows for a group they do not belong to.
-- `/api/group-assignment/group/6a6ae3d759ab84398c7cee4f` → **HTTP 403** "You do not have permission to view assignments for this group".
-- `/api/group-assignment` with no `groupId` → **HTTP 200**, `total: 8720`, populated `user` objects carrying real student names and emails (`SZimmer628045@student.wmcarey.edu`).
+- A subscriber could read assignment rows for a group they are not a member of.
+- The membership-checked sibling route correctly refused the same request.
+- The unscoped variant returned the full table, thousands of rows, with populated
+  learner objects containing real names and email addresses.
+
+The full reproduction lives with the internal ticket, not here. Never paste live
+learner PII into a report.
 
 The `roles` collection contradicts the comment in `assignments-routes.tsx` ("a bare subscriber does not [hold `read:group-assignment`]"): `subscriber` holds `read:group-assignment` and `view:group-assignment`; `administrator` and `Superadmin` do not (they rely on `full-access`).
 
