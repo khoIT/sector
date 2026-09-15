@@ -5,9 +5,11 @@ import {
   getAssignmentsForGroup,
   getGroupCourseOptions,
   getGroupLearners,
+  getMyDashboardAssignments,
   type GetGroupAssignmentsQuery,
+  type MyAssignmentsQuery,
 } from '../endpoints/group-assignment';
-import { groupKeys, mutationKeys } from '../query-keys';
+import { groupKeys, mutationKeys, myAssignmentKeys } from '../query-keys';
 import type { CreateGroupAssignmentPayload } from '../schemas/group-assignment';
 import { useApiClient } from './api-provider';
 
@@ -61,5 +63,21 @@ export function useCreateGroupAssignmentMutation(groupId: string) {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: groupKeys.assignmentsRoot(groupId) });
     },
+  });
+}
+
+export type UseMyAssignmentsDueOptions = MyAssignmentsQuery & { enabled?: boolean };
+
+/**
+ * The caller's own assignments, narrowed to a due window. Used by the "Due
+ * this week" panel on the learner home.
+ */
+export function useMyAssignmentsDue({ enabled = true, ...query }: UseMyAssignmentsDueOptions) {
+  const client = useApiClient();
+
+  return useQuery({
+    queryKey: myAssignmentKeys.dueSoon(query),
+    queryFn: ({ signal }) => getMyDashboardAssignments(client, query, signal),
+    enabled,
   });
 }

@@ -739,6 +739,12 @@
       "resumeAt": "{{title}} · {{timestamp}}",
       "percent": "{{percent}}%"
     },
+    "dueThisWeek": {
+      "title": "Para esta semana",
+      "overdue": "Em atraso",
+      "upcoming": "Vence em breve",
+      "untitled": "Trabalho atribuído"
+    },
     "courseStatus": {
       "inProgress": "Em andamento",
       "completed": "Concluído",

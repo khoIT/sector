@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/auth/auth-context';
 
 import { ContinueLearningRow } from './continue-learning-row';
+import { DueThisWeekPanel } from './due-this-week-panel';
 import { MyLearningPanel } from './my-learning-panel';
 
 /**
@@ -22,6 +23,7 @@ export function LearnerHome() {
         {t('home.greeting', { name: user ? userDisplayName(user) : '' })}
       </h1>
       <ContinueLearningRow />
+      <DueThisWeekPanel />
       <MyLearningPanel />
     </div>
   );

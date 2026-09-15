@@ -119,6 +119,37 @@ export const groupAssignmentSchema = z.object({
 export type GroupAssignment = z.infer<typeof groupAssignmentSchema>;
 
 /**
+ * One row of the caller's own assignment dashboard
+ * (`GET /api/group-assignment/dashboard/user`).
+ *
+ * The same row as `groupAssignmentSchema` plus `route`, which the SERVER
+ * builds. That matters: the assignment reminder emails build their link with
+ * the same function, so a learner following a reminder and a learner clicking
+ * the row on their home page land in the same place. Re-deriving the path in
+ * the browser is how those two drift apart.
+ */
+export const myAssignmentSchema = groupAssignmentSchema.extend({
+  route: z.string(),
+});
+export type MyAssignment = z.infer<typeof myAssignmentSchema>;
+
+/**
+ * The dashboard envelope's `data`. `userProgress` is deliberately NOT
+ * declared: it is a separate counters block this surface does not read, and
+ * zod strips what is not declared rather than failing on it.
+ */
+export const myAssignmentsPageSchema = z.object({
+  assignments: z.array(myAssignmentSchema),
+  pagination: z.object({
+    total: z.number(),
+    skip: z.number(),
+    limit: z.number(),
+    hasMore: z.boolean(),
+  }),
+});
+export type MyAssignmentsPage = z.infer<typeof myAssignmentsPageSchema>;
+
+/**
  * `POST /group-assignment` — course-level, single or bulk (`userIds`).
  * `contentRefModel` is always `'V2Course'` here because `assignmentType` is
  * pinned to `'course'` — see the module doc comment for why the other three

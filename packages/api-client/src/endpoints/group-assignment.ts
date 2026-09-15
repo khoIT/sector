@@ -6,8 +6,9 @@ import {
   groupAssignmentSchema,
   groupCourseOptionSchema,
   groupLearnerSchema,
+  myAssignmentsPageSchema,
 } from '../schemas/group-assignment';
-import type { CreateGroupAssignmentPayload } from '../schemas/group-assignment';
+import type { CreateGroupAssignmentPayload, MyAssignmentsPage } from '../schemas/group-assignment';
 
 const paginatedGroupAssignmentSchema = paginatedSchema(groupAssignmentSchema);
 
@@ -103,5 +104,39 @@ export async function createGroupAssignment(
       userIds: payload.userIds,
       dueDate: payload.dueDate,
     },
+  });
+}
+
+export type MyAssignmentsQuery = {
+  /** Upper bound on the due date, as an ISO string. */
+  dueDateTo?: string;
+  /** Only rows past their due date and not yet completed. */
+  isOverdue?: boolean;
+  limit?: number;
+};
+
+/**
+ * `GET /api/group-assignment/dashboard/user` — the CALLER's own assignments.
+ *
+ * No `userId` travels from the browser, by design: the server derives whose
+ * dashboard this is from the session. Sending one is how a client asks for
+ * someone else's, which the route authorises separately and which no
+ * learner-facing surface should ever do.
+ */
+export async function getMyDashboardAssignments(
+  client: ApiClient,
+  query: MyAssignmentsQuery = {},
+  signal?: AbortSignal,
+): Promise<MyAssignmentsPage> {
+  return client.get('/api/group-assignment/dashboard/user', {
+    query: {
+      ...(query.dueDateTo ? { dueDateTo: query.dueDateTo } : {}),
+      // Sent as an explicit string: the route reads 'true'/'false' rather than
+      // coercing, so that 'false' cannot arrive meaning "only overdue".
+      ...(query.isOverdue === undefined ? {} : { isOverdue: String(query.isOverdue) }),
+      ...(query.limit ? { limit: String(query.limit) } : {}),
+    },
+    schema: myAssignmentsPageSchema,
+    signal,
   });
 }

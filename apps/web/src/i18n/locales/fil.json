@@ -739,6 +739,12 @@
       "resumeAt": "{{title}} · {{timestamp}}",
       "percent": "{{percent}}%"
     },
+    "dueThisWeek": {
+      "title": "Nakatakda sa linggong ito",
+      "overdue": "Lampas na sa takda",
+      "upcoming": "Malapit nang matapos",
+      "untitled": "Nakatalagang gawain"
+    },
     "courseStatus": {
       "inProgress": "Kasalukuyang ginagawa",
       "completed": "Nakumpleto",

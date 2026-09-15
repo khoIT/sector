@@ -787,6 +787,8 @@ export {
   groupAssignmentTypeSchema,
   groupCourseOptionSchema,
   groupLearnerSchema,
+  myAssignmentSchema,
+  myAssignmentsPageSchema,
   type AssignmentContentRef,
   type CreateGroupAssignmentPayload,
   type GroupAssignment,
@@ -794,19 +796,25 @@ export {
   type GroupAssignmentType,
   type GroupCourseOption,
   type GroupLearner,
+  type MyAssignment,
+  type MyAssignmentsPage,
 } from './schemas/group-assignment';
 export {
   createGroupAssignment,
   getAssignmentsForGroup,
   getGroupCourseOptions,
   getGroupLearners,
+  getMyDashboardAssignments,
   type GetGroupAssignmentsQuery,
+  type MyAssignmentsQuery,
 } from './endpoints/group-assignment';
 export {
   useAssignmentsForGroup,
   useCreateGroupAssignmentMutation,
   useGroupCourseOptions,
   useGroupLearners,
+  useMyAssignmentsDue,
+  type UseMyAssignmentsDueOptions,
 } from './react/use-group-assignments';
 
 // ─── course runner: progress writes, per-question quiz submit, content ────

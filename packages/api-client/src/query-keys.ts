@@ -109,6 +109,12 @@ export const groupKeys = {
     ['get-group-assignments', groupId, params] as const,
 } as const;
 
+/** The caller's own assignment dashboard — no user id in the key, because
+ *  none travels in the request: the server derives it from the session. */
+export const myAssignmentKeys = {
+  dueSoon: (params: unknown) => ['get-my-assignments-due', params] as const,
+} as const;
+
 export const courseKeys = {
   /** Prefix for every page of My Courses, across every keyword/status/sort. */
   listRoot: () => ['get-learner-courses'] as const,

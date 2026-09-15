@@ -739,6 +739,12 @@
       "resumeAt": "{{title}} · {{timestamp}}",
       "percent": "{{percent}} %"
     },
+    "dueThisWeek": {
+      "title": "Diese Woche fällig",
+      "overdue": "Überfällig",
+      "upcoming": "Bald fällig",
+      "untitled": "Zugewiesene Aufgabe"
+    },
     "courseStatus": {
       "inProgress": "In Bearbeitung",
       "completed": "Abgeschlossen",
