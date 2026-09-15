@@ -18,5 +18,7 @@ pnpm-debug.log*
 .idea/
 .vscode/
 
-# Per-agent memory that review tooling writes into the checkout.
-.claude/agent-memory/
+# Per-agent memory that review tooling writes into the checkout. Globbed from
+# any depth: a pattern with an interior slash is anchored to this directory, so
+# the unglobbed form missed the copies written under packages/*/.claude/.
+**/.claude/agent-memory/
