@@ -104,7 +104,13 @@ export function CourseShell() {
 
       <div className="flex flex-col items-start gap-4 lg:flex-row">
         {currentItemId ? (
-          <div className="w-full flex-shrink-0 lg:w-80">
+          // The pane keeps its own scroll from the large breakpoint up. On a
+          // 185-item course the contents list is far taller than the video
+          // beside it, and sharing the page's scroll meant reaching the player
+          // controls scrolled the contents away — the one thing the pane exists
+          // to keep on screen. Below `lg` the two panes are stacked, where a
+          // second scroll region would trap the page's own scrolling instead.
+          <div className="w-full flex-shrink-0 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:w-80 lg:overflow-y-auto">
             <OutlineSidebar
               courseId={courseId}
               items={outline.items}
