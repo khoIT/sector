@@ -125,8 +125,14 @@ export function GroupProgressTable({ groupId }: GroupProgressTableProps) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <TableRow key={`${row.Email}-${row['Course Name']}`}>
+              {/*
+                A learner can appear twice under one course: the report is
+                built from group memberships, and the same person can hold two
+                of them. Email plus course name is therefore not unique, and
+                keying on it alone makes React treat two distinct rows as one.
+              */}
+              {rows.map((row, index) => (
+                <TableRow key={`${row.Email}-${row['Course Name']}-${index}`}>
                   <TableCell>
                     <div className="flex flex-col">
                       <span className="text-ink">{learnerName(row)}</span>
