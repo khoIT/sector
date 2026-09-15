@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { displayText } from './decode-html-entities';
+
 /**
  * My Courses — GET /api/v2/learners/courses.
  *
@@ -112,7 +114,7 @@ export type LearnerCourseAuthor = z.infer<typeof learnerCourseAuthorSchema>;
  */
 export const learnerCourseSummarySchema = z.object({
   id: z.string(),
-  title: z.string(),
+  title: displayText(),
   slug: z.string(),
   content: z.string().optional(),
   imageUrl: z.string().nullable(),
@@ -161,7 +163,7 @@ export const learnerCourseProgressSchema = z.object({
   lastItemAccessed: z
     .object({
       id: z.string(),
-      title: z.string(),
+      title: displayText(),
       /** The playhead, for a topic carrying a video. Null for everything else. */
       positionSeconds: z.number().nullable(),
     })

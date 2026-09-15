@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { displayText } from './decode-html-entities';
+
 import { courseItemProgressStatusSchema, courseProgressStatusSchema } from './course';
 
 /**
@@ -69,7 +71,7 @@ export type CourseOutlineQuizSummary = z.infer<typeof courseOutlineQuizSummarySc
 export const courseOutlineItemSchema = z.object({
   id: z.string(),
   kind: courseOutlineItemKindSchema,
-  title: z.string(),
+  title: displayText(),
   order: z.number(),
   depth: z.number(),
   parentId: z.string().nullable(),
