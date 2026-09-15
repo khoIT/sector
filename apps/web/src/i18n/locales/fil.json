@@ -78,7 +78,15 @@
     "profile": "[FIL] Profile",
     "themeLight": "Liwanag",
     "themeDark": "Madilim",
-    "fallbackName": "[FIL] Account"
+    "fallbackName": "[FIL] Account",
+    "assignmentReminders": {
+      "title": "Mga paalala sa takdang-aralin",
+      "description": "Email tungkol sa mga takdang-aralin na ibinigay sa iyo ng lider ng iyong grupo.",
+      "label": "I-email ako tungkol sa aking mga takdang-aralin",
+      "scopeNote": "Mga paalala lamang sa takdang-aralin ang saklaw nito. Hindi apektado ang email tungkol sa account, password at pagsusuri ng scan.",
+      "loadError": "Hindi ma-load ang iyong setting para sa mga paalala.",
+      "saveError": "Hindi na-save ang setting na iyon."
+    }
   },
   "groupsDialog": {
     "title": "Mga Grupo"

@@ -192,6 +192,10 @@ export const dashboardKeys = {
  * legacy mutations that carried no key (updateScanById, deleteScanById) get
  * one here so the set is complete.
  */
+export const accountKeys = {
+  profile: () => ['get-account-profile'] as const,
+} as const;
+
 export const mutationKeys = {
   login: () => ['login'] as const,
   logout: () => ['logout'] as const,

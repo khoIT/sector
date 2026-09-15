@@ -290,6 +290,7 @@ export {
 export { useFindingDefinitionsFetcher } from './react/use-create-scan-lookups';
 export { useDeleteScanMutation } from './react/use-scan-delete';
 export {
+  useAccountProfile,
   useRemoveAccountPhotoMutation,
   useUpdatePasswordMutation,
   useUpdateProfileMutation,
@@ -938,7 +939,7 @@ export {
   useDashboardTopicProgress,
 } from './react/use-dashboard';
 
-export { dashboardKeys } from './query-keys';
+export { accountKeys, dashboardKeys } from './query-keys';
 // ─── pathology gallery: category bar, sub-category rail, card grid ────────
 export {
   pathologyCategorySchema,

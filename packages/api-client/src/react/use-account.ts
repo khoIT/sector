@@ -1,13 +1,14 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { deleteAccount } from '../endpoints/account-delete';
 import {
+  getAccount,
   removeAccountPhoto,
   updateAccountPassword,
   updateAccountProfile,
   uploadAccountPhoto,
 } from '../endpoints/account';
-import { mutationKeys } from '../query-keys';
+import { accountKeys, mutationKeys } from '../query-keys';
 import type {
   AccountPhotoResult,
   AccountUser,
@@ -25,6 +26,23 @@ import { useApiClient } from './api-provider';
  * merges the result into that session itself — see `updateUser` on the auth
  * context — so the header updates without a refetch and without a reload.
  */
+
+/**
+ * The account record, read fresh from the server.
+ *
+ * The auth session already carries name, email and photo, so most surfaces
+ * need no query at all. This exists for the fields the session does NOT
+ * carry — the reminder opt-out among them — which would otherwise have no
+ * way to render their current value.
+ */
+export function useAccountProfile() {
+  const client = useApiClient();
+
+  return useQuery<AccountUser, Error>({
+    queryKey: accountKeys.profile(),
+    queryFn: ({ signal }) => getAccount(client, signal),
+  });
+}
 
 export function useUpdateProfileMutation() {
   const client = useApiClient();

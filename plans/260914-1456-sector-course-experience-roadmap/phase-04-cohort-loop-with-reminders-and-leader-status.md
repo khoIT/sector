@@ -383,6 +383,33 @@ template that throws renders an empty body, which no query-layer test catches.
 | `administrator` loses leader dashboards | **Certain** | Medium | Stated plainly, pinned by a test, flagged as the open product question |
 | Phase 4 and Phase 5 conflict on shared files | Medium | Low | Both append to `sweep-routes.json` and the seven locale files. **Merge order: Phase 4 first, then Phase 5.** Phase 4 appends under `groups.*`/`account.*`, Phase 5 under `courses.*`. <!-- Red team 2026-09-14: folded correction --> |
 
+## Decision — administrator stays scoped (2026-09-15)
+
+**Asked and answered: `administrator` keeps no bypass.** It must lead the group, exactly as
+`Superadmin` does not have to. Recorded here so nobody re-opens it from the 403 alone.
+
+The evidence that settled it:
+
+- **This is not a new restriction, it is an existing one applied consistently.**
+  `assertLeadsGroup` already guards 15 call sites elsewhere — 12 in `manager.controller.ts`,
+  2 in `scan.export.controller.ts`, 1 in `dashboard.controller.ts`. `administrator` is
+  already scoped in every one of them. `group-assignment` was the outlier, not the victim.
+- **The permission config says so itself.** `ADMIN_FULL_ACCESS` is commented as
+  "super-admin: bypasses all group/data scoping on the admin dashboard (above administrator
+  role)". Administrator being subject to scoping is the documented intent, not a side effect.
+- The split is real and load-bearing: `withPermission` treats `full-access` and
+  `admin:full-access` as equivalent wildcards, while `leadsGroup` honours only the latter.
+  `administrator` holds `full-access`; only `Superadmin` holds both.
+
+**What could not be measured from here:** how many real administrators exist in production.
+The mirror carries 3,158 users but only 14 with a role — the rest were stubbed on clone — so
+the blast radius needs a production read if it ever matters.
+
+**Practical effect:** an administrator who leads no group still reads a group's assignment
+LIST (that route keeps its own `full-access` check, untouched). What they lose is the learner
+and course pickers behind "New assignment", which now say so rather than rendering an empty
+picker that reads as "this group has no learners".
+
 ## Security Considerations
 
 - **This phase closes eight unscoped reads, not two.** Until step 1 lands, any signed-in

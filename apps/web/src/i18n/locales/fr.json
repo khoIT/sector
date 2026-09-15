@@ -78,7 +78,15 @@
     "profile": "Profil",
     "themeLight": "Lumière",
     "themeDark": "Sombre",
-    "fallbackName": "Compte"
+    "fallbackName": "Compte",
+    "assignmentReminders": {
+      "title": "Rappels de devoirs",
+      "description": "E-mails concernant les devoirs que votre responsable de groupe vous a confiés.",
+      "label": "M’envoyer des e-mails concernant mes devoirs",
+      "scopeNote": "Ceci ne concerne que les rappels de devoirs. Les e-mails de compte, de mot de passe et de relecture d’examen ne sont pas affectés.",
+      "loadError": "Votre préférence de rappels n’a pas pu être chargée.",
+      "saveError": "Ce réglage n’a pas pu être enregistré."
+    }
   },
   "groupsDialog": {
     "title": "Groupes"

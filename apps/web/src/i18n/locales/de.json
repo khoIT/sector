@@ -78,7 +78,15 @@
     "profile": "Profil",
     "themeLight": "Licht",
     "themeDark": "Dunkel",
-    "fallbackName": "Konto"
+    "fallbackName": "Konto",
+    "assignmentReminders": {
+      "title": "Erinnerungen an Aufgaben",
+      "description": "E-Mails zu Aufgaben, die Ihnen Ihre Gruppenleitung zugewiesen hat.",
+      "label": "E-Mails zu meinen Aufgaben senden",
+      "scopeNote": "Dies betrifft nur Aufgabenerinnerungen. E-Mails zu Konto, Passwort und Scan-Begutachtung bleiben unberührt.",
+      "loadError": "Ihre Erinnerungseinstellung konnte nicht geladen werden.",
+      "saveError": "Diese Einstellung konnte nicht gespeichert werden."
+    }
   },
   "groupsDialog": {
     "title": "Gruppen"

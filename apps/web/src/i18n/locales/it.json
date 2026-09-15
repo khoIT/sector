@@ -78,7 +78,15 @@
     "profile": "Profilo",
     "themeLight": "Leggero",
     "themeDark": "Scuro",
-    "fallbackName": "Account"
+    "fallbackName": "Account",
+    "assignmentReminders": {
+      "title": "Promemoria dei compiti",
+      "description": "E-mail sui compiti che il responsabile del gruppo ti ha assegnato.",
+      "label": "Inviami e-mail sui miei compiti",
+      "scopeNote": "Riguarda solo i promemoria dei compiti. Le e-mail di account, password e revisione delle scansioni non sono interessate.",
+      "loadError": "Non è stato possibile caricare la tua preferenza sui promemoria.",
+      "saveError": "Non è stato possibile salvare questa impostazione."
+    }
   },
   "groupsDialog": {
     "title": "Gruppi"

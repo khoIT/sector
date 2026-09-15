@@ -35,6 +35,13 @@ export const accountUserSchema = z.object({
   photo: z.string().nullish(),
   role: authRoleSchema.nullish(),
   lastLoginAt: z.string().nullish(),
+  /**
+   * Whether the user has turned off assignment reminder email.
+   *
+   * `nullish` because the field did not exist until reminders did: every
+   * account predating them answers with it absent, which reads as opted in.
+   */
+  assignmentRemindersOptOut: z.boolean().nullish(),
   profile: z.unknown().nullish(),
 });
 
@@ -49,8 +56,14 @@ export type AccountUser = z.infer<typeof accountUserSchema>;
  * is not a field to start collecting as a side effect of a shell redesign.
  */
 export const updateProfilePayloadSchema = z.object({
-  firstName: z.string().trim().max(100),
-  lastName: z.string().trim().max(100),
+  firstName: z.string().trim().max(100).optional(),
+  lastName: z.string().trim().max(100).optional(),
+  /**
+   * Optional like the names, so the reminder toggle can send this field ALONE.
+   * The server only copies across keys it finds, so a payload carrying one key
+   * leaves the other two untouched rather than blanking them.
+   */
+  assignmentRemindersOptOut: z.boolean().optional(),
 });
 
 export type UpdateProfilePayload = z.infer<typeof updateProfilePayloadSchema>;

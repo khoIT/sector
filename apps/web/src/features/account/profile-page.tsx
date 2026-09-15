@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sector/ui';
 import { useTranslation } from 'react-i18next';
 
+import { AssignmentReminderSetting } from './assignment-reminder-setting';
 import { CreateScanFlowSetting } from './create-scan-flow-setting';
 import { DeleteAccountDialog } from './delete-account-dialog';
 import { NotificationPreferences } from './notification-preferences';
@@ -65,6 +66,8 @@ export function ProfilePage() {
           <PasswordForm />
         </CardContent>
       </Card>
+
+      <AssignmentReminderSetting />
 
       <NotificationPreferences />
 

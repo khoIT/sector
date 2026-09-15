@@ -78,7 +78,15 @@
     "profile": "Perfil",
     "themeLight": "Luz",
     "themeDark": "Oscuro",
-    "fallbackName": "Cuenta"
+    "fallbackName": "Cuenta",
+    "assignmentReminders": {
+      "title": "Recordatorios de tareas",
+      "description": "Correos sobre las tareas que le ha asignado el líder de su grupo.",
+      "label": "Enviarme correos sobre mis tareas",
+      "scopeNote": "Esto se aplica solo a los recordatorios de tareas. No afecta a los correos de cuenta, contraseña ni revisión de ecografías.",
+      "loadError": "No se pudo cargar su preferencia de recordatorios.",
+      "saveError": "No se pudo guardar esa preferencia."
+    }
   },
   "groupsDialog": {
     "title": "Grupos"

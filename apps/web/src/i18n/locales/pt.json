@@ -78,7 +78,15 @@
     "profile": "Perfil",
     "themeLight": "Luz",
     "themeDark": "Sombrio",
-    "fallbackName": "Conta"
+    "fallbackName": "Conta",
+    "assignmentReminders": {
+      "title": "Lembretes de tarefas",
+      "description": "E-mails sobre as tarefas que o líder do seu grupo lhe atribuiu.",
+      "label": "Enviar-me e-mails sobre as minhas tarefas",
+      "scopeNote": "Abrange apenas lembretes de tarefas. Os e-mails de conta, palavra-passe e revisão de exames não são afetados.",
+      "loadError": "Não foi possível carregar a sua preferência de lembretes.",
+      "saveError": "Não foi possível guardar essa definição."
+    }
   },
   "groupsDialog": {
     "title": "Grupos"

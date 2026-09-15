@@ -138,7 +138,15 @@
     "themeSystem": "System ({{resolved}})",
     "signOut": "Sign out",
     "build": "Build",
-    "fallbackName": "Account"
+    "fallbackName": "Account",
+    "assignmentReminders": {
+      "title": "Assignment reminders",
+      "description": "Email about assignments your group leader has given you.",
+      "label": "Email me about my assignments",
+      "scopeNote": "This covers assignment reminders only. Account, password and scan review email are not affected.",
+      "loadError": "Your reminder setting could not be loaded.",
+      "saveError": "That setting could not be saved."
+    }
   },
   "logout": {
     "title": "Sign out?",
