@@ -62,10 +62,10 @@ Sources: [brainstorm report](../reports/brainstorm-260914-1456-sector-course-exp
 | 2 | [Progress model with position and watch threshold](./phase-02-progress-model-with-position-and-watch-threshold.md) | Completed |
 | 3 | [Outline and home re-entry surfaces](./phase-03-outline-and-home-re-entry-surfaces.md) | Completed |
 | 4 | [Cohort loop with reminders and leader status](./phase-04-cohort-loop-with-reminders-and-leader-status.md) | Completed |
-| 5 | [Persistent course player shell](./phase-05-persistent-course-player-shell.md) | Partly done — layout route landed, tab strip not started |
-| 6 | [Transcript plus notes and chapters](./phase-06-transcript-plus-notes-and-chapters.md) | Blocked — chapters have no source data, transcript gated on the Vimeo seat, Notes on its go/no-go |
-| 7 | [Course landing page and content fields](./phase-07-course-landing-page-and-content-fields.md) | In progress — content owner named, gate cleared |
-| 8 | [Leader completion report and due-this-week](./phase-08-leader-completion-report-and-due-this-week.md) | In progress |
+| 5 | [Persistent course player shell](./phase-05-persistent-course-player-shell.md) | Done bar the tab strip, which waits on Phase 6 having tabs to hold |
+| 6 | [Transcript plus notes and chapters](./phase-06-transcript-plus-notes-and-chapters.md) | Blocked — chapters dropped (no source data), transcript gated on the Vimeo seat, Notes on its go/no-go |
+| 7 | [Course landing page and content fields](./phase-07-course-landing-page-and-content-fields.md) | Completed bar the console form controls |
+| 8 | [Leader completion report and due-this-week](./phase-08-leader-completion-report-and-due-this-week.md) | Completed — no 719-member perf run, no browser sweep |
 
 ## Cross-Plan Dependencies
 

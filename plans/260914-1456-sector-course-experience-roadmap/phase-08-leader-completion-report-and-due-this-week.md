@@ -368,3 +368,78 @@ Manual pass:
   default; a client-side hidden column is not a control. Set `staleTime: 0, gcTime: 0` on the
   report query so the rows are not retained after the tab unmounts.
 - CSV leaves the product as a file. Keep the filename free of PII beyond the group name.
+
+## Outcome — 2026-09-15
+
+### The two exports disagreed, and unifying them changed the report
+
+The phase assumed one row builder was a refactor. It was not. The two callers
+computed different numbers:
+
+| | `getGroupReport` (JSON/CSV) | `exportGroupCourseProgress` (xlsx) |
+| --- | --- | --- |
+| percentage | cached `progress.progress` | recomputed from the course-meta structure |
+| item counts | cached `completedItems`/`totalItems` | counted from `progress.items` against the flattened structure |
+| completion date | whenever `completedAt` existed | only at true 100% |
+| drift | unreported | logged whenever the two differed by >5 points |
+
+Both now call `buildCourseProgressRows`, and **the recomputed figure wins**. So
+the JSON and CSV report's numbers CHANGE wherever a cached percentage had
+drifted. That is deliberate: the xlsx export has been logging that drift for as
+long as it has existed, and a leader comparing the screen with the spreadsheet
+was comparing two definitions of "complete". The characterisation test fixture
+exercises it directly — a learner with a cached 90% and a real 50%.
+
+### Built
+
+- `helpers/course-progress-report.helper.ts` — batched: one `groupmembers`
+  read, one `usercourseprogresses` find, one `groupassignments` aggregation per
+  group-course pair, replacing a query per learner. 302 lines of N+1 deleted
+  from the controller for 35 added.
+- `courseId` filter, `lastAccessedAt`, and per-learner `{ total, completed,
+  overdue }` assignment counts. The definition of an *open* assignment moved
+  onto the model so the reminder job and the report cannot disagree about what
+  is still owed.
+- `utils/csv.util.ts` — RFC 4180 quoting plus the full OWASP formula-injection
+  set (`= + - @ \t \r |`). This fixes an **already-broken** download: the old
+  branch joined with a comma and quoted nothing, so any learner whose surname
+  contained a comma silently split into two columns.
+- web: `report-row-model.ts` (11 tests) and `group-progress-table.tsx` on the
+  existing Exports tab — no sixth tab, no client-side CSV serialiser.
+- web: `due-this-week-panel.tsx` + model (7 tests) on the learner home.
+
+### A latent leak found and closed on the way
+
+Phase 8 step 11 requires the Due panel to send **no** `userId`. The handler
+already resolved the caller from the session when the parameter was absent —
+but built its filter from the raw parameter, and the service drops the user
+filter entirely for an undefined value. The schema still marking `userId`
+required was the only thing preventing "my dashboard" from returning every
+learner's assignments. Making the parameter optional without fixing the filter
+would have shipped that. Both changed together, with a test that seeds a second
+learner and asserts their row never appears.
+
+The dashboard rows also emitted legacy `my-courses/...` paths while the reminder
+emails emitted Sector paths, so the two named different destinations. Both now
+use `assignmentSectorPath`.
+
+### Not done
+
+- **No 719-member performance measurement** (step 7). The builder is batched
+  rather than N+1, which was the actual defect, but the p95 against a
+  719-member fixture was not run.
+- **No cold-load browser sweep.** The local Sector API would not boot — it
+  hangs after the secrets fallback and never binds its port. Unrelated to these
+  changes (it was already down beforehand), but it means no surface in this
+  phase has been seen in a browser.
+
+**Verified**: API typecheck clean on Node 22; 264 API tests pass across 28
+files in `group`, `group-assignment`, `group-member`, `group-course` and
+`learners`, run serially; web typecheck clean; 276 web tests across the groups
+feature and i18n.
+
+> **Test-suite note worth keeping.** The API suite pins itself to one database
+> (`gusi_test`) and refuses any other name, so two concurrent `vitest` runs wipe
+> each other's fixtures. That — not a defect — is what produced the unexplained
+> failures in `expert-scan-group-scoping` and `list-pending-scans` in the
+> previous session. Run the API suite serially, and never alongside another.
