@@ -16,6 +16,25 @@ import type { MyAssignment } from '@sector/api-client';
 
 export type DueAssignment = MyAssignment & { dueDate: string };
 
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * The far edge of the window, as the server wants it: the end of the day seven
+ * days out.
+ *
+ * Rounded to the day deliberately. This string is part of the request's cache
+ * key, so a millisecond-precise boundary mints a new key on every single
+ * render — each fetch re-renders, each re-render asks again, and the panel
+ * never stops requesting. Rounding also means returning to this page reuses
+ * the answer already fetched instead of asking again, and "due this week"
+ * never needed sub-second precision to begin with.
+ */
+export function dueWindowEnd(now: Date): string {
+  const end = new Date(now.getTime() + SEVEN_DAYS_MS);
+  end.setHours(23, 59, 59, 999);
+  return end.toISOString();
+}
+
 function dueTime(assignment: DueAssignment): number {
   return new Date(assignment.dueDate).getTime();
 }

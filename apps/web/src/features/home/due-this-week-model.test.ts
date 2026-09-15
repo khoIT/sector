@@ -1,7 +1,7 @@
 import type { MyAssignment } from '@sector/api-client';
 import { describe, expect, it } from 'vitest';
 
-import { assignmentTitle, selectDueThisWeek } from './due-this-week-model';
+import { assignmentTitle, dueWindowEnd, selectDueThisWeek } from './due-this-week-model';
 
 const NOW = new Date('2026-09-15T00:00:00.000Z');
 
@@ -84,5 +84,33 @@ describe('assignmentTitle', () => {
       ),
     ).toBe('POCUS Essentials');
     expect(assignmentTitle(assignment())).toBeNull();
+  });
+});
+
+describe('dueWindowEnd', () => {
+  it('returns the same boundary for any two moments in the same day', () => {
+    // This string is part of the request's cache key. If it moved with the
+    // clock, every render would ask for a window nobody had asked for yet,
+    // and the panel would fetch in a loop for as long as it stayed mounted.
+    const early = dueWindowEnd(new Date('2026-09-15T00:00:00.000Z'));
+    const later = dueWindowEnd(new Date('2026-09-15T00:00:00.001Z'));
+    const muchLater = dueWindowEnd(new Date('2026-09-15T11:59:59.999Z'));
+
+    expect(later).toBe(early);
+    expect(muchLater).toBe(early);
+  });
+
+  it('covers the whole of the seventh day, so nothing due that day is missed', () => {
+    const end = new Date(dueWindowEnd(new Date('2026-09-15T08:00:00.000Z')));
+
+    expect(end.getTime()).toBeGreaterThan(new Date('2026-09-22T08:00:00.000Z').getTime());
+    expect(end.getHours()).toBe(23);
+    expect(end.getMinutes()).toBe(59);
+  });
+
+  it('moves on once the day does', () => {
+    expect(dueWindowEnd(new Date('2026-09-16T00:00:00.000Z'))).not.toBe(
+      dueWindowEnd(new Date('2026-09-15T00:00:00.000Z')),
+    );
   });
 });

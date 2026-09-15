@@ -1,13 +1,12 @@
 import { useMyAssignmentsDue } from '@sector/api-client';
 import { Card, CardContent, CardHeader, CardTitle, Skeleton, StatusPill } from '@sector/ui';
 import { CalendarClock } from 'lucide-react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import { CardError } from './card-error';
-import { assignmentTitle, isOverdue, selectDueThisWeek } from './due-this-week-model';
-
-const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+import { assignmentTitle, dueWindowEnd, isOverdue, selectDueThisWeek } from './due-this-week-model';
 
 /**
  * What a learner owes in the next week, late things first.
@@ -25,8 +24,13 @@ const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
  */
 export function DueThisWeekPanel() {
   const { t } = useTranslation();
-  const now = new Date();
-  const dueDateTo = new Date(now.getTime() + SEVEN_DAYS_MS).toISOString();
+
+  // Pinned for the life of this mount. A bare `new Date()` here is read on
+  // every render, and it reaches the request as part of the cache key: a new
+  // millisecond each render means a new key, a new fetch, another render, and
+  // a panel that requests without ever stopping.
+  const now = useMemo(() => new Date(), []);
+  const dueDateTo = useMemo(() => dueWindowEnd(now), [now]);
 
   // No `userId`: the server reads whose dashboard this is from the session.
   const assignments = useMyAssignmentsDue({ dueDateTo, limit: 10 });
