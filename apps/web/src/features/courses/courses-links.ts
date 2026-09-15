@@ -47,3 +47,19 @@ export function courseAdminPathFor(learnerId: string, courseId: string): string 
  *  it is now mounted. Joined with its parent it still resolves to
  *  `COURSE_ITEM_ROUTE_PATH`, the URL `legacy-route-map.ts` redirects to. */
 export const COURSE_ITEM_CHILD_ROUTE_PATH = ':itemId';
+
+/**
+ * The course landing page: what the course is, before the item list.
+ *
+ * A SIBLING of the outline route rather than a child of the course shell,
+ * because it answers "should I take this?" and the shell's contents pane
+ * answers "where am I in it?" — two different jobs, and nesting it would put
+ * the pane beside a page that exists to be read before there is a position to
+ * keep. `about` is a static segment, so it outranks the shell's `:itemId`
+ * child and can never be mistaken for an outline item.
+ */
+export const COURSE_ABOUT_ROUTE_PATH = `${COURSES_INDEX_ROUTE_PATH}/:courseId/about`;
+
+export function courseAboutPathFor(courseId: string): string {
+  return `${COURSES_PATH}/${courseId}/about`;
+}

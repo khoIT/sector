@@ -570,6 +570,39 @@
         "bestPercentage": "Meilleur score : {{percent}} %"
       }
     },
+    "landing": {
+      "title": "À propos de ce cours",
+      "viewOutline": "Voir le sommaire du cours",
+      "totalTime": "{{duration}} de vidéo",
+      "itemCount_one": "{{count}} élément",
+      "itemCount_other": "{{count}} éléments",
+      "moduleCount_one": "{{count}} module",
+      "moduleCount_other": "{{count}} modules",
+      "moduleMeta": "{{topics}} sujets · {{quizzes}} quiz",
+      "level": {
+        "beginner": "Débutant",
+        "intermediate": "Intermédiaire",
+        "advanced": "Avancé"
+      },
+      "about": {
+        "title": "À propos de ce cours"
+      },
+      "objectives": {
+        "title": "Ce que vous allez apprendre"
+      },
+      "contents": {
+        "title": "Contenu du cours"
+      },
+      "cme": {
+        "title": "Crédits CME",
+        "credits": "{{credits}} crédits",
+        "link": "Détails de l'accréditation",
+        "unavailable": "Le téléchargement des certificats est temporairement indisponible."
+      },
+      "error": {
+        "title": "Ce cours n'a pas pu être chargé"
+      }
+    },
     "module": {
       "empty": {
         "title": "Cette leçon ne contient encore ni sujets ni quiz",

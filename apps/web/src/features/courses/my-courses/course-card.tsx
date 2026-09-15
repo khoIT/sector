@@ -4,7 +4,7 @@ import { GraduationCap } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-import { coursePathFor } from '../courses-links';
+import { courseAboutPathFor, coursePathFor } from '../courses-links';
 import { courseActionLabelKey, courseProgressTone, roundedProgress } from './course-row-model';
 
 export type CourseCardProps = {
@@ -61,7 +61,19 @@ export function CourseCard({ item }: CourseCardProps) {
           {/* `state.title` closes the gap `course-outline-page.tsx` documents
               (its heading falls back to a generic label without it) and is
               carried forward again from there into the course runner. */}
-          <Link to={coursePathFor(item.course.id)} state={{ title: item.course.title }}>
+          <Link
+            to={
+              // A course nobody has opened yet opens on its landing page —
+              // what it is and how long it takes, which is what someone
+              // deciding whether to start needs. Once there is progress to
+              // resume, that question is answered and the outline is the
+              // useful destination.
+              item.progress.status === 'not_started'
+                ? courseAboutPathFor(item.course.id)
+                : coursePathFor(item.course.id)
+            }
+            state={{ title: item.course.title }}
+          >
             {t(courseActionLabelKey(item.progress.status), { title: item.course.title })}
           </Link>
         </Button>

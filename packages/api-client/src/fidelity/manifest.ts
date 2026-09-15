@@ -513,6 +513,10 @@ export const REPLAY_ENTRIES: readonly ReplayEntry[] = [
     collection: 'v2courses',
     schema: learnerCourseSummarySchema,
     proves: ['learnerCourseSummarySchema', 'learnerCourseAuthorSchema'],
+    // This entry now also carries the only real risk in `level` and
+    // `objectives`: not a wrong value but a missing key. No course document
+    // anywhere has either field, so replaying all of them is what proves the
+    // schema reads a course authored before the fields existed.
     prefetch: async (_batch, { refs }) => refs.loadAll('users'),
     // The same projection the two list entries below embed, so the course
     // object cannot be proved in one shape here and served in another there.

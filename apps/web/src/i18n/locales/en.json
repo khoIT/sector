@@ -646,6 +646,39 @@
         "bestPercentage": "Best: {{percent}}%"
       }
     },
+    "landing": {
+      "title": "About this course",
+      "viewOutline": "View course outline",
+      "totalTime": "{{duration}} of video",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} items",
+      "moduleCount_one": "{{count}} module",
+      "moduleCount_other": "{{count}} modules",
+      "moduleMeta": "{{topics}} topics · {{quizzes}} quizzes",
+      "level": {
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced"
+      },
+      "about": {
+        "title": "About this course"
+      },
+      "objectives": {
+        "title": "What you'll learn"
+      },
+      "contents": {
+        "title": "Course contents"
+      },
+      "cme": {
+        "title": "CME credit",
+        "credits": "{{credits}} credits",
+        "link": "Accreditation details",
+        "unavailable": "Certificate downloads are temporarily unavailable."
+      },
+      "error": {
+        "title": "This course could not be loaded"
+      }
+    },
     "module": {
       "empty": {
         "title": "This lesson has no topics or quizzes yet",

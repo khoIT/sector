@@ -570,6 +570,39 @@
         "bestPercentage": "Migliore: {{percent}}%"
       }
     },
+    "landing": {
+      "title": "Informazioni sul corso",
+      "viewOutline": "Vedi la struttura del corso",
+      "totalTime": "{{duration}} di video",
+      "itemCount_one": "{{count}} elemento",
+      "itemCount_other": "{{count}} elementi",
+      "moduleCount_one": "{{count}} modulo",
+      "moduleCount_other": "{{count}} moduli",
+      "moduleMeta": "{{topics}} argomenti · {{quizzes}} quiz",
+      "level": {
+        "beginner": "Base",
+        "intermediate": "Intermedio",
+        "advanced": "Avanzato"
+      },
+      "about": {
+        "title": "Informazioni sul corso"
+      },
+      "objectives": {
+        "title": "Cosa imparerai"
+      },
+      "contents": {
+        "title": "Contenuti del corso"
+      },
+      "cme": {
+        "title": "Crediti CME",
+        "credits": "{{credits}} crediti",
+        "link": "Dettagli dell'accreditamento",
+        "unavailable": "Il download dei certificati non è temporaneamente disponibile."
+      },
+      "error": {
+        "title": "Non è stato possibile caricare questo corso"
+      }
+    },
     "module": {
       "empty": {
         "title": "Questa lezione non ha ancora argomenti o quiz",

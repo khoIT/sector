@@ -570,6 +570,39 @@
         "bestPercentage": "Pinakamataas: {{percent}}%"
       }
     },
+    "landing": {
+      "title": "Tungkol sa kursong ito",
+      "viewOutline": "Tingnan ang balangkas ng kurso",
+      "totalTime": "{{duration}} na video",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} na item",
+      "moduleCount_one": "{{count}} module",
+      "moduleCount_other": "{{count}} na module",
+      "moduleMeta": "{{topics}} paksa · {{quizzes}} pagsusulit",
+      "level": {
+        "beginner": "Panimula",
+        "intermediate": "Katamtaman",
+        "advanced": "Mataas"
+      },
+      "about": {
+        "title": "Tungkol sa kursong ito"
+      },
+      "objectives": {
+        "title": "Ang matututunan mo"
+      },
+      "contents": {
+        "title": "Nilalaman ng kurso"
+      },
+      "cme": {
+        "title": "CME credit",
+        "credits": "{{credits}} na credit",
+        "link": "Mga detalye ng akreditasyon",
+        "unavailable": "Pansamantalang hindi available ang pag-download ng sertipiko."
+      },
+      "error": {
+        "title": "Hindi ma-load ang kursong ito"
+      }
+    },
     "module": {
       "empty": {
         "title": "Wala pang mga paksa o pagsusulit ang araling ito",

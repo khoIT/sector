@@ -612,14 +612,17 @@ export {
   ASSIGNMENT_TYPES,
   COURSE_ITEM_PROGRESS_STATUSES,
   COURSE_PROGRESS_STATUSES,
+  COURSE_LEVELS,
   ENROLLMENT_STATUSES,
   EXPIRATION_TYPES,
   assignmentTypeSchema,
+  courseLevelSchema,
   courseItemProgressStatusSchema,
   courseProgressStatusSchema,
   enrollmentStatusSchema,
   expirationTypeSchema,
   learnerCourseAuthorSchema,
+  learnerCourseDetailsSchema,
   learnerCourseGroupSchema,
   learnerCourseListItemSchema,
   learnerCourseMetaVersionSummarySchema,
@@ -628,10 +631,12 @@ export {
   learnerCoursesPageSchema,
   type AssignmentType,
   type CourseItemProgressStatus,
+  type CourseLevel,
   type CourseProgressStatus,
   type EnrollmentStatus,
   type ExpirationType,
   type LearnerCourseAuthor,
+  type LearnerCourseDetails,
   type LearnerCourseGroup,
   type LearnerCourseListItem,
   type LearnerCourseMetaVersionSummary,
@@ -659,13 +664,19 @@ export {
 
 export {
   getCourseOutline,
+  getLearnerCourseDetails,
   getLearnerCourses,
   type CourseListStatusFilter,
   type CoursesListQuery,
 } from './endpoints/course';
 
 export { useCourses, type UseCoursesOptions } from './react/use-courses';
-export { useCourseOutline, type UseCourseOutlineOptions } from './react/use-course-outline';
+export {
+  useCourseOutline,
+  useLearnerCourseDetails,
+  type UseCourseOutlineOptions,
+  type UseLearnerCourseDetailsOptions,
+} from './react/use-course-outline';
 export { courseKeys } from './query-keys';
 // ─── upload retry policy ──────────────────────────────────────────────────────
 export {

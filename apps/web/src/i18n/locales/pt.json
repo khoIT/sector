@@ -570,6 +570,39 @@
         "bestPercentage": "Melhor: {{percent}}%"
       }
     },
+    "landing": {
+      "title": "Sobre este curso",
+      "viewOutline": "Ver o sumário do curso",
+      "totalTime": "{{duration}} de vídeo",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} itens",
+      "moduleCount_one": "{{count}} módulo",
+      "moduleCount_other": "{{count}} módulos",
+      "moduleMeta": "{{topics}} tópicos · {{quizzes}} questionários",
+      "level": {
+        "beginner": "Iniciante",
+        "intermediate": "Intermédio",
+        "advanced": "Avançado"
+      },
+      "about": {
+        "title": "Sobre este curso"
+      },
+      "objectives": {
+        "title": "O que vai aprender"
+      },
+      "contents": {
+        "title": "Conteúdo do curso"
+      },
+      "cme": {
+        "title": "Créditos CME",
+        "credits": "{{credits}} créditos",
+        "link": "Detalhes da acreditação",
+        "unavailable": "A transferência de certificados está temporariamente indisponível."
+      },
+      "error": {
+        "title": "Não foi possível carregar este curso"
+      }
+    },
     "module": {
       "empty": {
         "title": "Esta lição ainda não tem tópicos ou questionários",

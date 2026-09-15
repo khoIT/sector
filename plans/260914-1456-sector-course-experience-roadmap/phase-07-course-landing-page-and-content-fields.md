@@ -403,3 +403,69 @@ Plus a **manual** pass, since the suite renders nothing (`environment: 'node'`,
   create a public course page here.
 - `imageUrl` is presigned per request by the API (`schemas/course.ts:110-111`). Render it, do
   not cache it, and do not persist a presigned URL anywhere client-side.
+
+## Outcome — 2026-09-15
+
+### The phase's headline number was wrong, and the correction is good news
+
+This phase opened on "158 of the 175 describe themselves with nothing" and was
+scoped as "as much about creating the fields as about rendering them". Re-measured
+against `gusi_prod_mirror.v2courses` before building:
+
+| | all 175 | live (`deletedAt: null`) |
+| --- | --- | --- |
+| course documents | 175 | **117** (58 are soft-deleted) |
+| `content` key present | 175 | 117 |
+| description non-empty, raw | 113 | 108 |
+| description non-empty after stripping tags | 110 | **107** |
+| `status: published` | 146 | **102** |
+| carrying any CME key | — | 41 |
+| CME credits non-empty | — | **0** |
+| `level` / `objectives` | 0 | 0 |
+
+So **10 live courses lack a description, not 158** — and only **six of them are
+published**: MedGlobal Bangladesh, MedGlobal Colombia, MedGlobal Yemen, MedGlobal
+Yemen 2, Kenya OB Ultrasound pre- & post-tests, Fellowship Biophysical Profile.
+The earlier figure counted all 175 documents, soft-deleted ones included, and
+inverted "has a description" for "has none".
+
+This does not change what was built — every block was already conditional — but it
+changes what the content team is being asked for. The ask is not 158 descriptions.
+It is 6 descriptions, a level and a set of objectives on 117 live courses, and a
+decision about the 41 courses advertising CME keys with no credits behind them.
+
+### Built
+
+- `level` (closed enum: beginner/intermediate/advanced) and `objectives` on the v2
+  course model, additive and defaulted, no migration. Served from **both**
+  `getLearnerCourseDetails` and `getLearnerCourses`, so the two routes cannot
+  disagree about a course's shape, and accepted on `PUT /api/v2/courses/:id`.
+  `objectives` arrives over multipart, so the write path accepts a JSON-encoded
+  array, repeated fields or a single value, and drops blank entries.
+- api-client: `level`/`objectives` on `learnerCourseSummarySchema`, plus a new
+  **narrow** `learnerCourseDetailsSchema`. Narrow deliberately — the details route
+  also returns the whole resolved structure with every lesson, topic and quiz
+  populated, which is a second definition of an outline that `courseOutlineSchema`
+  already owns. Zod strips what is not declared.
+- `course-landing-model.ts`: `landingBlocks`, `formatTotalTime`, `ctaLabelKey`.
+  Eight unit tests. `ctaLabelKey` delegates to the existing `courseActionLabelKey`
+  rather than restating three verbs in a second place.
+- `course-landing-page.tsx` at `/learn/courses/:courseId/about` — a sibling of the
+  shell, not a child: it answers "should I take this?", which is a different job
+  from the contents pane's "where am I in it?". `about` is a static segment, so it
+  outranks the shell's `:itemId` child.
+- Entry points: a `not_started` course card opens the landing page; the outline
+  page links to it. Seven locales, 189 i18n parity tests green.
+- The content-team list: `reports/course-content-authoring-list.csv`, one row per
+  live course with what it has and what it lacks.
+
+### Not built
+
+- **Step 11, the console form controls.** Still a separate item in
+  `gusi_scanhub_console`. `PUT /api/v2/courses/:id` accepts both fields today, so
+  content can be authored by script or API before that PR exists.
+- The `landingBlocks` "empty" path is now the rare case rather than the common one.
+  Worth re-reading the page once real levels and objectives exist.
+
+**Verified**: API typecheck clean; api-client typecheck clean; web typecheck clean;
+183 tests across the courses feature and the route map; 189 i18n tests.

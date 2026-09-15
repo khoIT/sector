@@ -120,6 +120,11 @@ export function learnerCourseSummary(refs: RefCache, course: Document): unknown 
     title: course.title ?? '',
     slug: course.slug ?? '',
     status: course.status || '',
+    // Both landing-page fields are coalesced by the service, not passed
+    // through: no course document in any dump carries either key, so this
+    // replay is what proves the schema survives 175 courses that have neither.
+    level: course.level ?? null,
+    objectives: course.objectives ?? [],
     // getCloudfrontUrl presigns per request; a dump cannot replay that.
     imageUrl: null,
     author: learnerCourseAuthor(refs, course.author),

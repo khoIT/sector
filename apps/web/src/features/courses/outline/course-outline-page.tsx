@@ -3,7 +3,7 @@ import { CircleCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-import { courseItemPathFor } from '../courses-links';
+import { courseAboutPathFor, courseItemPathFor } from '../courses-links';
 import { useCourseShell } from '../shell/course-shell-context';
 import { CourseOutlineItemRow } from './course-outline-item-row';
 import {
@@ -47,6 +47,13 @@ export function CourseOutlinePage() {
           {t('courses.outline.completedBanner')}
         </div>
       ) : null}
+
+      <Link
+        to={courseAboutPathFor(courseId)}
+        className="mb-3 inline-block text-body text-accent-ink outline-none hover:underline focus-visible:ring-2 focus-visible:ring-accent-ink"
+      >
+        {t('courses.landing.title')}
+      </Link>
 
       {groups.length === 0 ? (
         <EmptyState title={t('courses.outline.empty.title')} />

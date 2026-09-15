@@ -90,6 +90,15 @@ const COURSE_STATUSES = ['published', 'draft', 'pending_review', 'hidden'] as co
 const courseStatusSchema = z.enum(COURSE_STATUSES);
 
 /**
+ * Difficulty, closed server-side to these three. Kept an enum rather than a
+ * string so a level can safely index a translation table; an unknown value
+ * must fail here rather than reach the UI as a missing key.
+ */
+export const COURSE_LEVELS = ['beginner', 'intermediate', 'advanced'] as const;
+export const courseLevelSchema = z.enum(COURSE_LEVELS);
+export type CourseLevel = z.infer<typeof courseLevelSchema>;
+
+/**
  * `resolveCourseAuthor()` keys this `_id`, not `id` — the one populated ref
  * on this route that is built by hand rather than through
  * `transformIdPlugin`'s toJSON, which is what renames `_id` everywhere else
@@ -122,6 +131,15 @@ export const learnerCourseSummarySchema = z.object({
   cmeCredits: z.string().nullish(),
   cmeUrl: z.string().nullish(),
   cmeCode: z.string().nullish(),
+  /**
+   * Difficulty and learning objectives are authored, and no course carries
+   * either today — all 175 documents predate the fields. So the real risk is
+   * not a wrong value but an absent key on every single row, which is why
+   * `level` is `.nullish()` and `objectives` defaults to an empty array: a
+   * course list must not fail to parse because nobody has written content yet.
+   */
+  level: courseLevelSchema.nullish(),
+  objectives: z.array(displayText()).default([]),
   status: courseStatusSchema,
   author: learnerCourseAuthorSchema,
 });
@@ -235,6 +253,30 @@ export const learnerCourseListItemSchema = z.object({
   expirationType: expirationTypeSchema.nullable(),
 });
 export type LearnerCourseListItem = z.infer<typeof learnerCourseListItemSchema>;
+
+/**
+ * `GET /api/v2/learners/courses/:courseId` — one enrolment, read for the
+ * course landing page.
+ *
+ * Deliberately NARROW. The route also returns a `courseMetaVersion` carrying
+ * the whole resolved structure plus every lesson, topic and quiz populated —
+ * hundreds of kilobytes on a large course, and a second, competing definition
+ * of an outline that `courseOutlineSchema` already owns. Zod strips unknown
+ * keys, so declaring only what the landing page reads keeps one route from
+ * growing a second outline shape nobody resolves navigation from.
+ *
+ * `course` is the SAME `learnerCourseSummarySchema` the list route embeds, so
+ * a course cannot describe itself one way in My Courses and another way on
+ * its own page.
+ */
+export const learnerCourseDetailsSchema = z.object({
+  id: z.string(),
+  assignmentType: assignmentTypeSchema,
+  group: learnerCourseGroupSchema.nullable(),
+  course: learnerCourseSummarySchema,
+  progress: learnerCourseProgressSchema,
+});
+export type LearnerCourseDetails = z.infer<typeof learnerCourseDetailsSchema>;
 
 /**
  * The paginated envelope's `data`. Not `Paginated<T>` from `envelope.ts`:

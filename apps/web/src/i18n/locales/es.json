@@ -570,6 +570,39 @@
         "bestPercentage": "Mejor: {{percent}}%"
       }
     },
+    "landing": {
+      "title": "Sobre este curso",
+      "viewOutline": "Ver el índice del curso",
+      "totalTime": "{{duration}} de vídeo",
+      "itemCount_one": "{{count}} elemento",
+      "itemCount_other": "{{count}} elementos",
+      "moduleCount_one": "{{count}} módulo",
+      "moduleCount_other": "{{count}} módulos",
+      "moduleMeta": "{{topics}} temas · {{quizzes}} cuestionarios",
+      "level": {
+        "beginner": "Principiante",
+        "intermediate": "Intermedio",
+        "advanced": "Avanzado"
+      },
+      "about": {
+        "title": "Sobre este curso"
+      },
+      "objectives": {
+        "title": "Lo que aprenderás"
+      },
+      "contents": {
+        "title": "Contenido del curso"
+      },
+      "cme": {
+        "title": "Créditos CME",
+        "credits": "{{credits}} créditos",
+        "link": "Detalles de la acreditación",
+        "unavailable": "La descarga de certificados no está disponible temporalmente."
+      },
+      "error": {
+        "title": "No se pudo cargar este curso"
+      }
+    },
     "module": {
       "empty": {
         "title": "Esta lección aún no tiene temas ni cuestionarios",

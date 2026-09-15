@@ -30,7 +30,8 @@ export function decodeHtmlEntities(value: string): string {
 
   return value.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (whole, body: string) => {
     if (body.startsWith('#')) {
-      const code = body[1] === 'x' || body[1] === 'X' ? parseInt(body.slice(2), 16) : Number(body.slice(1));
+      const code =
+        body[1] === 'x' || body[1] === 'X' ? parseInt(body.slice(2), 16) : Number(body.slice(1));
       return Number.isFinite(code) && code > 0 ? String.fromCodePoint(code) : whole;
     }
     return NAMED[body.toLowerCase()] ?? whole;

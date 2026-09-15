@@ -114,6 +114,7 @@ export const courseKeys = {
   listRoot: () => ['get-learner-courses'] as const,
   list: (params: unknown) => ['get-learner-courses', params] as const,
   outline: (courseId: string) => ['get-learner-course-outline', courseId] as const,
+  details: (courseId: string) => ['get-learner-course-details', courseId] as const,
 } as const;
 
 /** One lesson/topic/quiz body, read through the legacy `/api/lms/*` routes —

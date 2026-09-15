@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import type { RouteObject } from 'react-router-dom';
 
 import {
+  COURSE_ABOUT_ROUTE_PATH,
   COURSE_ADMIN_ROUTE_PATH,
   COURSE_ITEM_CHILD_ROUTE_PATH,
   COURSE_OUTLINE_ROUTE_PATH,
@@ -35,6 +36,11 @@ const CourseShell = lazy(() =>
 const CourseItemRoute = lazy(() =>
   import('./shell/course-item-route').then((module) => ({ default: module.CourseItemRoute })),
 );
+const CourseLandingPage = lazy(() =>
+  import('./landing/course-landing-page').then((module) => ({
+    default: module.CourseLandingPage,
+  })),
+);
 const CourseReadOnlyAdminPage = lazy(() =>
   import('./admin/course-read-only').then((module) => ({
     default: module.CourseReadOnlyAdminPage,
@@ -55,5 +61,9 @@ export const coursesRoutes: RouteObject[] = [
       { path: COURSE_ITEM_CHILD_ROUTE_PATH, element: <CourseItemRoute /> },
     ],
   },
+  // Declared before the shell purely for readability; React Router ranks by
+  // specificity, and `about` being static is what makes it win over
+  // `:itemId` regardless of order.
+  { path: COURSE_ABOUT_ROUTE_PATH, element: <CourseLandingPage /> },
   { path: COURSE_ADMIN_ROUTE_PATH, element: <CourseReadOnlyAdminPage /> },
 ];

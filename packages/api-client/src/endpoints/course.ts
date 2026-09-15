@@ -1,6 +1,11 @@
 import type { ApiClient } from '../client';
 import { courseOutlineSchema, type CourseOutline } from '../schemas/course-outline';
-import { learnerCoursesPageSchema, type LearnerCoursesPage } from '../schemas/course';
+import {
+  learnerCourseDetailsSchema,
+  learnerCoursesPageSchema,
+  type LearnerCourseDetails,
+  type LearnerCoursesPage,
+} from '../schemas/course';
 
 /**
  * My Courses + the course outline (`GET /api/v2/learners/*`).
@@ -49,6 +54,23 @@ export async function getLearnerCourses(
   return client.get('/api/v2/learners/courses', {
     query: coursesListParams(query),
     schema: learnerCoursesPageSchema,
+    signal,
+  });
+}
+
+/**
+ * GET /api/v2/learners/courses/:courseId — the enrolment behind the course
+ * landing page. Same 404 contract as the outline route: a course the caller
+ * is not enrolled on is indistinguishable from one that does not exist, by
+ * design.
+ */
+export async function getLearnerCourseDetails(
+  client: ApiClient,
+  courseId: string,
+  signal?: AbortSignal,
+): Promise<LearnerCourseDetails> {
+  return client.get(`/api/v2/learners/courses/${courseId}`, {
+    schema: learnerCourseDetailsSchema,
     signal,
   });
 }

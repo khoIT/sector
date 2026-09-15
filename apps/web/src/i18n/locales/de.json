@@ -570,6 +570,39 @@
         "bestPercentage": "Beste: {{percent}}%"
       }
     },
+    "landing": {
+      "title": "Über diesen Kurs",
+      "viewOutline": "Kursübersicht ansehen",
+      "totalTime": "{{duration}} Video",
+      "itemCount_one": "{{count}} Element",
+      "itemCount_other": "{{count}} Elemente",
+      "moduleCount_one": "{{count}} Modul",
+      "moduleCount_other": "{{count}} Module",
+      "moduleMeta": "{{topics}} Themen · {{quizzes}} Tests",
+      "level": {
+        "beginner": "Einsteiger",
+        "intermediate": "Fortgeschritten",
+        "advanced": "Experte"
+      },
+      "about": {
+        "title": "Über diesen Kurs"
+      },
+      "objectives": {
+        "title": "Das lernen Sie"
+      },
+      "contents": {
+        "title": "Kursinhalte"
+      },
+      "cme": {
+        "title": "CME-Punkte",
+        "credits": "{{credits}} Punkte",
+        "link": "Details zur Akkreditierung",
+        "unavailable": "Zertifikat-Downloads sind vorübergehend nicht verfügbar."
+      },
+      "error": {
+        "title": "Dieser Kurs konnte nicht geladen werden"
+      }
+    },
     "module": {
       "empty": {
         "title": "Diese Lektion hat noch keine Themen oder Quiz",
