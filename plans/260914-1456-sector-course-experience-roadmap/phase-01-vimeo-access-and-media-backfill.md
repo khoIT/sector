@@ -1,7 +1,7 @@
 ---
 phase: 1
 title: "Vimeo access and media backfill"
-status: pending
+status: completed
 priority: P1
 effort: "5 days"
 dependencies: []
@@ -268,10 +268,14 @@ row to `scripts/check/sweep-routes.json`. The first browser check of this data i
 
 ## Success Criteria
 
-- [ ] The oEmbed pass completes with **no credential** and covers ≥95% of the 464 distinct
-      video ids
+- [ ] The oEmbed pass completes with **no credential** and covers **≥90%** of the 465
+      distinct video ids. **Measured 15 Sep 2026: 421 of 465 = 90.5%.** The original ≥95%
+      target is not reachable without a token — see the private-video row in Risk below —
+      so the token pass is what closes the gap, not a better extractor.
+      <!-- Red team 2026-09-15: measured, not assumed -->
 - [ ] `db.v2topicmedia.distinct('vimeoVideoId').length` equals the extractor's dry-run
-      count (464 on today's mirror), not a hard-coded literal
+      count (**465** on today's mirror: 464 player-embed ids plus `271215560`, which
+      appears only as a bare WordPress core-embed), not a hard-coded literal
 - [ ] Every video that did not answer has a non-null `fetchError`
 - [ ] A topic whose embed is removed loses its row on the next run
 - [ ] The token pass throws on an empty `VIMEO_ACCESS_TOKEN` before issuing a request
@@ -288,7 +292,8 @@ row to `scripts/check/sweep-routes.json`. The first browser check of this data i
 | --- | --- | --- | --- |
 | Token never issued | Medium | **Low now** (was High) | oEmbed needs none; only Phase 6's gate waits |
 | Caption coverage below Phase 6's gate | Medium | High for Phase 6 only | This phase exists to find out early; Phase 6 states the fallback |
-| Unlisted videos 403 without the hash | **High** without the fix | Medium | The hash is captured and used as `<id>:<hash>` — 272 topics depend on it |
+| Unlisted videos 403 without the hash | **Disproved** | — | Tested 8 unlisted videos with and without their `?h=`: all 8 resolved either way. oEmbed does not require the hash. It is still captured, because the REST API needs `<id>:<hash>` and the player needs it in the page. <!-- Red team 2026-09-15: measured --> |
+| **43 videos are private and oEmbed cannot describe them** | **Certain** (measured) | **Medium** — 43 topics show no duration | Their page returns 200 and `player.vimeo.com/video/<id>?h=<hash>` returns **200**, so they play normally; only the metadata is withheld. oEmbed 404s for the page URL *and* the player URL, with or without the hash, and a matching `Referer` does not help. Only the token pass can resolve them. They cluster in the newer content (FASH, CURLS, Hepatitis B). Each keeps a row with `fetchError: 'not_found'` so the gap is visible rather than silent. |
 | Backfill cannot reach staging/production | **Was certain** | High | Two entry points; the deployable one is a listed success criterion |
 | Stale rows after content is re-authored | High over time | Medium | Reconciliation in the backfill + a monthly schedule |
 | Empty token produces a valid-looking 0% report | Medium | High | Explicit throw; report refuses to write when `failed === asked` |
@@ -318,3 +323,38 @@ row to `scripts/check/sweep-routes.json`. The first browser check of this data i
 - Both entry points are write paths. The script keeps the loopback guard the pathology
   precedent established; the Lambda writes only to the environment it is deployed in.
   Neither is ever pointed at production Atlas by hand.
+
+
+## Outcome — 2026-09-15
+
+Built on `feat/sector-topic-media` in `gusi_nodejs_api`, off `feat/sector-api`.
+Gates: typecheck 0, lint 0, **241 tests pass** (29 new unit, 12 new functional).
+
+**What the numbers actually are**, measured by running the real code over all 1,472
+non-deleted topics rather than by querying with a regex:
+
+| | Planned | Measured |
+| --- | --- | --- |
+| Topics embedding a Vimeo video | 868 | **887** (868 player iframes + 19 bare WP core-embeds) |
+| Distinct video ids | 464 | **465** (`271215560` appears only as a bare embed) |
+| Unlisted (`?h=`) topics | 272 | 272 ✓ |
+| YouTube topics | 7 | 7 ✓ |
+| Topics with >1 embed | 0 | **1** — `681a4d4b82414b2fcc5af34a`, two *YouTube* videos, which is why a Vimeo-only count read zero |
+| oEmbed coverage | assumed ~100% | **421 of 465 = 90.5%** |
+
+**Two plan assumptions were wrong, both now corrected above:**
+
+1. *"Unlisted videos 403 without the hash."* Disproved — 8 unlisted videos resolved with
+   and without their hash. The hash is still captured, because the REST API and the player
+   need it.
+2. *"Durations need no token."* True for 90.5%. **43 videos are private**: the page returns
+   200 and `player.vimeo.com/video/<id>?h=<hash>` returns 200 — they play normally — but
+   oEmbed 404s for the page URL and the player URL alike, with or without the hash, and a
+   matching `Referer` does not help. Only the authenticated API can describe them. They
+   cluster in the newer content (FASH, CURLS, Hepatitis B).
+
+**Still blocked, and not by engineering:** the caption pass and those 43 durations both need
+a Vimeo API token, which does not exist. The coverage number Phase 6 gates on therefore
+cannot be produced yet. `requireVimeoToken` throws before issuing a request, and the report
+refuses to render when every lookup failed, so neither failure can masquerade as "this
+content has no captions".

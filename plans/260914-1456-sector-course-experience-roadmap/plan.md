@@ -79,10 +79,18 @@ same stack and shares the same upstream-merge dependency.
 
 ## Dependencies
 
-- **Vimeo API token** for the GUSI account (read scope: text tracks). Needed only for captions
-  (Phase 6 and Phase 1's coverage report). Durations and thumbnails come from Vimeo's public
-  oEmbed endpoint with no token — verified on all 35 topics of one course, 14 Sep 2026 — so
-  Phases 2, 3, 5 and 7 are not blocked on it. Not engineering.
+- **Vimeo API token** for the GUSI account (read scope: text tracks **and private video
+  metadata**). Public oEmbed covers **90.5%** of durations and thumbnails with no credential —
+  measured 15 Sep 2026 by running the real backfill over all 1,472 non-deleted topics, 421 of
+  465 videos resolved — so Phases 2, 3, 5 and 7 are **not blocked** on it. The token closes the
+  remaining gap: **43 private videos** whose metadata oEmbed will not return at any URL (they
+  still *play*, so this is 43 topics missing a duration, not 43 broken videos), plus all
+  caption data for Phase 6. Not engineering.
+  <!-- Corrected 15 Sep 2026: an earlier version said the token was needed only for captions. -->
+
+  > Scope the request as: read access to the GUSI account's videos, covering `texttracks`
+  > and private-video metadata. Without it, 43 of 887 video topics show no runtime — which is
+  > a visible gap on the outline, not a failure.
 - **Content-team owner** for learning objectives and course level (Phase 7). Not engineering.
 - **Completion threshold decision** — 80% (dashboard) vs 70% (LinkedIn Learning). Phase 2 assumes
   80% for parity unless a clinical/CME view says otherwise.
