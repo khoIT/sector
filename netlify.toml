@@ -1,0 +1,21 @@
+# Netlify build for Sector (apps/web).
+#
+# Sector is a static SPA with no backend of its own: every request goes to the
+# legacy gusi_nodejs_api, whose origin is baked into the bundle at build time.
+# Staging is the target here — that API sends `access-control-allow-origin: *`,
+# so a cross-origin bundle works without any API-side change.
+[build]
+  command = "pnpm run build"
+  publish = "apps/web/dist"
+
+[build.environment]
+  # Node 24+ is unusable against this stack; the repo pins 22 in .nvmrc.
+  NODE_VERSION = "22"
+  VITE_API_BASE_URL = "https://icavf6xrl0.execute-api.us-east-1.amazonaws.com"
+
+# React Router owns every path. Without this, a deep link such as /scans/my is a
+# 404 from the CDN, because no file of that name exists in the bundle.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

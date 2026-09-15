@@ -1,0 +1,31 @@
+# ClaudeKit Ignore File - SIZE-based blocking
+# Blocks directories with heavy file counts that fill LLM context
+# Syntax: gitignore-spec | Use ! prefix to allow (e.g., !src/vendor)
+
+# JS/TS
+node_modules
+.next
+.nuxt
+
+# Python
+__pycache__
+.venv
+venv
+
+# Go/PHP/Rust/Java
+vendor
+target
+
+# VCS & Coverage
+.git
+coverage
+
+# Allow reading these files
+!.env
+!.env.*
+
+# Sector ships as a static bundle, so producing and deploying apps/web/dist is
+# ordinary work in this repo rather than an accidental context read. Reading the
+# bundle's CONTENTS is still avoided by hand.
+!build
+!dist
