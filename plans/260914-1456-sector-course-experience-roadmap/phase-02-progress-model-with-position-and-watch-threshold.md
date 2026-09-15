@@ -1,7 +1,7 @@
 ---
 phase: 2
 title: "Progress model with position and watch threshold"
-status: pending
+status: completed
 priority: P1
 effort: "8 days"
 dependencies: [1]
@@ -459,3 +459,37 @@ phase**. Say so to stakeholders reading Success Criterion 1.
   the read-only admin view, or any export.
 - The `decidedBy: 'legacy'` log line must not include the request body verbatim — log the
   topic id, the mark and the verdict, not the learner's headers.
+
+
+## Outcome — 2026-09-15
+
+Built across `feat/sector-topic-media` in `gusi_nodejs_api` and `main` in `scanvault`.
+Gates: API typecheck 0, lint 0, **334 tests** across 35 files; web typecheck 0, lint 0,
+**888 tests** across 73 files; **34/34 routes healthy on a cold load, 0 console errors**.
+
+**What shipped.** Completion for a video topic is now a server decision. `resolveTopicCompletion`
+compares the stored high-water mark against the runtime cached in `v2topicmedia`; the request
+body's `hasVideo`/`videoCompleted` are ignored for any video whose runtime is known. A new
+`POST .../items/:itemId/position` route writes the playhead as a single conditional array
+update — no transaction, no structure walk — and completes the topic itself when the mark
+crosses the threshold, so a closed tab no longer costs a learner the completion.
+
+**One asymmetry worth keeping in mind.** The server's "this topic has a video" beats the
+client's, but the client's still counts when the server has nothing cached. The abuse being
+closed is a request claiming *less* video than exists; claiming more only makes completion
+harder and is the honest answer for a topic added since the last media backfill.
+
+**A pre-existing defect found and fixed on the way.** `cleanseUserProgress` reassigned
+`items[]` on every call, clean or not. Assigning the array marks the whole of it dirty, so
+Mongoose sent a full-array `$set` built from a possibly stale copy — which could roll back a
+status written in between. Completion is forward-only and group-leader reports and CME credit
+read it, so this mattered more than the playhead it was found through. It now reassigns only
+when it actually removed something. `position-survives-whole-array-writers.test.ts` pins it.
+
+**A hypothesis this disproved.** An `items.push()` from a stale document does *not* clobber a
+sibling's playhead: Mongoose compiles an append to an atomic `$push`, not a full-array `$set`.
+Only outright reassignment loses writes. The test file records both, because the difference is
+not obvious from reading the calling code.
+
+**Not done here, by design.** Nothing in the UI renders `durationSeconds` or `imageUrl` yet —
+Phase 2 plumbs them onto the outline payload, Phase 3 is where they appear on screen.

@@ -1,7 +1,7 @@
 ---
 title: "Sector course experience: re-entry, cohort loop, player shell, landing"
 description: "Post-cutover roadmap for Sector's course experience: re-entry and progress clarity, the cohort assignment loop, a persistent player shell with transcript and notes, and a course landing page — sequenced by production drop-off evidence."
-status: pending
+status: in-progress
 priority: P1
 branch: "feat/sector"
 tags: [lms, courses, progress, cohorts, vimeo, post-cutover]
@@ -58,8 +58,8 @@ Sources: [brainstorm report](../reports/brainstorm-260914-1456-sector-course-exp
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | [Vimeo access and media backfill](./phase-01-vimeo-access-and-media-backfill.md) | Pending |
-| 2 | [Progress model with position and watch threshold](./phase-02-progress-model-with-position-and-watch-threshold.md) | Pending |
+| 1 | [Vimeo access and media backfill](./phase-01-vimeo-access-and-media-backfill.md) | Completed |
+| 2 | [Progress model with position and watch threshold](./phase-02-progress-model-with-position-and-watch-threshold.md) | Completed |
 | 3 | [Outline and home re-entry surfaces](./phase-03-outline-and-home-re-entry-surfaces.md) | Pending |
 | 4 | [Cohort loop with reminders and leader status](./phase-04-cohort-loop-with-reminders-and-leader-status.md) | Pending |
 | 5 | [Persistent course player shell](./phase-05-persistent-course-player-shell.md) | Pending |
