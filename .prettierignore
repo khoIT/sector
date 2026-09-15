@@ -16,5 +16,7 @@ pnpm-lock.yaml
 # Agent memory, not source.
 .claude/agent-memory/
 
-# Generated from the legacy route map; a test asserts it byte for byte.
+# Half generated from the legacy route map, below the marker; a test asserts
+# that half byte for byte. The hand-written half above it is prose, and
+# reflowing either would fail the test or rewrite the record.
 docs/decommission-dashboard.md

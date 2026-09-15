@@ -3,9 +3,16 @@ import { LEGACY_ROUTES } from './legacy-route-map';
 /**
  * The decommission document's tables, rendered from the route map so the
  * prose in docs/ can never claim a destination the router does not have.
- * The prose around the tables (order of switch-off, rollback) is written in
- * the document itself, above the generated marker.
+ * The prose around the tables (cutover decisions, order of switch-off,
+ * rollback) is written in the document itself, above the generated marker.
+ *
+ * Only the marker and everything after it belongs to this renderer. The
+ * writer script replaces that span and leaves the hand-written head alone,
+ * and the test compares only that span — so prose and tables can coexist in
+ * one file without either clobbering the other.
  */
+export const GENERATED_SECTION_MARKER =
+  '<!-- BEGIN generated from apps/web/src/app/legacy-route-map.ts — run `pnpm docs:legacy-routes`; do not edit below this line -->';
 
 const REASON_TITLE: Record<string, string> = {
   commerce: 'Commerce',
@@ -28,13 +35,12 @@ export function renderDecommissionDocument(): string {
   const retired = LEGACY_ROUTES.filter((route) => route.resolve({}).kind === 'retired');
 
   const lines: string[] = [];
-  lines.push('# Decommissioning the dashboard');
+  lines.push(GENERATED_SECTION_MARKER);
   lines.push('');
   lines.push(
-    'Every URL `gusi_web_dashboard` served, and what Sector does with it. Generated from',
-    '`apps/web/src/app/legacy-route-map.ts` by `pnpm docs:legacy-routes`;',
-    'a test fails when this file and that table disagree. The router mounts the same table, so a',
-    'legacy bookmark, an emailed scan link or a saved tab lands where the rows below say.',
+    'Every URL `gusi_web_dashboard` served, and what Sector does with it. The router mounts the',
+    'same table, so a legacy bookmark, an emailed scan link or a saved tab lands where the rows',
+    'below say.',
   );
   lines.push('');
   lines.push('## Kept at the same path');

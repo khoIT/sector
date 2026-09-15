@@ -1,9 +1,71 @@
 # Decommissioning the dashboard
 
-Every URL `gusi_web_dashboard` served, and what Sector does with it. Generated from
-`apps/web/src/app/legacy-route-map.ts` by `pnpm docs:legacy-routes`;
-a test fails when this file and that table disagree. The router mounts the same table, so a
-legacy bookmark, an emailed scan link or a saved tab lands where the rows below say.
+What `gusi_web_dashboard` stops serving, in what order, and where every URL it served goes
+instead. Everything below the marker is generated from the router's own route map; this half is
+written by hand.
+
+## Cutover decisions this depends on
+
+| Decision | Answer | Recorded in |
+| --- | --- | --- |
+| Does Sector read a runtime flag service? | **No** — permanently and explicitly, rather than by drift | [`feature-flags-decision.md`](./feature-flags-decision.md) |
+| Do signed-in users keep their session? | **Yes** — same-origin handoff, no re-authentication | [`session-handoff.md`](./session-handoff.md) |
+
+The same-origin decision is what makes the forwarding table below work at all. `LegacyRedirect` is
+a client-side React Router component, so a `/dashboard/*` bookmark only reaches it if the browser
+already loaded Sector's bundle — which only happens if Sector serves the origin those bookmarks,
+links and notification emails point at. Standing Sector up on a second hostname would silently turn
+every row in that table into a 404 and sign every user out at the same moment.
+
+## Order of switch-off
+
+Decommission runs *after* the redirect map is live, never before it. A retired surface that 404s
+instead of explaining itself is the failure this document exists to prevent.
+
+1. **Deploy Sector to the dashboard's origin**, redirect map mounted. Nothing is switched off yet:
+   both apps' URLs resolve and the handoff adopts live sessions.
+2. **Internal rollout** — GUSI staff only. Walk all four roles in two locales on the deployed
+   build.
+3. **One pilot group** — a real cohort with real assignments. This is the step that surfaces the
+   two things a staging pass cannot: a classroom signing in from behind one NAT, and one person on
+   a second device.
+4. **All users.**
+5. **Stop minting dashboard URLs.** Confirm no live email template still emits a `:3000` path.
+6. **Switch the dashboard off**, leaving the redirect map serving its URLs.
+7. **Retire the dashboard's infrastructure** last, once a full assignment cycle has passed with no
+   forwarded URL reported broken.
+
+Steps 1–4 are reversible at the DNS layer. Step 6 is the first irreversible one.
+
+## Rollback
+
+Point the origin back at the dashboard. That is why step 6 is late and step 7 is last: while the
+dashboard still exists, cutover is a routing change rather than a migration.
+
+What rollback does **not** recover is a session. `migrateLegacyDashboardSession` removes the
+dashboard's `token` and `user` keys once it has adopted them, so a user who signed into Sector and
+is then sent back signs in once more. That is a deliberate trade — leaving the keys in place would
+mean two stores drifting apart — and it is a one-time cost per user, not a data loss.
+
+## Still open before this can run
+
+- **The OIDC IAM role.** `.github/workflows/deploy.yml` names `SectorS3GithubRole`, a placeholder.
+  A GitHub OIDC trust policy is scoped to a single repository, so the dashboard's
+  `ScanhubS3GithubRole` does not trust this one. Someone with AWS access must provision the role
+  and register `PROD_AWS_ACCOUNT_ID`, `PROD_AWS_REGION`, `PROD_AWS_BUCKET_NAME`,
+  `PROD_AWS_CLOUDFRONT_DISTRIBUTION_ID` and `PROD_VITE_API_URL`. Until then the pipeline is
+  validated but has never run.
+- **Whether Sector takes over the dashboard's bucket and CloudFront distribution or gets its own.**
+  The same-origin decision constrains this: whatever serves the origin at step 1 is what the
+  distribution must point at.
+- **Flag decisions for `features/{courses,home,gallery}`**, left open in
+  `feature-flags-decision.md` for whoever finishes those surfaces.
+
+<!-- BEGIN generated from apps/web/src/app/legacy-route-map.ts — run `pnpm docs:legacy-routes`; do not edit below this line -->
+
+Every URL `gusi_web_dashboard` served, and what Sector does with it. The router mounts the
+same table, so a legacy bookmark, an emailed scan link or a saved tab lands where the rows
+below say.
 
 ## Kept at the same path
 
