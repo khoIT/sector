@@ -446,3 +446,62 @@ picker that reads as "this group has no learners".
   or group title.
 - The job stamps rows, so it is a write path: staging or the local mirror-backed database
   only, never production Atlas outside a deployed Lambda.
+
+## Outcome — 2026-09-15
+
+Shipped: the authorization sweep, the daily reminder job with one-click unsubscribe, and
+the learner opt-out on the profile page. An adversarial review over the finished branch
+(five dimensions, each finding independently verified by an agent briefed to refute it)
+found nine real defects, all fixed below. Three would have shipped silently.
+
+### Defects the review caught
+
+| What | Why it mattered |
+|---|---|
+| `idOf()` read `.id` before `._id` | A bare `ObjectId`'s `.id` is the raw 12-byte buffer, and it is truthy, so it won the `??` chain. The aggregation hands the link builder bare ObjectIds — so **every link in every reminder email was mojibake**. |
+| `contentTitle` never projected | Declared on the row type, absent from the `$group`. Optional typing hid it. **Every subject read "Due in 3 days: your next assignment".** |
+| Ninth read route never converted | `GET /group/:groupId` still gated on membership, not leadership. It returns every assignment in the group populated with each assignee's name and email — strictly more than the routes that were locked down, and it is the one the web client actually calls. |
+| Mail mock imported, not declared | The import-sort lint rule moved it below the worker import, so `@/lib/mail` resolved first and the real provider ran. The tests passed only when another file in the same run happened to register the mock — i.e. **vacuously**. |
+| GET unsubscribe mutated | Corporate mail gateways fetch every link in an inbound message. Learners would have been unsubscribed without ever clicking. GET now renders a confirm button; only POST writes. |
+| Opt-out stamped the learner's rows | Kept them out of the query, but made the opt-out irreversible — switching reminders back on cannot unstamp a row. Opted-out learners are now excluded in the aggregation instead, leaving their rows untouched. |
+| Profile-update email on a preference toggle | Turning reminder mail off sent a "your profile was updated" email. Now only an identity-field change triggers it. |
+| `updateProfile` omitted the flag | A client writing the response into its cache saw the toggle snap back. The response now mirrors `getProfile`. |
+| `assertMayReadUserAssignments` re-derived leadership | Missed group ancestry (a leader of a parent group was refused a learner in its child) and never saw the scoped-visibility switch, despite the module header claiming both. Now uses `getLedGroupIdsWithDescendants`. |
+
+Reported and **rejected** after verification: the unsubscribe token appearing in access
+logs (real mechanism, but the token only ever sets one boolean for one user, and it
+expires — severity does not justify a redesign), and "the upcoming stage stamps every row
+but emails only the first" (the filter is a one-day window, so a batch cannot hold rows
+the email failed to name).
+
+`cancelled` folding into `not_started` is left as-is and documented in the model: the
+mirror holds **zero** cancelled rows across 8,720 assignments, so the case is unreachable.
+
+### Deviations from the plan
+
+- **No compound index.** The collection is under 9,000 rows and the job runs once a day;
+  the existing `{ dueDate: 1 }` index bounds both queries. A new index would cost writes
+  on every assignment created and save nothing measurable.
+- **Dashboard API `route` field left on legacy paths.** The still-deployed legacy
+  dashboard consumes it and prefixes `/dashboard/` itself. Only the *email* links moved
+  to Sector paths.
+- **Learner opt-out is its own card**, not a row in `notification-preferences.tsx`. That
+  card renders nothing for anyone who leads no group — exactly the audience for these
+  reminders.
+
+### Verified
+
+- Templates sent through the real path into Mailpit: both RFC 8058 headers arrive intact,
+  a `<script>` tag passed as a learner name comes out escaped, singular/plural digest copy
+  is correct, no unrendered variables.
+- The two new regression tests were confirmed to **fail** against the reintroduced bugs
+  and pass against the fix — not merely green.
+- The reminder suite now passes standalone (11/11), which it did not before.
+
+### Known flake
+
+`get-user-dashboard-assignments.test.ts` and `get-active-learner-courses.test.ts` each
+failed once in a directory run and passed in isolation and on re-run. All test files share
+one `gusi_test` database with a `beforeEach` wipe; work outstanding from a finished file
+can race the next file's clear. Not caused by this phase, but it will keep producing
+one-off reds until the database is per-file.

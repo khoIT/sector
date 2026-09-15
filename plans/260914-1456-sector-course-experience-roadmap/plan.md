@@ -61,8 +61,8 @@ Sources: [brainstorm report](../reports/brainstorm-260914-1456-sector-course-exp
 | 1 | [Vimeo access and media backfill](./phase-01-vimeo-access-and-media-backfill.md) | Completed |
 | 2 | [Progress model with position and watch threshold](./phase-02-progress-model-with-position-and-watch-threshold.md) | Completed |
 | 3 | [Outline and home re-entry surfaces](./phase-03-outline-and-home-re-entry-surfaces.md) | Completed |
-| 4 | [Cohort loop with reminders and leader status](./phase-04-cohort-loop-with-reminders-and-leader-status.md) | Pending |
-| 5 | [Persistent course player shell](./phase-05-persistent-course-player-shell.md) | Pending |
+| 4 | [Cohort loop with reminders and leader status](./phase-04-cohort-loop-with-reminders-and-leader-status.md) | Completed |
+| 5 | [Persistent course player shell](./phase-05-persistent-course-player-shell.md) | Partly done — layout route landed, tab strip not started |
 | 6 | [Transcript plus notes and chapters](./phase-06-transcript-plus-notes-and-chapters.md) | Pending |
 | 7 | [Course landing page and content fields](./phase-07-course-landing-page-and-content-fields.md) | Pending |
 | 8 | [Leader completion report and due-this-week](./phase-08-leader-completion-report-and-due-this-week.md) | Pending |
@@ -91,6 +91,32 @@ same stack and shares the same upstream-merge dependency.
   > Scope the request as: read access to the GUSI account's videos, covering `texttracks`
   > and private-video metadata. Without it, 43 of 887 video topics show no runtime — which is
   > a visible gap on the outline, not a failure.
+
+  **Token obtained and measured, 15 Sep 2026.** A personal access token (scope
+  `private public`) minted from the GUSI Vimeo app on a **Contributor** seat was run against
+  all 465 distinct video ids in the mirror:
+
+  | | videos | share |
+  |---|---|---|
+  | readable (metadata + duration) | 295 | 63% |
+  | carry text tracks (all include English) | 278 | 59% |
+  | unreadable, but alive on public oEmbed | 128 | 28% |
+  | genuinely gone (404 both ways) | 42 | 9% |
+
+  Track languages: `en` 211, `en-x-autogen` 202, then ar/de/es/fr/hi/pt/sw/uk/ur/zh at 181
+  each — GUSI already subtitles into the languages Sector ships locales for.
+
+  Three consequences for Phase 6:
+
+  1. **Transcript coverage is 59%, not the ~90% the oEmbed figure suggested.** The gap is a
+     *seat permission* problem, not a scope problem: 128 readable-in-public videos are simply
+     not shared with this seat. An owner-generated token, or granting the seat those folders,
+     should close most of it. **Re-measure before committing to a coverage promise.**
+  2. **Do not switch durations onto the API.** Public oEmbed reaches 421/465 with no
+     credential; the token reaches 295. oEmbed stays the better source for Phase 2/3/5/7.
+  3. **App client id/secret are useless here.** A client-credentials token carries no user
+     context and 401s (error 8003) on every `/videos/*` read, including public ones. Only a
+     personal access token works.
 - **Content-team owner** for learning objectives and course level (Phase 7). Not engineering.
 - **Completion threshold decision** — 80% (dashboard) vs 70% (LinkedIn Learning). Phase 2 assumes
   80% for parity unless a clinical/CME view says otherwise.

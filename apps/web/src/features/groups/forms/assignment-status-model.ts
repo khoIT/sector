@@ -31,6 +31,11 @@ type LifecycleInput = Pick<GroupAssignment, 'status' | 'dueDate'>;
  *      completed — it is not a thing to chase, and showing it as overdue
  *      would put permanent red on a list that is already mostly red.
  *   2. Cancelled rows are not overdue either; nobody owes anything on them.
+ *      They fold into `not_started`, which does overstate outstanding work in
+ *      principle — but the production mirror holds ZERO cancelled rows across
+ *      8,720 assignments (only active, completed and in_progress occur), so
+ *      the case is unreachable today. Give cancelled its own pill if the
+ *      status ever starts being written.
  *   3. Past its date and still open is overdue, whether or not it was started.
  *      This deliberately outranks `in_progress`: half-done and three weeks
  *      late is the case the report exists to surface.

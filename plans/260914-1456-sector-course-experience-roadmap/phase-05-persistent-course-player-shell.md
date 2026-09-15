@@ -336,3 +336,41 @@ cold load:
   pressure to.
 - Playback position is rendered only on the learner's own shell. It does not reach the
   read-only admin view (`admin/course-read-only.tsx`), and must not be added there.
+
+## Outcome — 2026-09-15
+
+Landed under a one-hour cap, so this is a partial phase. What is done is done
+properly; what is not done is named here rather than left to be discovered.
+
+**Done**
+
+- `shell/course-shell.tsx` is the layout route. It owns the outline query and
+  the chrome; `CourseOutlinePage` is its index child and `CourseItemRoute` its
+  `:itemId` child. Requirements 1, 4, 5, 8, 9, 10.
+- Requirement 2 is **proven, not assumed**. A browser run stamped a DOM
+  attribute on the contents pane, navigated to a different item, and found the
+  same node still carrying it — the pane was never unmounted. `paneSurvived:
+  true`, no console errors.
+- The pane moved to the left, matching the design and the legacy dashboard.
+  It renders on item routes only: on the index the outline page IS the contents
+  list, and showing both put the same tree on screen twice.
+- Requirement 7, position freshness: `patchItemPosition` writes each resolved
+  playhead into the cached outline in place, so an A -> B -> A round trip inside
+  the shell resumes where the learner stopped rather than 30 seconds behind.
+  Returns the previous object unchanged when nothing moved, so a write that
+  changes nothing notifies no subscriber. Four unit tests.
+- `course-runner-page.tsx` and `course-layout.tsx` are deleted; their pending,
+  error and dispatch logic moved into the shell and the item route intact.
+
+**Not done — carried forward**
+
+- Requirements 3 and 6: the tab strip and its URL search param. Nothing depends
+  on it until Phase 6 adds Transcript and Notes, and adding the strip with a
+  single Overview tab would have been scaffolding with no reader.
+- The contents pane still lists every item in the course rather than collapsing
+  to the current module, which on a 65-item course makes a very tall page.
+  Phase 6 should decide whether the pane scrolls independently or collapses.
+
+**Verified**: typecheck clean; 80/80 unit tests across the courses feature and
+the route-registration test; a browser pass over the outline index, an item
+route and an in-shell navigation with no console errors.
