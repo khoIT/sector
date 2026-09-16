@@ -62,10 +62,40 @@ Sources: [brainstorm report](../reports/brainstorm-260914-1456-sector-course-exp
 | 2 | [Progress model with position and watch threshold](./phase-02-progress-model-with-position-and-watch-threshold.md) | Completed |
 | 3 | [Outline and home re-entry surfaces](./phase-03-outline-and-home-re-entry-surfaces.md) | Completed |
 | 4 | [Cohort loop with reminders and leader status](./phase-04-cohort-loop-with-reminders-and-leader-status.md) | Completed |
-| 5 | [Persistent course player shell](./phase-05-persistent-course-player-shell.md) | Done bar the tab strip, which waits on Phase 6 having tabs to hold |
+| 5 | [Persistent course player shell](./phase-05-persistent-course-player-shell.md) | Completed — tab strip and the collapsing contents pane landed 15 Sep |
 | 6 | [Transcript plus notes and chapters](./phase-06-transcript-plus-notes-and-chapters.md) | Blocked — chapters dropped (no source data), transcript gated on the Vimeo seat, Notes on its go/no-go |
 | 7 | [Course landing page and content fields](./phase-07-course-landing-page-and-content-fields.md) | Completed bar the console form controls |
 | 8 | [Leader completion report and due-this-week](./phase-08-leader-completion-report-and-due-this-week.md) | Completed — no 719-member perf run, no browser sweep |
+
+## Course and player brought to the design — 2026-09-15
+
+The two screens in `design/learner-course-experience.html` that were furthest from what shipped are
+now close to it. All changes are in `apps/web`:
+
+- **Course landing** is two columns: the course stated in learner units (modules / topics / quizzes /
+  video runtime) with a CME pill, a "What you'll learn" card, and module rows carrying a status mark,
+  per-module counts, minutes and `done/total`. The sticky rail holds the cover, the percentage, time
+  left, the three fractions and the Resume button. The percentage is the SERVER's, not a recount.
+- **Player** gained the design's contents pane — a header with `completed/total`, time left and a
+  bar, modules that collapse and can be opened by hand, per-item durations, a question count on a
+  quiz, and the footer stating the 80% rule. The video now leads the column at 16:9 (the embed used
+  to sit at its authored 640px inside the prose), with the title, the watched line and an
+  Overview / Transcript / Notes strip beneath it. An item route shows a breadcrumb instead of the
+  progress header, which the pane now carries.
+- Phase 5's two carried-forward requirements — the tab strip and collapsing the pane to the current
+  module — are done. **Phase 6 still owns what goes INSIDE** Transcript and Notes; both tabs say
+  plainly that they are not built rather than showing an empty panel.
+
+Supporting changes: a shared `OutlineStatusGlyph`, `splitTopicMedia()` (lifts the player out of the
+authored HTML so the prose can live under a tab), `formatPlayheadTimestamp` moved to `lib/format.ts`
+so home and the player share it, and 22 new keys across all seven locales.
+
+Verified: typecheck clean on all three packages, 978 web tests pass, and a browser pass over My
+Courses, the landing page, the outline and an item route with no console errors.
+
+**The data behind the demo is faked** — `level`, `objectives` and `cmeCredits` on three courses, and
+a deliberately mid-course progress state. See `docs/local-setup-lms.md` section 8. No course in
+production carries objectives or a level; Phase 7's console work is still what makes them real.
 
 ## Cross-Plan Dependencies
 
