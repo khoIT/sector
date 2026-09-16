@@ -41,7 +41,11 @@ export function CourseItemRoute() {
 
   return (
     <article aria-label={item.title} className="flex flex-col gap-4">
-      <h2 className="text-[17px] font-semibold text-ink">{item.title}</h2>
+      {/* A topic prints its own heading under the player, with the watched
+          line beside it. A lesson and a quiz still need one here. */}
+      {item.kind === 'topic' ? null : (
+        <h2 className="text-[17px] font-semibold text-ink">{item.title}</h2>
+      )}
       {item.kind === 'lesson' ? (
         <LessonView
           courseId={courseId}

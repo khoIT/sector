@@ -12,3 +12,20 @@
  * path so the utility classes used inside the UI primitives are generated.
  */
 @source '../../../packages/ui/src';
+
+/*
+ * A topic's video fills the reading column.
+ *
+ * The embed comes from the topic's own authored HTML, where it carries whatever
+ * width and height the author typed — usually a 640x360 box that leaves the
+ * player looking like a thumbnail in a 1000px column. Scoped to `.sv-video` so
+ * it only reaches the runner's content area, and matched on the iframe rather
+ * than a wrapper because most of these embeds have no wrapper at all.
+ */
+.sv-video iframe {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  display: block;
+}

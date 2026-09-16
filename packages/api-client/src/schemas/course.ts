@@ -269,10 +269,34 @@ export type LearnerCourseListItem = z.infer<typeof learnerCourseListItemSchema>;
  * a course cannot describe itself one way in My Courses and another way on
  * its own page.
  */
+/**
+ * The group as the DETAIL route returns it, which is smaller than the list
+ * route's: it omits `deletedAt`, `expirationDate` and `isGroupExpired`.
+ *
+ * Those three are derived server-side for the list, where
+ * `normalizeLearnerCourses()` needs them to split `items` from `expired`. The
+ * detail route answers for one enrolment the caller already reached, computes
+ * none of them, and no detail surface reads them — so requiring them here made
+ * the course landing page fail to parse for any course assigned through a
+ * group, while the same course opened fine for a purely personal enrolment.
+ * That is why it went unnoticed: it needs a learner who is BOTH enrolled
+ * personally and a member of a group the course is assigned to.
+ *
+ * Modelled as its own shape rather than by loosening
+ * `learnerCourseGroupSchema`, so the list keeps the stricter contract it
+ * genuinely relies on. The lasting fix is for the detail route to return the
+ * same object as the list; until it does, this describes what it really sends.
+ */
+const learnerCourseDetailsGroupSchema = learnerCourseGroupSchema.partial({
+  deletedAt: true,
+  expirationDate: true,
+  isGroupExpired: true,
+});
+
 export const learnerCourseDetailsSchema = z.object({
   id: z.string(),
   assignmentType: assignmentTypeSchema,
-  group: learnerCourseGroupSchema.nullable(),
+  group: learnerCourseDetailsGroupSchema.nullable(),
   course: learnerCourseSummarySchema,
   progress: learnerCourseProgressSchema,
 });

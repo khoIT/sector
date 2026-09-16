@@ -616,11 +616,31 @@
         "title": "Créditos CME",
         "credits": "{{credits}} créditos",
         "link": "Detalles de la acreditación",
-        "unavailable": "La descarga de certificados no está disponible temporalmente."
+        "unavailable": "La descarga de certificados no está disponible temporalmente.",
+        "none": "Sin créditos CME",
+        "pill": "{{credits}} créditos CME"
       },
       "error": {
         "title": "No se pudo cargar este curso"
-      }
+      },
+      "eyebrow": {
+        "personal": "Curso individual",
+        "group": "Curso de grupo"
+      },
+      "modulesWord_one": "módulo",
+      "modulesWord_other": "módulos",
+      "topicsWord_one": "tema",
+      "topicsWord_other": "temas",
+      "quizzesWord_one": "cuestionario",
+      "quizzesWord_other": "cuestionarios",
+      "ofVideo": "de vídeo",
+      "levelLabel": "Nivel: {{level}}",
+      "modules": {
+        "title": "Módulos"
+      },
+      "percentComplete": "{{percent}}% completado",
+      "timeLeft": "quedan {{duration}}",
+      "progressCounts": "{{modulesDone}}/{{modules}} módulos · {{topicsDone}}/{{topics}} temas · {{quizzesDone}}/{{quizzes}} cuestionarios"
     },
     "module": {
       "empty": {
@@ -676,6 +696,21 @@
         "backToOutline": "Volver al esquema del curso",
         "saveError": "No se pudo guardar tu última respuesta. Continúa — se volverá a intentar.",
         "resumeError": "No se pudo cargar tu progreso guardado. Empezando de nuevo."
+      },
+      "contents": {
+        "title": "Contenido"
+      },
+      "completionNote": "Los temas se completan automáticamente al {{percent}}% visto.",
+      "questionCount_one": "{{count}} p",
+      "questionCount_other": "{{count}} p",
+      "watchedPercent": "Empezado · {{percent}}% visto",
+      "tabs": {
+        "overview": "Resumen",
+        "transcript": "Transcripción",
+        "notes": "Notas",
+        "transcriptPending": "Las transcripciones aún no están disponibles. Llegarán con los subtítulos que GUSI ya publica en Vimeo.",
+        "notesPending": "Las notas aún no existen. Nada de lo que escribas aquí se guardaría.",
+        "overviewEmpty": "Este tema es el vídeo. No hay nada más que leer."
       }
     },
     "admin": {

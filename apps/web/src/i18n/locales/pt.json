@@ -616,11 +616,31 @@
         "title": "Créditos CME",
         "credits": "{{credits}} créditos",
         "link": "Detalhes da acreditação",
-        "unavailable": "A transferência de certificados está temporariamente indisponível."
+        "unavailable": "A transferência de certificados está temporariamente indisponível.",
+        "none": "Sem créditos CME",
+        "pill": "{{credits}} créditos CME"
       },
       "error": {
         "title": "Não foi possível carregar este curso"
-      }
+      },
+      "eyebrow": {
+        "personal": "Curso individual",
+        "group": "Curso em grupo"
+      },
+      "modulesWord_one": "módulo",
+      "modulesWord_other": "módulos",
+      "topicsWord_one": "tópico",
+      "topicsWord_other": "tópicos",
+      "quizzesWord_one": "questionário",
+      "quizzesWord_other": "questionários",
+      "ofVideo": "de vídeo",
+      "levelLabel": "Nível: {{level}}",
+      "modules": {
+        "title": "Módulos"
+      },
+      "percentComplete": "{{percent}}% concluído",
+      "timeLeft": "faltam {{duration}}",
+      "progressCounts": "{{modulesDone}}/{{modules}} módulos · {{topicsDone}}/{{topics}} tópicos · {{quizzesDone}}/{{quizzes}} questionários"
     },
     "module": {
       "empty": {
@@ -676,6 +696,21 @@
         "backToOutline": "Voltar ao resumo do curso",
         "saveError": "Sua última resposta não pôde ser salva. Continue — a tentativa será refeita.",
         "resumeError": "Seu progresso salvo não pôde ser carregado. Começando do zero."
+      },
+      "contents": {
+        "title": "Conteúdo"
+      },
+      "completionNote": "Os tópicos são concluídos automaticamente com {{percent}}% assistido.",
+      "questionCount_one": "{{count}} p",
+      "questionCount_other": "{{count}} p",
+      "watchedPercent": "Iniciado · {{percent}}% assistido",
+      "tabs": {
+        "overview": "Visão geral",
+        "transcript": "Transcrição",
+        "notes": "Notas",
+        "transcriptPending": "As transcrições ainda não estão disponíveis. Virão com as legendas que a GUSI já publica no Vimeo.",
+        "notesPending": "As notas ainda não foram criadas. Nada do que escrever aqui seria guardado.",
+        "overviewEmpty": "Este tópico é o vídeo. Não há mais nada para ler."
       }
     },
     "admin": {

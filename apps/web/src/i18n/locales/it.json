@@ -616,11 +616,31 @@
         "title": "Crediti CME",
         "credits": "{{credits}} crediti",
         "link": "Dettagli dell'accreditamento",
-        "unavailable": "Il download dei certificati non è temporaneamente disponibile."
+        "unavailable": "Il download dei certificati non è temporaneamente disponibile.",
+        "none": "Nessun credito CME",
+        "pill": "{{credits}} crediti CME"
       },
       "error": {
         "title": "Non è stato possibile caricare questo corso"
-      }
+      },
+      "eyebrow": {
+        "personal": "Corso individuale",
+        "group": "Corso di gruppo"
+      },
+      "modulesWord_one": "modulo",
+      "modulesWord_other": "moduli",
+      "topicsWord_one": "argomento",
+      "topicsWord_other": "argomenti",
+      "quizzesWord_one": "quiz",
+      "quizzesWord_other": "quiz",
+      "ofVideo": "di video",
+      "levelLabel": "Livello: {{level}}",
+      "modules": {
+        "title": "Moduli"
+      },
+      "percentComplete": "{{percent}}% completato",
+      "timeLeft": "{{duration}} rimanenti",
+      "progressCounts": "{{modulesDone}}/{{modules}} moduli · {{topicsDone}}/{{topics}} argomenti · {{quizzesDone}}/{{quizzes}} quiz"
     },
     "module": {
       "empty": {
@@ -676,6 +696,21 @@
         "backToOutline": "Torna alla struttura del corso",
         "saveError": "Non è stato possibile salvare la tua ultima risposta. Continua — verrà ritentato automaticamente.",
         "resumeError": "Non è stato possibile caricare i tuoi progressi salvati. Si riparte da zero."
+      },
+      "contents": {
+        "title": "Contenuti"
+      },
+      "completionNote": "Gli argomenti si completano automaticamente al {{percent}}% visto.",
+      "questionCount_one": "{{count}} d",
+      "questionCount_other": "{{count}} d",
+      "watchedPercent": "Iniziato · {{percent}}% visto",
+      "tabs": {
+        "overview": "Panoramica",
+        "transcript": "Trascrizione",
+        "notes": "Note",
+        "transcriptPending": "Le trascrizioni non sono ancora disponibili. Arriveranno con i sottotitoli che GUSI pubblica già su Vimeo.",
+        "notesPending": "Le note non sono ancora state realizzate. Nulla di ciò che scrivi qui verrebbe salvato.",
+        "overviewEmpty": "Questo argomento è il video. Non c’è altro da leggere."
       }
     },
     "admin": {

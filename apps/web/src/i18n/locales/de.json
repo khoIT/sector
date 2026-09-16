@@ -616,11 +616,31 @@
         "title": "CME-Punkte",
         "credits": "{{credits}} Punkte",
         "link": "Details zur Akkreditierung",
-        "unavailable": "Zertifikat-Downloads sind vorübergehend nicht verfügbar."
+        "unavailable": "Zertifikat-Downloads sind vorübergehend nicht verfügbar.",
+        "none": "Keine CME-Punkte",
+        "pill": "{{credits}} CME-Punkte"
       },
       "error": {
         "title": "Dieser Kurs konnte nicht geladen werden"
-      }
+      },
+      "eyebrow": {
+        "personal": "Einzelkurs",
+        "group": "Gruppenkurs"
+      },
+      "modulesWord_one": "Modul",
+      "modulesWord_other": "Module",
+      "topicsWord_one": "Thema",
+      "topicsWord_other": "Themen",
+      "quizzesWord_one": "Test",
+      "quizzesWord_other": "Tests",
+      "ofVideo": "Video",
+      "levelLabel": "Niveau: {{level}}",
+      "modules": {
+        "title": "Module"
+      },
+      "percentComplete": "{{percent}}% abgeschlossen",
+      "timeLeft": "{{duration}} übrig",
+      "progressCounts": "{{modulesDone}}/{{modules}} Module · {{topicsDone}}/{{topics}} Themen · {{quizzesDone}}/{{quizzes}} Tests"
     },
     "module": {
       "empty": {
@@ -676,6 +696,21 @@
         "backToOutline": "Zurück zur Kursübersicht",
         "saveError": "Deine letzte Antwort konnte nicht gespeichert werden. Mach weiter — es wird erneut versucht.",
         "resumeError": "Dein gespeicherter Fortschritt konnte nicht geladen werden. Neustart."
+      },
+      "contents": {
+        "title": "Inhalte"
+      },
+      "completionNote": "Themen gelten ab {{percent}}% Wiedergabe automatisch als abgeschlossen.",
+      "questionCount_one": "{{count}} F",
+      "questionCount_other": "{{count}} F",
+      "watchedPercent": "Begonnen · {{percent}}% gesehen",
+      "tabs": {
+        "overview": "Überblick",
+        "transcript": "Transkript",
+        "notes": "Notizen",
+        "transcriptPending": "Transkripte sind noch nicht verfügbar. Sie kommen mit den Untertiteln, die GUSI bereits auf Vimeo veröffentlicht.",
+        "notesPending": "Notizen sind noch nicht umgesetzt. Eingaben würden hier nicht gespeichert.",
+        "overviewEmpty": "Dieses Thema besteht aus dem Video. Es gibt nichts weiter zu lesen."
       }
     },
     "admin": {

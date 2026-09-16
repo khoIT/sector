@@ -692,11 +692,31 @@
         "title": "CME credit",
         "credits": "{{credits}} credits",
         "link": "Accreditation details",
-        "unavailable": "Certificate downloads are temporarily unavailable."
+        "unavailable": "Certificate downloads are temporarily unavailable.",
+        "none": "No CME credit",
+        "pill": "{{credits}} CME credits"
       },
       "error": {
         "title": "This course could not be loaded"
-      }
+      },
+      "eyebrow": {
+        "personal": "Individual course",
+        "group": "Group course"
+      },
+      "modulesWord_one": "module",
+      "modulesWord_other": "modules",
+      "topicsWord_one": "topic",
+      "topicsWord_other": "topics",
+      "quizzesWord_one": "quiz",
+      "quizzesWord_other": "quizzes",
+      "ofVideo": "of video",
+      "levelLabel": "Level: {{level}}",
+      "modules": {
+        "title": "Modules"
+      },
+      "percentComplete": "{{percent}}% complete",
+      "timeLeft": "{{duration}} left",
+      "progressCounts": "{{modulesDone}}/{{modules}} modules · {{topicsDone}}/{{topics}} topics · {{quizzesDone}}/{{quizzes}} quizzes"
     },
     "module": {
       "empty": {
@@ -752,6 +772,21 @@
         "backToOutline": "Back to course outline",
         "saveError": "Your last answer could not be saved. Keep going — it will retry.",
         "resumeError": "Your saved progress could not be loaded. Starting fresh."
+      },
+      "contents": {
+        "title": "Contents"
+      },
+      "completionNote": "Topics complete automatically at {{percent}}% watched.",
+      "questionCount_one": "{{count}} q",
+      "questionCount_other": "{{count}} q",
+      "watchedPercent": "Started · {{percent}}% watched",
+      "tabs": {
+        "overview": "Overview",
+        "transcript": "Transcript",
+        "notes": "Notes",
+        "transcriptPending": "Transcripts are not available yet. They arrive with the video captions GUSI already publishes on Vimeo.",
+        "notesPending": "Notes are not built yet. Nothing you type here would be saved.",
+        "overviewEmpty": "This topic is the video. There is nothing further to read."
       }
     },
     "admin": {

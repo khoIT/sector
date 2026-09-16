@@ -1,11 +1,15 @@
 import type { CourseOutlineItem } from '@sector/api-client';
 import { useCourseTopicDetail } from '@sector/api-client';
-import { Button, EmptyState, RichText, Skeleton } from '@sector/ui';
+import { Button, EmptyState, RichText, Skeleton, cn } from '@sector/ui';
 import { AlertTriangle } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { formatPlayheadTimestamp } from '@/lib/format';
+
+import { OutlineStatusGlyph } from '../outline/outline-status-glyph';
 import { CourseItemNav } from './course-item-nav';
+import { hasReadableBody, splitTopicMedia } from './split-topic-media';
 import { useTrackCourseItemView } from './use-track-course-item-view';
 import { useVimeoWatchTracking } from './use-vimeo-watch-tracking';
 import { useWatchPosition } from './use-watch-position';
@@ -47,6 +51,9 @@ export function TopicView({ courseId, item }: TopicViewProps) {
 
   useVimeoWatchTracking(contentRef, detail.data?.content, reportPosition);
 
+  const duration = formatPlayheadTimestamp(item.durationSeconds);
+  const { media, body } = splitTopicMedia(detail.data?.content);
+
   if (detail.isPending) {
     return (
       <div className="flex flex-col gap-3">
@@ -74,10 +81,103 @@ export function TopicView({ courseId, item }: TopicViewProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div ref={contentRef}>
-        <RichText html={detail.data.content} />
+      {/* The embed arrives inside the topic's own HTML with whatever width the
+          author gave it, which on most topics is a 640px box floating in a
+          1000px column. `sv-video` forces any iframe in this subtree to fill
+          the column at 16:9 — the player is the page, not an illustration. */}
+      <div ref={contentRef} className="sv-video flex flex-col gap-4">
+        {/* The player leads. Kept inside `contentRef` so the watch-tracking
+            hook still finds the iframe it reports the playhead from. */}
+        {media ? <RichText html={media} /> : null}
+
+        <div className="flex flex-col gap-1">
+          <h1 className="text-[20px] font-semibold leading-tight text-ink">{item.title}</h1>
+          <div className="sv-num flex flex-wrap items-center gap-2 text-[12px] text-ink-dim">
+            <OutlineStatusGlyph status={item.status} />
+            <span>{watchedLabel(item, t)}</span>
+            {duration ? (
+              <>
+                <span aria-hidden>{'\u00b7'}</span>
+                <span>{duration}</span>
+              </>
+            ) : null}
+          </div>
+        </div>
+
+        <TopicTabs body={body} />
       </div>
       <CourseItemNav courseId={courseId} prevId={item.prevId} nextId={item.nextId} />
+    </div>
+  );
+}
+
+/**
+ * Where the learner stands on THIS topic, in the words the contents pane uses
+ * for the same three states — plus how far in they are, which is the number
+ * that tells them whether picking it up again is worth it.
+ */
+function watchedLabel(
+  item: CourseOutlineItem,
+  t: (key: string, o?: Record<string, unknown>) => string,
+): string {
+  if (item.status === 'completed') return t('courses.outline.itemStatus.completed');
+  if (item.positionSeconds && item.durationSeconds) {
+    const percent = Math.min(100, Math.round((item.positionSeconds / item.durationSeconds) * 100));
+    return t('courses.runner.watchedPercent', { percent });
+  }
+  return t(`courses.outline.itemStatus.${item.status}`);
+}
+
+const TABS = ['overview', 'transcript', 'notes'] as const;
+
+/**
+ * Overview, Transcript and Notes.
+ *
+ * Only Overview has anything to show today. The other two are declared here
+ * rather than hidden because they are the shape the player is being built
+ * toward, and each says plainly that it is not built yet — an empty tab a
+ * learner can open and read is honest; a tab that silently shows nothing is
+ * a bug report waiting to happen.
+ */
+function TopicTabs({ body }: { body: string }) {
+  const { t } = useTranslation();
+  const [tab, setTab] = useState<(typeof TABS)[number]>('overview');
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div role="tablist" className="flex gap-1 border-b border-line">
+        {TABS.map((name) => (
+          <button
+            key={name}
+            type="button"
+            role="tab"
+            aria-selected={tab === name}
+            onClick={() => setTab(name)}
+            className={cn(
+              '-mb-px border-b-2 px-3 py-2 text-body outline-none focus-visible:ring-2 focus-visible:ring-accent-ink',
+              tab === name
+                ? 'border-accent-ink font-medium text-ink'
+                : 'border-transparent text-ink-dim hover:text-ink',
+            )}
+          >
+            {t(`courses.runner.tabs.${name}`)}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'overview' ? (
+        hasReadableBody(body) ? (
+          <RichText html={body} />
+        ) : (
+          // Most topics are the video and nothing else. Saying so beats an
+          // empty panel under a tab the learner just clicked.
+          <p className="text-body text-ink-dim">{t('courses.runner.tabs.overviewEmpty')}</p>
+        )
+      ) : (
+        <p className="max-w-[62ch] text-body text-ink-dim">
+          {t(`courses.runner.tabs.${tab}Pending`)}
+        </p>
+      )}
     </div>
   );
 }

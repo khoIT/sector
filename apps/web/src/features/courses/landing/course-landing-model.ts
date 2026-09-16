@@ -1,4 +1,8 @@
-import type { CourseProgressStatus, LearnerCourseSummary } from '@sector/api-client';
+import type {
+  CourseOutlineItem,
+  CourseProgressStatus,
+  LearnerCourseSummary,
+} from '@sector/api-client';
 
 import { courseActionLabelKey } from '../my-courses/course-row-model';
 import type { OutlineSummary } from '../outline/outline-summary';
@@ -85,4 +89,67 @@ export function formatTotalTime(seconds: number | null): string | null {
  */
 export function ctaLabelKey(status: CourseProgressStatus): string {
   return courseActionLabelKey(status);
+}
+
+/**
+ * How much of each KIND of thing the course holds, and how much of it is done.
+ *
+ * The landing page states the course in the learner's units — modules, topics,
+ * quizzes — rather than in the server's single `totalItems`, because "65 items"
+ * answers nothing a person actually asks before starting. Counted from the
+ * outline, which is the only place the three kinds are distinguishable.
+ *
+ * Blocked items (a published quiz with no questions) are left out of both
+ * halves, matching `summariseOutline`: a denominator nobody can move is a
+ * denominator that makes a finished course read as unfinished forever.
+ */
+export type OutlineKindCounts = {
+  modules: number;
+  modulesDone: number;
+  topics: number;
+  topicsDone: number;
+  quizzes: number;
+  quizzesDone: number;
+};
+
+export function outlineKindCounts(items: readonly CourseOutlineItem[]): OutlineKindCounts {
+  const counts: OutlineKindCounts = {
+    modules: 0,
+    modulesDone: 0,
+    topics: 0,
+    topicsDone: 0,
+    quizzes: 0,
+    quizzesDone: 0,
+  };
+
+  // A module is a depth-0 row. Its own completion is the server's, not a
+  // recount of its children: the two can legitimately disagree while a child
+  // is blocked, and the server's answer is the one every other surface shows.
+  for (const item of items) {
+    if (item.blockedReason) continue;
+    const done = item.status === 'completed';
+
+    if (item.depth === 0) {
+      counts.modules += 1;
+      if (done) counts.modulesDone += 1;
+      continue;
+    }
+    if (item.kind === 'topic') {
+      counts.topics += 1;
+      if (done) counts.topicsDone += 1;
+      continue;
+    }
+    if (item.kind === 'quiz') {
+      counts.quizzes += 1;
+      if (done) counts.quizzesDone += 1;
+    }
+  }
+
+  return counts;
+}
+
+/** Whole percent, floored, and never above 100 — the number beside a bar. */
+export function completionPercent(completed: number, total: number): number {
+  if (total <= 0) return 0;
+  return Math.min(100, Math.floor((completed / total) * 100));
 }

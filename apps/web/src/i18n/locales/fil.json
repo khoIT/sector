@@ -616,11 +616,31 @@
         "title": "CME credit",
         "credits": "{{credits}} na credit",
         "link": "Mga detalye ng akreditasyon",
-        "unavailable": "Pansamantalang hindi available ang pag-download ng sertipiko."
+        "unavailable": "Pansamantalang hindi available ang pag-download ng sertipiko.",
+        "none": "Walang CME credit",
+        "pill": "{{credits}} CME credits"
       },
       "error": {
         "title": "Hindi ma-load ang kursong ito"
-      }
+      },
+      "eyebrow": {
+        "personal": "Indibidwal na kurso",
+        "group": "Kurso ng grupo"
+      },
+      "modulesWord_one": "module",
+      "modulesWord_other": "mga module",
+      "topicsWord_one": "paksa",
+      "topicsWord_other": "mga paksa",
+      "quizzesWord_one": "pagsusulit",
+      "quizzesWord_other": "mga pagsusulit",
+      "ofVideo": "ng video",
+      "levelLabel": "Antas: {{level}}",
+      "modules": {
+        "title": "Mga module"
+      },
+      "percentComplete": "{{percent}}% tapos",
+      "timeLeft": "{{duration}} pa",
+      "progressCounts": "{{modulesDone}}/{{modules}} module · {{topicsDone}}/{{topics}} paksa · {{quizzesDone}}/{{quizzes}} pagsusulit"
     },
     "module": {
       "empty": {
@@ -676,6 +696,21 @@
         "backToOutline": "Bumalik sa outline ng kurso",
         "saveError": "Hindi na-save ang iyong huling sagot. Magpatuloy — susubukan ulit ito.",
         "resumeError": "Hindi ma-load ang iyong na-save na progreso. Magsisimula mula sa umpisa."
+      },
+      "contents": {
+        "title": "Nilalaman"
+      },
+      "completionNote": "Awtomatikong nakukumpleto ang mga paksa sa {{percent}}% na napanood.",
+      "questionCount_one": "{{count}} t",
+      "questionCount_other": "{{count}} t",
+      "watchedPercent": "Nasimulan · {{percent}}% napanood",
+      "tabs": {
+        "overview": "Pangkalahatan",
+        "transcript": "Transcript",
+        "notes": "Mga tala",
+        "transcriptPending": "Wala pang transcript. Darating ito kasama ng mga caption na inilalathala na ng GUSI sa Vimeo.",
+        "notesPending": "Hindi pa gawa ang mga tala. Walang maise-save dito.",
+        "overviewEmpty": "Ang paksang ito ay ang video. Wala nang iba pang mababasa."
       }
     },
     "admin": {

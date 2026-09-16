@@ -18,6 +18,17 @@ export const POSITION_WRITE_INTERVAL_MS = 12_000;
  * immediately: it is the difference between resuming where the learner left
  * off and resuming up to twelve seconds behind it.
  */
+/**
+ * The share of a video that marks its topic complete.
+ *
+ * The rule is the SERVER's — it decides completion from the high-water mark it
+ * stores, and the browser only reports where the playhead is. This constant
+ * exists so the contents pane can tell a learner what the rule is; it must
+ * never be used to decide completion on the client, which is exactly the claim
+ * the old `videoCompleted: true` report made and the reason it was removed.
+ */
+export const WATCH_COMPLETION_PERCENT = 80;
+
 export const POSITION_SEEK_THRESHOLD_SECONDS = 15;
 
 /**

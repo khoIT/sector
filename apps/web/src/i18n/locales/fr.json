@@ -616,11 +616,31 @@
         "title": "Crédits CME",
         "credits": "{{credits}} crédits",
         "link": "Détails de l'accréditation",
-        "unavailable": "Le téléchargement des certificats est temporairement indisponible."
+        "unavailable": "Le téléchargement des certificats est temporairement indisponible.",
+        "none": "Aucun crédit CME",
+        "pill": "{{credits}} crédits CME"
       },
       "error": {
         "title": "Ce cours n'a pas pu être chargé"
-      }
+      },
+      "eyebrow": {
+        "personal": "Cours individuel",
+        "group": "Cours de groupe"
+      },
+      "modulesWord_one": "module",
+      "modulesWord_other": "modules",
+      "topicsWord_one": "sujet",
+      "topicsWord_other": "sujets",
+      "quizzesWord_one": "quiz",
+      "quizzesWord_other": "quiz",
+      "ofVideo": "de vidéo",
+      "levelLabel": "Niveau : {{level}}",
+      "modules": {
+        "title": "Modules"
+      },
+      "percentComplete": "{{percent}} % terminé",
+      "timeLeft": "{{duration}} restantes",
+      "progressCounts": "{{modulesDone}}/{{modules}} modules · {{topicsDone}}/{{topics}} sujets · {{quizzesDone}}/{{quizzes}} quiz"
     },
     "module": {
       "empty": {
@@ -676,6 +696,21 @@
         "backToOutline": "Retour au plan du cours",
         "saveError": "Votre dernière réponse n'a pas pu être enregistrée. Continuez — une nouvelle tentative aura lieu.",
         "resumeError": "Votre progression enregistrée n'a pas pu être chargée. Reprise à zéro."
+      },
+      "contents": {
+        "title": "Contenu"
+      },
+      "completionNote": "Les sujets sont validés automatiquement à {{percent}} % visionnés.",
+      "questionCount_one": "{{count}} q",
+      "questionCount_other": "{{count}} q",
+      "watchedPercent": "Commencé · {{percent}} % vu",
+      "tabs": {
+        "overview": "Aperçu",
+        "transcript": "Transcription",
+        "notes": "Notes",
+        "transcriptPending": "Les transcriptions ne sont pas encore disponibles. Elles viendront des sous-titres que GUSI publie déjà sur Vimeo.",
+        "notesPending": "Les notes ne sont pas encore développées. Rien de ce que vous écrivez ici ne serait enregistré.",
+        "overviewEmpty": "Ce sujet se limite à la vidéo. Il n’y a rien de plus à lire."
       }
     },
     "admin": {

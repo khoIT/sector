@@ -66,3 +66,21 @@ function parseIso(value: string | null | undefined): Date | null {
   if (Number.isNaN(parsed)) return null;
   return new Date(parsed);
 }
+
+/**
+ * `'8:40'` — the playhead as a learner reads a video timestamp, not as a
+ * duration. Distinct from `formatDurationShort` on purpose: "resume at 8:40"
+ * and "10m left" are different sentences and rounding the first to `'9m'`
+ * would be wrong.
+ */
+export function formatPlayheadTimestamp(seconds: number | null): string | null {
+  if (seconds === null || !Number.isFinite(seconds) || seconds < 0) return null;
+
+  const whole = Math.floor(seconds);
+  const hours = Math.floor(whole / 3600);
+  const minutes = Math.floor((whole % 3600) / 60);
+  const secs = whole % 60;
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  return hours > 0 ? `${hours}:${pad(minutes)}:${pad(secs)}` : `${minutes}:${pad(secs)}`;
+}

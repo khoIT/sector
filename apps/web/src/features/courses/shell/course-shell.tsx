@@ -4,7 +4,8 @@ import { ChevronLeft, TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, Outlet, useLocation, useMatch, useParams } from 'react-router-dom';
 
-import { COURSES_PATH } from '../courses-links';
+import { COURSES_PATH, coursePathFor, courseItemPathFor } from '../courses-links';
+import { groupOutlineItemsForDisplay } from '../outline/course-outline-model';
 import { OutlineSidebar } from '../runner/outline-sidebar';
 import type { CourseShellContext } from './course-shell-context';
 import { CourseShellHeader } from './course-shell-header';
@@ -99,7 +100,16 @@ export function CourseShell() {
     <section aria-label={t('courses.outline.title')} className="flex flex-col gap-4">
       <div>
         <BackLink />
-        <CourseShellHeader courseTitle={courseTitle} outline={outline} />
+        {currentItemId ? (
+          <CourseBreadcrumb
+            courseId={courseId}
+            courseTitle={courseTitle}
+            outline={outline}
+            currentItemId={currentItemId}
+          />
+        ) : (
+          <CourseShellHeader courseTitle={courseTitle} outline={outline} />
+        )}
       </div>
 
       <div className="flex flex-col items-start gap-4 lg:flex-row">
@@ -123,6 +133,66 @@ export function CourseShell() {
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * Course › module, on an item route.
+ *
+ * Replaces the progress header there rather than joining it: the contents pane
+ * beside it already states the counts, the time left and the bar, and the
+ * design's player leads with where you are, not with how far along you are.
+ */
+function CourseBreadcrumb({
+  courseId,
+  courseTitle,
+  outline,
+  currentItemId,
+}: {
+  courseId: string;
+  courseTitle: string | undefined;
+  outline: CourseShellContext['outline'];
+  currentItemId: string;
+}) {
+  const { t } = useTranslation();
+  const groups = groupOutlineItemsForDisplay(outline.items);
+  const module = groups.find(
+    (group) =>
+      group.header.id === currentItemId ||
+      group.children.some((child) => child.id === currentItemId),
+  );
+
+  return (
+    <nav className="flex flex-wrap items-center gap-1.5 text-[12px] text-ink-dim">
+      {/* The title rides in on navigation state, so a deep link or a refresh
+          arrives without it. An empty crumb with a separator after it reads as
+          a bug, so the course crumb simply does not appear. */}
+      {courseTitle ? (
+        <Link
+          to={coursePathFor(courseId)}
+          state={{ title: courseTitle }}
+          className="text-accent-ink hover:underline"
+        >
+          {courseTitle}
+        </Link>
+      ) : (
+        <Link to={coursePathFor(courseId)} className="text-accent-ink hover:underline">
+          {t('courses.outline.title')}
+        </Link>
+      )}
+      {module ? (
+        <>
+          <span aria-hidden>{'\u203a'}</span>
+          <Link
+            to={courseItemPathFor(courseId, module.header.id)}
+            state={{ title: courseTitle }}
+            className="text-accent-ink hover:underline"
+          >
+            {module.header.title}
+          </Link>
+        </>
+      ) : null}
+    </nav>
   );
 }
 
