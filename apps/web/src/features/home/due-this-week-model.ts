@@ -59,7 +59,15 @@ export function selectDueThisWeek(
     (assignment) => assignment.status !== 'completed' && assignment.status !== 'cancelled',
   );
 
-  return open.sort((left, right) => {
+  // Bound the window here rather than trusting the request to have been
+  // filtered. An API that does not know the due-date parameter drops it and
+  // answers with everything the learner owes, and this panel would then put
+  // work due months out under a heading that says this week. Overdue work is
+  // still owed now, so only the far edge is cut.
+  const windowEnd = new Date(dueWindowEnd(now)).getTime();
+  const withinWindow = open.filter((assignment) => dueTime(assignment) <= windowEnd);
+
+  return withinWindow.sort((left, right) => {
     const leftLate = isOverdue(left, now);
     const rightLate = isOverdue(right, now);
     if (leftLate !== rightLate) return leftLate ? -1 : 1;

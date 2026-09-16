@@ -108,6 +108,13 @@ export async function createGroupAssignment(
 }
 
 export type MyAssignmentsQuery = {
+  /**
+   * The CALLER's own id. The server resolves whose dashboard this is from the
+   * session and answers 403 for any id but the caller's, so this narrows
+   * nothing and grants nothing. It is sent because deployments that predate
+   * that resolution still treat the id as mandatory and answer 400 without it.
+   */
+  userId?: string;
   /** Upper bound on the due date, as an ISO string. */
   dueDateTo?: string;
   /** Only rows past their due date and not yet completed. */
@@ -118,10 +125,10 @@ export type MyAssignmentsQuery = {
 /**
  * `GET /api/group-assignment/dashboard/user` — the CALLER's own assignments.
  *
- * No `userId` travels from the browser, by design: the server derives whose
- * dashboard this is from the session. Sending one is how a client asks for
- * someone else's, which the route authorises separately and which no
- * learner-facing surface should ever do.
+ * Whose dashboard this is comes from the session, not from the request: the
+ * route answers 403 for any id but the caller's. A learner-facing surface must
+ * therefore never send anyone else's, and passing the caller's own changes
+ * nothing about what comes back.
  */
 export async function getMyDashboardAssignments(
   client: ApiClient,
@@ -130,6 +137,7 @@ export async function getMyDashboardAssignments(
 ): Promise<MyAssignmentsPage> {
   return client.get('/api/group-assignment/dashboard/user', {
     query: {
+      ...(query.userId ? { userId: query.userId } : {}),
       ...(query.dueDateTo ? { dueDateTo: query.dueDateTo } : {}),
       // Sent as an explicit string: the route reads 'true'/'false' rather than
       // coercing, so that 'false' cannot arrive meaning "only overdue".

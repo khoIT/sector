@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
+import { useAuth } from '../../auth/auth-context';
 import { CardError } from './card-error';
 import { assignmentTitle, dueWindowEnd, isOverdue, selectDueThisWeek } from './due-this-week-model';
 
@@ -24,6 +25,7 @@ import { assignmentTitle, dueWindowEnd, isOverdue, selectDueThisWeek } from './d
  */
 export function DueThisWeekPanel() {
   const { t } = useTranslation();
+  const { user } = useAuth();
 
   // Pinned for the life of this mount. A bare `new Date()` here is read on
   // every render, and it reaches the request as part of the cache key: a new
@@ -32,8 +34,16 @@ export function DueThisWeekPanel() {
   const now = useMemo(() => new Date(), []);
   const dueDateTo = useMemo(() => dueWindowEnd(now), [now]);
 
-  // No `userId`: the server reads whose dashboard this is from the session.
-  const assignments = useMyAssignmentsDue({ dueDateTo, limit: 10 });
+  // Send our own id. The server reads whose dashboard this is from the session
+  // and rejects any id but the caller's, so this narrows nothing and grants
+  // nothing — but a deployment that still treats the id as mandatory answers
+  // 400 without it, and this panel would be an error card on the home page.
+  const assignments = useMyAssignmentsDue({
+    userId: user?.id,
+    dueDateTo,
+    limit: 10,
+    enabled: Boolean(user?.id),
+  });
 
   if (assignments.isPending) {
     return (

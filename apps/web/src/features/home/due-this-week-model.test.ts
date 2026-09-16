@@ -114,3 +114,32 @@ describe('dueWindowEnd', () => {
     );
   });
 });
+
+describe('selectDueThisWeek window', () => {
+  it('drops work due beyond the week even when the server did not filter it', () => {
+    // An API that does not know the due-date parameter drops it and answers
+    // with everything owed. The heading says this week, so the panel has to
+    // mean it whatever came back.
+    const soon = assignment({ id: 'soon', dueDate: '2026-09-18T00:00:00.000Z' });
+    const far = assignment({ id: 'far', dueDate: '2026-10-30T00:00:00.000Z' });
+
+    const picked = selectDueThisWeek([soon, far], NOW).map((row) => row.id);
+
+    expect(picked).toContain('soon');
+    expect(picked).not.toContain('far');
+  });
+
+  it('keeps overdue work, which is owed now rather than later', () => {
+    const late = assignment({ id: 'late', dueDate: '2026-09-01T00:00:00.000Z' });
+
+    expect(selectDueThisWeek([late], NOW).map((row) => row.id)).toEqual(['late']);
+  });
+
+  it('keeps work due on the final day of the window', () => {
+    // The boundary runs to the end of that day, so something due that morning
+    // is inside it. An exclusive edge would silently hide a whole day.
+    const edge = assignment({ id: 'edge', dueDate: '2026-09-22T08:00:00.000Z' });
+
+    expect(selectDueThisWeek([edge], NOW).map((row) => row.id)).toEqual(['edge']);
+  });
+});
