@@ -12,6 +12,7 @@ export type SetupOption = {
   value: string;
   label: string;
   description?: string;
+  imageUrl?: string | null;
 };
 
 /** Scan types, newest-version detail on the second line. */
@@ -20,6 +21,9 @@ export function scanTypeOptions(types: readonly ScanTypeSummary[] | undefined): 
     value: type.id,
     label: type.name,
     ...(type.version ? { description: `v${type.version}` } : {}),
+    // Presigned and short-lived; the list is refetched, so it is never stale
+    // for long, and the row falls back to an empty slot if it does expire.
+    imageUrl: type.imageUrl,
   }));
 }
 

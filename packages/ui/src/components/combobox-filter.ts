@@ -11,6 +11,11 @@ export type ComboboxOption = {
   label: string;
   /** Second line, searched as well — a group's parent, a type's version. */
   description?: string;
+  /**
+   * Small picture for the row, e.g. a scan type's icon. Not searched: it is
+   * decoration beside the label, never the thing a person types to find.
+   */
+  imageUrl?: string | null;
 };
 
 /**

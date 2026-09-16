@@ -5,6 +5,32 @@ import { filterComboboxOptions, nextHighlight, type ComboboxOption } from './com
 
 export type { ComboboxOption } from './combobox-filter';
 
+/**
+ * An option's picture, shown only in lists that have them.
+ *
+ * Falls back to an empty slot of the same size when the image is missing or
+ * fails to load — a presigned URL can expire while the popover sits open — so
+ * the labels in a list stay on one vertical line either way.
+ */
+function OptionThumb({ src }: { src?: string | null }) {
+  const [failed, setFailed] = useState(false);
+
+  if (!src || failed) {
+    return <span className="h-6 w-6 shrink-0 rounded-token bg-surface-2" aria-hidden />;
+  }
+
+  return (
+    <img
+      src={src}
+      alt=""
+      aria-hidden
+      loading="lazy"
+      onError={() => setFailed(true)}
+      className="h-6 w-6 shrink-0 rounded-token bg-surface-2 object-contain p-0.5"
+    />
+  );
+}
+
 export type ComboboxProps = {
   /** Small label inside the trigger, above the value. */
   label: string;
@@ -64,6 +90,11 @@ export function Combobox({
   const listId = useId();
 
   const visible = useMemo(() => filterComboboxOptions(options, query), [options, query]);
+
+  // Reserve the picture column for the whole list, not per row: a scan-type
+  // list is all icons, a group list has none, and mixing the two inside one
+  // list would step the labels in and out as the search narrows.
+  const showThumbs = useMemo(() => options.some((option) => option.imageUrl), [options]);
 
   // Reopening should start clean rather than resuming someone's half-typed
   // search from minutes ago.
@@ -222,6 +253,7 @@ export function Combobox({
                         isSelected && 'bg-accent-soft text-accent-ink',
                       )}
                     >
+                      {showThumbs ? <OptionThumb src={option.imageUrl} /> : null}
                       <span className="min-w-0 flex-1">
                         <span className={cn('block truncate', isSelected && 'font-medium')}>
                           {option.label}
