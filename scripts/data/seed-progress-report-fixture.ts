@@ -121,16 +121,14 @@ async function seedCourses(db: Db, groupId: ObjectId): Promise<ObjectId[]> {
       { upsert: true },
     );
 
-    await db
-      .collection('groupcourses')
-      .updateOne(
-        { group: groupId, course: courseId },
-        {
-          $set: { group: groupId, course: courseId, deletedAt: null, updatedAt: new Date() },
-          $setOnInsert: { createdAt: new Date() },
-        },
-        { upsert: true },
-      );
+    await db.collection('groupcourses').updateOne(
+      { group: groupId, course: courseId },
+      {
+        $set: { group: groupId, course: courseId, deletedAt: null, updatedAt: new Date() },
+        $setOnInsert: { createdAt: new Date() },
+      },
+      { upsert: true },
+    );
 
     ids.push(courseId);
   }
@@ -229,25 +227,23 @@ async function attachLeader(db: Db, groupId: ObjectId): Promise<void> {
   }
 
   const now = new Date();
-  await db
-    .collection('groupmembers')
-    .updateOne(
-      { group: groupId, user: leader._id },
-      {
-        $set: {
-          group: groupId,
-          user: leader._id,
-          role: 'leader',
-          status: 'active',
-          deletedAt: null,
-          expiresAt: null,
-          joinedAt: now,
-          updatedAt: now,
-        },
-        $setOnInsert: { createdAt: now },
+  await db.collection('groupmembers').updateOne(
+    { group: groupId, user: leader._id },
+    {
+      $set: {
+        group: groupId,
+        user: leader._id,
+        role: 'leader',
+        status: 'active',
+        deletedAt: null,
+        expiresAt: null,
+        joinedAt: now,
+        updatedAt: now,
       },
-      { upsert: true },
-    );
+      $setOnInsert: { createdAt: now },
+    },
+    { upsert: true },
+  );
   console.log(`${leaderEmail} leads ${GROUP_NAME}`);
 }
 

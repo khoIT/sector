@@ -659,6 +659,18 @@ export const NOT_REPLAYED: Readonly<Record<string, string>> = {
   deleteAccountPayloadSchema: 'request body of DELETE /api/account/delete',
 
   scanTagPayloadSchema: 'request body of POST/DELETE /api/scan/:id/tags',
+
+  // The course landing page and the learner's own assignment list. Neither has
+  // a collection to replay: the first is assembled per request, and no dump
+  // holds groupassignments at all.
+  courseLevelSchema:
+    "the level enum. No course document anywhere carries a level, so a replay can only ever see the field absent — which is what the v2courses entry proves. Claiming the enum's VALUES are proved would overstate what any dump can show; they are checked by the route replay once a course is authored with one",
+  learnerCourseDetailsSchema:
+    'response of GET /api/v2/learners/courses/:courseId — one enrolment assembled per request; the course inside it is proved by the v2courses entry and the progress by the usercourseprogresses entry',
+  myAssignmentSchema:
+    'an item of GET /api/group-assignment/dashboard/user. No groupassignments collection is replayed, and the row carries a route the server composes per request rather than stores',
+  myAssignmentsPageSchema:
+    'the page wrapper around myAssignmentSchema, counted and paginated per request',
   // The course outline. Every shape below is assembled by
   // learners.outline.helper.ts's traversal of a course-meta structure, joined
   // against lesson/topic/quiz documents and the learner's own progress items:
