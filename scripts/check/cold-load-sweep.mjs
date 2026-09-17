@@ -49,6 +49,22 @@ const WIDTHS = (process.env.SECTOR_SWEEP_WIDTHS ?? '390,1440,2200')
   .filter((value) => Number.isFinite(value) && value > 0);
 const PRIMARY = Number(process.env.SECTOR_SWEEP_PRIMARY ?? 1440);
 
+// A gate that passes because it was misconfigured is worse than no gate. Every
+// one of these used to end in "0/0 routes healthy" and exit 0: a width list
+// that parsed to nothing, a primary that is not a number, or a primary that is
+// simply not in the list -- in which case the loop below never takes the
+// branch that records a row, and `rows.some(...)` is vacuously false.
+if (WIDTHS.length === 0) {
+  console.error('SECTOR_SWEEP_WIDTHS parsed to no usable width; refusing to report a clean sweep.');
+  process.exit(2);
+}
+if (!Number.isFinite(PRIMARY) || PRIMARY <= 0) {
+  console.error(`SECTOR_SWEEP_PRIMARY is not a width: ${process.env.SECTOR_SWEEP_PRIMARY}`);
+  process.exit(2);
+}
+if (!WIDTHS.includes(PRIMARY)) WIDTHS.push(PRIMARY);
+WIDTHS.sort((a, b) => a - b);
+
 const [secret, fixtureDir] = process.argv.slice(2);
 const HERE = fileURLToPath(new URL('.', import.meta.url));
 const SP = fixtureDir ?? HERE;
@@ -117,24 +133,78 @@ for (const [role, id] of Object.entries(ids)) sessions[role] = await sessionFor(
 /**
  * The widest elements sticking out past the viewport, for the failure line.
  *
- * Reported rather than merely counted: "the document is 1118px too wide" is a
- * symptom, and the element that causes it is the fix. Ancestors are skipped
- * when a descendant overflows further, so the line names the leaf that is
- * actually too wide instead of the body that contains it.
+ * Reported rather than merely counted: "the document is 966px too wide" is a
+ * symptom, and the element that causes it is the fix.
+ *
+ * Elements inside a scroll container are skipped, and that exclusion is the
+ * whole value of this function. A wide table inside its own `overflow-x-auto`
+ * is a deliberate design that moves nothing; listing it sends the reader to
+ * rewrite a table that was innocent. The real culprit of the 966px drag was an
+ * absolutely positioned `sr-only` label whose containing block was three
+ * components away — visible here, invisible in the markup.
  */
 async function overflowCulprits(page) {
   return page.evaluate(() => {
     const limit = document.documentElement.clientWidth;
+    // A transform, a filter, a perspective or paint containment makes even a
+    // `static` element the containing block for positioned descendants. Asking
+    // only about `position` is how a scroller that genuinely clips its content
+    // gets reported as letting it escape -- `contain: paint` is one of the two
+    // ways to fix the very bug this function exists to find.
+    const establishesForFixed = (style) =>
+      style.transform !== 'none' ||
+      style.filter !== 'none' ||
+      style.backdropFilter !== 'none' ||
+      style.perspective !== 'none' ||
+      /transform|filter|perspective/.test(style.willChange) ||
+      /paint|layout|strict|content/.test(style.contain);
+
+    const containingBlockOf = (el, position) => {
+      if (position !== 'absolute' && position !== 'fixed') return null;
+      for (let ancestor = el.parentElement; ancestor; ancestor = ancestor.parentElement) {
+        const style = getComputedStyle(ancestor);
+        const establishes =
+          position === 'absolute'
+            ? style.position !== 'static' || establishesForFixed(style)
+            : establishesForFixed(style);
+        if (establishes) return ancestor;
+      }
+      return null;
+    };
+
+    const clipped = (el) => {
+      const position = getComputedStyle(el).position;
+      const inFlow = position !== 'absolute' && position !== 'fixed';
+      // Where this element's geometry is actually resolved. Null means the
+      // initial containing block -- the viewport -- so nothing in the document
+      // can clip it.
+      const containingBlock = containingBlockOf(el, position);
+      if (!inFlow && !containingBlock) return false;
+
+      for (let ancestor = el.parentElement; ancestor; ancestor = ancestor.parentElement) {
+        const overflow = getComputedStyle(ancestor).overflowX;
+        if (overflow !== 'auto' && overflow !== 'scroll' && overflow !== 'hidden') continue;
+        // An in-flow element is clipped by any scrolling ancestor. A positioned
+        // one is clipped only by a scroller at or above its containing block:
+        // a scroller BETWEEN the element and its containing block is exactly
+        // what it escapes, which is the whole shape of the bug.
+        if (inFlow || ancestor.contains(containingBlock)) return true;
+      }
+      return false;
+    };
+
     const over = [...document.querySelectorAll('*')]
       .map((el) => ({ el, right: Math.round(el.getBoundingClientRect().right) }))
-      .filter((entry) => entry.right > limit + 1)
+      .filter((entry) => entry.right > limit + 1 && !clipped(entry.el))
       .sort((a, b) => b.right - a.right);
+
     return over
       .filter((entry) => !over.some((other) => other !== entry && entry.el.contains(other.el)))
       .slice(0, 3)
       .map(({ el, right }) => {
         const cls = typeof el.className === 'string' ? el.className.slice(0, 60) : '';
-        return `${el.tagName.toLowerCase()}${cls ? `.${cls.trim().split(/\s+/).join('.')}` : ''} → ${right}px`;
+        const position = getComputedStyle(el).position;
+        return `${el.tagName.toLowerCase()}${cls ? `.${cls.trim().split(/\s+/).join('.')}` : ''} [${position}] → ${right}px`;
       });
   });
 }
@@ -189,15 +259,21 @@ for (const { path, role, needs } of routes) {
           pending: document.querySelectorAll('.sv-skeleton').length,
         }));
       let settled = '';
-      for (let i = 0; i < (primary ? 24 : 3); i += 1) {
+      let last = { text: '', pending: 0 };
+      for (let i = 0; i < (primary ? 24 : 8); i += 1) {
         await page.waitForTimeout(1000);
         const now = await read();
-        const ready = primary
-          ? now.text.length > 40 &&
-            now.pending === 0 &&
-            now.text === settled &&
-            (!needs || new RegExp(needs, 'i').test(now.text))
-          : now.text.length > 40 && now.text === settled;
+        last = now;
+        // `pending === 0` is required at EVERY width, not just the primary one.
+        // Skeletons carry no text, so a page still showing them has text that
+        // is stable and short -- which reads as settled to a text-only check.
+        // They are also `w-full`, so they never overflow: measuring then is how
+        // a route whose table had not rendered reports that it fits.
+        const ready =
+          now.text.length > 40 &&
+          now.pending === 0 &&
+          now.text === settled &&
+          (!primary || !needs || new RegExp(needs, 'i').test(now.text));
         settled = now.text;
         if (ready) break;
       }
@@ -217,6 +293,7 @@ for (const { path, role, needs } of routes) {
           role: role ?? 'anon',
           width,
           by: box.scrollWidth - box.clientWidth,
+          pending: last.pending,
           culprits: await overflowCulprits(page),
         });
       }
@@ -301,10 +378,20 @@ if (overflows.length === 0) {
     console.log(
       `  FAIL ${String(o.width).padStart(4)}px ${String(o.role).padEnd(9)} ${o.path.padEnd(42)} ${o.threw ? o.threw : `+${o.by}px`}`,
     );
+    // A page still showing placeholders has not laid out its real content, so
+    // whatever this measured is not the finished page -- in either direction.
+    if (o.pending)
+      console.log(`         ↳ measured with ${o.pending} placeholder(s) on screen — unproven`);
     o.culprits?.forEach((c) => console.log(`         ↳ ${c}`));
   }
 }
 console.log(`${overflows.length} overflow finding(s) across ${routes.length} routes`);
 
-// A sweep that reports and exits 0 is a sweep a pipeline ignores.
-process.exitCode = rows.some((r) => !r.ok) || overflows.length > 0 ? 1 : 0;
+// A sweep that reports and exits 0 is a sweep a pipeline ignores -- and one
+// that reports on fewer routes than it was given has skipped something without
+// saying so, which is the same failure wearing a clean face.
+const missing = routes.length - rows.length;
+if (missing !== 0) {
+  console.log(`\nMISSING: ${missing} route(s) produced no result at ${PRIMARY}px`);
+}
+process.exitCode = missing !== 0 || rows.some((r) => !r.ok) || overflows.length > 0 ? 1 : 0;

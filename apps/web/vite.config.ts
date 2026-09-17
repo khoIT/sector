@@ -35,6 +35,20 @@ function buildCommit(): string {
   }
 }
 
+/**
+ * Same-origin `/api` keeps the API client's baseUrl empty and sidesteps CORS
+ * entirely. The preview server needs it as much as the dev server does: a
+ * preview of the built bundle with no proxy cannot reach the API at all, so
+ * every page renders its error state. Shared rather than restated so the two
+ * cannot drift.
+ */
+const apiProxy = {
+  '/api': {
+    target: LEGACY_API_ORIGIN,
+    changeOrigin: true,
+  },
+};
+
 export default defineConfig({
   define: {
     __APP_COMMIT__: JSON.stringify(buildCommit()),
@@ -50,17 +64,11 @@ export default defineConfig({
     // Fail loudly rather than silently moving to 3101, so the documented port
     // is always the real one.
     strictPort: true,
-    proxy: {
-      // Same-origin /api keeps the API client's baseUrl empty and sidesteps
-      // CORS entirely in development.
-      '/api': {
-        target: LEGACY_API_ORIGIN,
-        changeOrigin: true,
-      },
-    },
+    proxy: apiProxy,
   },
   preview: {
     port: 3100,
     strictPort: true,
+    proxy: apiProxy,
   },
 });

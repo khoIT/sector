@@ -105,17 +105,22 @@
   {
     "path": "/learn/courses/681a4b63779a0d9e6c9cc55b",
     "role": "learner",
-    "needs": "Pediatric Residency|Course outline"
+    "needs": "Pediatric Residency Essentials.*MODULES"
   },
   {
     "path": "/learn/courses/681a4b82779a0d9e6c9cc605",
     "role": "learner",
-    "needs": "quiz has no questions|Course outline"
+    "needs": "GUSI POCUS Basics.*MODULES"
   },
   {
     "path": "/learn/courses/681a4b67779a0d9e6c9cc574",
     "role": "learner",
-    "needs": "completed this course|Course outline"
+    "needs": "completed this course"
+  },
+  {
+    "path": "/learn/courses/681a4b63779a0d9e6c9cc55b/about",
+    "role": "learner",
+    "needs": "Pediatric Residency Essentials.*MODULES"
   },
   {
     "path": "/learn/gallery",
