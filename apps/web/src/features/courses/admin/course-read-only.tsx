@@ -51,7 +51,7 @@ export function CourseReadOnlyAdminPage() {
 
   if (query.isPending) {
     return (
-      <div className="flex max-w-xl flex-col gap-3">
+      <div className="flex flex-col gap-3">
         <Skeleton className="h-6 w-2/3" />
         <Skeleton className="h-48 w-full" />
       </div>
@@ -78,7 +78,7 @@ export function CourseReadOnlyAdminPage() {
   const percent = roundedProgress(courseDetail.progress.progress);
 
   return (
-    <section aria-label={t('courses.admin.title')} className="flex max-w-xl flex-col gap-4">
+    <section aria-label={t('courses.admin.title')} className="flex flex-col gap-4">
       <div>
         <h2 className="text-[17px] font-semibold text-ink">
           {t('courses.admin.heading', { learner: learner.name, course: courseDetail.course.title })}

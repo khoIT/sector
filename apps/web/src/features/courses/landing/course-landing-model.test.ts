@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { ctaLabelKey, formatTotalTime, landingBlocks } from './course-landing-model';
+import type { CourseOutlineItem } from '@sector/api-client';
+
+import {
+  ctaLabelKey,
+  formatTotalTime,
+  landingBlocks,
+  outlineKindCounts,
+} from './course-landing-model';
 
 const EMPTY_COURSE = {
   content: undefined,
@@ -80,5 +87,76 @@ describe('ctaLabelKey', () => {
     expect(ctaLabelKey('not_started')).toBe('courses.index.action.start');
     expect(ctaLabelKey('in_progress')).toBe('courses.index.action.resume');
     expect(ctaLabelKey('completed')).toBe('courses.index.action.review');
+  });
+});
+
+function outlineItem(
+  overrides: Partial<CourseOutlineItem> & Pick<CourseOutlineItem, 'id'>,
+): CourseOutlineItem {
+  return {
+    kind: 'lesson',
+    title: overrides.id,
+    order: 0,
+    depth: 0,
+    parentId: null,
+    lessonId: null,
+    topicId: null,
+    prevId: null,
+    nextId: null,
+    status: 'not_started',
+    completedAt: null,
+    lastAccessedAt: null,
+    blockedReason: null,
+    quiz: null,
+    positionSeconds: null,
+    durationSeconds: null,
+    imageUrl: null,
+    ...overrides,
+  };
+}
+
+describe('outlineKindCounts', () => {
+  it('counts modules, topics and quizzes separately, with their done tallies', () => {
+    const counts = outlineKindCounts([
+      outlineItem({ id: 'm1', depth: 0, status: 'completed' }),
+      outlineItem({ id: 't1', kind: 'topic', depth: 1, status: 'completed' }),
+      outlineItem({ id: 't2', kind: 'topic', depth: 1 }),
+      outlineItem({ id: 'q1', kind: 'quiz', depth: 1, status: 'completed' }),
+      outlineItem({ id: 'm2', depth: 0 }),
+    ]);
+
+    expect(counts).toEqual({
+      modules: 2,
+      modulesDone: 1,
+      topics: 2,
+      topicsDone: 1,
+      quizzes: 1,
+      quizzesDone: 1,
+    });
+  });
+
+  it('leaves a blocked quiz out of both halves', () => {
+    // A published quiz with no questions cannot be opened, so counting it
+    // leaves a denominator nobody can ever move — a finished course that
+    // reads as unfinished forever.
+    const counts = outlineKindCounts([
+      outlineItem({ id: 'm1', depth: 0, status: 'completed' }),
+      outlineItem({ id: 'q1', kind: 'quiz', depth: 1, blockedReason: 'quiz_has_no_questions' }),
+    ]);
+
+    expect(counts.quizzes).toBe(0);
+    expect(counts.quizzesDone).toBe(0);
+  });
+
+  it('counts a depth-0 topic as a module, because that is the row the page draws', () => {
+    // The fourth nesting shape: course > topic > quiz, with no lesson at all.
+    const counts = outlineKindCounts([
+      outlineItem({ id: 't1', kind: 'topic', depth: 0 }),
+      outlineItem({ id: 'q1', kind: 'quiz', depth: 1 }),
+    ]);
+
+    expect(counts.modules).toBe(1);
+    expect(counts.topics).toBe(0);
+    expect(counts.quizzes).toBe(1);
   });
 });

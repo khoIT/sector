@@ -1,14 +1,16 @@
 import { isApiError, useCourseOutline } from '@sector/api-client';
 import { Button, EmptyState, Skeleton } from '@sector/ui';
 import { ChevronLeft, TriangleAlert } from 'lucide-react';
+import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, Outlet, useLocation, useMatch, useParams } from 'react-router-dom';
 
 import { COURSES_PATH, coursePathFor, courseItemPathFor } from '../courses-links';
 import { groupOutlineItemsForDisplay } from '../outline/course-outline-model';
 import { OutlineSidebar } from '../runner/outline-sidebar';
+import { ContentsDrawer } from './contents-drawer';
 import type { CourseShellContext } from './course-shell-context';
-import { CourseShellHeader } from './course-shell-header';
+import { PlayerLayout } from './player-layout';
 
 /**
  * The layout route every course surface opens through: it owns the outline
@@ -33,6 +35,10 @@ export function CourseShell() {
   const itemMatch = useMatch(`${COURSES_PATH}/:courseId/:itemId`);
   const currentItemId = itemMatch?.params.itemId ?? null;
   const courseTitle = (location.state as { title?: string } | null | undefined)?.title;
+
+  // Held as state, not a ref: the item view has to re-render when the panel
+  // column appears or disappears, and a ref mutation does not cause one.
+  const [panelSlot, setPanelSlot] = useState<HTMLElement | null>(null);
 
   const outlineQuery = useCourseOutline({ courseId });
 
@@ -94,44 +100,50 @@ export function CourseShell() {
   }
 
   const outline = outlineQuery.data;
-  const context: CourseShellContext = { courseId, courseTitle, outline };
+  const context: CourseShellContext = { courseId, courseTitle, outline, panelSlot };
 
   return (
     <section aria-label={t('courses.outline.title')} className="flex flex-col gap-4">
       <div>
         <BackLink />
+        {/* On the index route the course page owns the whole header — it has
+            the course's real title and its progress, where this shell has only
+            a title carried in on navigation state that a deep link arrives
+            without. Two headers, one of them sometimes reading "Course
+            outline", is what a second one would add. */}
         {currentItemId ? (
           <CourseBreadcrumb
             courseId={courseId}
             courseTitle={courseTitle}
             outline={outline}
             currentItemId={currentItemId}
-          />
-        ) : (
-          <CourseShellHeader courseTitle={courseTitle} outline={outline} />
-        )}
+          >
+            <ContentsDrawer
+              courseId={courseId}
+              items={outline.items}
+              currentItemId={currentItemId}
+            />
+          </CourseBreadcrumb>
+        ) : null}
       </div>
 
-      <div className="flex flex-col items-start gap-4 lg:flex-row">
-        {currentItemId ? (
-          // The pane keeps its own scroll from the large breakpoint up. On a
-          // 185-item course the contents list is far taller than the video
-          // beside it, and sharing the page's scroll meant reaching the player
-          // controls scrolled the contents away — the one thing the pane exists
-          // to keep on screen. Below `lg` the two panes are stacked, where a
-          // second scroll region would trap the page's own scrolling instead.
-          <div className="w-full flex-shrink-0 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:w-80 lg:overflow-y-auto">
+      {currentItemId ? (
+        <PlayerLayout
+          onPanelSlotChange={setPanelSlot}
+          contents={
             <OutlineSidebar
               courseId={courseId}
               items={outline.items}
               currentItemId={currentItemId}
             />
-          </div>
-        ) : null}
-        <div className="min-w-0 flex-1">
+          }
+          main={<Outlet context={context} />}
+        />
+      ) : (
+        <div className="min-w-0">
           <Outlet context={context} />
         </div>
-      </div>
+      )}
     </section>
   );
 }
@@ -148,11 +160,14 @@ function CourseBreadcrumb({
   courseTitle,
   outline,
   currentItemId,
+  children,
 }: {
   courseId: string;
   courseTitle: string | undefined;
   outline: CourseShellContext['outline'];
   currentItemId: string;
+  /** The contents trigger, which only exists below `lg`. */
+  children?: ReactNode;
 }) {
   const { t } = useTranslation();
   const groups = groupOutlineItemsForDisplay(outline.items);
@@ -164,6 +179,7 @@ function CourseBreadcrumb({
 
   return (
     <nav className="flex flex-wrap items-center gap-1.5 text-[12px] text-ink-dim">
+      {children}
       {/* The title rides in on navigation state, so a deep link or a refresh
           arrives without it. An empty crumb with a separator after it reads as
           a bug, so the course crumb simply does not appear. */}

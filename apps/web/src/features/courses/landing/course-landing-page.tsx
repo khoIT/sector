@@ -1,17 +1,25 @@
-import { isApiError, useCourseOutline, useLearnerCourseDetails } from '@sector/api-client';
-import { Badge, Button, EmptyState, RichText, Skeleton } from '@sector/ui';
-import { ChevronLeft, ChevronRight, TriangleAlert } from 'lucide-react';
+import { isApiError, useLearnerCourseDetails } from '@sector/api-client';
+import { Badge, Button, EmptyState, RichText, Skeleton, cn } from '@sector/ui';
+import { ChevronDown, ChevronRight, CircleCheck, TriangleAlert } from 'lucide-react';
+import { useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import { COURSES_PATH, coursePathFor, courseItemPathFor } from '../courses-links';
-import { groupOutlineItemsForDisplay, resolveResumeTarget } from '../outline/course-outline-model';
+import { COURSES_PATH, courseItemPathFor } from '../courses-links';
+import {
+  blockedReasonLabelKey,
+  groupOutlineItemsForDisplay,
+  isOutlineComplete,
+  resolveResumeTarget,
+  type CourseOutlineGroup,
+} from '../outline/course-outline-model';
 import { OutlineStatusGlyph } from '../outline/outline-status-glyph';
 import {
   formatDurationShort,
   groupTotalSeconds,
   summariseOutline,
 } from '../outline/outline-summary';
+import { useCourseShell } from '../shell/course-shell-context';
 import {
   completionPercent,
   ctaLabelKey,
@@ -19,81 +27,97 @@ import {
   landingBlocks,
   outlineKindCounts,
 } from './course-landing-model';
+import { initialOpenModuleIds, toggleModuleId } from './module-row-state';
 
 /**
- * "What is this, how long will it take, and what do I get?" — the three
- * questions a learner asks before committing, which a bare item list and a
- * percentage never answered.
+ * The course's entry page: what it is, how long it takes, what the learner
+ * gets — and, under that, the whole outline with each module expanding in
+ * place.
  *
- * Every block here is conditional. Most courses in the library carry no
- * description, no level and no objectives, so this page has to read well when
- * the only things it knows are the ones it can compute: the module list, the
- * item counts and the total runtime. A heading with an empty body under it is
- * what makes a sparse course look broken, so a block with no data renders
- * nothing at all.
+ * It used to be two pages. `/:courseId` was a bare item list and the
+ * description lived behind `/:courseId/about`, on the premise that almost no
+ * course had one. That premise came from `gusi_dev`: on production 96 of 102
+ * live published courses carry a description. So the page a learner opens
+ * leads with the description, and the outline is under it rather than
+ * somewhere else.
+ *
+ * Every block is still conditional. A course with no description, no level
+ * and no objectives has to read as short rather than broken, so a block with
+ * no data renders nothing at all.
+ *
+ * The outline arrives from `useCourseShell()`, not from a query of this
+ * page's own: this mounts as the shell's index child, and the shell has
+ * already fetched it.
  */
 export function CourseLandingPage() {
   const { t } = useTranslation();
-  const { courseId = '' } = useParams<{ courseId: string }>();
+  const { courseId, outline } = useCourseShell();
 
   const detailsQuery = useLearnerCourseDetails({ courseId });
-  const outlineQuery = useCourseOutline({ courseId });
 
-  if (detailsQuery.isPending || outlineQuery.isPending) {
+  const groups = useMemo(() => groupOutlineItemsForDisplay(outline.items), [outline.items]);
+  const resumeItem = resolveResumeTarget(outline.items, outline.resume?.itemId ?? null);
+  // Seeded once, then owned by the learner: re-seeding on every render would
+  // reopen the resume module each time the details query settles.
+  const [openModuleIds, setOpenModuleIds] = useState<readonly string[]>(() =>
+    initialOpenModuleIds(groups, resumeItem?.id ?? null),
+  );
+
+  if (detailsQuery.isPending) {
     return (
-      <section aria-label={t('courses.landing.title')} className="flex flex-col gap-4">
-        <BackLink />
+      <div className="flex flex-col gap-4">
         <Skeleton className="h-8 w-2/3" />
         <Skeleton className="h-24 w-full" />
         <Skeleton className="h-64 w-full" />
-      </section>
+      </div>
     );
   }
 
-  if (detailsQuery.isError || outlineQuery.isError) {
-    const error = detailsQuery.error ?? outlineQuery.error;
+  if (detailsQuery.isError) {
     // Same rule as the shell: a 404 is the enrolment answering, not a blip,
     // so it offers My Courses rather than a retry that can never succeed.
+    const error = detailsQuery.error;
     const isExpiredOrMissing = isApiError(error) && error.isNotFound;
 
     return (
-      <section aria-label={t('courses.landing.title')}>
-        <BackLink />
-        <EmptyState
-          tone="crit"
-          icon={<TriangleAlert className="h-5 w-5" aria-hidden />}
-          title={
-            isExpiredOrMissing
-              ? t('courses.runner.noLongerAvailable.title')
-              : t('courses.landing.error.title')
-          }
-          description={
-            isExpiredOrMissing
-              ? t('courses.runner.noLongerAvailable.description')
-              : isApiError(error)
-                ? error.message
-                : undefined
-          }
-          action={
-            <Button variant="secondary" size="sm" asChild>
-              <Link to={COURSES_PATH}>{t('courses.index.title')}</Link>
-            </Button>
-          }
-        />
-      </section>
+      <EmptyState
+        tone="crit"
+        icon={<TriangleAlert className="h-5 w-5" aria-hidden />}
+        title={
+          isExpiredOrMissing
+            ? t('courses.runner.noLongerAvailable.title')
+            : t('courses.landing.error.title')
+        }
+        description={
+          isExpiredOrMissing
+            ? t('courses.runner.noLongerAvailable.description')
+            : isApiError(error)
+              ? error.message
+              : undefined
+        }
+        action={
+          <Button variant="secondary" size="sm" asChild>
+            <Link to={COURSES_PATH}>{t('courses.index.title')}</Link>
+          </Button>
+        }
+      />
     );
   }
 
   const { course, progress, assignmentType } = detailsQuery.data;
-  const outline = outlineQuery.data;
   const summary = summariseOutline(outline.items);
   const blocks = landingBlocks(course, summary);
-  const groups = groupOutlineItemsForDisplay(outline.items);
   const counts = outlineKindCounts(outline.items);
-  const resumeItem = resolveResumeTarget(outline.items, outline.resume?.itemId ?? null);
   const totalTime = formatTotalTime(summary.totalSeconds);
-  const remaining = formatDurationShort(summary.remainingSeconds);
-  // The server's own number, not a recount: My Courses, the outline header and
+  // Nothing left to watch needs no line. `formatDurationShort(0)` is the
+  // string "0s", which is truthy — so a finished course showed "0s left"
+  // directly above "You have completed this course."
+  const remaining = summary.remainingSeconds ? formatDurationShort(summary.remainingSeconds) : null;
+  // Completion is something the outline REPORTS, not something the absence of
+  // a resume target implies: a course with no published content has nothing to
+  // resume and nothing completed either.
+  const isComplete = isOutlineComplete(outline);
+  // The server's own number, not a recount: My Courses, the contents pane and
   // this card must all say the same percentage, and only one of them can own it.
   const percent = Number.isFinite(progress.progress)
     ? Math.round(progress.progress)
@@ -102,14 +126,12 @@ export function CourseLandingPage() {
 
   return (
     <section aria-label={t('courses.landing.title')} className="flex flex-col gap-4">
-      <BackLink />
-
       {/* Two columns on a wide screen: what the course is on the left, the one
           action and where the learner stands on the right. They stack on a
           phone, and the action column comes FIRST there — a learner who is
           already enrolled wants Continue, not the syllabus. */}
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-        <div className="order-2 flex flex-col gap-6 lg:order-1">
+        <div className="order-2 flex min-w-0 flex-col gap-6 lg:order-1">
           <div className="flex flex-col gap-2">
             <span className="text-[11px] font-semibold uppercase tracking-wide text-ink-dim">
               {t(`courses.landing.eyebrow.${assignmentType === 'group' ? 'group' : 'personal'}`)}
@@ -185,7 +207,16 @@ export function CourseLandingPage() {
               <ol className="flex flex-col overflow-hidden rounded-token border border-line bg-surface">
                 {groups.map((group, index) => (
                   <li key={group.header.id} className={index ? 'border-t border-line' : ''}>
-                    <ModuleRow courseId={courseId} courseTitle={course.title} group={group} t={t} />
+                    <ModuleRow
+                      courseId={courseId}
+                      courseTitle={course.title}
+                      group={group}
+                      open={openModuleIds.includes(group.header.id)}
+                      onToggle={() =>
+                        setOpenModuleIds((open) => toggleModuleId(open, group.header.id))
+                      }
+                      t={t}
+                    />
                   </li>
                 ))}
               </ol>
@@ -199,7 +230,7 @@ export function CourseLandingPage() {
               </h2>
               <p className="text-body text-ink-dim">
                 {t('courses.landing.cme.credits', { credits: course.cmeCredits })}
-                {course.cmeCode ? ` \u00b7 ${course.cmeCode}` : ''}
+                {course.cmeCode ? ` · ${course.cmeCode}` : ''}
               </p>
               {course.cmeUrl ? (
                 <a
@@ -272,24 +303,11 @@ export function CourseLandingPage() {
                 </span>
               </Link>
             </Button>
-          ) : (
-            <Button variant="secondary" asChild className="w-full justify-center">
-              <Link to={coursePathFor(courseId)} state={{ title: course.title }}>
-                {t('courses.landing.viewOutline')}
-              </Link>
-            </Button>
-          )}
-
-          {/* Only beside a Continue button. On a finished course the button
-              IS the outline link, and two of them read as a mistake. */}
-          {resumeItem ? (
-            <Link
-              to={coursePathFor(courseId)}
-              state={{ title: course.title }}
-              className="text-center text-[12px] text-accent-ink hover:underline"
-            >
-              {t('courses.landing.viewOutline')}
-            </Link>
+          ) : isComplete ? (
+            <div className="flex items-center gap-2 rounded-token border border-line bg-ok-soft px-3 py-2 text-body text-ok">
+              <CircleCheck className="h-4 w-4 shrink-0" aria-hidden />
+              {t('courses.outline.completedBanner')}
+            </div>
           ) : null}
         </aside>
       </div>
@@ -298,67 +316,154 @@ export function CourseLandingPage() {
 }
 
 /**
- * One module: its state, its shape, and how far in the learner is.
+ * One module: its state, its shape, how far in the learner is — and its
+ * contents, in place.
  *
- * The row opens the module's first openable item rather than a module page,
- * which does not exist — a chevron that goes nowhere is worse than one that
- * goes to the obvious place.
+ * Expanding is not navigating. The old row was a link into the module's first
+ * openable item, which meant the only way to see what a module held was to
+ * start it. Now the row opens, and the child rows are the links.
+ *
+ * A module with no children stays a link, because a disclosure that opens
+ * onto nothing is worse than the chevron it replaces: on a flat course —
+ * which plenty of the imported ones are — every row is one of these.
  */
 function ModuleRow({
   courseId,
   courseTitle,
   group,
+  open,
+  onToggle,
   t,
 }: {
   courseId: string;
   courseTitle: string;
-  group: ReturnType<typeof groupOutlineItemsForDisplay>[number];
+  group: CourseOutlineGroup;
+  open: boolean;
+  onToggle: () => void;
   t: (key: string, options?: Record<string, unknown>) => string;
 }) {
+  const panelId = useId();
   const minutes = formatDurationShort(groupTotalSeconds(group));
-  const children = group.children.filter((child) => !child.blockedReason);
-  const topics = children.filter((child) => child.kind === 'topic').length;
-  const quizzes = children.filter((child) => child.kind === 'quiz').length;
-  const done = children.filter((child) => child.status === 'completed').length;
-  const target =
-    children.find((child) => child.status !== 'completed') ?? children[0] ?? group.header;
+  const openable = group.children.filter((child) => !child.blockedReason);
+  const topics = openable.filter((child) => child.kind === 'topic').length;
+  const quizzes = openable.filter((child) => child.kind === 'quiz').length;
+  const done = openable.filter((child) => child.status === 'completed').length;
+
+  const summaryLine = (
+    <span className="flex min-w-0 flex-1 flex-col text-left">
+      <span className="truncate text-body font-medium text-ink">{group.header.title}</span>
+      <span className="sv-num text-[12px] text-ink-dim">
+        {t('courses.landing.moduleMeta', { topics, quizzes })}
+        {minutes ? ` · ${minutes}` : ''}
+      </span>
+    </span>
+  );
+  const tally =
+    openable.length > 0 ? (
+      <span className="sv-num shrink-0 text-[12px] text-ink-dim">
+        {done}/{openable.length}
+      </span>
+    ) : null;
+
+  if (group.children.length === 0) {
+    return (
+      <Link
+        to={courseItemPathFor(courseId, group.header.id)}
+        state={{ title: courseTitle }}
+        className="flex items-center gap-3 px-3.5 py-3 outline-none hover:bg-surface-2 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-ink"
+      >
+        <OutlineStatusGlyph
+          status={group.header.status}
+          blocked={Boolean(group.header.blockedReason)}
+        />
+        {summaryLine}
+        {tally}
+        <ChevronRight className="h-4 w-4 shrink-0 text-ink-dim" aria-hidden />
+      </Link>
+    );
+  }
 
   return (
-    <Link
-      to={courseItemPathFor(courseId, target.id)}
-      state={{ title: courseTitle }}
-      className="flex items-center gap-3 px-3.5 py-3 outline-none hover:bg-surface-2 focus-visible:ring-2 focus-visible:ring-accent-ink"
-    >
-      <OutlineStatusGlyph
-        status={group.header.status}
-        blocked={Boolean(group.header.blockedReason)}
-      />
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-body font-medium text-ink">{group.header.title}</span>
-        <span className="sv-num text-[12px] text-ink-dim">
-          {t('courses.landing.moduleMeta', { topics, quizzes })}
-          {minutes ? ` \u00b7 ${minutes}` : ''}
-        </span>
-      </span>
-      {children.length > 0 ? (
-        <span className="sv-num shrink-0 text-[12px] text-ink-dim">
-          {done}/{children.length}
-        </span>
+    <>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-controls={panelId}
+        className="flex w-full items-center gap-3 px-3.5 py-3 outline-none hover:bg-surface-2 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-ink"
+      >
+        <OutlineStatusGlyph
+          status={group.header.status}
+          blocked={Boolean(group.header.blockedReason)}
+        />
+        {summaryLine}
+        {tally}
+        <ChevronDown
+          className={cn('h-4 w-4 shrink-0 text-ink-dim transition-transform', open && 'rotate-180')}
+          aria-hidden
+        />
+      </button>
+
+      {open ? (
+        <ol id={panelId} className="flex flex-col border-t border-line bg-surface-2/40">
+          {group.children.map((child) => (
+            <li key={child.id}>
+              <ChildRow courseId={courseId} courseTitle={courseTitle} item={child} />
+            </li>
+          ))}
+        </ol>
       ) : null}
-      <ChevronRight className="h-4 w-4 shrink-0 text-ink-dim" aria-hidden />
-    </Link>
+    </>
   );
 }
 
-function BackLink() {
+/**
+ * One topic or quiz inside an open module — the same three pieces the
+ * player's contents pane shows (mark, title, duration), so a learner meets
+ * one vocabulary in both places.
+ */
+function ChildRow({
+  courseId,
+  courseTitle,
+  item,
+}: {
+  courseId: string;
+  courseTitle: string;
+  item: CourseOutlineGroup['children'][number];
+}) {
   const { t } = useTranslation();
+  const duration = formatDurationShort(item.durationSeconds);
+
+  // A quiz with no questions explains itself rather than pretending to open.
+  if (item.blockedReason) {
+    return (
+      <div className="flex items-start gap-3 py-2 pl-10 pr-3.5 text-body" aria-disabled="true">
+        <OutlineStatusGlyph status={item.status} blocked className="mt-0.5" />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-ink-dim">{item.title}</span>
+          <span className="text-[11px] text-crit">
+            {t(blockedReasonLabelKey(item.blockedReason))}
+          </span>
+        </span>
+      </div>
+    );
+  }
+
   return (
     <Link
-      to={COURSES_PATH}
-      className="mb-2 inline-flex items-center gap-1 text-body text-accent-ink outline-none hover:underline focus-visible:ring-2 focus-visible:ring-accent-ink"
+      to={courseItemPathFor(courseId, item.id)}
+      state={{ title: courseTitle }}
+      className="flex items-center gap-3 py-2 pl-10 pr-3.5 text-body outline-none hover:bg-surface-2 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-ink"
     >
-      <ChevronLeft className="h-3.5 w-3.5" aria-hidden />
-      {t('courses.outline.backToCourses')}
+      <OutlineStatusGlyph status={item.status} />
+      <span className="min-w-0 flex-1 truncate text-ink">{item.title}</span>
+      {item.kind === 'quiz' && item.quiz ? (
+        <span className="sv-num shrink-0 rounded-full border border-line px-1.5 text-[10px] text-ink-dim">
+          {t('courses.runner.questionCount', { count: item.quiz.questionCount })}
+        </span>
+      ) : duration ? (
+        <span className="sv-num shrink-0 text-[12px] text-ink-dim">{duration}</span>
+      ) : null}
     </Link>
   );
 }

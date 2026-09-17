@@ -7,7 +7,6 @@ import {
   groupOutlineItemsForDisplay,
   isOutlineComplete,
   resolveResumeTarget,
-  resumeActionLabelKey,
 } from './course-outline-model';
 
 function item(
@@ -94,22 +93,6 @@ describe('findOutlineItem', () => {
   });
 });
 
-describe('resumeActionLabelKey', () => {
-  it.each([
-    ['not_started', 'courses.outline.resume.start'],
-    ['in_progress', 'courses.outline.resume.resume'],
-    ['failed', 'courses.outline.resume.retry'],
-    ['completed', 'courses.outline.resume.review'],
-  ] as const)('maps item status %j to %j', (status, key) => {
-    expect(resumeActionLabelKey(status)).toBe(key);
-  });
-});
-
-/**
- * The route's own resume rule is "first incomplete leaf" with no test for
- * `blockedReason` (learners.outline.helper.ts), so every case here is a
- * pointer it really can send.
- */
 describe('resolveResumeTarget', () => {
   const blockedQuiz = item({
     id: 'q-empty',

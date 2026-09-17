@@ -4,6 +4,7 @@ import type {
   LearnerCourseSummary,
 } from '@sector/api-client';
 
+import { hasVisibleText } from '../html-text';
 import { courseActionLabelKey } from '../my-courses/course-row-model';
 import type { OutlineSummary } from '../outline/outline-summary';
 import { formatDurationShort } from '../outline/outline-summary';
@@ -12,13 +13,17 @@ import { formatDurationShort } from '../outline/outline-summary';
  * What a course landing page can honestly say about itself.
  *
  * The whole point of this file is the difference between "absent" and
- * "empty". 158 of the library's 175 courses carry no description, none has a
- * level or an objective, and all 93 courses with CME keys hold the empty
- * string in every one of them. A page that renders a heading over an empty
- * body for each of those makes a sparse course look broken; a page that
- * renders nothing at all just looks short. So every block is gated on its
- * data being genuinely present, and the page renders only the blocks that
- * pass.
+ * "empty". Most courses DO carry a description — 96 of the 102 live published
+ * ones, measured on production, 100 of those over 200 characters. (An earlier
+ * "158 of 175 carry none" was measured against `gusi_dev`, and the course page
+ * was designed around a sparseness production does not have.) What is
+ * genuinely sparse is the rest: no course has a level or an objective, and all
+ * 93 courses with CME keys hold the empty string in every one of them.
+ *
+ * So the rule stands even though the numbers moved: a page that renders a
+ * heading over an empty body makes a course look broken, and one that renders
+ * nothing at all just looks short. Every block is gated on its data being
+ * genuinely present.
  */
 
 export type LandingBlocks = {
@@ -28,25 +33,6 @@ export type LandingBlocks = {
   totalTime: boolean;
   cme: boolean;
 };
-
-/**
- * A CMS leaves `<p></p>` behind when an editor clears a field, and WordPress
- * leaves `&nbsp;`. Neither is a description, so strip the markup before
- * deciding whether anything is left.
- *
- * The entity is matched in its RAW form because `content` is the one field
- * on the course that is deliberately not decoded at the schema boundary: it
- * is HTML, so it arrives with its entities intact and is sanitised at render.
- */
-function hasVisibleText(html: string | null | undefined): boolean {
-  if (!html) return false;
-  return (
-    html
-      .replace(/<[^>]*>/g, '')
-      .replace(/&nbsp;|&#160;|&#xa0;/gi, ' ')
-      .replace(/\s+/g, '').length > 0
-  );
-}
 
 /**
  * Narrower than `LearnerCourseSummary` on purpose: these are the only four

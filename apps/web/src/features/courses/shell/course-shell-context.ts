@@ -8,6 +8,16 @@ export type CourseShellContext = {
    *  forward via `<Link state>` is a fallback, not a requirement. */
   courseTitle: string | undefined;
   outline: CourseOutline;
+  /**
+   * The player's third column, when the viewport is wide enough to have one.
+   * The item view portals its tab panel into this; `null` means there is no
+   * panel column and the tabs render inline under the video.
+   *
+   * An element rather than a ref: a ref's `.current` is null on the render
+   * that mounts it, so a child reading it during render would never see the
+   * node and the panel would stay empty forever.
+   */
+  panelSlot: HTMLElement | null;
 };
 
 /**

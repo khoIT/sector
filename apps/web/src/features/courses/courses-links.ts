@@ -49,17 +49,14 @@ export function courseAdminPathFor(learnerId: string, courseId: string): string 
 export const COURSE_ITEM_CHILD_ROUTE_PATH = ':itemId';
 
 /**
- * The course landing page: what the course is, before the item list.
+ * REDIRECT ONLY. The course's description used to live on its own page here,
+ * on the premise that almost no course had one; on production 96 of 102 live
+ * published courses do, so it leads the course page instead and this URL
+ * forwards there.
  *
- * A SIBLING of the outline route rather than a child of the course shell,
- * because it answers "should I take this?" and the shell's contents pane
- * answers "where am I in it?" — two different jobs, and nesting it would put
- * the pane beside a page that exists to be read before there is a position to
- * keep. `about` is a static segment, so it outranks the shell's `:itemId`
- * child and can never be mistaken for an outline item.
+ * Nothing links to it any more. It stays declared because learners have it in
+ * their history, and a 404 on a URL that worked is a regression rather than a
+ * cleanup. `about` is a static segment, so it still outranks the shell's
+ * `:itemId` child and can never be mistaken for an outline item.
  */
 export const COURSE_ABOUT_ROUTE_PATH = `${COURSES_INDEX_ROUTE_PATH}/:courseId/about`;
-
-export function courseAboutPathFor(courseId: string): string {
-  return `${COURSES_PATH}/${courseId}/about`;
-}
