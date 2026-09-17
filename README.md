@@ -136,6 +136,20 @@ rebuilt, which is why it cannot be committed. Omit the fixture directory to use
 the shipped routes. Set `SECTOR_WEB_ORIGIN` to point the sweep at a worktree's
 own dev server on its own port instead of the shared `:3101` instance.
 
+Every route is opened at three widths — **390, 1440 and 2200** — and a route
+whose document scrolls sideways fails. A page you have to drag left and right
+on a phone is broken whatever its text says, and the node-environment suites
+cannot see it because nothing in them has a layout. The reviewed group queue
+dragged the document 966px at 390px for months without a single gate noticing.
+
+Only the primary width (1440) does the full settle-and-assert pass; the other
+two load, settle briefly and get measured, which is what keeps a 105-load run
+affordable. `SECTOR_SWEEP_WIDTHS` and `SECTOR_SWEEP_PRIMARY` override both. On
+a failure the sweep names the widest element that is not inside a scroll
+container, because the element that overflows is the fix and the document width
+is only the symptom. The script exits non-zero when any route is unhealthy or
+any width overflows.
+
 ### The production mirror, and proving the schemas against it
 
 The dumps beside this repo hold every production content and scan collection.

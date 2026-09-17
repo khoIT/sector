@@ -6,7 +6,7 @@ priority: P1
 branch: "feat/sector"
 tags: [port, rebrand, lms, scan-vault, data-fidelity]
 blockedBy: []
-blocks: [260914-1456-sector-course-experience-roadmap]
+blocks: [260914-1456-sector-course-experience-roadmap, 260916-1705-sector-upgrade-features-and-ux]
 created: "2026-09-13T08:30:32.895Z"
 createdBy: "ck:plan"
 source: skill

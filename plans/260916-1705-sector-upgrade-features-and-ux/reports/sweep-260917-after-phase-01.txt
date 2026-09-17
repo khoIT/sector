@@ -1,0 +1,41 @@
+ok   anon      /login                                     → /login                                     147ch   0r  Sector Global Ultrasound Institute Sign in Username or email Password 
+ok   anon      /forgot-password                           → /forgot-password                           211ch   0r  Sector Global Ultrasound Institute Forgot password? Enter your email a
+ok   anon      /group-invitation-confirmation             → /group-invitation-confirmation             220ch   0r  Sector Global Ultrasound Institute You have been invited to join a gro
+ok   learner   /                                          → /                                          630ch   0r  Welcome back, Sector Learner Pick up where you left off FAST/e-FAST, C
+ok   leader    /                                          → /                                          721ch   0r  Group leader dashboard GROUP WCUCOM OMS II Class of 2029 A.Y. 2026-202
+ok   reviewer  /                                          → /                                          860ch   0r  Scan reviewer dashboard Expert scans — unreviewed 7 Expert scans — rev
+ok   admin     /                                          → /                                          503ch   0r  Administrator dashboard Manage groups GROUP Sector Course Fixtures Sec
+ok   learner   /scans/my                                  → /scans/my                                  846ch   0r  My Scans My Scans Shared Scans Create Scan Study You have not created 
+ok   learner   /scans/shared                              → /scans/shared                              297ch   0r  Shared Scans My Scans Shared Scans Create Scan Study 0 scans Filters C
+ok   reviewer  /scans/group/unreviewed                    → /scans/group/unreviewed                   4507ch  20r  Group Scans — Unreviewed My Scans Shared Scans Group Scans Expert Scan
+ok   reviewer  /scans/group/reviewed                      → /scans/group/reviewed                     5089ch  20r  Group Scans — Reviewed My Scans Shared Scans Group Scans Expert Scans 
+ok   reviewer  /scans/expert/unreviewed                   → /scans/expert/unreviewed                  1805ch   7r  Expert Scans — Unreviewed My Scans Shared Scans Group Scans Expert Sca
+ok   reviewer  /scans/expert/reviewed                     → /scans/expert/reviewed                    4940ch  20r  Expert Scans — Reviewed My Scans Shared Scans Group Scans Expert Scans
+ok   learner   /scans/create                              → /scans/create                             1397ch   0r  Create scan study Files upload while you work. Submitting records the 
+ok   reviewer  /scans/group/unreviewed/6aa0a7c3d83c1da90fcd5721 → /scans/group/unreviewed/6aa0a7c3d83c1da90fcd5721  1155ch   0r  Back to unreviewed group scans This browser cannot play JPEG The file 
+ok   leader    /profile                                   → /profile                                  1513ch   0r  Profile Your account The name and picture other people see beside your
+ok   admin     /administer/groups                         → /administer/groups                        1319ch  20r  Groups Create group Groups GROUP TYPE MEMBERS LEADERS SEATS EXPIRES Se
+ok   reviewer  /administer/groups/6a6ae3d759ab84398c7cee4f/members → /administer/groups/6a6ae3d759ab84398c7cee4f/members  1913ch  20r  All groups WCUCOM OMS II Class of 2029 A.Y. 2026-2027 Members Courses 
+ok   learner   /learn/courses                             → /learn/courses                            1403ch   0r  My Courses All statuses Fellowship OB 1st Tri Module In progress 7% co
+ok   learner   /learn/question-banks                      → /learn/question-banks                      555ch   0r  Question Banks Skin Soft Tissue 10 questions Pediatric Residency Essen
+ok   learner   /learn/question-banks/question-bank-cardiac-basic → /learn/question-banks/question-bank-cardiac-basic   220ch   0r  All question banks Cardiac (Basic) The highlighted dark area on this p
+ok   learner   /dashboard/scans/my-scans                  → /scans/my                                  846ch   0r  My Scans My Scans Shared Scans Create Scan Study You have not created 
+ok   learner   /dashboard/orders                          → /dashboard/orders                          245ch   0r  This part of the old dashboard was retired This part of the old dashbo
+ok   learner   /nothing-here                              → /nothing-here                               93ch   0r  Page not found Page not found Nothing in Sector is routed at /nothing-
+ok   learner   /learn/courses/681a4b63779a0d9e6c9cc55b    → /learn/courses/681a4b63779a0d9e6c9cc55b   4630ch   0r  My Courses 0% Course outline 0/83 completed (0%) Resume: Ultrasound Ba
+ok   learner   /learn/courses/681a4b82779a0d9e6c9cc605    → /learn/courses/681a4b82779a0d9e6c9cc605    598ch   0r  My Courses 0% Course outline 0/8 completed (0%) Start: Ultrasound Basi
+ok   learner   /learn/courses/681a4b67779a0d9e6c9cc574    → /learn/courses/681a4b67779a0d9e6c9cc574   3057ch   0r  My Courses 0% Course outline 0/48 completed (0%) Start: Ultrasound Bas
+ok   learner   /learn/gallery                             → /learn/gallery                             747ch   0r  Pathology Gallery AAA DVT Echo FASH FAST FAST/EFAST Gallbladder GI Lun
+ok   learner   /learn/sage                                → /learn/sage                                 77ch   0r  Sage AI Ask Sage AI anything about point-of-care ultrasound. Loading S
+ok   reviewer  /administer/groups/6a6ae3d759ab84398c7cee4f/assignments → /administer/groups/6a6ae3d759ab84398c7cee4f/assignments  2044ch   0r  All groups WCUCOM OMS II Class of 2029 A.Y. 2026-2027 Members Courses 
+ok   learner   /learn/courses/681a4b63779a0d9e6c9cc55b/681a4d96acc6f28eaec5e30b → /learn/courses/681a4b63779a0d9e6c9cc55b/681a4d96acc6f28eaec5e30b  2648ch   0r  My Courses Course outline › Ultrasound Basics Contents 0/83 Ultrasound
+ok   learner   /learn/courses/681a4b63779a0d9e6c9cc55b/681a4d9eacc6f28eaec5e337 → /learn/courses/681a4b63779a0d9e6c9cc55b/681a4d9eacc6f28eaec5e337  1729ch   0r  My Courses Course outline › Pediatric Focused Assessment with Sonograp
+ok   learner   /learn/courses/681a4b63779a0d9e6c9cc55b/681a4e2c82414b2fcc5af816 → /learn/courses/681a4b63779a0d9e6c9cc55b/681a4e2c82414b2fcc5af816  2803ch   0r  My Courses Course outline › Ultrasound Basics Contents 0/83 Ultrasound
+ok   learner   /learn/courses/681a4b63779a0d9e6c9cc55b/681a4f4d4bc509ae57597c1b → /learn/courses/681a4b63779a0d9e6c9cc55b/681a4f4d4bc509ae57597c1b   923ch   0r  My Courses Course outline › Ultrasound Basics Contents 0/83 Ultrasound
+FAIL admin     /learn/course-progress/6aa68680341eed9251900a2e/681a4b63779a0d9e6c9cc55b → /learn/course-progress/6aa68680341eed9251900a2e/681a4b63779a0d9e6c9cc55b    66ch   0r  This learner's course could not be loaded User not found Try again
+
+34/35 routes healthy on a cold load at 1440px
+
+Horizontal overflow, widths 390 / 1440 / 2200px:
+  none — every route fits its viewport at all 3 widths
+0 overflow finding(s) across 35 routes

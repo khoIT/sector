@@ -62,6 +62,13 @@ block conditionally so that a course with no description, no level and no CME st
 deliberate rather than broken. **Which is 158 of 175 courses on day one** — the empty state is
 the common case here, not the edge case.
 
+> **Correction (16 Sep 2026).** The "158 of 175 courses carry no description"
+> figure throughout this file was measured against `gusi_dev`. Re-measured on
+> `gusi_prod_mirror.v2courses`: **96 of 102 live published courses have
+> `content`**, 100 of them over 200 characters. The sparse state this page was
+> optimised for is the rare case, not the common one — which is why the landing
+> page and the outline are merged and the description leads.
+
 ## Requirements
 
 **Functional**

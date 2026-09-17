@@ -5,7 +5,7 @@ status: in-progress
 priority: P1
 branch: "feat/sector"
 tags: [lms, courses, progress, cohorts, vimeo, post-cutover]
-blockedBy: [260913-1451-sector-replaces-scanhub]
+blockedBy: [260913-1451-sector-replaces-scanhub, 260916-1705-sector-upgrade-features-and-ux]
 blocks: []
 created: "2026-09-14T08:03:20.442Z"
 createdBy: "ck:plan"
@@ -102,6 +102,7 @@ production carries objectives or a level; Phase 7's console work is still what m
 | Relationship | Plan | Status |
 |---|---|---|
 | Blocked by | `260913-1451-sector-replaces-scanhub` (cutover, phase 11) | in-progress |
+| Superseded in part by | `260916-1705-sector-upgrade-features-and-ux` — takes over phase 6 (transcript, notes) and reworks the phase 5 player and phase 7 landing surfaces | pending |
 
 This plan ships as Sector releases *after* cutover. It also inherits that plan's unmerged
 API-side branches (`feat/sector-*` in `gusi_nodejs_api`): every API change here lands on the

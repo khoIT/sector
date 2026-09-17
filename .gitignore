@@ -25,3 +25,7 @@ pnpm-debug.log*
 
 # Netlify CLI local state
 .netlify/
+
+# Screenshots captured against a restored database show real learner names,
+# email addresses and customer group names. This repository is public.
+plans/**/*-shots/
