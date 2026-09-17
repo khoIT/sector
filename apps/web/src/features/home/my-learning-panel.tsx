@@ -85,7 +85,7 @@ export function MyLearningPanel() {
         ) : null}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 2xl:grid-cols-4">
         <Card>
           <CardHeader>
             <CardTitle>{t('home.myLearning.courseProgress')}</CardTitle>
@@ -158,7 +158,7 @@ export function MyLearningPanel() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 2xl:grid-cols-4">
         <Card className="lg:col-span-2">
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -206,7 +206,7 @@ export function MyLearningPanel() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
         <Card>
           <CardHeader>
             <CardTitle>{t('home.myLearning.topics')}</CardTitle>

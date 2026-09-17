@@ -19,16 +19,30 @@ import { GraduationCap, Search, TriangleAlert, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { DataTablePagination } from '../../scan-list/table/data-table-pagination';
-import { filterValue, hasActiveNarrowing, setFilter } from '../../scan-list/table/list-url-state';
+import {
+  filterValue,
+  hasActiveNarrowing,
+  LAYOUT_FILTER_ID,
+  setFilter,
+} from '../../scan-list/table/list-url-state';
 import { useDebouncedValue } from '../../scan-list/table/use-debounced-value';
 import { useListUrlState } from '../../scan-list/table/use-list-url-state';
 import { CourseCard } from './course-card';
+import { CourseLayoutToggle, type CourseLayout } from './course-layout-toggle';
+import { CourseListRow } from './course-list-row';
 import { COURSE_LIST_STATUS_FILTERS } from './course-row-model';
 import { ExpiredCoursesSection } from './expired-courses-section';
 
 /** A sentinel for "no status narrowing", since Radix's Select cannot carry
  *  an empty-string item value. */
 const ALL_STATUSES = 'all';
+
+/**
+ * Five columns at `2xl`. A 2,200px screen fitting three cards is the gutter
+ * problem this programme exists to fix, and a course card is narrow enough
+ * that five of them still read.
+ */
+const COURSE_GRID_CLASS = 'grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5';
 
 /** A URL filter value, narrowed to one this list actually offers. */
 function asStatusFilter(value: string | string[] | undefined): CourseListStatusFilter | undefined {
@@ -56,6 +70,10 @@ export function MyCoursesPage() {
   // rather than forwarded, because the route answers an unknown one with a
   // 400 whose validator text then becomes the learner's error message.
   const status = asStatusFilter(filterValue(url.filters, 'status'));
+  // Anything other than `list` is the default, so a hand-edited URL degrades
+  // to the grid rather than to a blank results area.
+  const layout: CourseLayout =
+    filterValue(url.filters, LAYOUT_FILTER_ID) === 'list' ? 'list' : 'grid';
 
   const query = useCourses({
     query: { keyword: debouncedKeyword, status, page: url.page, limit: url.limit },
@@ -68,6 +86,12 @@ export function MyCoursesPage() {
 
   function setStatus(value: string) {
     url.setFilters(setFilter(url.filters, 'status', value === ALL_STATUSES ? undefined : value));
+  }
+
+  function setLayout(next: CourseLayout) {
+    // `grid` is dropped rather than written: the default belongs in the code,
+    // not in every learner's shared link.
+    url.setFilters(setFilter(url.filters, LAYOUT_FILTER_ID, next === 'grid' ? undefined : next));
   }
 
   if (query.isError) {
@@ -131,14 +155,27 @@ export function MyCoursesPage() {
             ))}
           </SelectContent>
         </Select>
+
+        <CourseLayoutToggle value={layout} onChange={setLayout} />
       </div>
 
       {query.isPending ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }, (_, index) => (
-            <Skeleton key={index} className="aspect-[4/5] w-full rounded-token" />
-          ))}
-        </div>
+        // Shaped like what is coming, so the page does not jump when it
+        // arrives: a card is about 13rem tall now that a cover is the
+        // exception, and a row about 4.5rem.
+        layout === 'list' ? (
+          <div className="flex flex-col gap-2">
+            {Array.from({ length: 8 }, (_, index) => (
+              <Skeleton key={index} className="h-[4.5rem] w-full rounded-token" />
+            ))}
+          </div>
+        ) : (
+          <div className={COURSE_GRID_CLASS}>
+            {Array.from({ length: 6 }, (_, index) => (
+              <Skeleton key={index} className="h-[13rem] w-full rounded-token" />
+            ))}
+          </div>
+        )
       ) : items.length === 0 ? (
         <EmptyState
           icon={<GraduationCap className="h-5 w-5" aria-hidden />}
@@ -173,8 +210,14 @@ export function MyCoursesPage() {
             ) : undefined
           }
         />
+      ) : layout === 'list' ? (
+        <div className="flex flex-col gap-2">
+          {items.map((item) => (
+            <CourseListRow key={item.id} item={item} />
+          ))}
+        </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className={COURSE_GRID_CLASS}>
           {items.map((item) => (
             <CourseCard key={item.id} item={item} />
           ))}

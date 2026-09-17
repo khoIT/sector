@@ -112,49 +112,47 @@ export function GroupProgressTable({ groupId }: GroupProgressTableProps) {
           title={courseId ? t('groups.report.empty.course') : t('groups.report.empty.group')}
         />
       ) : (
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHead>
-              <TableRow>
-                <SortableHeader column="name" label={t('groups.report.column.learner')} />
-                <TableHeaderCell>{t('groups.report.column.course')}</TableHeaderCell>
-                <SortableHeader column="completion" label={t('groups.report.column.completion')} />
-                <TableHeaderCell>{t('groups.report.column.steps')}</TableHeaderCell>
-                <SortableHeader column="lastActive" label={t('groups.report.column.lastActive')} />
-                <SortableHeader column="overdue" label={t('groups.report.column.overdue')} />
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {/*
+        <Table>
+          <TableHead>
+            <TableRow>
+              <SortableHeader column="name" label={t('groups.report.column.learner')} />
+              <TableHeaderCell>{t('groups.report.column.course')}</TableHeaderCell>
+              <SortableHeader column="completion" label={t('groups.report.column.completion')} />
+              <TableHeaderCell>{t('groups.report.column.steps')}</TableHeaderCell>
+              <SortableHeader column="lastActive" label={t('groups.report.column.lastActive')} />
+              <SortableHeader column="overdue" label={t('groups.report.column.overdue')} />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {/*
                 A learner can appear twice under one course: the report is
                 built from group memberships, and the same person can hold two
                 of them. Email plus course name is therefore not unique, and
                 keying on it alone makes React treat two distinct rows as one.
               */}
-              {rows.map((row, index) => (
-                <TableRow key={`${row.Email}-${row['Course Name']}-${index}`}>
-                  <TableCell>
-                    <div className="flex flex-col">
-                      <span className="text-ink">{learnerName(row)}</span>
-                      <span className="text-[12px] text-ink-dim">{row.Email}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{row['Course Name']}</TableCell>
-                  <TableCell className="sv-num">{row['Completion Percentage']}</TableCell>
-                  <TableCell className="sv-num">{row['Completed Steps']}</TableCell>
-                  <TableCell>{formatLastActive(row, t)}</TableCell>
-                  <TableCell>
-                    {row.assignments.overdue > 0 ? (
-                      <Badge tone="crit">{row.assignments.overdue}</Badge>
-                    ) : (
-                      <span className="sv-num text-ink-dim">0</span>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+            {rows.map((row, index) => (
+              <TableRow key={`${row.Email}-${row['Course Name']}-${index}`}>
+                <TableCell>
+                  <div className="flex flex-col">
+                    <span className="text-ink">{learnerName(row)}</span>
+                    <span className="text-[12px] text-ink-dim">{row.Email}</span>
+                  </div>
+                </TableCell>
+                <TableCell>{row['Course Name']}</TableCell>
+                <TableCell className="sv-num">{row['Completion Percentage']}</TableCell>
+                <TableCell className="sv-num">{row['Completed Steps']}</TableCell>
+                <TableCell>{formatLastActive(row, t)}</TableCell>
+                <TableCell>
+                  {row.assignments.overdue > 0 ? (
+                    <Badge tone="crit">{row.assignments.overdue}</Badge>
+                  ) : (
+                    <span className="sv-num text-ink-dim">0</span>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
     </div>
   );
