@@ -1,5 +1,5 @@
 import { Button } from '@sector/ui';
-import { Menu, X } from 'lucide-react';
+import { Menu, Search, X } from 'lucide-react';
 
 import { useTranslation } from 'react-i18next';
 
@@ -14,6 +14,7 @@ export type TopbarProps = {
   title: string;
   navOpen: boolean;
   onToggleNav: () => void;
+  onOpenCommandMenu: () => void;
 };
 
 /**
@@ -24,7 +25,7 @@ export type TopbarProps = {
  * remembering to render one, and it is the label the <main> landmark points
  * at. Feature pages start their own headings at <h2>.
  */
-export function Topbar({ title, navOpen, onToggleNav }: TopbarProps) {
+export function Topbar({ title, navOpen, onToggleNav, onOpenCommandMenu }: TopbarProps) {
   const { t } = useTranslation();
 
   return (
@@ -58,6 +59,22 @@ export function Topbar({ title, navOpen, onToggleNav }: TopbarProps) {
           and so the rail copy of this menu — is display-none. Above lg it
           would be the same identity on screen twice. */}
       <div className="ml-auto flex shrink-0 items-center gap-1">
+        {/* The hint is shown, not just documented: a shortcut nobody is told
+            about is a shortcut nobody uses. Icon only below `sm`, where the
+            chord does not exist anyway. */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onOpenCommandMenu}
+          className="gap-1.5 text-ink-dim"
+          aria-label={t('command.open')}
+        >
+          <Search className="h-4 w-4" aria-hidden />
+          <kbd className="hidden rounded-[4px] border border-line px-1 text-[10px] font-medium lg:inline">
+            {'\u2318K'}
+          </kbd>
+        </Button>
+
         <LanguageSwitcher />
         <div className="lg:hidden">
           <AccountMenu />
