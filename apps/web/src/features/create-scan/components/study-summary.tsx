@@ -18,6 +18,7 @@ import {
 import { countStored, countTracked, trackedBytes } from '../model/file-counts';
 import { defaultGroupCohort, isWiderThanCohort } from '../model/group-cohort';
 import type { DraftState } from '../model/draft-types';
+import { useTranslation } from 'react-i18next';
 
 export type StudySummaryProps = {
   state: DraftState;
@@ -38,6 +39,7 @@ export type StudySummaryProps = {
  * the API has no route that adds a group to an existing scan.
  */
 export function StudySummary({ state, onEdit, collectsScanIdentifier }: StudySummaryProps) {
+  const { t } = useTranslation();
   const { data: definitionData } = useFindingDefinitions(state.scanTypeId, state.organizationId);
   const { data: groups } = useScanUserGroups();
 
@@ -52,53 +54,50 @@ export function StudySummary({ state, onEdit, collectsScanIdentifier }: StudySum
     <Card>
       <CardHeader className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <CardTitle>What will be sent</CardTitle>
-          <p className="mt-0.5 text-[12px] text-ink-dim">
-            Everything below is recorded against the files already in storage. Group routing cannot
-            be changed afterwards.
-          </p>
+          <CardTitle>{t('createScan.summary.title')}</CardTitle>
+          <p className="mt-0.5 text-[12px] text-ink-dim">{t('createScan.summary.blurb')}</p>
         </div>
         <Button variant="ghost" size="sm" onClick={onEdit}>
-          <Pencil className="h-3.5 w-3.5" aria-hidden /> Edit study
+          <Pencil className="h-3.5 w-3.5" aria-hidden /> {t('createScan.summary.edit')}
         </Button>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-5">
-        <Section title="The study">
-          <Fact label="Exam type" value={state.scanTypeName} />
+        <Section title={t('createScan.summary.study')}>
+          <Fact label={t('createScan.summary.examType')} value={state.scanTypeName} />
           <Fact
-            label="Files"
+            label={t('createScan.summary.files')}
             value={
               tracked === 0
                 ? null
-                : `${stored} of ${tracked} in storage · ${formatBytes(trackedBytes(state.files))}`
+                : t('createScan.summary.filesValue', {
+                    stored,
+                    tracked,
+                    size: formatBytes(trackedBytes(state.files)),
+                  })
             }
           />
           {collectsScanIdentifier ? (
-            <Fact label="Scan identifier" value={state.scanIdentifier} />
+            <Fact label={t('createScan.summary.scanIdentifier')} value={state.scanIdentifier} />
           ) : null}
-          <Fact label="External patient ID" value={state.externalPatientId} />
+          <Fact label={t('createScan.summary.patientId')} value={state.externalPatientId} />
         </Section>
 
-        <Section title="Findings">
+        <Section title={t('createScan.summary.findings')}>
           <FindingsSummary definitions={definitions} answers={state.findings} />
         </Section>
 
-        <Section title="Clinical note">
+        <Section title={t('createScan.summary.clinicalNote')}>
           {state.note.trim() ? (
             <p className="whitespace-pre-wrap text-body text-ink">{state.note}</p>
           ) : (
-            <Empty>No note. A reviewer will see the findings and the images only.</Empty>
+            <Empty>{t('createScan.summary.noNote')}</Empty>
           )}
         </Section>
 
-        <Section title="Who sees this study">
+        <Section title={t('createScan.summary.audience')}>
           {chosenGroups.length === 0 ? (
-            <Empty>
-              No groups. No group reviewer will see this study, and a group cannot be added to it
-              afterwards — the API has no route for that. You can still share it with named people
-              from the study itself.
-            </Empty>
+            <Empty>{t('createScan.summary.noGroups')}</Empty>
           ) : (
             <ul className="flex flex-col gap-1">
               {chosenGroups.map((group) => (
@@ -109,7 +108,7 @@ export function StudySummary({ state, onEdit, collectsScanIdentifier }: StudySum
                       reviewers it was never meant for. */}
                   {isWiderThanCohort(group, groups) ? (
                     <span className="rounded-full border border-warn/25 bg-warn-soft px-2 py-0.5 text-[11px] text-warn">
-                      wider than your cohort
+                      {t('createScan.summary.widerThanCohort')}
                     </span>
                   ) : null}
                 </li>
@@ -117,7 +116,11 @@ export function StudySummary({ state, onEdit, collectsScanIdentifier }: StudySum
             </ul>
           )}
 
-          <Fact label="Expert review" value={state.expertReview?.label} empty="Not requested" />
+          <Fact
+            label={t('createScan.summary.expertReview')}
+            value={state.expertReview?.label}
+            empty={t('createScan.summary.notRequested')}
+          />
         </Section>
       </CardContent>
     </Card>
@@ -178,6 +181,7 @@ function FindingsSummary({
   definitions: readonly FindingDefinition[];
   answers: FindingAnswers;
 }) {
+  const { t } = useTranslation();
   const missing = new Set(
     missingRequiredFindings(definitions, answers).map((definition) => definition.key),
   );
@@ -189,7 +193,7 @@ function FindingsSummary({
   );
 
   if (rows.length === 0) {
-    return <Empty>No findings recorded.</Empty>;
+    return <Empty>{t('createScan.summary.noFindings')}</Empty>;
   }
 
   return (

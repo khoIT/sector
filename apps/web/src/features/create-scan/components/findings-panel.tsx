@@ -12,6 +12,7 @@ import {
 } from '../model/finding-controls';
 import { FindingRow } from './finding-row';
 import { InlineNotice } from './inline-notice';
+import { useTranslation } from 'react-i18next';
 
 export type FindingsPanelProps = {
   scanTypeId: string;
@@ -29,6 +30,7 @@ export function FindingsPanel({
   onChange,
   invalidKeys = [],
 }: FindingsPanelProps) {
+  const { t } = useTranslation();
   const { data, isPending, isError, error, refetch } = useFindingDefinitions(
     scanTypeId,
     organizationId,
@@ -42,11 +44,8 @@ export function FindingsPanel({
     <Card>
       <CardHeader className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <CardTitle>Findings</CardTitle>
-          <p className="mt-0.5 text-[12px] text-ink-dim">
-            What the study shows. Every option the scan type defines is offered — leave a row
-            untouched if it was not assessed.
-          </p>
+          <CardTitle>{t('createScan.findings.title')}</CardTitle>
+          <p className="mt-0.5 text-[12px] text-ink-dim">{t('createScan.findings.blurb')}</p>
         </div>
 
         {definitions.length > 0 ? (
@@ -63,11 +62,13 @@ export function FindingsPanel({
           >
             {applied ? (
               <>
-                <RotateCcw className="h-3.5 w-3.5" aria-hidden /> Clear defaults
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden />{' '}
+                {t('createScan.findings.clearDefaults')}
               </>
             ) : (
               <>
-                <HeartPulse className="h-3.5 w-3.5" aria-hidden /> No pathology
+                <HeartPulse className="h-3.5 w-3.5" aria-hidden />{' '}
+                {t('createScan.findings.noPathology')}
               </>
             )}
           </Button>
@@ -86,21 +87,18 @@ export function FindingsPanel({
         ) : isError ? (
           <InlineNotice
             tone="crit"
-            title="This scan type's findings form could not be loaded"
+            title={t('createScan.findings.loadError')}
             action={
               <Button size="sm" variant="secondary" onClick={() => void refetch()}>
-                Try again
+                {t('createScan.findings.retry')}
               </Button>
             }
           >
-            {error instanceof Error ? error.message : 'The request failed.'} You can still submit
-            the study with a note instead, or retry.
+            {error instanceof Error ? error.message : t('createScan.findings.requestFailed')}{' '}
+            {t('createScan.findings.loadErrorDetail')}
           </InlineNotice>
         ) : definitions.length === 0 ? (
-          <p className="text-body text-ink-dim">
-            This scan type has no structured findings. Record what you saw in the clinical note
-            below.
-          </p>
+          <p className="text-body text-ink-dim">{t('createScan.findings.none')}</p>
         ) : (
           <ul className="flex flex-col">
             {definitions.map((definition) => (

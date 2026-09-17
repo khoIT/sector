@@ -4,6 +4,7 @@ import { Check, Loader2, Stethoscope } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { InlineNotice } from './inline-notice';
+import { useTranslation } from 'react-i18next';
 
 export type ScanTypePickerProps = {
   value: string | null;
@@ -59,6 +60,7 @@ function ScanTypeThumb({ src }: { src: string | null | undefined }) {
  * buried next to the notes field.
  */
 export function ScanTypePicker({ value, onChange, pendingTypeId }: ScanTypePickerProps) {
+  const { t } = useTranslation();
   const { data, isPending, isError, error, refetch } = useScanTypes();
   const [search, setSearch] = useState('');
 
@@ -83,15 +85,15 @@ export function ScanTypePicker({ value, onChange, pendingTypeId }: ScanTypePicke
     return (
       <InlineNotice
         tone="crit"
-        title="Scan types could not be loaded"
+        title={t('createScan.typePicker.loadError')}
         action={
           <Button size="sm" variant="secondary" onClick={() => void refetch()}>
-            Try again
+            {t('createScan.typePicker.retry')}
           </Button>
         }
       >
-        {error instanceof Error ? error.message : 'The request failed.'} Your files are still
-        uploading and nothing has been lost.
+        {error instanceof Error ? error.message : t('createScan.typePicker.requestFailed')}{' '}
+        {t('createScan.typePicker.loadErrorDetail')}
       </InlineNotice>
     );
   }
@@ -99,8 +101,8 @@ export function ScanTypePicker({ value, onChange, pendingTypeId }: ScanTypePicke
   return (
     <div className="flex flex-col gap-3">
       <Input
-        label="Find a scan type"
-        placeholder="AAA, Echo, Lung…"
+        label={t('createScan.typePicker.findLabel')}
+        placeholder={t('createScan.typePicker.findPlaceholder')}
         value={search}
         onChange={(event) => setSearch(event.target.value)}
         className="max-w-xs"
@@ -109,8 +111,8 @@ export function ScanTypePicker({ value, onChange, pendingTypeId }: ScanTypePicke
       {filtered.length === 0 ? (
         <EmptyState
           icon={<Stethoscope className="h-5 w-5" aria-hidden />}
-          title="No scan type matches that"
-          description="Clear the search to see all scan types."
+          title={t('createScan.typePicker.noMatchTitle')}
+          description={t('createScan.typePicker.noMatchDetail')}
         />
       ) : (
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">

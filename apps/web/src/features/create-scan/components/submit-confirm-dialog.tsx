@@ -11,6 +11,7 @@ import {
 import { Send } from 'lucide-react';
 
 import { InlineNotice } from './inline-notice';
+import { useTranslation } from 'react-i18next';
 
 export type SubmitFact = {
   label: string;
@@ -48,15 +49,13 @@ export function SubmitConfirmDialog({
   error,
   onConfirm,
 }: SubmitConfirmDialogProps) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={submitting ? undefined : onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Submit this study?</DialogTitle>
-          <DialogDescription>
-            Your files are already in storage. Submitting records these details against them — it
-            does not start another upload.
-          </DialogDescription>
+          <DialogTitle>{t('createScan.submitConfirm.title')}</DialogTitle>
+          <DialogDescription>{t('createScan.submitConfirm.blurb')}</DialogDescription>
         </DialogHeader>
 
         <dl className="flex flex-col">
@@ -79,18 +78,20 @@ export function SubmitConfirmDialog({
         </dl>
 
         {error ? (
-          <InlineNotice tone="crit" title="The study could not be created">
+          <InlineNotice tone="crit" title={t('createScan.submitConfirm.error')}>
             {error}
           </InlineNotice>
         ) : null}
 
         <DialogFooter>
           <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={submitting}>
-            Keep editing
+            {t('createScan.submitConfirm.keepEditing')}
           </Button>
           <Button onClick={onConfirm} disabled={submitting}>
             <Send className="h-3.5 w-3.5" aria-hidden />
-            {submitting ? 'Submitting…' : 'Submit study'}
+            {submitting
+              ? t('createScan.submitConfirm.submitting')
+              : t('createScan.submitConfirm.submit')}
           </Button>
         </DialogFooter>
       </DialogContent>

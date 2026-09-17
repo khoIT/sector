@@ -3,6 +3,8 @@ import type { RouteObject } from 'react-router-dom';
 
 import { RequirePermission } from '@/auth/require-auth';
 
+import { pageMeasure } from '@/routes/route-measure';
+
 /**
  * The create-scan wizard's route.
  *
@@ -18,6 +20,8 @@ export const createScanRoutes: RouteObject[] = [
     // Gated as a pathless layout route so the permission is visible in the
     // route table rather than buried in the page.
     element: <RequirePermission required="create:scan" />,
-    children: [{ path: 'scans/create', element: <CreateScanPage /> }],
+    children: [
+      { path: 'scans/create', element: <CreateScanPage />, handle: pageMeasure('working') },
+    ],
   },
 ];

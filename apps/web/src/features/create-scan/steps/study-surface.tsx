@@ -9,6 +9,7 @@ import { CommitBar } from '../components/commit-bar';
 import { ExpertReviewPanel } from '../components/expert-review-panel';
 import { FindingsPanel } from '../components/findings-panel';
 import { InlineNotice } from '../components/inline-notice';
+import { RoutingSummary } from '../components/routing-summary';
 import { SetupBar } from '../components/setup-bar';
 import { StudyRail } from '../components/study-rail';
 import { SwitchScanTypeDialog } from '../components/switch-scan-type-dialog';
@@ -20,6 +21,7 @@ import { readinessFor } from '../model/readiness';
 import { useDraftMediaSources } from '../model/use-draft-media-sources';
 import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
 import { useScanTypeSwitch } from '../model/use-scan-type-switch';
+import { useTranslation } from 'react-i18next';
 
 export type StudySurfaceProps = {
   draft: UseCreateScanDraft;
@@ -47,6 +49,7 @@ export type StudySurfaceProps = {
  * and their reviewer now read the same study the same way.
  */
 export function StudySurface({ draft, onSubmitted }: StudySurfaceProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { state, update } = draft;
   const { data: definitions } = useFindingDefinitions(state.scanTypeId, state.organizationId);
@@ -107,10 +110,15 @@ export function StudySurface({ draft, onSubmitted }: StudySurfaceProps) {
         />
       ) : null}
 
-      {/* Media left, work right. Stacks media-first below xl, where a 450px
-          findings column would be worse than a full-width one. */}
+      {/* Media left, work right, and at 2xl the review decision gets a column
+          of its own. Stacks media-first below xl, where a 450px findings
+          column would be worse than a full-width one. */}
       <div
-        className={cn('grid gap-4 xl:items-start', 'xl:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]')}
+        className={cn(
+          'grid gap-4 xl:items-start',
+          'xl:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]',
+          '2xl:grid-cols-[minmax(0,22rem)_minmax(0,1fr)_minmax(0,24rem)]',
+        )}
       >
         <StudyRail
           draft={draft}
@@ -129,9 +137,8 @@ export function StudySurface({ draft, onSubmitted }: StudySurfaceProps) {
               onChange={(findings) => update({ findings })}
             />
           ) : (
-            <InlineNotice tone="info" title="Pick a scan type to see its findings">
-              Findings differ per scan type, so the form appears once a type is chosen. Your files
-              keep uploading in the background meanwhile.
+            <InlineNotice tone="info" title={t('createScan.studySurface.pickTypeTitle')}>
+              {t('createScan.studySurface.pickTypeBody')}
             </InlineNotice>
           )}
 
@@ -140,15 +147,25 @@ export function StudySurface({ draft, onSubmitted }: StudySurfaceProps) {
           {missingRequired.length > 0 ? (
             <InlineNotice
               tone="warn"
-              title={`${missingRequired.length} required ${missingRequired.length === 1 ? 'finding is' : 'findings are'} still blank`}
+              title={t('createScan.studySurface.missingRequired', {
+                count: missingRequired.length,
+              })}
             >
-              {missingRequired.map((definition) => definition.name).join(', ')}. You can submit
-              without them, but a reviewer will not know whether they were normal or not assessed.
+              {t('createScan.studySurface.missingRequiredBody', {
+                names: missingRequired.map((definition) => definition.name).join(', '),
+              })}
             </InlineNotice>
           ) : null}
 
           <ClinicalNotePanel draft={draft} rows={4} />
+        </div>
 
+        {/* MOVED by grid placement, never rendered twice. Two mounted copies
+            behind visibility classes would each hold their own credit-purchase
+            dialog state, which is the last thing to have two of. Below 2xl
+            there is no third column, so this flows into column 2 under the
+            note — the stacked order the phone wants anyway. */}
+        <div className="flex min-w-0 flex-col gap-4 2xl:sticky 2xl:top-4 2xl:col-start-3 2xl:row-start-1">
           {/* Its own block rather than a line in the commit bar: requesting a
               review spends a credit and can open a purchase, which is more
               than a bar should hold. */}
@@ -160,6 +177,8 @@ export function StudySurface({ draft, onSubmitted }: StudySurfaceProps) {
               onChange={(expertReview) => update({ expertReview })}
             />
           ) : null}
+
+          <RoutingSummary state={{ groupIds: state.groupIds, expertReview: state.expertReview }} />
         </div>
       </div>
 

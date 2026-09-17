@@ -6,6 +6,7 @@ import { useAuth } from '@/auth/auth-context';
 
 import { anyOrganizationCollectsScanIdentifier } from '../model/identifier-gate';
 import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
+import { useTranslation } from 'react-i18next';
 
 export type ClinicalNotePanelProps = {
   draft: UseCreateScanDraft;
@@ -21,6 +22,7 @@ export type ClinicalNotePanelProps = {
  * viewer along with it.
  */
 export function ClinicalNotePanel({ draft, rows = 6 }: ClinicalNotePanelProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { data: organizations } = useUserOrganizations(user?.id);
   const { state, update } = draft;
@@ -36,16 +38,13 @@ export function ClinicalNotePanel({ draft, rows = 6 }: ClinicalNotePanelProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Clinical note</CardTitle>
-        <p className="mt-0.5 text-[12px] text-ink-dim">
-          Context a reviewer needs: presentation, the question the scan was answering, anything the
-          findings list cannot hold.
-        </p>
+        <CardTitle>{t('createScan.clinicalNote.title')}</CardTitle>
+        <p className="mt-0.5 text-[12px] text-ink-dim">{t('createScan.clinicalNote.blurb')}</p>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <Textarea
-          label="Note"
-          placeholder="e.g. 62M with flank pain, ruling out AAA. Limited windows due to bowel gas."
+          label={t('createScan.clinicalNote.noteLabel')}
+          placeholder={t('createScan.clinicalNote.notePlaceholder')}
           value={state.note}
           rows={rows}
           onChange={(event) => update({ note: event.target.value })}
@@ -53,8 +52,8 @@ export function ClinicalNotePanel({ draft, rows = 6 }: ClinicalNotePanelProps) {
 
         <div className="grid gap-3 sm:grid-cols-2">
           <Input
-            label="External patient ID"
-            hint="Optional. Your own record number, up to 100 characters."
+            label={t('createScan.clinicalNote.patientIdLabel')}
+            hint={t('createScan.clinicalNote.patientIdHint')}
             maxLength={100}
             value={state.externalPatientId}
             onChange={(event) => update({ externalPatientId: event.target.value })}
@@ -62,8 +61,8 @@ export function ClinicalNotePanel({ draft, rows = 6 }: ClinicalNotePanelProps) {
 
           {collectsScanIdentifier ? (
             <Input
-              label="Scan identifier"
-              hint="Optional. Shown back on the study and included in your organization's export."
+              label={t('createScan.clinicalNote.scanIdLabel')}
+              hint={t('createScan.clinicalNote.scanIdHint')}
               value={state.scanIdentifier}
               onChange={(event) => update({ scanIdentifier: event.target.value })}
             />

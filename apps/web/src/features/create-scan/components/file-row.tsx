@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import { formatBytes } from '@/lib/format';
 
 import type { DraftFile, DraftFileStatus } from '../model/draft-types';
+import { useTranslation } from 'react-i18next';
 
 type StatusPresentation = {
   tone: 'neutral' | 'accent' | 'ok' | 'warn' | 'crit';
@@ -37,6 +38,7 @@ export type FileRowProps = {
 };
 
 export function FileRow({ file, onCancel, onRetry, onRemove, onReattach }: FileRowProps) {
+  const { t } = useTranslation();
   const reattachRef = useRef<HTMLInputElement>(null);
   const presentation = STATUS[file.status];
   const Icon = file.type.startsWith('video/') ? FileVideo : ImageIcon;
@@ -55,11 +57,8 @@ export function FileRow({ file, onCancel, onRetry, onRemove, onReattach }: FileR
         <StatusPill tone={presentation.tone} label={presentation.label} />
 
         {file.confidence === 'structure-only' ? (
-          <Badge
-            tone="warn"
-            title="The file is a valid, complete container, but this browser cannot decode its codec. It uploads normally and the server can read it."
-          >
-            structure only
+          <Badge tone="warn" title={t('createScan.fileRow.structureOnlyTitle')}>
+            {t('createScan.fileRow.structureOnly')}
           </Badge>
         ) : null}
 
@@ -69,15 +68,15 @@ export function FileRow({ file, onCancel, onRetry, onRemove, onReattach }: FileR
               variant="ghost"
               size="sm"
               onClick={() => onCancel(file.id)}
-              aria-label={`Cancel upload of ${file.name}`}
+              aria-label={t('createScan.fileRow.cancelUpload', { name: file.name })}
             >
-              <X className="h-3.5 w-3.5" aria-hidden /> Cancel
+              <X className="h-3.5 w-3.5" aria-hidden /> {t('createScan.fileRow.cancel')}
             </Button>
           ) : null}
 
           {file.status === 'failed' || file.status === 'cancelled' ? (
             <Button variant="secondary" size="sm" onClick={() => onRetry(file.id)}>
-              <RotateCcw className="h-3.5 w-3.5" aria-hidden /> Retry
+              <RotateCcw className="h-3.5 w-3.5" aria-hidden /> {t('createScan.fileRow.retry')}
             </Button>
           ) : null}
 
@@ -94,7 +93,7 @@ export function FileRow({ file, onCancel, onRetry, onRemove, onReattach }: FileR
                 }}
               />
               <Button variant="secondary" size="sm" onClick={() => reattachRef.current?.click()}>
-                <Upload className="h-3.5 w-3.5" aria-hidden /> Choose again
+                <Upload className="h-3.5 w-3.5" aria-hidden /> {t('createScan.fileRow.chooseAgain')}
               </Button>
             </>
           ) : null}
@@ -103,8 +102,8 @@ export function FileRow({ file, onCancel, onRetry, onRemove, onReattach }: FileR
             variant="ghost"
             size="icon"
             onClick={() => onRemove(file.id)}
-            aria-label={`Remove ${file.name}`}
-            title={`Remove ${file.name}`}
+            aria-label={t('createScan.fileRow.remove', { name: file.name })}
+            title={t('createScan.fileRow.remove', { name: file.name })}
           >
             <X className="h-4 w-4" aria-hidden />
           </Button>
@@ -116,7 +115,7 @@ export function FileRow({ file, onCancel, onRetry, onRemove, onReattach }: FileR
           <Progress
             value={file.progress}
             tone={file.status === 'stored' ? 'ok' : 'accent'}
-            label={`Upload progress for ${file.name}`}
+            label={t('createScan.fileRow.progress', { name: file.name })}
             className="flex-1"
           />
           <span className={cn('sv-num w-9 text-right text-[11px] text-ink-dim')}>
@@ -128,10 +127,7 @@ export function FileRow({ file, onCancel, onRetry, onRemove, onReattach }: FileR
       {file.error ? <p className="text-[12px] text-crit">{file.error.message}</p> : null}
 
       {file.status === 'detached' ? (
-        <p className="text-[12px] text-ink-dim">
-          This file was in the saved draft but its contents were not kept in the browser. Choose the
-          same file again to finish uploading it, or remove it from the study.
-        </p>
+        <p className="text-[12px] text-ink-dim">{t('createScan.fileRow.detachedBody')}</p>
       ) : null}
     </li>
   );

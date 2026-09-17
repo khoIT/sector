@@ -9,6 +9,7 @@ import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
 
 import { StepInterpretation } from './step-interpretation';
 import { StepReviewRouting } from './step-review-routing';
+import { useTranslation } from 'react-i18next';
 
 export type ClassicStepsProps = {
   draft: UseCreateScanDraft;
@@ -37,6 +38,7 @@ export type ClassicStepsProps = {
  *    allows. See model/classic-steps.ts for the pair that disagreed.
  */
 export function ClassicSteps({ draft, onSubmitted }: ClassicStepsProps) {
+  const { t } = useTranslation();
   const { state } = draft;
 
   if (state.step === 'files') {
@@ -51,10 +53,11 @@ export function ClassicSteps({ draft, onSubmitted }: ClassicStepsProps) {
 
         <div className="flex flex-wrap items-center justify-end gap-2">
           {tracked === 0 ? (
-            <span className="text-[12px] text-ink-dim">Add at least one file to continue.</span>
+            <span className="text-[12px] text-ink-dim">{t('createScan.classic.addFile')}</span>
           ) : null}
           <Button onClick={() => draft.goToStep('interpretation')} disabled={!canContinue}>
-            Interpretation <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+            {t('createScan.classic.interpretation')}{' '}
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden />
           </Button>
         </div>
       </div>
@@ -70,15 +73,16 @@ export function ClassicSteps({ draft, onSubmitted }: ClassicStepsProps) {
 
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Button variant="secondary" onClick={() => draft.goToStep('files')}>
-            <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> Files
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t('createScan.classic.files')}
           </Button>
 
           <div className="flex flex-wrap items-center gap-2">
             {!canContinue ? (
-              <span className="text-[12px] text-ink-dim">Choose a scan type to continue.</span>
+              <span className="text-[12px] text-ink-dim">{t('createScan.classic.chooseType')}</span>
             ) : null}
             <Button onClick={() => draft.goToStep('routing')} disabled={!canContinue}>
-              Review routing <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+              {t('createScan.classic.reviewRouting')}{' '}
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden />
             </Button>
           </div>
         </div>

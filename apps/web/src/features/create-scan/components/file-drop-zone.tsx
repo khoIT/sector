@@ -3,6 +3,7 @@ import { UploadCloud } from 'lucide-react';
 import { useCallback, useId, useRef, useState } from 'react';
 
 import { ALLOWED_MEDIA_TYPES } from '../model/validate-media-file';
+import { useTranslation } from 'react-i18next';
 
 export type FileDropZoneProps = {
   onFiles: (files: File[]) => void;
@@ -11,6 +12,7 @@ export type FileDropZoneProps = {
 };
 
 export function FileDropZone({ onFiles, disabled, className }: FileDropZoneProps) {
+  const { t } = useTranslation();
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -43,14 +45,11 @@ export function FileDropZone({ onFiles, disabled, className }: FileDropZoneProps
       )}
     >
       <UploadCloud className="h-5 w-5 text-ink-dim" aria-hidden />
-      <p className="text-body font-medium text-ink">Drop images or clips here</p>
-      <p className="max-w-md text-[12px] text-ink-dim">
-        Each file is checked and starts uploading straight away, while you fill in the rest of the
-        study. JPEG, PNG, GIF, WebP, BMP, SVG, MP4, MOV, WebM, AVI and MKV.
-      </p>
+      <p className="text-body font-medium text-ink">{t('createScan.drop.title')}</p>
+      <p className="max-w-md text-[12px] text-ink-dim">{t('createScan.drop.blurb')}</p>
 
       <label htmlFor={inputId} className="sr-only">
-        Choose scan files
+        {t('createScan.drop.chooseLabel')}
       </label>
       <input
         ref={inputRef}
@@ -72,7 +71,7 @@ export function FileDropZone({ onFiles, disabled, className }: FileDropZoneProps
         disabled={disabled}
         onClick={() => inputRef.current?.click()}
       >
-        Browse files
+        {t('createScan.drop.browse')}
       </Button>
     </div>
   );

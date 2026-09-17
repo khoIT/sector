@@ -23,6 +23,7 @@ import {
 import { useState } from 'react';
 
 import { InlineNotice } from './inline-notice';
+import { useTranslation } from 'react-i18next';
 
 export type PurchaseCreditsDialogProps = {
   open: boolean;
@@ -61,6 +62,7 @@ export function PurchaseCreditsDialog({
   userId,
   credits,
 }: PurchaseCreditsDialogProps) {
+  const { t } = useTranslation();
   const purchase = usePurchaseScanCredits();
   const [accountId, setAccountId] = useState<string>(userId);
   const [option, setOption] = useState<CreditOption>(SMALLEST_BUNDLE);
@@ -90,21 +92,21 @@ export function PurchaseCreditsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Buy expert review credits</DialogTitle>
-          <DialogDescription>
-            One credit pays for one expert review. Credits can be held by you or by a group.
-          </DialogDescription>
+          <DialogTitle>{t('createScan.credits.title')}</DialogTitle>
+          <DialogDescription>{t('createScan.credits.blurb')}</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
-            <span className="text-[12px] font-medium text-ink-dim">Credits go to</span>
+            <span className="text-[12px] font-medium text-ink-dim">
+              {t('createScan.credits.goTo')}
+            </span>
             <Select value={accountId} onValueChange={setAccountId}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={userId}>My own balance</SelectItem>
+                <SelectItem value={userId}>{t('createScan.credits.ownBalance')}</SelectItem>
                 {groups.map((group) => (
                   <SelectItem key={group.groupId} value={group.groupId}>
                     {group.groupName}
@@ -115,7 +117,9 @@ export function PurchaseCreditsDialog({
           </div>
 
           <fieldset className="flex flex-col gap-1.5">
-            <legend className="mb-1 text-[12px] font-medium text-ink-dim">Bundle</legend>
+            <legend className="mb-1 text-[12px] font-medium text-ink-dim">
+              {t('createScan.credits.bundle')}
+            </legend>
             {CREDIT_OPTIONS.map((entry) => {
               const selected = entry.credits === option.credits;
               return (
@@ -142,22 +146,23 @@ export function PurchaseCreditsDialog({
           </fieldset>
 
           {purchase.isError ? (
-            <InlineNotice tone="crit" title="Checkout could not be started">
+            <InlineNotice tone="crit" title={t('createScan.credits.error')}>
               {isApiError(purchase.error)
                 ? purchase.error.message
-                : 'The payment service did not respond.'}{' '}
-              Nothing was charged. Your study is saved — try again, or submit it without an expert
-              review.
+                : t('createScan.credits.noResponse')}{' '}
+              {t('createScan.credits.errorDetail')}
             </InlineNotice>
           ) : null}
         </div>
 
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('createScan.credits.cancel')}
           </Button>
           <Button onClick={start} disabled={purchase.isPending}>
-            {purchase.isPending ? 'Opening checkout…' : `Continue to payment`}
+            {purchase.isPending
+              ? t('createScan.credits.opening')
+              : t('createScan.credits.continue')}
           </Button>
         </DialogFooter>
       </DialogContent>

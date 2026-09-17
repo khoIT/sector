@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@sector/ui';
+import { useTranslation } from 'react-i18next';
 
 export type DiscardDraftDialogProps = {
   open: boolean;
@@ -34,15 +35,16 @@ export function DiscardDraftDialog({
   holdings,
   onConfirm,
 }: DiscardDraftDialogProps) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Discard this draft?</DialogTitle>
+          <DialogTitle>{t('createScan.discard.title')}</DialogTitle>
           <DialogDescription>
             {holdings.length === 0
-              ? 'Nothing has been entered yet, so nothing is lost.'
-              : 'This cannot be undone. The draft holds:'}
+              ? t('createScan.discard.nothingLost')
+              : t('createScan.discard.holds')}
           </DialogDescription>
         </DialogHeader>
 
@@ -58,7 +60,7 @@ export function DiscardDraftDialog({
 
         <DialogFooter>
           <Button variant="secondary" onClick={() => onOpenChange(false)}>
-            Keep the draft
+            {t('createScan.discard.keep')}
           </Button>
           <Button
             onClick={() => {
@@ -66,7 +68,7 @@ export function DiscardDraftDialog({
               onConfirm();
             }}
           >
-            Discard it
+            {t('createScan.discard.confirm')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -15,6 +15,7 @@ import { missingRequiredFindings } from '../model/finding-controls';
 import { useDraftMediaSources } from '../model/use-draft-media-sources';
 import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
 import { useScanTypeSwitch } from '../model/use-scan-type-switch';
+import { useTranslation } from 'react-i18next';
 
 export type StepInterpretationProps = {
   draft: UseCreateScanDraft;
@@ -29,6 +30,7 @@ export function StepInterpretation({
   draft,
   collapsibleScanType = false,
 }: StepInterpretationProps) {
+  const { t } = useTranslation();
   const { state, update } = draft;
 
   // Required findings are advisory here: the server does not enforce them, and
@@ -92,22 +94,21 @@ export function StepInterpretation({
           className="flex w-full items-center gap-2 rounded-token border border-line bg-surface px-3 py-2.5 text-left outline-none transition-colors hover:bg-surface-2 focus-visible:ring-2 focus-visible:ring-accent-ink"
         >
           <Stethoscope className="h-4 w-4 shrink-0 text-ink-dim" aria-hidden />
-          <span className="sr-only">Scan type: </span>
+          <span className="sr-only">{t('createScan.interpretation.scanTypePrefix')}</span>
           <span className="min-w-0 truncate text-body text-ink">{state.scanTypeName}</span>
           {/* "Change", not a bare chevron. The type is fixed for good once the
               study is submitted, so the row names what opening it is for. */}
           <span className="ml-auto inline-flex shrink-0 items-center gap-1 text-[12px] text-ink-dim">
-            Change
+            {t('createScan.interpretation.change')}
             <ChevronDown className="h-4 w-4" aria-hidden />
           </span>
         </button>
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>Scan type</CardTitle>
+            <CardTitle>{t('createScan.interpretation.scanTypeTitle')}</CardTitle>
             <p className="mt-0.5 text-[12px] text-ink-dim">
-              Required, and fixed once the study is submitted — the API has no way to change a
-              scan's type afterwards.
+              {t('createScan.interpretation.scanTypeBlurb')}
             </p>
           </CardHeader>
           <CardContent>
@@ -142,9 +143,10 @@ export function StepInterpretation({
               navigationKeys="brackets"
             />
             <p className="mt-1 text-[11px] text-ink-dim">
-              Playing from this browser — nothing is fetched back from storage. Use{' '}
-              <kbd className="rounded border border-line px-1">[</kbd> and{' '}
-              <kbd className="rounded border border-line px-1">]</kbd> to step between files.
+              {t('createScan.rail.localPlayback')}{' '}
+              <kbd className="rounded border border-line px-1">[</kbd> {t('createScan.rail.and')}{' '}
+              <kbd className="rounded border border-line px-1">]</kbd>{' '}
+              {t('createScan.rail.stepBetween')}
             </p>
           </div>
         ) : null}
@@ -159,9 +161,8 @@ export function StepInterpretation({
               onChange={(findings) => update({ findings })}
             />
           ) : (
-            <InlineNotice tone="info" title="Pick a scan type to see its findings">
-              Findings differ per scan type, so the form appears once a type is chosen. Your files
-              keep uploading in the background meanwhile.
+            <InlineNotice tone="info" title={t('createScan.studySurface.pickTypeTitle')}>
+              {t('createScan.studySurface.pickTypeBody')}
             </InlineNotice>
           )}
         </div>
@@ -172,10 +173,11 @@ export function StepInterpretation({
       {missingRequired.length > 0 ? (
         <InlineNotice
           tone="warn"
-          title={`${missingRequired.length} required ${missingRequired.length === 1 ? 'finding is' : 'findings are'} still blank`}
+          title={t('createScan.studySurface.missingRequired', { count: missingRequired.length })}
         >
-          {missingRequired.map((definition) => definition.name).join(', ')}. You can submit without
-          them, but a reviewer will not know whether they were normal or not assessed.
+          {t('createScan.studySurface.missingRequiredBody', {
+            names: missingRequired.map((definition) => definition.name).join(', '),
+          })}
         </InlineNotice>
       ) : null}
     </div>

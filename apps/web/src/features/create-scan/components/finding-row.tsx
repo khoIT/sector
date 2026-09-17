@@ -1,5 +1,6 @@
 import type { FindingDefinition } from '@sector/api-client';
 import { Input, cn } from '@sector/ui';
+import { useTranslation } from 'react-i18next';
 
 import {
   findingControlKind,
@@ -55,6 +56,7 @@ function OptionButton({
  * stuck on whichever option was hit first.
  */
 export function FindingRow({ definition, value, onChange, invalid }: FindingRowProps) {
+  const { t } = useTranslation();
   const kind = findingControlKind(definition);
 
   if (kind === 'heading') {
@@ -68,13 +70,16 @@ export function FindingRow({ definition, value, onChange, invalid }: FindingRowP
   }
 
   const label = (
-    <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+    // Capped so the eye's travel from label to control stays readable: the
+    // controls already take at most 60% of the row, and 38ch of label beside
+    // them keeps the run under ~70ch however wide the column gets.
+    <div className="flex min-w-0 flex-1 flex-col gap-0.5 @md:max-w-[38ch]">
       <span className="text-body font-medium text-ink">
         {definition.level && definition.level > 1
           ? `${definition.name} (${definition.level})`
           : definition.name}
         {definition.required ? (
-          <span className="ml-1 text-crit" aria-label="required">
+          <span className="ml-1 text-crit" aria-label={t('createScan.findingRow.required')}>
             *
           </span>
         ) : null}

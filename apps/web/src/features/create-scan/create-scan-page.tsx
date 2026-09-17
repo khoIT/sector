@@ -120,10 +120,10 @@ export function CreateScanPage() {
       <header className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h1 className="text-[18px] font-semibold tracking-tight text-ink">Create scan study</h1>
-            <p className="mt-0.5 text-[12px] text-ink-dim">
-              Files upload while you work. Submitting records the details against them.
-            </p>
+            <h1 className="text-[18px] font-semibold tracking-tight text-ink">
+              {t('createScan.page.title')}
+            </h1>
+            <p className="mt-0.5 text-[12px] text-ink-dim">{t('createScan.page.blurb')}</p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -132,13 +132,13 @@ export function CreateScanPage() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setDiscardOpen(true)}
-                title="Discard this draft and start again"
+                title={t('createScan.page.discardTitle')}
               >
-                <Trash2 className="h-3.5 w-3.5" aria-hidden /> Discard draft
+                <Trash2 className="h-3.5 w-3.5" aria-hidden /> {t('createScan.page.discard')}
               </Button>
             ) : null}
             <Button asChild variant="secondary" size="sm">
-              <Link to={SCAN_VAULT_PATH.my}>My scans</Link>
+              <Link to={SCAN_VAULT_PATH.my}>{t('createScan.page.myScans')}</Link>
             </Button>
           </div>
         </div>
@@ -163,16 +163,14 @@ export function CreateScanPage() {
       {draft.wasRestored && !submitted ? (
         <InlineNotice
           tone="info"
-          title="Picked up where you left off"
+          title={t('createScan.page.restoredTitle')}
           action={
             <Button variant="ghost" size="sm" onClick={() => setDiscardOpen(true)}>
-              Start fresh
+              {t('createScan.page.startFresh')}
             </Button>
           }
         >
-          A saved draft was found in this browser. Files that finished uploading are already in
-          storage, and anything that was still transferring picks up where it stopped. Only a file
-          this browser no longer holds has to be chosen again — those are listed as such.
+          {t('createScan.page.restoredBody')}
         </InlineNotice>
       ) : null}
 

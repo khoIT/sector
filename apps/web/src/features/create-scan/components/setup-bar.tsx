@@ -12,6 +12,7 @@ import {
 } from '../model/setup-options';
 import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
 import type { useScanTypeSwitch } from '../model/use-scan-type-switch';
+import { useTranslation } from 'react-i18next';
 
 export type SetupBarProps = {
   draft: UseCreateScanDraft;
@@ -33,6 +34,7 @@ export type SetupBarProps = {
  * rail already carries the panel that owns it.
  */
 export function SetupBar({ draft, switcher }: SetupBarProps) {
+  const { t } = useTranslation();
   const { state, update } = draft;
   const { data: scanTypes, isPending: typesPending } = useScanTypes();
   const { data: groups, isPending: groupsPending } = useScanUserGroups();
@@ -54,10 +56,10 @@ export function SetupBar({ draft, switcher }: SetupBarProps) {
     >
       <Combobox
         className="min-w-[13rem] flex-1 sm:max-w-[18rem]"
-        label="Scan type"
-        placeholder="Choose a scan type"
-        searchPlaceholder="AAA, Echo, Lung…"
-        emptyLabel="No scan type matches."
+        label={t('createScan.setup.scanTypeLabel')}
+        placeholder={t('createScan.setup.scanTypePlaceholder')}
+        searchPlaceholder={t('createScan.setup.scanTypeSearch')}
+        emptyLabel={t('createScan.setup.scanTypeEmpty')}
         loading={typesPending}
         options={typeOptions}
         selected={state.scanTypeId ? [state.scanTypeId] : []}
@@ -71,9 +73,9 @@ export function SetupBar({ draft, switcher }: SetupBarProps) {
 
       <Combobox
         className="min-w-[13rem] flex-1 sm:max-w-[18rem]"
-        label="Share with"
-        searchPlaceholder="Search your groups…"
-        emptyLabel="No group matches."
+        label={t('createScan.setup.shareLabel')}
+        searchPlaceholder={t('createScan.setup.groupSearch')}
+        emptyLabel={t('createScan.setup.groupEmpty')}
         loading={groupsPending}
         multiple
         options={groupChoices}

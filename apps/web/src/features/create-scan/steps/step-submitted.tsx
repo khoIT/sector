@@ -45,36 +45,41 @@ export function StepSubmitted({ outcome, onCreateAnother, onTryAgain }: StepSubm
               <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warn" aria-hidden />
             )}
             <div>
-              <CardTitle>{outcome.scanTitle ?? 'Study submitted'}</CardTitle>
+              <CardTitle>{outcome.scanTitle ?? t('createScan.submitted.title')}</CardTitle>
               <p className="mt-0.5 text-[12px] text-ink-dim">
                 {complete
-                  ? 'The study is in your vault. Processing and de-identification finish on the server a few seconds from now; the list updates itself.'
+                  ? t('createScan.submitted.blurb')
                   : t('createScan.submitIncompleteSubtitle')}
               </p>
             </div>
           </div>
           <StatusPill
             tone={complete ? 'ok' : 'warn'}
-            label={complete ? 'Submitted' : t('createScan.submitIncompleteStatus')}
+            label={
+              complete ? t('createScan.submitted.status') : t('createScan.submitIncompleteStatus')
+            }
           />
         </CardHeader>
 
         <CardContent className="flex flex-col gap-3">
           <dl className="grid gap-x-6 gap-y-1.5 text-body sm:grid-cols-2">
             <div className="flex justify-between gap-3 border-b border-line py-1">
-              <dt className="text-ink-dim">Files attached</dt>
+              <dt className="text-ink-dim">{t('createScan.submitted.filesAttached')}</dt>
               <dd className="sv-num text-ink">
-                {outcome.filesConfirmed} of {outcome.filesTotal}
+                {t('createScan.submitted.filesValue', {
+                  confirmed: outcome.filesConfirmed,
+                  total: outcome.filesTotal,
+                })}
               </dd>
             </div>
             <div className="flex justify-between gap-3 border-b border-line py-1">
-              <dt className="text-ink-dim">Expert review</dt>
+              <dt className="text-ink-dim">{t('createScan.submitted.expertReview')}</dt>
               <dd className="text-ink">
                 {outcome.expertReview === 'requested'
-                  ? 'Requested'
+                  ? t('createScan.submitted.requested')
                   : outcome.expertReview === 'failed'
-                    ? 'Request failed'
-                    : 'Not requested'}
+                    ? t('createScan.submitted.requestFailed')
+                    : t('createScan.submitted.notRequested')}
               </dd>
             </div>
           </dl>
@@ -93,7 +98,9 @@ export function StepSubmitted({ outcome, onCreateAnother, onTryAgain }: StepSubm
                   </Button>
                 ) : outcome.scanId ? (
                   <Button asChild variant="secondary" size="sm">
-                    <Link to={scanDetailPathFor('my', outcome.scanId)}>Open the study</Link>
+                    <Link to={scanDetailPathFor('my', outcome.scanId)}>
+                      {t('createScan.submitted.openStudy')}
+                    </Link>
                   </Button>
                 ) : undefined
               }
@@ -112,17 +119,19 @@ export function StepSubmitted({ outcome, onCreateAnother, onTryAgain }: StepSubm
           {outcome.expertReview === 'failed' ? (
             <InlineNotice
               tone="warn"
-              title="The expert review request did not go through"
+              title={t('createScan.submitted.expertFailedTitle')}
               action={
                 outcome.scanId ? (
                   <Button asChild variant="secondary" size="sm">
-                    <Link to={scanDetailPathFor('my', outcome.scanId)}>Open the study</Link>
+                    <Link to={scanDetailPathFor('my', outcome.scanId)}>
+                      {t('createScan.submitted.openStudy')}
+                    </Link>
                   </Button>
                 ) : undefined
               }
             >
-              {outcome.expertReviewError ?? 'The request was rejected.'} The study itself is saved
-              and routed to your groups, and no credit was spent.
+              {outcome.expertReviewError ?? t('createScan.submitted.requestRejected')}{' '}
+              {t('createScan.submitted.expertFailedBody')}
             </InlineNotice>
           ) : null}
         </CardContent>
@@ -130,14 +139,16 @@ export function StepSubmitted({ outcome, onCreateAnother, onTryAgain }: StepSubm
 
       <div className="flex flex-wrap items-center justify-end gap-2">
         <Button variant="secondary" onClick={onCreateAnother}>
-          <Plus className="h-3.5 w-3.5" aria-hidden /> Create another study
+          <Plus className="h-3.5 w-3.5" aria-hidden /> {t('createScan.submitted.createAnother')}
         </Button>
         <Button asChild>
           {/* The study it just made, not the list it is somewhere in. The id
               is right here in the outcome; making the learner find the row
               they cannot yet see was the long way round. */}
           <Link to={outcome.scanId ? scanDetailPathFor('my', outcome.scanId) : SCAN_VAULT_PATH.my}>
-            {outcome.scanId ? 'Open the study' : 'Go to my scans'}
+            {outcome.scanId
+              ? t('createScan.submitted.openStudy')
+              : t('createScan.submitted.goToMyScans')}
           </Link>
         </Button>
       </div>

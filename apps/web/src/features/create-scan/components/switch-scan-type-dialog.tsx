@@ -9,6 +9,7 @@ import {
 } from '@sector/ui';
 
 import type { LabelledAnswer } from '../model/transfer-findings';
+import { useTranslation } from 'react-i18next';
 
 export type SwitchScanTypeDialogProps = {
   open: boolean;
@@ -45,34 +46,45 @@ export function SwitchScanTypeDialog({
   cleared,
   onConfirm,
 }: SwitchScanTypeDialogProps) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Switch to {nextTypeName}?</DialogTitle>
+          <DialogTitle>{t('createScan.switchType.title', { type: nextTypeName })}</DialogTitle>
           <DialogDescription>
             {cleared.length === 1
-              ? 'One answer has no equivalent on the new scan type and will be cleared.'
-              : `${cleared.length} answers have no equivalent on the new scan type and will be cleared.`}
+              ? t('createScan.switchType.clearedOne')
+              : t('createScan.switchType.clearedMany', { count: cleared.length })}
           </DialogDescription>
         </DialogHeader>
 
         <AnswerList
-          title={`Cleared${currentTypeName ? ` from ${currentTypeName}` : ''}`}
+          title={
+            currentTypeName
+              ? t('createScan.switchType.clearedFrom', { type: currentTypeName })
+              : t('createScan.switchType.cleared')
+          }
           tone="crit"
           answers={cleared}
         />
 
         {kept.length > 0 ? (
-          <AnswerList title={`Carried over to ${nextTypeName}`} tone="ok" answers={kept} />
+          <AnswerList
+            title={t('createScan.switchType.carriedOver', { type: nextTypeName })}
+            tone="ok"
+            answers={kept}
+          />
         ) : null}
 
         <DialogFooter>
           <Button variant="secondary" size="sm" onClick={() => onOpenChange(false)}>
-            Keep {currentTypeName || 'the current type'}
+            {currentTypeName
+              ? t('createScan.switchType.keep', { type: currentTypeName })
+              : t('createScan.switchType.keepCurrent')}
           </Button>
           <Button variant="danger" size="sm" onClick={onConfirm}>
-            Switch to {nextTypeName}
+            {t('createScan.switchType.confirm', { type: nextTypeName })}
           </Button>
         </DialogFooter>
       </DialogContent>

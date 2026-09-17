@@ -15,6 +15,7 @@ import {
   trackedBytes,
 } from '../model/file-counts';
 import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
+import { useTranslation } from 'react-i18next';
 
 export type FilesPanelProps = {
   draft: UseCreateScanDraft;
@@ -29,6 +30,7 @@ export type FilesPanelProps = {
 };
 
 export function FilesPanel({ draft, collapsed = false, onToggle }: FilesPanelProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { data: organizations } = useUserOrganizations(user?.id);
 
@@ -53,7 +55,9 @@ export function FilesPanel({ draft, collapsed = false, onToggle }: FilesPanelPro
       >
         <Paperclip className="h-4 w-4 shrink-0 text-ink-dim" aria-hidden />
         <span className="text-body text-ink">
-          <span className="sv-num">{stored}</span> {stored === 1 ? 'file' : 'files'} in storage
+          <span className="sv-num">
+            {t('createScan.files.collapsedSummary', { count: stored })}
+          </span>
         </span>
         <span className="sv-num text-[12px] text-ink-dim">{formatBytes(trackedBytes(files))}</span>
         <ChevronDown className="ml-auto h-4 w-4 shrink-0 text-ink-dim" aria-hidden />
@@ -67,17 +71,14 @@ export function FilesPanel({ draft, collapsed = false, onToggle }: FilesPanelPro
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
             <div>
-              <CardTitle>Files</CardTitle>
-              <p className="mt-0.5 text-[12px] text-ink-dim">
-                Uploading starts as soon as a file passes its check. You can keep working, and
-                closing this tab will not lose anything already in storage.
-              </p>
+              <CardTitle>{t('createScan.files.title')}</CardTitle>
+              <p className="mt-0.5 text-[12px] text-ink-dim">{t('createScan.files.blurb')}</p>
             </div>
             {/* Only offered once nothing needs attention: a fold that hides a
                 failed upload is how a failed upload reaches Submit. */}
             {onToggle && canAutoCollapseFiles(files) ? (
               <Button variant="ghost" size="sm" onClick={onToggle} aria-expanded>
-                Collapse
+                {t('createScan.files.collapse')}
               </Button>
             ) : null}
           </div>
@@ -89,14 +90,10 @@ export function FilesPanel({ draft, collapsed = false, onToggle }: FilesPanelPro
           {draft.validationFailures.length > 0 ? (
             <InlineNotice
               tone="crit"
-              title={
-                draft.validationFailures.length === 1
-                  ? '1 file was not added'
-                  : `${draft.validationFailures.length} files were not added`
-              }
+              title={t('createScan.files.notAdded', { count: draft.validationFailures.length })}
               action={
                 <Button variant="ghost" size="sm" onClick={draft.dismissValidationFailures}>
-                  Dismiss
+                  {t('createScan.files.dismiss')}
                 </Button>
               }
             >
@@ -109,36 +106,32 @@ export function FilesPanel({ draft, collapsed = false, onToggle }: FilesPanelPro
           ) : null}
 
           {showNudge ? (
-            <InlineNotice tone="warn" title="Most complete studies have at least three files">
-              This study has {tracked} so far. Add the remaining views now if you have them — files
-              can also be added to the study later, but reviewers see it as soon as it is submitted.
+            <InlineNotice tone="warn" title={t('createScan.files.nudgeTitle')}>
+              {t('createScan.files.nudgeBody', { count: tracked })}
             </InlineNotice>
           ) : null}
 
           {detached.length > 0 ? (
-            <InlineNotice tone="warn" title="Some files from your saved draft need choosing again">
-              {detached.length} of the files in this draft had not finished uploading when the page
-              was last closed, and the browser does not keep file contents. Pick each one again
-              below, or remove it from the study.
+            <InlineNotice tone="warn" title={t('createScan.files.detachedTitle')}>
+              {t('createScan.files.detachedBody', { count: detached.length })}
             </InlineNotice>
           ) : null}
 
           {failed.length > 0 ? (
             <InlineNotice
               tone="crit"
-              title={`${failed.length} ${failed.length === 1 ? 'file' : 'files'} failed to upload`}
+              title={t('createScan.files.failedTitle', { count: failed.length })}
               action={
                 <Button
                   variant="secondary"
                   size="sm"
                   onClick={() => failed.forEach((file) => draft.retryFile(file.id))}
                 >
-                  Retry all
+                  {t('createScan.files.retryAll')}
                 </Button>
               }
             >
-              Each one says why below. Retrying re-uploads only that file; everything already in
-              storage stays put.
+              {t('createScan.files.failedBody')}
             </InlineNotice>
           ) : null}
 
@@ -146,12 +139,13 @@ export function FilesPanel({ draft, collapsed = false, onToggle }: FilesPanelPro
             <div className="rounded-token border border-line bg-surface">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-3 py-2">
                 <span className="text-[12px] font-medium text-ink-dim">
-                  <span className="sv-num">{stored}</span> of{' '}
-                  <span className="sv-num">{tracked}</span> in storage
+                  <span className="sv-num">
+                    {t('createScan.files.storedOf', { stored, tracked })}
+                  </span>
                 </span>
                 {moving.length > 0 ? (
                   <Button variant="ghost" size="sm" onClick={draft.cancelAll}>
-                    Cancel all transfers
+                    {t('createScan.files.cancelAll')}
                   </Button>
                 ) : null}
               </div>

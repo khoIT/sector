@@ -22,7 +22,12 @@ export type ReadinessState = 'done' | 'partial' | 'empty';
 
 export type ReadinessItem = {
   id: 'files' | 'exam' | 'findings' | 'note';
-  label: string;
+  /**
+   * A translation key, not a label. The commit bar renders these into a
+   * sentence ("Still needed: files, exam"), and this module has no
+   * translator — nor should it, since it is pure shaping.
+   */
+  labelKey: string;
   state: ReadinessState;
   /** Short status, or null when the label alone says it. */
   detail: string | null;
@@ -41,7 +46,12 @@ function filesReadiness(files: DraftFile[]): ReadinessItem {
   const stored = countStored(files);
 
   if (tracked === 0) {
-    return { id: 'files', label: 'Files', state: 'empty', detail: 'none yet' };
+    return {
+      id: 'files',
+      labelKey: 'createScan.readiness.files',
+      state: 'empty',
+      detail: 'none yet',
+    };
   }
 
   // `partial` while any tracked file is short of storage — that covers
@@ -49,7 +59,7 @@ function filesReadiness(files: DraftFile[]): ReadinessItem {
   // know: the study is not yet safe to submit.
   return {
     id: 'files',
-    label: 'Files',
+    labelKey: 'createScan.readiness.files',
     state: stored === tracked ? 'done' : 'partial',
     detail: stored === tracked ? `${stored}` : `${stored} of ${tracked}`,
   };
@@ -61,7 +71,12 @@ function findingsReadiness(
   findings: FindingAnswers,
 ): ReadinessItem {
   if (!scanTypeId) {
-    return { id: 'findings', label: 'Findings', state: 'empty', detail: null };
+    return {
+      id: 'findings',
+      labelKey: 'createScan.readiness.findings',
+      state: 'empty',
+      detail: null,
+    };
   }
 
   const missing = missingRequiredFindings(definitions, findings);
@@ -76,7 +91,7 @@ function findingsReadiness(
     ).length;
     return {
       id: 'findings',
-      label: 'Findings',
+      labelKey: 'createScan.readiness.findings',
       state: required > 0 ? 'partial' : 'empty',
       detail: `${required} of ${required + missing.length}`,
     };
@@ -84,7 +99,7 @@ function findingsReadiness(
 
   return {
     id: 'findings',
-    label: 'Findings',
+    labelKey: 'createScan.readiness.findings',
     state: answered > 0 ? 'done' : 'empty',
     detail: answered > 0 ? `${answered}` : null,
   };
@@ -95,7 +110,7 @@ export function readinessFor(input: ReadinessInput): ReadinessItem[] {
     filesReadiness(input.files),
     {
       id: 'exam',
-      label: 'Exam',
+      labelKey: 'createScan.readiness.exam',
       state: input.scanTypeId ? 'done' : 'empty',
       detail: null,
     },
@@ -105,7 +120,7 @@ export function readinessFor(input: ReadinessInput): ReadinessItem[] {
       // state is not a warning — it is the difference between "nothing here"
       // and "not applicable", which the learner is entitled to decide.
       id: 'note',
-      label: 'Note',
+      labelKey: 'createScan.readiness.note',
       state: input.note.trim() ? 'done' : 'empty',
       detail: null,
     },

@@ -3,6 +3,7 @@ import { CloudUpload, HardDriveDownload, Loader2 } from 'lucide-react';
 
 import type { DraftFile } from '../model/draft-types';
 import { countStored, countTracked } from '../model/file-counts';
+import { useTranslation } from 'react-i18next';
 
 export type DraftIndicatorProps = {
   files: DraftFile[];
@@ -20,6 +21,7 @@ export type DraftIndicatorProps = {
  * PUT.
  */
 export function DraftIndicator({ files, className }: DraftIndicatorProps) {
+  const { t } = useTranslation();
   const total = countTracked(files);
   const stored = countStored(files);
   const moving = files.filter(
@@ -42,20 +44,23 @@ export function DraftIndicator({ files, className }: DraftIndicatorProps) {
         ) : (
           <CloudUpload className="h-3.5 w-3.5 text-ink-dim" aria-hidden />
         )}
-        Draft saved — <span className="sv-num">{stored}</span> of{' '}
-        <span className="sv-num">{total}</span> files in storage
+        <span className="sv-num">{t('createScan.draftIndicator.saved', { stored, total })}</span>
       </span>
 
       {moving > 0 ? (
         <span className="text-[12px] text-ink-dim">
-          <span className="sv-num">{moving}</span> still transferring
+          <span className="sv-num">
+            {t('createScan.draftIndicator.transferring', { count: moving })}
+          </span>
         </span>
       ) : null}
 
       {detached > 0 ? (
         <Badge tone="warn" className="gap-1">
           <HardDriveDownload className="h-3 w-3" aria-hidden />
-          <span className="sv-num">{detached}</span> need re-selecting
+          <span className="sv-num">
+            {t('createScan.draftIndicator.detached', { count: detached })}
+          </span>
         </Badge>
       ) : null}
     </div>

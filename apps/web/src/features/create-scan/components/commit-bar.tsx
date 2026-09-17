@@ -23,6 +23,7 @@ import { submitFacts } from '../model/submit-facts';
 import { NoStoredFilesError, submitDraft } from '../model/submit-draft';
 import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
 import { SubmitConfirmDialog } from './submit-confirm-dialog';
+import { useTranslation } from 'react-i18next';
 
 export type CommitBarProps = {
   draft: UseCreateScanDraft;
@@ -44,6 +45,7 @@ export type CommitBarProps = {
  * explains nothing.
  */
 export function CommitBar({ draft, readiness, onSubmitted }: CommitBarProps) {
+  const { t } = useTranslation();
   const client = useApiClient();
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -126,6 +128,10 @@ export function CommitBar({ draft, readiness, onSubmitted }: CommitBarProps) {
         className={cn(
           'flex flex-wrap items-center gap-x-3 gap-y-2 rounded-token border border-line',
           'bg-surface-2 px-3 py-2',
+          // Pinned to the bottom of the viewport until there is a column
+          // layout to hold it. On a phone Submit sat below every finding row,
+          // so committing meant scrolling past the whole form to find it.
+          'sticky bottom-0 z-20 xl:static',
         )}
       >
         <p className="min-w-0 flex-1 text-[12px] text-ink-dim">
@@ -134,18 +140,18 @@ export function CommitBar({ draft, readiness, onSubmitted }: CommitBarProps) {
               the confirm names anything still blank before it is acted on. */}
           {blockers.length > 0 ? (
             <>
-              Still needed:{' '}
+              {t('createScan.commit.stillNeeded')}{' '}
               <span className="text-ink">
-                {blockers.map((item) => item.label.toLowerCase()).join(', ')}
+                {blockers.map((item) => t(item.labelKey).toLowerCase()).join(', ')}
               </span>
             </>
           ) : (
-            <span className="text-ok">Ready to submit.</span>
+            <span className="text-ok">{t('createScan.commit.ready')}</span>
           )}
         </p>
 
         <Button size="sm" onClick={() => setConfirmOpen(true)}>
-          Review &amp; submit
+          {t('createScan.commit.reviewSubmit')}
           <ArrowRight className="h-3.5 w-3.5" aria-hidden />
         </Button>
       </div>

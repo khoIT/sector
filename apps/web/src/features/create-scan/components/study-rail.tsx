@@ -5,6 +5,7 @@ import type { StageSource } from '../model/draft-file-sources';
 
 import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
 import { FilesPanel } from './files-panel';
+import { useTranslation } from 'react-i18next';
 
 export type StudyRailProps = {
   draft: UseCreateScanDraft;
@@ -32,6 +33,7 @@ export type StudyRailProps = {
  * being answered.
  */
 export function StudyRail({ draft, sources, collapsed, onToggle }: StudyRailProps) {
+  const { t } = useTranslation();
   // Playable, not merely present. A draft restored from its manifest still
   // lists its files, but their bytes are in S3 and not in this browser, so
   // there is nothing to put on a stage — and a viewer frame offering to step
@@ -39,7 +41,10 @@ export function StudyRail({ draft, sources, collapsed, onToggle }: StudyRailProp
   const playable = playableSources(sources);
 
   return (
-    <div className="flex min-w-0 flex-col gap-3 xl:sticky xl:top-4">
+    // At 2xl the rail is a column of its own; a long file list scrolling
+    // inside it beats the page growing to the rail's height while the findings
+    // beside it end half a screen up.
+    <div className="flex min-w-0 flex-col gap-3 xl:sticky xl:top-4 2xl:max-h-[calc(100vh-2rem)] 2xl:overflow-y-auto">
       {playable.length > 0 ? (
         <div className="min-w-0">
           <ScanMediaViewer
@@ -49,16 +54,14 @@ export function StudyRail({ draft, sources, collapsed, onToggle }: StudyRailProp
             navigationKeys="brackets"
           />
           <p className="mt-1 text-[11px] text-ink-dim">
-            Playing from this browser — nothing is fetched back from storage. Use{' '}
-            <kbd className="rounded border border-line px-1">[</kbd> and{' '}
-            <kbd className="rounded border border-line px-1">]</kbd> to step between files.
+            {t('createScan.rail.localPlayback')}{' '}
+            <kbd className="rounded border border-line px-1">[</kbd> {t('createScan.rail.and')}{' '}
+            <kbd className="rounded border border-line px-1">]</kbd>{' '}
+            {t('createScan.rail.stepBetween')}
           </p>
         </div>
       ) : sources.length > 0 ? (
-        <p className="text-[11px] text-ink-dim">
-          Previews are played from this browser, so a study picked up after a reload has none. The
-          list below shows where each file actually is.
-        </p>
+        <p className="text-[11px] text-ink-dim">{t('createScan.rail.noPreviews')}</p>
       ) : null}
 
       <FilesPanel draft={draft} collapsed={collapsed} onToggle={onToggle} />

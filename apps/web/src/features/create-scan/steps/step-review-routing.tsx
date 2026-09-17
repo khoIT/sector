@@ -24,6 +24,7 @@ import { anyOrganizationCollectsScanIdentifier } from '../model/identifier-gate'
 import { NoStoredFilesError, submitDraft } from '../model/submit-draft';
 import { countStored, countTracked } from '../model/file-counts';
 import type { UseCreateScanDraft } from '../model/use-create-scan-draft';
+import { useTranslation } from 'react-i18next';
 
 export type StepReviewRoutingProps = {
   draft: UseCreateScanDraft;
@@ -50,6 +51,7 @@ export function StepReviewRouting({
   showGroupRouting = false,
   backLabel = 'Back to the study',
 }: StepReviewRoutingProps) {
+  const { t } = useTranslation();
   const client = useApiClient();
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -127,41 +129,36 @@ export function StepReviewRouting({
 
       <Card>
         <CardHeader>
-          <CardTitle>Submit</CardTitle>
-          <p className="mt-0.5 text-[12px] text-ink-dim">
-            Your files are already in storage. Submitting records the study's details against them —
-            it does not start another upload.
-          </p>
+          <CardTitle>{t('createScan.routing.submitTitle')}</CardTitle>
+          <p className="mt-0.5 text-[12px] text-ink-dim">{t('createScan.routing.submitBlurb')}</p>
         </CardHeader>
 
         <CardContent className="flex flex-col gap-3">
           {stillMoving > 0 ? (
             <InlineNotice
               tone="warn"
-              title={`${stillMoving} ${stillMoving === 1 ? 'file has' : 'files have'} not finished uploading`}
+              title={t('createScan.routing.stillMoving', { count: stillMoving })}
               action={
                 <Button variant="secondary" size="sm" onClick={onBack}>
                   {backLabel}
                 </Button>
               }
             >
-              Submitting now creates the study with the {stored} already in storage and leaves the
-              rest out. Wait for them to finish, or go back and deal with the ones that failed.
+              {t('createScan.routing.stillMovingBody', { stored })}
             </InlineNotice>
           ) : null}
 
           {stored === 0 ? (
             <InlineNotice
               tone="crit"
-              title="Nothing is in storage yet"
+              title={t('createScan.routing.nothingStored')}
               action={
                 <Button variant="secondary" size="sm" onClick={onBack}>
                   {backLabel}
                 </Button>
               }
             >
-              A study cannot be created without at least one uploaded file — the API rejects a file
-              total of zero.
+              {t('createScan.routing.nothingStoredBody')}
             </InlineNotice>
           ) : null}
 
@@ -172,30 +169,28 @@ export function StepReviewRouting({
           {!state.scanTypeId ? (
             <InlineNotice
               tone="crit"
-              title="No exam type chosen"
+              title={t('createScan.routing.noExamType')}
               action={
                 <Button variant="secondary" size="sm" onClick={onBack}>
-                  Choose exam type
+                  {t('createScan.routing.chooseExamType')}
                 </Button>
               }
             >
-              A study needs an exam type: it decides which findings a reviewer is asked, and it
-              cannot be changed once the study exists.
+              {t('createScan.routing.noExamTypeBody')}
             </InlineNotice>
           ) : null}
 
           {submitError ? (
             <InlineNotice
               tone="crit"
-              title="The study was not submitted"
+              title={t('createScan.routing.notSubmitted')}
               action={
                 <Button variant="secondary" size="sm" onClick={() => void submit()}>
-                  Try again
+                  {t('createScan.routing.tryAgain')}
                 </Button>
               }
             >
-              {submitError} Your uploaded files are still in storage and this draft is saved, so
-              nothing has to be re-done.
+              {submitError} {t('createScan.routing.notSubmittedBody')}
             </InlineNotice>
           ) : null}
         </CardContent>
@@ -210,7 +205,7 @@ export function StepReviewRouting({
           disabled={submitting || stored === 0 || !state.scanTypeId}
         >
           <Send className="h-3.5 w-3.5" aria-hidden />
-          {submitting ? 'Recording the study…' : 'Submit study'}
+          {submitting ? t('createScan.routing.recording') : t('createScan.routing.submit')}
         </Button>
       </div>
     </div>
