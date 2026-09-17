@@ -157,6 +157,9 @@ export { Toolbar } from './components/toolbar';
 export { Stat, type StatProps } from './components/stat';
 export { EmptyGrid, type EmptyGridProps } from './components/empty-grid';
 
+export { pageMeasureClass, type PageMeasure } from './components/page-measure';
+export { TABLE_SCROLL_CONTAINER_CLASS } from './components/table-scroll-container';
+
 export {
   Drawer,
   DrawerContent,

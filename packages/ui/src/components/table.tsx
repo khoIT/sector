@@ -6,6 +6,7 @@ import {
 } from 'react';
 
 import { cn } from '../lib/cn';
+import { TABLE_SCROLL_CONTAINER_CLASS } from './table-scroll-container';
 
 /**
  * Unopinionated table primitives. They render real <table> semantics and carry
@@ -19,7 +20,7 @@ export const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElemen
   ref,
 ) {
   return (
-    <div className="w-full overflow-x-auto">
+    <div className={TABLE_SCROLL_CONTAINER_CLASS}>
       <table
         ref={ref}
         className={cn('w-full border-collapse text-body text-ink', className)}
