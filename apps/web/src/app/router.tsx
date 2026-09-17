@@ -6,15 +6,10 @@ import { LoginPage } from '@/auth/login-page';
 import { RequireAuth } from '@/auth/require-auth';
 import { ResetPasswordPage } from '@/auth/reset-password-page';
 import { ResetSentPage } from '@/auth/reset-sent-page';
-import { HomeRoute } from '@/features/home/home-route';
-import { featureRoutes } from '@/routes/feature-routes';
 import { AppShell } from '@/shell/app-shell';
 
-import { LegacyRedirect } from './legacy-redirect';
-import { LEGACY_ROOTS } from './legacy-route-map';
-import { NotFoundPage } from './not-found-page';
+import { appShellRoutes } from './app-shell-routes';
 import { RouteErrorPage } from './route-error-page';
-import { scanVaultRoutes } from './scan-vault-routes';
 
 /**
  * The route tree.
@@ -84,18 +79,7 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
       {
         path: '/',
         element: <AppShell />,
-        children: [
-          { index: true, element: <HomeRoute /> },
-          ...scanVaultRoutes,
-          ...featureRoutes,
-          // Every URL the dashboard served resolves here — to the surface
-          // that took over, or to a page that says the surface was retired.
-          // The API writes `/dashboard/scans/...` into every scan notification,
-          // and bookmarks keep the rest (app/legacy-route-map.ts).
-          ...LEGACY_ROOTS.map((root) => ({ path: `${root}/*`, element: <LegacyRedirect /> })),
-          ...LEGACY_ROOTS.map((root) => ({ path: root, element: <LegacyRedirect /> })),
-          { path: '*', element: <NotFoundPage /> },
-        ],
+        children: appShellRoutes,
       },
     ],
   },

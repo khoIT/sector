@@ -5,6 +5,8 @@ import { RequirePermission } from '@/auth/require-auth';
 import { UnbuiltSurfacePage } from './unbuilt-surface-page';
 import { UNBUILT_SURFACES } from './unbuilt-surfaces';
 
+import { pageMeasure } from './route-measure';
+
 /**
  * A route for every section the rail carries ahead of its surface, so a rail
  * entry always resolves to a page rather than to the 404.
@@ -24,6 +26,7 @@ export const unbuiltSurfaceRoutes: RouteObject[] = Object.values(UNBUILT_SURFACE
     const leaf: RouteObject = {
       path: relativePath(surface.path),
       element: <UnbuiltSurfacePage />,
+      handle: pageMeasure('reading'),
     };
 
     // The gate is a pathless layout route rather than a check inside the page,

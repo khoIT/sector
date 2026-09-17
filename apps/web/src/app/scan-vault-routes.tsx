@@ -10,6 +10,8 @@ import {
   type ScanVaultView,
 } from '@/features/scan-list/scan-list-views';
 
+import { pageMeasure } from '@/routes/route-measure';
+
 /**
  * The Scan Vault tabs.
  *
@@ -74,7 +76,11 @@ function relativePath(view: ScanVaultView): string {
 }
 
 function routeFor(view: ScanVaultView): RouteObject {
-  const leaf: RouteObject = { path: relativePath(view), element: TAB_ELEMENT[view] };
+  const leaf: RouteObject = {
+    path: relativePath(view),
+    element: TAB_ELEMENT[view],
+    handle: pageMeasure('working'),
+  };
   const permission = SCAN_VAULT_PERMISSION[view];
 
   // The gate is a pathless layout route rather than a check inside the page,
@@ -91,10 +97,19 @@ export const scanVaultRoutes: RouteObject[] = [
   // thing to type, so send them to the first surface underneath that this role
   // may open — the unreviewed queue is not it for a role that may read only
   // the reviewed list, and sending them there was a 403 on a typed URL.
-  { path: 'scans/group', element: <FirstPermittedRedirect views={['pending', 'reviewed']} /> },
+  {
+    path: 'scans/group',
+    element: <FirstPermittedRedirect views={['pending', 'reviewed']} />,
+    handle: pageMeasure('working'),
+  },
   {
     path: 'scans/expert',
     element: <FirstPermittedRedirect views={['expert', 'expert-reviewed']} />,
+    handle: pageMeasure('working'),
   },
-  { path: 'scans', element: <Navigate to={SCAN_VAULT_PATH.my} replace /> },
+  {
+    path: 'scans',
+    element: <Navigate to={SCAN_VAULT_PATH.my} replace />,
+    handle: pageMeasure('working'),
+  },
 ];

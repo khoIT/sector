@@ -1,6 +1,8 @@
 import { lazy } from 'react';
 import type { RouteObject } from 'react-router-dom';
 
+import { pageMeasure } from '@/routes/route-measure';
+
 /**
  * The two question-bank routes, replacing the UNBUILT_SURFACES placeholder
  * row that used to live at this path (see routes/unbuilt-surfaces.ts). No
@@ -17,6 +19,14 @@ const QuestionBankDetailPage = lazy(() =>
 );
 
 export const questionBankRoutes: RouteObject[] = [
-  { path: 'learn/question-banks', element: <QuestionBankListPage /> },
-  { path: 'learn/question-banks/:slug', element: <QuestionBankDetailPage /> },
+  {
+    path: 'learn/question-banks',
+    element: <QuestionBankListPage />,
+    handle: pageMeasure('working'),
+  },
+  {
+    path: 'learn/question-banks/:slug',
+    element: <QuestionBankDetailPage />,
+    handle: pageMeasure('reading'),
+  },
 ];

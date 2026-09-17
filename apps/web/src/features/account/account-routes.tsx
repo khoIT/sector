@@ -1,6 +1,8 @@
 import { lazy } from 'react';
 import type { RouteObject } from 'react-router-dom';
 
+import { pageMeasure } from '@/routes/route-measure';
+
 /**
  * The profile page's route.
  *
@@ -15,4 +17,6 @@ const ProfilePage = lazy(() =>
   import('./profile-page').then((module) => ({ default: module.ProfilePage })),
 );
 
-export const accountRoutes: RouteObject[] = [{ path: 'profile', element: <ProfilePage /> }];
+export const accountRoutes: RouteObject[] = [
+  { path: 'profile', element: <ProfilePage />, handle: pageMeasure('reading') },
+];

@@ -1,10 +1,14 @@
-import { Skeleton } from '@sector/ui';
+import { pageMeasureClass, Skeleton } from '@sector/ui';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
-import { Suspense, useEffect, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Suspense, useCallback, useEffect, useState } from 'react';
+import { Outlet, useLocation, useMatches } from 'react-router-dom';
 
 import { useTranslation } from 'react-i18next';
 
+import { measureFromMatches } from '@/routes/route-measure';
+
+import { CommandMenu } from './command-menu/command-menu';
+import { useCommandMenuHotkey } from './command-menu/use-command-menu-hotkey';
 import { shellTitleKeyFor } from './nav-config';
 import { NavList } from './nav-list';
 import { Sidebar } from './sidebar';
@@ -39,6 +43,12 @@ export function AppShell() {
   const badges = useNavBadges();
   const { t } = useTranslation();
   const [navOpen, setNavOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  // Deepest declaration wins, so the course shell can say `full` and its item
+  // child inherit it without repeating itself.
+  const measure = measureFromMatches(useMatches());
+
+  useCommandMenuHotkey(useCallback(() => setCommandOpen(true), []));
 
   // A navigation from the mobile panel must close it; NavList's onNavigate
   // covers link clicks, this covers back/forward and programmatic redirects.
@@ -78,7 +88,16 @@ export function AppShell() {
         <Sidebar badges={badges} />
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <Topbar title={title} navOpen={navOpen} onToggleNav={() => setNavOpen((open) => !open)} />
+          <Topbar
+            title={title}
+            navOpen={navOpen}
+            onToggleNav={() => setNavOpen((open) => !open)}
+            onOpenCommandMenu={() => setCommandOpen(true)}
+          />
+
+          {/* Mounted once, inside the router and the query provider: it reads
+              the cache and navigates, and both need this context. */}
+          <CommandMenu open={commandOpen} onOpenChange={setCommandOpen} />
 
           {navOpen ? (
             <nav
@@ -98,7 +117,14 @@ export function AppShell() {
             aria-labelledby={SHELL_HEADING_ID}
             className="min-w-0 flex-1 rounded-t-2xl border-l border-t border-line bg-surface px-4 py-5 outline-none lg:rounded-tr-none lg:px-6"
           >
-            <div className="mx-auto w-full max-w-[1400px]">
+            {/*
+              The width comes from the ROUTE, not from the chrome. A paragraph
+              of prose and a table of 1,477 groups want opposite things, and
+              the one 1400px cap that used to live here told both the same
+              number. Each route declares `handle: { measure }`, and
+              `route-measures.test.ts` fails if one forgets.
+            */}
+            <div className={pageMeasureClass(measure)}>
               <Suspense fallback={<RouteFallback />}>
                 <Outlet />
               </Suspense>

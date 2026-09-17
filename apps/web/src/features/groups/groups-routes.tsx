@@ -12,6 +12,8 @@ import {
   GROUPS_INDEX_ROUTE_PATH,
 } from './groups-links';
 
+import { pageMeasure } from '@/routes/route-measure';
+
 /**
  * Routes for the group-administration surfaces, spread into `featureRoutes`.
  *
@@ -60,12 +62,36 @@ export const groupsRoutes: RouteObject[] = [
   {
     element: <RequirePermission required="read:group" />,
     children: [
-      { path: GROUPS_INDEX_ROUTE_PATH, element: <GroupsIndexPage /> },
-      { path: GROUP_MEMBERS_ROUTE_PATH, element: <MembersSurface /> },
-      { path: GROUP_COURSES_ROUTE_PATH, element: <GroupCoursesPanel /> },
-      { path: GROUP_ASSIGNMENTS_ROUTE_PATH, element: <GroupAssignmentsPanel /> },
-      { path: GROUP_EXPORTS_ROUTE_PATH, element: <GroupExportsPanel /> },
-      { path: GROUP_SETTINGS_ROUTE_PATH, element: <GroupSettingsPage /> },
+      {
+        path: GROUPS_INDEX_ROUTE_PATH,
+        element: <GroupsIndexPage />,
+        handle: pageMeasure('working'),
+      },
+      {
+        path: GROUP_MEMBERS_ROUTE_PATH,
+        element: <MembersSurface />,
+        handle: pageMeasure('working'),
+      },
+      {
+        path: GROUP_COURSES_ROUTE_PATH,
+        element: <GroupCoursesPanel />,
+        handle: pageMeasure('working'),
+      },
+      {
+        path: GROUP_ASSIGNMENTS_ROUTE_PATH,
+        element: <GroupAssignmentsPanel />,
+        handle: pageMeasure('working'),
+      },
+      {
+        path: GROUP_EXPORTS_ROUTE_PATH,
+        element: <GroupExportsPanel />,
+        handle: pageMeasure('working'),
+      },
+      {
+        path: GROUP_SETTINGS_ROUTE_PATH,
+        element: <GroupSettingsPage />,
+        handle: pageMeasure('reading'),
+      },
     ],
   },
 ];

@@ -3,6 +3,8 @@ import type { RouteObject } from 'react-router-dom';
 
 import { GALLERY_ROUTE_PATH } from './gallery-links';
 
+import { pageMeasure } from '@/routes/route-measure';
+
 /**
  * Route for the pathology gallery, spread into `featureRoutes`.
  *
@@ -15,5 +17,5 @@ const GalleryPage = lazy(() =>
 );
 
 export const galleryRoutes: RouteObject[] = [
-  { path: GALLERY_ROUTE_PATH, element: <GalleryPage /> },
+  { path: GALLERY_ROUTE_PATH, element: <GalleryPage />, handle: pageMeasure('working') },
 ];
