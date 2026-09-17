@@ -26,6 +26,12 @@ export type OutlineSidebarProps = {
   courseId: string;
   items: readonly CourseOutlineItem[];
   currentItemId: string;
+  /**
+   * Called when the learner opens an item. The drawer below `lg` uses it to
+   * close itself; the desktop column passes nothing, because a pane that is
+   * always there has nothing to close.
+   */
+  onNavigate?: () => void;
 };
 
 /**
@@ -38,7 +44,12 @@ export type OutlineSidebarProps = {
  * but every module can now be opened by hand, because the previous version
  * gave no way to look ahead without leaving the item you were on.
  */
-export function OutlineSidebar({ courseId, items, currentItemId }: OutlineSidebarProps) {
+export function OutlineSidebar({
+  courseId,
+  items,
+  currentItemId,
+  onNavigate,
+}: OutlineSidebarProps) {
   const { t } = useTranslation();
   const groups = groupOutlineItemsForDisplay(items);
   const summary = summariseOutline(items);
@@ -96,6 +107,7 @@ export function OutlineSidebar({ courseId, items, currentItemId }: OutlineSideba
               courseId={courseId}
               group={group}
               currentItemId={currentItemId}
+              onNavigate={onNavigate}
               open={openIds.includes(group.header.id)}
               onToggle={() =>
                 setOpenIds((ids) =>
@@ -120,12 +132,14 @@ function ModuleSection({
   courseId,
   group,
   currentItemId,
+  onNavigate,
   open,
   onToggle,
 }: {
   courseId: string;
   group: CourseOutlineGroup;
   currentItemId: string;
+  onNavigate?: () => void;
   open: boolean;
   onToggle: () => void;
 }) {
@@ -160,7 +174,12 @@ function ModuleSection({
         <ol className="flex flex-col">
           {group.children.map((child) => (
             <li key={child.id}>
-              <ItemRow courseId={courseId} item={child} current={currentItemId === child.id} />
+              <ItemRow
+                courseId={courseId}
+                item={child}
+                current={currentItemId === child.id}
+                onNavigate={onNavigate}
+              />
             </li>
           ))}
         </ol>
@@ -173,10 +192,12 @@ function ItemRow({
   courseId,
   item,
   current,
+  onNavigate,
 }: {
   courseId: string;
   item: CourseOutlineItem;
   current: boolean;
+  onNavigate?: () => void;
 }) {
   const { t } = useTranslation();
 
@@ -200,6 +221,7 @@ function ItemRow({
   return (
     <Link
       to={courseItemPathFor(courseId, item.id)}
+      onClick={onNavigate}
       aria-current={current ? 'page' : undefined}
       className={cn(
         'flex items-start gap-2 rounded-token px-2 py-1.5 pl-7 text-body outline-none',

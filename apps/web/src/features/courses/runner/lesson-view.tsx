@@ -67,10 +67,22 @@ export function LessonView({ courseId, courseTitle, item, items }: LessonViewPro
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {hasSubstantiveProse(detail.data.content) ? <RichText html={detail.data.content} /> : null}
+    <div className="flex flex-col gap-4 pb-20 lg:pb-0">
+      {hasSubstantiveProse(detail.data.content) ? (
+        // Clamped like every other authored body in the player: the item route
+        // is `full` so the video is not letterboxed, which leaves prose free
+        // to run a 1,600px line if nothing stops it.
+        <div className="max-w-[62ch]">
+          <RichText html={detail.data.content} />
+        </div>
+      ) : null}
       <ModulePage courseId={courseId} courseTitle={courseTitle} lessonItem={item} items={items} />
-      <CourseItemNav courseId={courseId} prevId={item.prevId} nextId={item.nextId} />
+      <CourseItemNav
+        courseId={courseId}
+        prevId={item.prevId}
+        nextId={item.nextId}
+        variant="sticky"
+      />
     </div>
   );
 }

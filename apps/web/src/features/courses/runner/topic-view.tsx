@@ -3,11 +3,13 @@ import { useCourseTopicDetail } from '@sector/api-client';
 import { Button, EmptyState, RichText, Skeleton, cn } from '@sector/ui';
 import { AlertTriangle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
 import { formatPlayheadTimestamp } from '@/lib/format';
 
 import { OutlineStatusGlyph } from '../outline/outline-status-glyph';
+import { useCourseShell } from '../shell/course-shell-context';
 import { CourseItemNav } from './course-item-nav';
 import { hasReadableBody, splitTopicMedia } from './split-topic-media';
 import { useTrackCourseItemView } from './use-track-course-item-view';
@@ -32,6 +34,7 @@ export function TopicView({ courseId, item }: TopicViewProps) {
   const { t } = useTranslation();
   const detail = useCourseTopicDetail(courseId, item.id);
   const contentRef = useRef<HTMLDivElement>(null);
+  const { panelSlot } = useCourseShell();
 
   const hasVideo = Boolean(detail.data?.content?.includes('player.vimeo.com'));
   // Deferred until the content query settles: see the hook's own doc comment
@@ -79,15 +82,20 @@ export function TopicView({ courseId, item }: TopicViewProps) {
     );
   }
 
+  const tabs = <TopicTabs body={body} />;
+
   return (
-    <div className="flex flex-col gap-4">
+    // Room at the bottom for the sticky prev/next bar, which would otherwise
+    // sit over the last line of the topic body on a phone.
+    <div className="flex flex-col gap-4 pb-20 lg:pb-0">
       {/* The embed arrives inside the topic's own HTML with whatever width the
           author gave it, which on most topics is a 640px box floating in a
           1000px column. `sv-video` forces any iframe in this subtree to fill
           the column at 16:9 — the player is the page, not an illustration. */}
       <div ref={contentRef} className="sv-video flex flex-col gap-4">
         {/* The player leads. Kept inside `contentRef` so the watch-tracking
-            hook still finds the iframe it reports the playhead from. */}
+            hook still finds the iframe it reports the playhead from — moving
+            the TABS out is safe, moving the media out is not. */}
         {media ? <RichText html={media} /> : null}
 
         <div className="flex flex-col gap-1">
@@ -103,10 +111,20 @@ export function TopicView({ courseId, item }: TopicViewProps) {
             ) : null}
           </div>
         </div>
-
-        <TopicTabs body={body} />
       </div>
-      <CourseItemNav courseId={courseId} prevId={item.prevId} nextId={item.nextId} />
+
+      {/* Beside the video when there is a column for it, under the video when
+          there is not. A portal rather than a second copy: the tab state, the
+          translations and the router all stay in this component's tree
+          wherever the DOM node happens to be. */}
+      {panelSlot ? createPortal(tabs, panelSlot) : tabs}
+
+      <CourseItemNav
+        courseId={courseId}
+        prevId={item.prevId}
+        nextId={item.nextId}
+        variant="sticky"
+      />
     </div>
   );
 }
@@ -167,7 +185,11 @@ function TopicTabs({ body }: { body: string }) {
 
       {tab === 'overview' ? (
         hasReadableBody(body) ? (
-          <RichText html={body} />
+          // The same clamp the course description uses, so authored prose is
+          // a readable column at every width rather than a 1,600px line.
+          <div className="max-w-[62ch]">
+            <RichText html={body} />
+          </div>
         ) : (
           // Most topics are the video and nothing else. Saying so beats an
           // empty panel under a tab the learner just clicked.
