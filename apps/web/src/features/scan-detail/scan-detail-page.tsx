@@ -4,7 +4,7 @@ import { Button, EmptyState, Skeleton } from '@sector/ui';
 import { ArrowLeft, RotateCcw, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/auth-context';
 import {
@@ -13,6 +13,7 @@ import {
 } from '@/features/scan-list/rows/scan-row-actions';
 import { useSetScanCompletionTag } from '@/features/scan-list/rows/use-scan-completion-tag';
 
+import { QueueNav } from './components/queue-nav';
 import { RequestExpertReviewDialog } from './components/request-expert-review-dialog';
 import { ResetUploadDialog } from './components/reset-upload-dialog';
 import { ScanContextPanel } from './components/scan-context-panel';
@@ -21,6 +22,7 @@ import { ScanNotesThread } from './components/scan-notes-thread';
 import { ScanReviewPanel } from './components/scan-review-panel';
 import { ScanReviewSummary } from './components/scan-review-summary';
 import { ScanSharePanel } from './components/scan-share-panel';
+import { isScanQueueState } from './queue-position';
 import {
   safeReturnUrl,
   scanDetailPathFor,
@@ -46,10 +48,15 @@ export function ScanDetailPage({ view }: { view: ScanListView }) {
   const { t } = useTranslation();
   const { scanId } = useParams<{ scanId: string }>();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const { user, can } = useAuth();
 
   const scanQuery = useScan({ view, scanId });
+  // Only a queue for THIS view drives the stepper. A state carried over from
+  // another list would step the reviewer through ids this page cannot open.
+  const queueState =
+    isScanQueueState(location.state) && location.state.view === view ? location.state : null;
   const listPath = scanListPathFor(view);
   const returnUrl = safeReturnUrl(searchParams.get('returnUrl'), listPath);
 
@@ -80,14 +87,23 @@ export function ScanDetailPage({ view }: { view: ScanListView }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1600px] px-4 py-4">
+    <div className="w-full">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <Button variant="ghost" size="sm" asChild>
-          <Link to={returnUrl}>
-            <ArrowLeft className="h-4 w-4" aria-hidden />
-            Back to {SCAN_VIEW_LABEL[view]}
-          </Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="ghost" size="sm" asChild>
+            <Link to={returnUrl}>
+              <ArrowLeft className="h-4 w-4" aria-hidden />
+              {t('scanDetail.page.back', { list: t(SCAN_VIEW_LABEL[view]) })}
+            </Link>
+          </Button>
+
+          {/* Only when the reviewer arrived from a list. An emailed link has
+              no queue behind it, and a stepper that cannot step is worse than
+              none. */}
+          {queueState && scanId ? (
+            <QueueNav state={queueState} scanId={scanId} returnUrl={returnUrl} />
+          ) : null}
+        </div>
 
         {isOwner && scan ? (
           <div className="flex items-center gap-2">
@@ -133,17 +149,17 @@ export function ScanDetailPage({ view }: { view: ScanListView }) {
           tone="crit"
           title={
             isApiError(scanQuery.error) && scanQuery.error.isNotFound
-              ? 'Scan not found'
-              : 'Could not load this scan'
+              ? t('scanDetail.page.notFound')
+              : t('scanDetail.page.loadError')
           }
           description={
             isApiError(scanQuery.error)
               ? scanQuery.error.message
-              : 'Something went wrong loading the scan.'
+              : t('scanDetail.page.loadErrorDetail')
           }
           action={
             <Button variant="secondary" onClick={() => void scanQuery.refetch()}>
-              Retry
+              {t('scanDetail.common.retry')}
             </Button>
           }
         />

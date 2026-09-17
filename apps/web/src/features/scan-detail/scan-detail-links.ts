@@ -13,12 +13,19 @@ import { SCAN_VAULT_PATH } from '@/features/scan-list/scan-list-views';
  * builders, and going through it would make that an import cycle.
  */
 
+/**
+ * Each list, as a translation KEY rather than as English.
+ *
+ * These are sentence fragments — "Back to unreviewed expert scans" — so they
+ * have to be translated at the render site, where the sentence is built, and
+ * this file has no translator.
+ */
 export const SCAN_VIEW_LABEL: Record<ScanListView, string> = {
-  my: 'my scans',
-  pending: 'unreviewed group scans',
-  reviewed: 'reviewed group scans',
-  expert: 'unreviewed expert scans',
-  'expert-reviewed': 'reviewed expert scans',
+  my: 'scanDetail.viewLabel.my',
+  pending: 'scanDetail.viewLabel.pending',
+  reviewed: 'scanDetail.viewLabel.reviewed',
+  expert: 'scanDetail.viewLabel.expert',
+  'expert-reviewed': 'scanDetail.viewLabel.expert-reviewed',
 };
 
 /** Permission each view's server routes are guarded by. */

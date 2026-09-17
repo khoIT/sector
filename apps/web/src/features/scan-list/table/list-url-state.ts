@@ -72,9 +72,31 @@ export function parseFilters(raw: string | null): FilterState[] {
   }
 }
 
-/** True when the user has narrowed the list themselves. Drives which empty state to show. */
+/**
+ * Layout, carried in `filters` rather than as a query param of its own.
+ *
+ * It rides here because `filters` is already parsed, serialised and cleared by
+ * this file and by `use-list-url-state.ts`, so a grid/list choice survives a
+ * reload and a shared link for free. The cost is that it is NOT a narrowing,
+ * and everything that reasons about narrowing has to say so — see
+ * `hasActiveNarrowing` below.
+ */
+export const LAYOUT_FILTER_ID = 'view';
+
+/**
+ * True when the user has narrowed the list themselves. Drives which empty
+ * state to show.
+ *
+ * The layout filter is excluded deliberately. It changes how the same rows are
+ * drawn, not which rows they are, so counting it would put "no courses match
+ * your filters — clear them" in front of a learner who had merely switched to
+ * the list view.
+ */
 export function hasActiveNarrowing(state: Pick<ListUrlState, 'keyword' | 'filters'>): boolean {
-  return state.keyword.trim().length > 0 || state.filters.length > 0;
+  return (
+    state.keyword.trim().length > 0 ||
+    state.filters.some((filter) => filter.id !== LAYOUT_FILTER_ID)
+  );
 }
 
 export function filterValue(filters: FilterState[], id: string): string | string[] | undefined {

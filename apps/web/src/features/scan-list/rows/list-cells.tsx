@@ -59,6 +59,7 @@ function Dot() {
 export function TitleCell({
   title,
   to,
+  state,
   scanIdentifier,
   fileCount,
   fileTotal,
@@ -69,6 +70,8 @@ export function TitleCell({
 }: {
   title: string;
   to: string;
+  /** The queue this row belongs to, so the detail page can step it. */
+  state?: unknown;
   scanIdentifier?: string | null;
   fileCount: number;
   fileTotal: number;
@@ -90,6 +93,7 @@ export function TitleCell({
     <div className="flex min-w-[12rem] flex-col gap-0.5">
       <Link
         to={to}
+        state={state}
         className="font-medium text-accent-ink underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-accent-ink"
       >
         {title}

@@ -29,6 +29,11 @@ export type ScanColumnContext = {
   returnUrl: string;
   /** Frozen "now" for the whole render, so every Waiting cell agrees. */
   now: number;
+  /**
+   * The queue a row belongs to, carried into `location.state` so the detail
+   * page can step it. Absent on a surface with no queue to step.
+   */
+  linkState?: (scan: Scan) => unknown;
 };
 
 /**
@@ -41,7 +46,7 @@ export type ScanColumnContext = {
  * "Date Created" on its twin) without anyone noticing.
  */
 export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>> {
-  const { view, user, returnUrl, now, t } = context;
+  const { view, user, returnUrl, now, t, linkState } = context;
   const queue = isReviewQueue(view);
   const reviewed = isReviewedList(view);
   const canReview = hasPermission(user, 'create:scan:review');
@@ -56,6 +61,7 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
         <TitleCell
           title={scan.title}
           to={scanDetailPathFor(view, scan.id, returnUrl)}
+          state={linkState?.(scan)}
           scanIdentifier={scan.scanIdentifier}
           fileCount={scan.fileCount}
           fileTotal={scan.fileTotal}
@@ -158,18 +164,21 @@ export function scanColumns(context: ScanColumnContext): Array<ListColumn<Scan>>
     className: 'text-right',
     cell: (scan) => {
       const to = scanDetailPathFor(view, scan.id, returnUrl);
+      const state = linkState?.(scan);
 
       return (
         <div className="flex items-center justify-end gap-1">
           {queue ? (
             <AssessAction
               to={to}
+              state={state}
               canReview={canReview}
               isOwnScan={Boolean(user) && scan.user.id === user?.id}
             />
           ) : (
             <OpenScanAction
               to={to}
+              state={state}
               label={reviewed ? t('actions.openReview') : t('actions.open')}
             />
           )}

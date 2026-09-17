@@ -20,6 +20,7 @@ import { safeReturnUrl, SHARED_SCAN_LIST_PATH } from './scan-detail-links';
 import { formatDateTime } from '@/lib/format';
 
 import { clinicalNoteFor } from './scan-detail-format';
+import { useTranslation } from 'react-i18next';
 
 /**
  * A scan someone shared with you — read-only throughout.
@@ -29,6 +30,7 @@ import { clinicalNoteFor } from './scan-detail-format';
  * and hold no permission over it.
  */
 export function SharedScanDetailPage() {
+  const { t } = useTranslation();
   const { shareId } = useParams<{ shareId: string }>();
   const [searchParams] = useSearchParams();
   const shareQuery = useSharedScanDetail(shareId);
@@ -38,15 +40,15 @@ export function SharedScanDetailPage() {
   const scan = share?.scan;
 
   return (
-    <div className="mx-auto w-full max-w-[1600px] px-4 py-4">
+    <div className="w-full">
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <Button variant="ghost" size="sm" asChild>
           <Link to={returnUrl}>
             <ArrowLeft className="h-4 w-4" aria-hidden />
-            Back to shared scans
+            {t('scanDetail.shared.back')}
           </Link>
         </Button>
-        <Badge tone="accent">Shared with you · read only</Badge>
+        <Badge tone="accent">{t('scanDetail.shared.readOnly')}</Badge>
       </div>
 
       {shareQuery.isPending ? (
@@ -59,17 +61,17 @@ export function SharedScanDetailPage() {
           tone="crit"
           title={
             isApiError(shareQuery.error) && shareQuery.error.isForbidden
-              ? 'This scan is not shared with you'
-              : 'Could not load this shared scan'
+              ? t('scanDetail.shared.notShared')
+              : t('scanDetail.shared.loadError')
           }
           description={
             isApiError(shareQuery.error)
               ? shareQuery.error.message
-              : 'Something went wrong loading the shared scan.'
+              : t('scanDetail.shared.loadErrorDetail')
           }
           action={
             <Button variant="secondary" onClick={() => void shareQuery.refetch()}>
-              Retry
+              {t('scanDetail.common.retry')}
             </Button>
           }
         />
@@ -77,11 +79,11 @@ export function SharedScanDetailPage() {
         // The share is real; the study behind it is gone. The API keeps the
         // share record after a scan is deleted and answers with scan: null.
         <EmptyState
-          title="This study is no longer available"
-          description="The person who shared it has since deleted the scan. The share stays in your list so you know it existed, but there is nothing left to open."
+          title={t('scanDetail.shared.goneTitle')}
+          description={t('scanDetail.shared.goneDetail')}
           action={
             <Button variant="secondary" asChild>
-              <Link to={returnUrl}>Back to shared scans</Link>
+              <Link to={returnUrl}>{t('scanDetail.shared.back')}</Link>
             </Button>
           }
         />
@@ -96,12 +98,12 @@ export function SharedScanDetailPage() {
           <div className="min-w-0 space-y-3">
             <Card>
               <CardHeader>
-                <CardTitle>Shared by</CardTitle>
+                <CardTitle>{t('scanDetail.shared.sharedBy')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-1">
                 <p className="text-body text-ink">
                   {typeof share.sharedBy === 'string'
-                    ? 'Unknown user'
+                    ? t('scanDetail.shared.unknownUser')
                     : userDisplayName(share.sharedBy)}
                 </p>
                 <p className="text-[12px] text-ink-dim">{formatDateTime(share.createdAt)}</p>

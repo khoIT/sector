@@ -9,16 +9,28 @@ import { Link } from 'react-router-dom';
  * lives on the scan's own page, not in a list row.
  */
 
-export function OpenScanAction({ to, label = 'Open' }: { to: string; label?: string }) {
+export function OpenScanAction({
+  to,
+  state,
+  label = 'Open',
+}: {
+  to: string;
+  /** The queue this row belongs to, so the detail page can step it. */
+  state?: unknown;
+  label?: string;
+}) {
   return (
     <Button asChild variant="secondary" size="sm">
-      <Link to={to}>{label}</Link>
+      <Link to={to} state={state}>
+        {label}
+      </Link>
     </Button>
   );
 }
 
 export type AssessActionProps = {
   to: string;
+  state?: unknown;
   /** False when the signed-in role lacks create:scan:review. */
   canReview: boolean;
   /** True when the row is the signed-in user's own scan. */
@@ -36,7 +48,7 @@ export type AssessActionProps = {
  * disabled and labelled, so the reason is on the row rather than discovered by
  * clicking.
  */
-export function AssessAction({ to, canReview, isOwnScan }: AssessActionProps) {
+export function AssessAction({ to, state, canReview, isOwnScan }: AssessActionProps) {
   if (isOwnScan) {
     return (
       <div className="flex items-center justify-end gap-1.5">
@@ -54,12 +66,14 @@ export function AssessAction({ to, canReview, isOwnScan }: AssessActionProps) {
   }
 
   if (!canReview) {
-    return <OpenScanAction to={to} label="View" />;
+    return <OpenScanAction to={to} state={state} label="View" />;
   }
 
   return (
     <Button asChild size="sm">
-      <Link to={to}>Assess</Link>
+      <Link to={to} state={state}>
+        Assess
+      </Link>
     </Button>
   );
 }

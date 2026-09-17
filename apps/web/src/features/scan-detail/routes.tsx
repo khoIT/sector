@@ -11,6 +11,8 @@ import {
 } from './scan-detail-links';
 import { SharedScanDetailPage } from './shared-scan-detail-page';
 
+import { pageMeasure } from '@/routes/route-measure';
+
 /**
  * Routes for the scan detail surface, ready to spread into `featureRoutes`:
  *
@@ -29,7 +31,17 @@ import { SharedScanDetailPage } from './shared-scan-detail-page';
 export const scanDetailRoutes: RouteObject[] = [
   ...SCAN_LIST_VIEWS.map((view) => ({
     element: <RequirePermission required={SCAN_VIEW_PERMISSION[view]} />,
-    children: [{ path: scanDetailRoutePath(view), element: <ScanDetailPage view={view} /> }],
+    children: [
+      {
+        path: scanDetailRoutePath(view),
+        element: <ScanDetailPage view={view} />,
+        handle: pageMeasure('full'),
+      },
+    ],
   })),
-  { path: SHARED_SCAN_DETAIL_ROUTE_PATH, element: <SharedScanDetailPage /> },
+  {
+    path: SHARED_SCAN_DETAIL_ROUTE_PATH,
+    element: <SharedScanDetailPage />,
+    handle: pageMeasure('full'),
+  },
 ];
