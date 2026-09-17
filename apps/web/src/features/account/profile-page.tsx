@@ -26,17 +26,15 @@ export function ProfilePage() {
   const { t } = useTranslation();
 
   return (
-    <section aria-labelledby="profile-heading" className="flex max-w-3xl flex-col gap-5">
+    <section aria-labelledby="profile-heading" className="flex flex-col gap-5">
       <h2 id="profile-heading" className="text-[17px] font-semibold tracking-tight text-ink">
-        Profile
+        {t('account.profile')}
       </h2>
 
       <Card>
         <CardHeader>
-          <CardTitle>Your account</CardTitle>
-          <CardDescription>
-            The name and picture other people see beside your scans.
-          </CardDescription>
+          <CardTitle>{t('account.identity.title')}</CardTitle>
+          <CardDescription>{t('account.identity.description')}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
           <ProfilePhoto />
@@ -46,11 +44,8 @@ export function ProfilePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Create scan study</CardTitle>
-          <CardDescription>
-            How the create-scan page is laid out for you. Both layouts collect the same things and
-            share the same draft.
-          </CardDescription>
+          <CardTitle>{t('account.createScanFlow.cardTitle')}</CardTitle>
+          <CardDescription>{t('account.createScanFlow.cardDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <CreateScanFlowSetting />
@@ -59,8 +54,8 @@ export function ProfilePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Password</CardTitle>
-          <CardDescription>You will need your current password to set a new one.</CardDescription>
+          <CardTitle>{t('account.password.title')}</CardTitle>
+          <CardDescription>{t('account.password.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <PasswordForm />

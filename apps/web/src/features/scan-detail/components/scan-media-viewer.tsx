@@ -7,6 +7,7 @@ import { formatBytes } from '@/lib/format';
 
 import { playableSources, type StageSource } from './media-source';
 import { ScanMediaStage } from './scan-media-stage';
+import { useTranslation } from 'react-i18next';
 
 type ScanMediaViewerProps = {
   /** Every file on the scan. Ones with no bytes are dropped from the stage. */
@@ -36,6 +37,7 @@ export function ScanMediaViewer({
   className,
   navigationKeys = 'arrows',
 }: ScanMediaViewerProps) {
+  const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -83,11 +85,15 @@ export function ScanMediaViewer({
       <EmptyState
         className={className}
         icon={<ImageOff className="h-5 w-5" aria-hidden />}
-        title={withoutBytes > 0 ? 'No preview available' : 'No media on this scan'}
+        title={
+          withoutBytes > 0
+            ? t('scanDetail.media.noPreviewTitle')
+            : t('scanDetail.media.noMediaTitle')
+        }
         description={
           withoutBytes > 0
-            ? `${withoutBytes} ${withoutBytes === 1 ? 'file' : 'files'} cannot be previewed here. The file list below names each one and its status.`
-            : 'The upload never produced a file. The file list below shows what was expected.'
+            ? t('scanDetail.media.notPreviewableList', { count: withoutBytes })
+            : t('scanDetail.media.noUpload')
         }
       />
     );
@@ -105,7 +111,7 @@ export function ScanMediaViewer({
             <Button
               variant="ghost"
               size="icon"
-              aria-label="Previous file"
+              aria-label={t('scanDetail.media.previousFile')}
               onClick={goPrevious}
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/55 text-white hover:bg-black/75"
             >
@@ -114,7 +120,7 @@ export function ScanMediaViewer({
             <Button
               variant="ghost"
               size="icon"
-              aria-label="Next file"
+              aria-label={t('scanDetail.media.nextFile')}
               onClick={goNext}
               className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/55 text-white hover:bg-black/75"
             >
@@ -133,14 +139,12 @@ export function ScanMediaViewer({
       <p className="truncate text-[12px] text-ink-dim" title={active.filename}>
         {active.filename}
         {typeof active.filesize === 'number' ? ` · ${formatBytes(active.filesize)}` : ''} ·{' '}
-        {mediaFormatLabel(active) || 'unknown type'}
+        {mediaFormatLabel(active) || t('scanDetail.media.unknownType')}
       </p>
 
       {withoutBytes > 0 ? (
         <p className="text-[12px] text-warn">
-          {withoutBytes} more {withoutBytes === 1 ? 'file' : 'files'} cannot be previewed here. The
-          list below names {withoutBytes === 1 ? 'it' : 'them'} and{' '}
-          {withoutBytes === 1 ? 'its' : 'their'} status.
+          {t('scanDetail.media.notPreviewable', { count: withoutBytes })}
         </p>
       ) : null}
 
@@ -154,7 +158,7 @@ export function ScanMediaViewer({
                 thumbnailRefs.current[index] = node;
               }}
               onClick={() => setActiveIndex(index)}
-              aria-label={`Show ${file.filename}`}
+              aria-label={t('scanDetail.media.showFile', { filename: file.filename })}
               aria-current={index === safeIndex}
               className={cn(
                 'h-14 w-20 shrink-0 overflow-hidden rounded border bg-scan-ground',
@@ -171,6 +175,7 @@ export function ScanMediaViewer({
 }
 
 function Thumbnail({ file }: { file: StageSource }) {
+  const { t } = useTranslation();
   const kind = mediaKindFor(file);
   // Video renditions carry a poster; a still is its own thumbnail. Legacy rows
   // store the extension alone as `filetype`, so the kind has to be resolved
@@ -180,7 +185,7 @@ function Thumbnail({ file }: { file: StageSource }) {
   if (!source) {
     return (
       <span className="flex h-full w-full items-center justify-center text-[10px] text-white/70">
-        {kind === 'video' ? 'VIDEO' : 'FILE'}
+        {kind === 'video' ? t('scanDetail.media.thumbVideo') : t('scanDetail.media.thumbFile')}
       </span>
     );
   }

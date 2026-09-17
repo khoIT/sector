@@ -3,6 +3,7 @@ import { FileWarning, Layers } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 
 import type { StageSource } from './media-source';
+import { useTranslation } from 'react-i18next';
 
 /**
  * What actually fills the media stage for one file.
@@ -17,6 +18,7 @@ import type { StageSource } from './media-source';
  * would be worse than saying so.
  */
 export function ScanMediaStage({ file }: { file: StageSource }) {
+  const { t } = useTranslation();
   // Some formats resolve to a viewable kind but still fail in this particular
   // browser — HEIC outside Safari, TIFF almost everywhere, a codec the machine
   // lacks. Guessing which in advance gets it wrong both ways, so the element is
@@ -32,8 +34,8 @@ export function ScanMediaStage({ file }: { file: StageSource }) {
     return (
       <StageMessage
         icon={<FileWarning className="h-6 w-6" aria-hidden />}
-        title="File not available"
-        detail="This file never finished uploading, so there is nothing to display."
+        title={t('scanDetail.media.unavailableTitle')}
+        detail={t('scanDetail.media.unavailableDetail')}
       />
     );
   }
@@ -42,8 +44,8 @@ export function ScanMediaStage({ file }: { file: StageSource }) {
     return (
       <StageMessage
         icon={<Layers className="h-6 w-6" aria-hidden />}
-        title="DICOM preview not supported"
-        detail="Sector has no DICOM renderer. Download the file and open it in a DICOM viewer."
+        title={t('scanDetail.media.dicomTitle')}
+        detail={t('scanDetail.media.dicomDetail')}
         action={<OpenOriginal url={file.url} />}
       />
     );
@@ -86,16 +88,20 @@ export function ScanMediaStage({ file }: { file: StageSource }) {
       icon={<FileWarning className="h-6 w-6" aria-hidden />}
       title={
         failed
-          ? `This browser cannot play ${format || 'this file'}`
-          : `Cannot preview ${format || 'this file type'}`
+          ? t('scanDetail.media.cannotPlay', { format: format || t('scanDetail.media.thisFile') })
+          : t('scanDetail.media.cannotPreview', {
+              format: format || t('scanDetail.media.thisFileType'),
+            })
       }
-      detail="The file is stored and can be downloaded, but the browser cannot display it inline."
+      detail={t('scanDetail.media.downloadableDetail')}
       action={<OpenOriginal url={file.url} />}
     />
   );
 }
 
 function OpenOriginal({ url }: { url: string }) {
+  const { t } = useTranslation();
+
   return (
     <a
       href={url}
@@ -103,7 +109,7 @@ function OpenOriginal({ url }: { url: string }) {
       rel="noreferrer"
       className="text-[12px] text-white underline underline-offset-2"
     >
-      Open original file
+      {t('scanDetail.media.openOriginal')}
     </a>
   );
 }

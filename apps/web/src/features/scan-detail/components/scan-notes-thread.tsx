@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { formatDateTime } from '@/lib/format';
 
 import { noteAuthorName } from '../scan-detail-format';
+import { useTranslation } from 'react-i18next';
 
 type ScanNotesThreadProps = {
   scanId: string;
@@ -31,6 +32,7 @@ type ScanNotesThreadProps = {
  * itself is refetched.
  */
 export function ScanNotesThread({ scanId, canRead, canAdd }: ScanNotesThreadProps) {
+  const { t } = useTranslation();
   const [draft, setDraft] = useState('');
   const notesQuery = useScanNotes(scanId, canRead);
   const addNote = useAddScanNoteMutation();
@@ -53,7 +55,7 @@ export function ScanNotesThread({ scanId, canRead, canAdd }: ScanNotesThreadProp
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Notes</CardTitle>
+        <CardTitle>{t('scanDetail.notes.title')}</CardTitle>
         {notes.length > 0 ? (
           <span className="text-[12px] text-ink-dim sv-num">{notes.length}</span>
         ) : null}
@@ -61,7 +63,7 @@ export function ScanNotesThread({ scanId, canRead, canAdd }: ScanNotesThreadProp
 
       <CardContent className="space-y-3">
         {!canRead ? (
-          <p className="text-body text-ink-dim">Your role cannot read the notes on this scan.</p>
+          <p className="text-body text-ink-dim">{t('scanDetail.notes.noReadAccess')}</p>
         ) : notesQuery.isPending ? (
           <div className="space-y-2">
             <Skeleton className="h-12 w-full" />
@@ -70,18 +72,20 @@ export function ScanNotesThread({ scanId, canRead, canAdd }: ScanNotesThreadProp
         ) : notesQuery.isError ? (
           <EmptyState
             tone="crit"
-            title="Could not load notes"
+            title={t('scanDetail.notes.loadError')}
             description={
-              isApiError(notesQuery.error) ? notesQuery.error.message : 'Something went wrong.'
+              isApiError(notesQuery.error)
+                ? notesQuery.error.message
+                : t('scanDetail.common.somethingWentWrong')
             }
             action={
               <Button variant="secondary" size="sm" onClick={() => void notesQuery.refetch()}>
-                Retry
+                {t('scanDetail.common.retry')}
               </Button>
             }
           />
         ) : notes.length === 0 ? (
-          <p className="text-body text-ink-dim">No notes yet.</p>
+          <p className="text-body text-ink-dim">{t('scanDetail.notes.empty')}</p>
         ) : (
           <ol className="space-y-2">
             {notes.map((note) => (
@@ -99,8 +103,8 @@ export function ScanNotesThread({ scanId, canRead, canAdd }: ScanNotesThreadProp
         {canAdd ? (
           <div className="space-y-2 border-t border-line pt-3">
             <Textarea
-              label="Add a note"
-              placeholder="Reply to the learner, or record something about this study."
+              label={t('scanDetail.notes.addLabel')}
+              placeholder={t('scanDetail.notes.addPlaceholder')}
               value={draft}
               rows={3}
               disabled={addNote.isPending}
@@ -109,7 +113,7 @@ export function ScanNotesThread({ scanId, canRead, canAdd }: ScanNotesThreadProp
                 addNote.isError
                   ? isApiError(addNote.error)
                     ? addNote.error.message
-                    : 'Could not add the note.'
+                    : t('scanDetail.notes.addError')
                   : undefined
               }
             />
@@ -120,7 +124,7 @@ export function ScanNotesThread({ scanId, canRead, canAdd }: ScanNotesThreadProp
                 onClick={() => void submit()}
               >
                 <MessagesSquare className="h-4 w-4" aria-hidden />
-                {addNote.isPending ? 'Adding…' : 'Add note'}
+                {addNote.isPending ? t('scanDetail.notes.adding') : t('scanDetail.notes.add')}
               </Button>
             </div>
           </div>

@@ -62,7 +62,11 @@
   },
   "toolbar": {
     "filters": "Filtres",
-    "columns": "Colonnes"
+    "columns": "Colonnes",
+    "sortBy": "Trier par",
+    "sortNone": "Choisir une colonne",
+    "sortAscending": "Trier par ordre croissant",
+    "sortDescending": "Trier par ordre décroissant"
   },
   "pagination": {
     "rows": "lignes",
@@ -86,6 +90,52 @@
       "scopeNote": "Ceci ne concerne que les rappels de devoirs. Les e-mails de compte, de mot de passe et de relecture d’examen ne sont pas affectés.",
       "loadError": "Votre préférence de rappels n’a pas pu être chargée.",
       "saveError": "Ce réglage n’a pas pu être enregistré."
+    },
+    "identity": {
+      "title": "Votre compte",
+      "description": "Le nom et la photo que les autres voient à côté de vos examens.",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "E-mail",
+      "username": "Nom d’utilisateur",
+      "role": "Rôle",
+      "saveError": "Votre nom n’a pas pu être enregistré.",
+      "saved": "Votre nom a été enregistré.",
+      "saving": "Enregistrement…",
+      "save": "Enregistrer le nom"
+    },
+    "photo": {
+      "upload": "Importer une photo",
+      "replace": "Remplacer la photo",
+      "uploading": "Import en cours…",
+      "remove": "Supprimer",
+      "removing": "Suppression…",
+      "choose": "Choisir une photo de profil"
+    },
+    "password": {
+      "title": "Mot de passe",
+      "description": "Votre mot de passe actuel est nécessaire pour en définir un nouveau.",
+      "current": "Mot de passe actuel",
+      "new": "Nouveau mot de passe",
+      "confirm": "Confirmer le nouveau mot de passe",
+      "error": "Votre mot de passe n’a pas pu être modifié.",
+      "changed": "Votre mot de passe a été modifié. Vous restez connecté sur cet appareil.",
+      "changing": "Modification…",
+      "change": "Modifier le mot de passe"
+    },
+    "createScanFlow": {
+      "cardTitle": "Créer un examen",
+      "cardDescription": "La disposition de la page de création d’examen. Les deux dispositions recueillent la même chose et partagent le même brouillon.",
+      "legend": "Disposition de la création d’examen",
+      "note": "S’applique à la prochaine ouverture de « Créer un examen ». Enregistré dans ce navigateur uniquement — comme le thème et la langue, il ne vous suivra pas sur un autre appareil.",
+      "study": {
+        "title": "Une seule surface de travail",
+        "description": "Fichiers, type d’examen, résultats, note et groupes sur une seule page, dans l’ordre que vous voulez, avec une barre indiquant ce qui manque. Un écran distinct montre ce qui va être envoyé."
+      },
+      "classic": {
+        "title": "Étape par étape",
+        "description": "L’assistant en quatre étapes : fichiers, puis interprétation, puis vérification et routage. Une chose à la fois, avec Précédent et Suivant."
+      }
     }
   },
   "groupsDialog": {
@@ -550,19 +600,18 @@
         "title_other": "{{count}} inscriptions expirées",
         "description": "L’accès à ces cours a pris fin ; le renouvellement d’une attribution est géré par votre responsable de groupe ou votre administrateur.",
         "badge": "Expiré"
-      }
+      },
+      "layout": {
+        "grid": "Vue grille",
+        "list": "Vue liste"
+      },
+      "counts": "{{lessons}} modules · {{topics}} sujets · {{quizzes}} quiz",
+      "expiresOn": "Expire le {{date}}",
+      "lastActive": "Ouvert le {{date}}"
     },
     "outline": {
       "title": "Plan du cours",
       "backToCourses": "Mes cours",
-      "progress": "{{completed}}/{{total}} terminés ({{percent}} %)",
-      "remaining": "Il reste {{duration}} à regarder",
-      "resume": {
-        "start": "Commencer : {{title}}",
-        "resume": "Poursuivre : {{title}}",
-        "retry": "Réessayer : {{title}}",
-        "review": "Revoir : {{title}}"
-      },
       "completedBanner": "Vous avez terminé ce cours.",
       "empty": {
         "title": "Ce cours n’a pas encore de contenu"
@@ -591,7 +640,6 @@
     },
     "landing": {
       "title": "À propos de ce cours",
-      "viewOutline": "Voir le sommaire du cours",
       "totalTime": "{{duration}} de vidéo",
       "itemCount_one": "{{count}} élément",
       "itemCount_other": "{{count}} éléments",
@@ -698,7 +746,8 @@
         "resumeError": "Votre progression enregistrée n'a pas pu être chargée. Reprise à zéro."
       },
       "contents": {
-        "title": "Contenu"
+        "title": "Contenu",
+        "open": "Contenu {{index}}/{{total}}"
       },
       "completionNote": "Les sujets sont validés automatiquement à {{percent}} % visionnés.",
       "questionCount_one": "{{count}} q",
@@ -765,7 +814,254 @@
     "creditCount_one": "{{count}} crédit",
     "creditCount_other": "{{count}} crédits",
     "creditWillBeSpent": "Un crédit de {{label}} sera utilisé à la soumission",
-    "creditSpentOnSubmit": "Le crédit n'est utilisé qu'une fois l'étude soumise. En cas d'échec de la demande, vous serez averti, et l'étude est enregistrée dans tous les cas."
+    "creditSpentOnSubmit": "Le crédit n'est utilisé qu'une fois l'étude soumise. En cas d'échec de la demande, vous serez averti, et l'étude est enregistrée dans tous les cas.",
+    "routingSummary": {
+      "title": "Destination",
+      "groupsDefault": "Vos groupes habituels",
+      "groupsNone": "Aucun groupe — vous seul et l’expert éventuel",
+      "groupsCount_one": "{{count}} groupe",
+      "groupsCount_other": "{{count}} groupes",
+      "expertNone": "Aucune revue d’expert demandée",
+      "expertRequested": "Revue d’expert depuis {{pool}}"
+    },
+    "readiness": {
+      "files": "Fichiers",
+      "findings": "Résultats",
+      "exam": "Examen",
+      "note": "Note"
+    },
+    "clinicalNote": {
+      "title": "Note clinique",
+      "blurb": "Le contexte dont un relecteur a besoin : présentation, la question à laquelle l’examen répondait, tout ce que la liste de résultats ne peut pas contenir.",
+      "noteLabel": "Note",
+      "notePlaceholder": "p. ex. Homme de 62 ans, douleur du flanc, recherche d’AAA. Fenêtres limitées par les gaz digestifs.",
+      "patientIdLabel": "ID patient externe",
+      "patientIdHint": "Facultatif. Votre propre numéro de dossier, jusqu’à 100 caractères.",
+      "scanIdLabel": "Identifiant de l’examen",
+      "scanIdHint": "Facultatif. Affiché sur l’examen et inclus dans l’export de votre organisation."
+    },
+    "commit": {
+      "stillNeeded": "Encore requis :",
+      "ready": "Prêt à envoyer.",
+      "reviewSubmit": "Vérifier et envoyer"
+    },
+    "discard": {
+      "title": "Abandonner ce brouillon ?",
+      "nothingLost": "Rien n’a encore été saisi, rien n’est donc perdu.",
+      "holds": "Cette action est irréversible. Le brouillon contient :",
+      "keep": "Garder le brouillon",
+      "confirm": "Abandonner"
+    },
+    "draftIndicator": {
+      "saved": "Brouillon enregistré — {{stored}} fichiers sur {{total}} en stockage",
+      "transferring": "{{count}} encore en transfert",
+      "detached": "{{count}} à resélectionner"
+    },
+    "drop": {
+      "title": "Déposez ici des images ou des clips",
+      "blurb": "Chaque fichier est vérifié et se téléverse aussitôt, pendant que vous complétez le reste de l’examen. JPEG, PNG, GIF, WebP, BMP, SVG, MP4, MOV, WebM, AVI et MKV.",
+      "chooseLabel": "Choisir des fichiers d’examen",
+      "browse": "Parcourir les fichiers"
+    },
+    "findingRow": {
+      "required": "obligatoire"
+    },
+    "findings": {
+      "title": "Résultats",
+      "blurb": "Ce que montre l’examen. Chaque option définie par le type d’examen est proposée — laissez une ligne intacte si elle n’a pas été évaluée.",
+      "clearDefaults": "Effacer les valeurs par défaut",
+      "noPathology": "Pas de pathologie",
+      "loadError": "Le formulaire de résultats de ce type d’examen n’a pas pu être chargé",
+      "retry": "Réessayer",
+      "requestFailed": "La requête a échoué.",
+      "loadErrorDetail": "Vous pouvez tout de même envoyer l’examen avec une note, ou réessayer.",
+      "none": "Ce type d’examen n’a pas de résultats structurés. Notez ce que vous avez vu dans la note clinique ci-dessous."
+    },
+    "groups": {
+      "title": "Partager avec des groupes",
+      "blurb": "Les relecteurs de ces groupes verront l’examen. Ce réglage est fixé à la création et ne peut pas être modifié ensuite.",
+      "loadError": "Vos groupes n’ont pas pu être chargés",
+      "retry": "Réessayer",
+      "requestFailed": "La requête a échoué.",
+      "loadErrorDetail": "Vous pouvez envoyer sans groupe et demander une revue d’expert à la place.",
+      "noneTitle": "Vous n’êtes encore dans aucun groupe",
+      "noneDetail": "Personne ne sera sollicité pour relire cet examen via un groupe. Vous pouvez tout de même demander une revue d’expert ci-dessous.",
+      "in": "dans",
+      "parentGroup": "Un groupe parent — le sélectionner partage avec tous ceux qui en dépendent.",
+      "widerGroup": "groupe parent"
+    },
+    "files": {
+      "collapsedSummary_one": "{{count}} fichier en stockage",
+      "collapsedSummary_other": "{{count}} fichiers en stockage",
+      "title": "Fichiers",
+      "blurb": "Le téléversement démarre dès qu’un fichier passe sa vérification. Vous pouvez continuer à travailler, et fermer cet onglet ne perd rien de ce qui est déjà en stockage.",
+      "collapse": "Replier",
+      "notAdded_one": "{{count}} fichier n’a pas été ajouté",
+      "notAdded_other": "{{count}} fichiers n’ont pas été ajoutés",
+      "dismiss": "Fermer",
+      "nudgeTitle": "Les examens complets comptent au moins trois fichiers",
+      "nudgeBody": "Cet examen en a {{count}} pour l’instant. Ajoutez les vues restantes si vous les avez — des fichiers peuvent aussi être ajoutés plus tard, mais les relecteurs le voient dès l’envoi.",
+      "detachedTitle": "Certains fichiers de votre brouillon sont à resélectionner",
+      "detachedBody": "{{count}} des fichiers de ce brouillon n’avaient pas fini de se téléverser à la dernière fermeture de la page, et le navigateur ne conserve pas le contenu. Resélectionnez-les ci-dessous ou retirez-les de l’examen.",
+      "failedTitle_one": "{{count}} fichier n’a pas pu être téléversé",
+      "failedTitle_other": "{{count}} fichiers n’ont pas pu être téléversés",
+      "retryAll": "Tout réessayer",
+      "failedBody": "Chacun indique pourquoi ci-dessous. Réessayer ne renvoie que ce fichier ; tout ce qui est déjà en stockage reste en place.",
+      "storedOf": "{{stored}} sur {{tracked}} en stockage",
+      "cancelAll": "Annuler tous les transferts"
+    },
+    "fileRow": {
+      "structureOnlyTitle": "Le fichier est un conteneur valide et complet, mais ce navigateur ne peut pas décoder son codec. Il se téléverse normalement et le serveur peut le lire.",
+      "structureOnly": "structure seule",
+      "cancelUpload": "Annuler le téléversement de {{name}}",
+      "cancel": "Annuler",
+      "retry": "Réessayer",
+      "chooseAgain": "Resélectionner",
+      "remove": "Retirer {{name}}",
+      "progress": "Progression du téléversement de {{name}}",
+      "detachedBody": "Ce fichier était dans le brouillon enregistré mais son contenu n’a pas été conservé par le navigateur. Resélectionnez le même fichier pour finir de le téléverser, ou retirez-le de l’examen."
+    },
+    "rail": {
+      "localPlayback": "Lecture depuis ce navigateur — rien n’est récupéré du stockage. Utilisez",
+      "stepBetween": "pour passer d’un fichier à l’autre.",
+      "and": "et",
+      "noPreviews": "Les aperçus sont lus depuis ce navigateur ; un examen repris après un rechargement n’en a donc aucun. La liste ci-dessous indique où se trouve chaque fichier."
+    },
+    "setup": {
+      "scanTypeLabel": "Type d’examen",
+      "scanTypePlaceholder": "Choisir un type d’examen",
+      "scanTypeSearch": "AAA, Écho, Poumon…",
+      "scanTypeEmpty": "Aucun type d’examen ne correspond.",
+      "shareLabel": "Partager avec",
+      "groupSearch": "Rechercher vos groupes…",
+      "groupEmpty": "Aucun groupe ne correspond."
+    },
+    "typePicker": {
+      "loadError": "Les types d’examen n’ont pas pu être chargés",
+      "retry": "Réessayer",
+      "requestFailed": "La requête a échoué.",
+      "loadErrorDetail": "Vos fichiers continuent de se téléverser et rien n’a été perdu.",
+      "findLabel": "Trouver un type d’examen",
+      "findPlaceholder": "AAA, Écho, Poumon…",
+      "noMatchTitle": "Aucun type d’examen ne correspond",
+      "noMatchDetail": "Effacez la recherche pour voir tous les types."
+    },
+    "switchType": {
+      "title": "Passer à {{type}} ?",
+      "clearedOne": "Une réponse n’a pas d’équivalent sur le nouveau type d’examen et sera effacée.",
+      "clearedMany": "{{count}} réponses n’ont pas d’équivalent sur le nouveau type d’examen et seront effacées.",
+      "clearedFrom": "Effacé de {{type}}",
+      "cleared": "Effacé",
+      "carriedOver": "Repris dans {{type}}",
+      "keep": "Garder {{type}}",
+      "keepCurrent": "Garder le type actuel",
+      "confirm": "Passer à {{type}}"
+    },
+    "submitConfirm": {
+      "title": "Envoyer cet examen ?",
+      "blurb": "Vos fichiers sont déjà en stockage. L’envoi enregistre ces informations avec eux — il ne relance aucun téléversement.",
+      "error": "L’examen n’a pas pu être créé",
+      "keepEditing": "Continuer à modifier",
+      "submitting": "Envoi…",
+      "submit": "Envoyer l’examen"
+    },
+    "credits": {
+      "title": "Acheter des crédits de revue d’expert",
+      "blurb": "Un crédit paie une revue d’expert. Les crédits peuvent être détenus par vous ou par un groupe.",
+      "goTo": "Les crédits vont à",
+      "ownBalance": "Mon propre solde",
+      "bundle": "Forfait",
+      "error": "Le paiement n’a pas pu démarrer",
+      "noResponse": "Le service de paiement n’a pas répondu.",
+      "errorDetail": "Rien n’a été débité. Votre examen est enregistré — réessayez, ou envoyez-le sans revue d’expert.",
+      "cancel": "Annuler",
+      "opening": "Ouverture du paiement…",
+      "continue": "Continuer vers le paiement"
+    },
+    "studySurface": {
+      "pickTypeTitle": "Choisissez un type d’examen pour voir ses résultats",
+      "pickTypeBody": "Les résultats diffèrent selon le type d’examen, le formulaire apparaît donc une fois un type choisi. Vos fichiers continuent de se téléverser entre-temps.",
+      "missingRequired_one": "{{count}} résultat obligatoire est encore vide",
+      "missingRequired_other": "{{count}} résultats obligatoires sont encore vides",
+      "missingRequiredBody": "{{names}}. Vous pouvez envoyer sans eux, mais un relecteur ne saura pas s’ils étaient normaux ou non évalués."
+    },
+    "summary": {
+      "title": "Ce qui sera envoyé",
+      "blurb": "Tout ce qui suit est enregistré avec les fichiers déjà en stockage. Le routage de groupe ne peut pas être modifié ensuite.",
+      "edit": "Modifier l’examen",
+      "study": "L’examen",
+      "examType": "Type d’examen",
+      "files": "Fichiers",
+      "filesValue": "{{stored}} sur {{tracked}} en stockage · {{size}}",
+      "scanIdentifier": "Identifiant de l’examen",
+      "patientId": "ID patient externe",
+      "findings": "Résultats",
+      "clinicalNote": "Note clinique",
+      "noNote": "Aucune note. Un relecteur ne verra que les résultats et les images.",
+      "audience": "Qui voit cet examen",
+      "noGroups": "Aucun groupe. Aucun relecteur de groupe ne verra cet examen, et un groupe ne peut pas être ajouté ensuite — l’API n’a pas de route pour cela. Vous pouvez toujours le partager avec des personnes nommées depuis l’examen lui-même.",
+      "widerThanCohort": "plus large que votre cohorte",
+      "expertReview": "Revue d’expert",
+      "notRequested": "Non demandée",
+      "noFindings": "Aucun résultat enregistré."
+    },
+    "page": {
+      "title": "Créer un examen",
+      "blurb": "Les fichiers se téléversent pendant que vous travaillez. L’envoi enregistre les informations avec eux.",
+      "discardTitle": "Abandonner ce brouillon et recommencer",
+      "discard": "Abandonner le brouillon",
+      "myScans": "Mes examens",
+      "restoredTitle": "Repris là où vous en étiez",
+      "startFresh": "Recommencer",
+      "restoredBody": "Un brouillon enregistré a été trouvé dans ce navigateur. Les fichiers entièrement téléversés sont déjà en stockage, et ceux en cours reprennent où ils s’étaient arrêtés. Seuls les fichiers que ce navigateur ne conserve plus sont à resélectionner — ils sont signalés comme tels."
+    },
+    "classic": {
+      "addFile": "Ajoutez au moins un fichier pour continuer.",
+      "interpretation": "Interprétation",
+      "files": "Fichiers",
+      "chooseType": "Choisissez un type d’examen pour continuer.",
+      "reviewRouting": "Vérification et routage"
+    },
+    "interpretation": {
+      "scanTypePrefix": "Type d’examen : ",
+      "change": "Modifier",
+      "scanTypeTitle": "Type d’examen",
+      "scanTypeBlurb": "Obligatoire, et figé dès l’envoi — l’API ne peut pas changer le type d’un examen ensuite."
+    },
+    "routing": {
+      "submitTitle": "Envoyer",
+      "submitBlurb": "Vos fichiers sont déjà en stockage. L’envoi enregistre les informations de l’examen avec eux — il ne relance aucun téléversement.",
+      "stillMoving_one": "{{count}} fichier n’a pas fini de se téléverser",
+      "stillMoving_other": "{{count}} fichiers n’ont pas fini de se téléverser",
+      "stillMovingBody": "Envoyer maintenant crée l’examen avec les {{stored}} déjà en stockage et laisse le reste de côté. Attendez la fin, ou revenez en arrière pour traiter ceux qui ont échoué.",
+      "nothingStored": "Rien n’est encore en stockage",
+      "nothingStoredBody": "Un examen ne peut pas être créé sans au moins un fichier téléversé — l’API refuse un total de zéro fichier.",
+      "noExamType": "Aucun type d’examen choisi",
+      "chooseExamType": "Choisir le type d’examen",
+      "noExamTypeBody": "Un examen a besoin d’un type : il décide des résultats demandés au relecteur, et il ne peut pas être modifié une fois l’examen créé.",
+      "notSubmitted": "L’examen n’a pas été envoyé",
+      "tryAgain": "Réessayer",
+      "notSubmittedBody": "Vos fichiers téléversés sont toujours en stockage et ce brouillon est enregistré : rien n’est à refaire.",
+      "recording": "Enregistrement de l’examen…",
+      "submit": "Envoyer l’examen"
+    },
+    "submitted": {
+      "title": "Examen envoyé",
+      "blurb": "L’examen est dans votre coffre. Le traitement et l’anonymisation se terminent sur le serveur dans quelques secondes ; la liste se met à jour d’elle-même.",
+      "status": "Envoyé",
+      "filesAttached": "Fichiers joints",
+      "filesValue": "{{confirmed}} sur {{total}}",
+      "expertReview": "Revue d’expert",
+      "requested": "Demandée",
+      "requestFailed": "Demande échouée",
+      "notRequested": "Non demandée",
+      "openStudy": "Ouvrir l’examen",
+      "expertFailedTitle": "La demande de revue d’expert n’a pas abouti",
+      "requestRejected": "La demande a été rejetée.",
+      "expertFailedBody": "L’examen lui-même est enregistré et transmis à vos groupes, et aucun crédit n’a été dépensé.",
+      "createAnother": "Créer un autre examen",
+      "goToMyScans": "Aller à mes examens"
+    }
   },
   "scanDetail": {
     "resetUploadDialogTitle": "Réinitialiser « {{title}} » pour un nouvel envoi ?",
@@ -783,7 +1079,181 @@
     "markIncomplete": "Marquer comme incomplet",
     "close": "Fermer",
     "completionTagErrorTitle": "La marque n'a pas été enregistrée",
-    "completionTagError": "L'état de complétude du scan n'a pas pu être modifié. Rien n'a été enregistré — réessayez."
+    "completionTagError": "L'état de complétude du scan n'a pas pu être modifié. Rien n'a été enregistré — réessayez.",
+    "queueNav": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "position": "{{position}} sur {{total}}",
+      "hint": "j pour suivant, k pour précédent"
+    },
+    "learnerQuestion": {
+      "title": "Question de l’apprenant"
+    },
+    "notes": {
+      "dialogTitle": "Commentaires sur {{title}}",
+      "title": "Notes",
+      "none": "Aucune note sur cet examen.",
+      "noReadAccess": "Votre rôle ne peut pas lire les notes de cet examen.",
+      "loadError": "Impossible de charger les notes",
+      "empty": "Aucune note pour l’instant.",
+      "addLabel": "Ajouter une note",
+      "addPlaceholder": "Répondez à l’apprenant ou notez quelque chose sur cet examen.",
+      "addError": "Impossible d’ajouter la note.",
+      "adding": "Ajout…",
+      "add": "Ajouter la note"
+    },
+    "submittedAnswers": {
+      "none": "Rien n’a été soumis avec cet examen — ni résultats ni réponses au formulaire.",
+      "findingsGroup": "Résultats"
+    },
+    "activity": {
+      "title": "Journal d’activité",
+      "show": "Afficher",
+      "hide": "Masquer",
+      "none": "Rien d’enregistré pour l’instant."
+    },
+    "files": {
+      "none": "Aucun fichier enregistré sur cet examen.",
+      "recorded_one": "{{recorded}} fichier sur {{count}} attendu enregistré.",
+      "recorded_other": "{{recorded}} fichiers sur {{count}} attendus enregistrés."
+    },
+    "media": {
+      "unavailableTitle": "Fichier indisponible",
+      "unavailableDetail": "Ce fichier n’a jamais fini de se téléverser, il n’y a donc rien à afficher.",
+      "dicomTitle": "Aperçu DICOM non pris en charge",
+      "dicomDetail": "Sector n’a pas de moteur de rendu DICOM. Téléchargez le fichier et ouvrez-le dans une visionneuse DICOM.",
+      "openOriginal": "Ouvrir le fichier original",
+      "previousFile": "Fichier précédent",
+      "nextFile": "Fichier suivant",
+      "unknownType": "type inconnu",
+      "thumbVideo": "VIDÉO",
+      "thumbFile": "FICHIER",
+      "notPreviewable_one": "{{count}} autre fichier ne peut pas être prévisualisé ici. La liste ci-dessous le nomme et donne son statut.",
+      "notPreviewable_other": "{{count}} autres fichiers ne peuvent pas être prévisualisés ici. La liste ci-dessous les nomme et donne leur statut.",
+      "filesSection": "Fichiers ({{count}}/{{total}})",
+      "showFile": "Afficher {{filename}}",
+      "cannotPlay": "Ce navigateur ne peut pas lire {{format}}",
+      "cannotPreview": "Impossible de prévisualiser {{format}}",
+      "thisFile": "ce fichier",
+      "thisFileType": "ce type de fichier",
+      "downloadableDetail": "Le fichier est stocké et peut être téléchargé, mais le navigateur ne peut pas l’afficher ici.",
+      "noPreviewTitle": "Aucun aperçu disponible",
+      "noMediaTitle": "Aucun média sur cet examen",
+      "notPreviewableList_one": "{{count}} fichier ne peut pas être prévisualisé ici. La liste ci-dessous le nomme et donne son statut.",
+      "notPreviewableList_other": "{{count}} fichiers ne peuvent pas être prévisualisés ici. La liste ci-dessous nomme chacun d’eux et donne son statut.",
+      "noUpload": "Le téléversement n’a jamais produit de fichier. La liste ci-dessous montre ce qui était attendu."
+    },
+    "context": {
+      "clinicalNote": "Note clinique",
+      "findings": "Résultats et interprétation",
+      "identifiers": "Identifiants",
+      "scanIdentifier": "Identifiant de l’examen",
+      "externalPatientId": "ID patient externe",
+      "scanId": "ID de l’examen",
+      "submittedBy": "Soumis par",
+      "submitted": "Soumis",
+      "lastUpdated": "Dernière mise à jour",
+      "reviewed": "Relu",
+      "group_one": "Groupe",
+      "group_other": "Groupes",
+      "noGroup": "Rattaché à aucun groupe.",
+      "tags": "Étiquettes"
+    },
+    "common": {
+      "retry": "Réessayer",
+      "somethingWentWrong": "Une erreur est survenue."
+    },
+    "review": {
+      "titleExpert": "Revue d’expert",
+      "title": "Revue",
+      "competency": "Mesure de compétence",
+      "achieved": "Atteinte",
+      "notAchieved": "Non atteinte",
+      "competencyMissing": "Choisissez atteinte ou non atteinte.",
+      "overall": "Appréciation générale",
+      "overallMissing": "L’appréciation générale est obligatoire.",
+      "technical": "Appréciation technique",
+      "technicalHint": "Tenue de la sonde, gain, profondeur, orientation.",
+      "teaching": "Points pédagogiques",
+      "noteLabel": "Note à l’apprenant (facultatif)",
+      "noteHint": "Publiée dans le fil de notes et envoyée par e-mail avec la revue.",
+      "submitError": "Impossible d’envoyer la revue.",
+      "submitting": "Envoi…",
+      "submit": "Envoyer la revue",
+      "draftSaved": "Brouillon enregistré {{time}}",
+      "discard": "Abandonner"
+    },
+    "share": {
+      "title": "Partage",
+      "recipients_one": "{{count}} destinataire",
+      "recipients_other": "{{count}} destinataires",
+      "loadError": "Impossible de charger les partages existants.",
+      "none": "Vous n’avez partagé cet examen avec personne.",
+      "sharedAt": "Partagé {{date}}",
+      "opened": "Ouvert",
+      "unopened": "Non ouvert",
+      "revoke": "Révoquer l’accès de {{email}}",
+      "revokeError": "Impossible de révoquer l’accès.",
+      "withLabel": "Partager avec",
+      "withPlaceholder": "nom@hopital.org, collegue@clinique.org",
+      "withHint": "Séparés par une virgule ou un retour à la ligne. Les destinataires doivent avoir un compte.",
+      "shareError": "Impossible de partager l’examen.",
+      "messageLabel": "Message (facultatif)",
+      "sharing": "Partage…",
+      "shareWithCount": "Partager avec {{count}}",
+      "outcomeShared_one": "Partagé avec {{count}} destinataire.",
+      "outcomeShared_other": "Partagé avec {{count}} destinataires.",
+      "outcomeDuplicate": "Avaient déjà accès : {{emails}}",
+      "outcomeNotFound": "Pas de compte Sector, rien envoyé : {{emails}}",
+      "dialogTitle": "Partager {{title}}"
+    },
+    "summary": {
+      "notReviewed": "Cet examen n’a pas encore été relu.",
+      "reviewer": "Relecteur",
+      "overall": "Appréciation générale",
+      "technical": "Appréciation technique",
+      "teaching": "Points pédagogiques",
+      "teachingContent": "Contenu pédagogique",
+      "customQuestions": "Questions personnalisées"
+    },
+    "custom": {
+      "title": "Questions personnalisées (facultatif)",
+      "add": "Ajouter",
+      "question": "Question {{number}}",
+      "remove": "Supprimer la question {{number}}",
+      "questionLabel": "Question",
+      "questionPlaceholder": "p. ex. Fraction d’éjection",
+      "answerLabel": "Réponse"
+    },
+    "markdown": {
+      "title": "Revue assistée par IA",
+      "languageGroup": "Langue de la revue",
+      "original": "Original"
+    },
+    "shared": {
+      "back": "Retour aux examens partagés",
+      "readOnly": "Partagé avec vous · lecture seule",
+      "notShared": "Cet examen n’est pas partagé avec vous",
+      "loadError": "Impossible de charger cet examen partagé",
+      "loadErrorDetail": "Une erreur est survenue lors du chargement de l’examen partagé.",
+      "goneTitle": "Cette étude n’est plus disponible",
+      "goneDetail": "La personne qui l’a partagée a depuis supprimé l’examen. Le partage reste dans votre liste pour que vous sachiez qu’il a existé, mais il n’y a plus rien à ouvrir.",
+      "sharedBy": "Partagé par",
+      "unknownUser": "Utilisateur inconnu"
+    },
+    "page": {
+      "back": "Retour à {{list}}",
+      "notFound": "Examen introuvable",
+      "loadError": "Impossible de charger cet examen",
+      "loadErrorDetail": "Une erreur est survenue lors du chargement de l’examen."
+    },
+    "viewLabel": {
+      "my": "mes examens",
+      "pending": "examens de groupe non relus",
+      "reviewed": "examens de groupe relus",
+      "expert": "examens experts non relus",
+      "expert-reviewed": "examens experts relus"
+    }
   },
   "home": {
     "greeting": "Content de vous revoir, {{name}}",
@@ -894,6 +1364,17 @@
     "signedOut": {
       "title": "Connectez-vous pour utiliser Sage AI",
       "description": "Sage AI nécessite un compte connecté pour s'ouvrir."
+    }
+  },
+  "command": {
+    "title": "Menu de commandes",
+    "open": "Rechercher",
+    "placeholder": "Rechercher pages, examens et cours",
+    "empty": "Aucun résultat",
+    "group": {
+      "nav": "Aller à",
+      "scan": "Examens",
+      "course": "Cours"
     }
   }
 }

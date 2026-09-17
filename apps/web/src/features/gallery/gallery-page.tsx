@@ -82,7 +82,7 @@ export function GalleryPage() {
 
         <div>
           {(isResolving || categoriesQuery.isPending) && (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
               {Array.from({ length: PAGE_SIZE }, (_, index) => (
                 <Skeleton key={index} className="aspect-video w-full rounded-token" />
               ))}
@@ -101,7 +101,7 @@ export function GalleryPage() {
           )}
 
           {canFetchList && listQuery.isPending && (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
               {Array.from({ length: PAGE_SIZE }, (_, index) => (
                 <Skeleton key={index} className="aspect-video w-full rounded-token" />
               ))}
@@ -128,7 +128,7 @@ export function GalleryPage() {
 
           {canFetchList && items.length > 0 && (
             <>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
                 {items.map((item) => (
                   <PathologyCard key={item.id} pathology={item} />
                 ))}

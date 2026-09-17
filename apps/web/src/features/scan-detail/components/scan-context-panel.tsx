@@ -113,7 +113,7 @@ export function ScanContextPanel({
         ) : null}
 
         {clinicalNote ? (
-          <Section title="Clinical note">
+          <Section title={t('scanDetail.context.clinicalNote')}>
             <p className="whitespace-pre-wrap break-words text-body text-ink">
               {clinicalNote.note}
             </p>
@@ -123,7 +123,7 @@ export function ScanContextPanel({
           </Section>
         ) : null}
 
-        <Section title="Findings and interpretation">
+        <Section title={t('scanDetail.context.findings')}>
           <ScanSubmittedAnswers
             scanTypeId={scan.scanType.id}
             findings={scan.findings}
@@ -131,30 +131,42 @@ export function ScanContextPanel({
           />
         </Section>
 
-        <Section title="Identifiers">
+        <Section title={t('scanDetail.context.identifiers')}>
           <dl className="space-y-1">
-            <Row label="Scan identifier" value={scan.scanIdentifier || '—'} />
-            <Row label="External patient ID" value={scan.externalPatientId || '—'} />
-            <Row label="Scan ID" value={scan.id} mono />
+            <Row
+              label={t('scanDetail.context.scanIdentifier')}
+              value={scan.scanIdentifier || '—'}
+            />
+            <Row
+              label={t('scanDetail.context.externalPatientId')}
+              value={scan.externalPatientId || '—'}
+            />
+            <Row label={t('scanDetail.context.scanId')} value={scan.id} mono />
           </dl>
         </Section>
 
-        <Section title="Submitted by">
+        <Section title={t('scanDetail.context.submittedBy')}>
           <p className="text-body text-ink">{userDisplayName(scan.user)}</p>
           <p className="text-[12px] text-ink-dim">{scan.user.email}</p>
           <dl className="mt-2 space-y-1">
-            <Row label="Submitted" value={formatDateTime(scan.createdAt)} />
-            <Row label="Last updated" value={formatDateTime(scan.updatedAt)} />
+            <Row label={t('scanDetail.context.submitted')} value={formatDateTime(scan.createdAt)} />
+            <Row
+              label={t('scanDetail.context.lastUpdated')}
+              value={formatDateTime(scan.updatedAt)}
+            />
             {scan.reviewedAt ? (
-              <Row label="Reviewed" value={formatDateTime(scan.reviewedAt)} />
+              <Row
+                label={t('scanDetail.context.reviewed')}
+                value={formatDateTime(scan.reviewedAt)}
+              />
             ) : null}
           </dl>
         </Section>
 
         {groups ? (
-          <Section title={groups.length === 1 ? 'Group' : 'Groups'}>
+          <Section title={t('scanDetail.context.group', { count: groups.length })}>
             {groups.length === 0 ? (
-              <p className="text-body text-ink-dim">Not attached to a group.</p>
+              <p className="text-body text-ink-dim">{t('scanDetail.context.noGroup')}</p>
             ) : (
               <ul className="flex flex-wrap gap-1.5">
                 {groups.map((group) => (
@@ -168,7 +180,7 @@ export function ScanContextPanel({
         ) : null}
 
         {scan.tags.length > 0 || canEditCompletion ? (
-          <Section title="Tags">
+          <Section title={t('scanDetail.context.tags')}>
             {scan.tags.length > 0 ? (
               <ul className="mb-2 flex flex-wrap gap-1.5">
                 {scan.tags.map((tag) => (
@@ -209,7 +221,12 @@ export function ScanContextPanel({
           </Section>
         ) : null}
 
-        <Section title={`Files (${scan.fileCount}/${scan.fileTotal})`}>
+        <Section
+          title={t('scanDetail.media.filesSection', {
+            count: scan.fileCount,
+            total: scan.fileTotal,
+          })}
+        >
           <ScanFileList
             files={scan.files}
             fileDetails={scan.fileDetails}

@@ -11,6 +11,7 @@ import {
   type ProfileField,
 } from './account-form-model';
 import { AccountField, FormNotice } from './account-form-parts';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Name, and the three identity fields that are not editable here.
@@ -21,6 +22,7 @@ import { AccountField, FormNotice } from './account-form-parts';
  * not a scan-vault concern even where the server would allow it.
  */
 export function ProfileIdentityForm() {
+  const { t } = useTranslation();
   const auth = useAuth();
   const update = useUpdateProfileMutation();
 
@@ -61,7 +63,11 @@ export function ProfileIdentityForm() {
   return (
     <form onSubmit={(event) => void submit(event)} className="flex flex-col gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
-        <AccountField label="First name" htmlFor="account-first-name" error={errors.firstName}>
+        <AccountField
+          label={t('account.identity.firstName')}
+          htmlFor="account-first-name"
+          error={errors.firstName}
+        >
           <Input
             id="account-first-name"
             value={firstName}
@@ -70,7 +76,11 @@ export function ProfileIdentityForm() {
           />
         </AccountField>
 
-        <AccountField label="Last name" htmlFor="account-last-name" error={errors.lastName}>
+        <AccountField
+          label={t('account.identity.lastName')}
+          htmlFor="account-last-name"
+          error={errors.lastName}
+        >
           <Input
             id="account-last-name"
             value={lastName}
@@ -81,22 +91,26 @@ export function ProfileIdentityForm() {
       </div>
 
       <dl className="grid gap-3 border-t border-line pt-4 text-body sm:grid-cols-3">
-        <ReadOnlyFact label="Email" value={user.email} />
-        <ReadOnlyFact label="Username" value={user.userName} />
-        <ReadOnlyFact label="Role" value={user.role?.name ?? '—'} className="capitalize" />
+        <ReadOnlyFact label={t('account.identity.email')} value={user.email} />
+        <ReadOnlyFact label={t('account.identity.username')} value={user.userName} />
+        <ReadOnlyFact
+          label={t('account.identity.role')}
+          value={user.role?.name ?? '—'}
+          className="capitalize"
+        />
       </dl>
 
       {update.isError ? (
         <FormNotice tone="crit">
-          {isApiError(update.error) ? update.error.message : 'Your name could not be saved.'}
+          {isApiError(update.error) ? update.error.message : t('account.identity.saveError')}
         </FormNotice>
       ) : null}
 
-      {saved && !changed ? <FormNotice tone="ok">Your name has been saved.</FormNotice> : null}
+      {saved && !changed ? <FormNotice tone="ok">{t('account.identity.saved')}</FormNotice> : null}
 
       <div className="flex justify-end">
         <Button type="submit" size="sm" disabled={!changed || update.isPending}>
-          {update.isPending ? 'Saving…' : 'Save name'}
+          {update.isPending ? t('account.identity.saving') : t('account.identity.save')}
         </Button>
       </div>
     </form>

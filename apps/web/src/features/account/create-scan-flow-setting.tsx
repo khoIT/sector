@@ -1,5 +1,6 @@
 import { cn } from '@sector/ui';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
   readCreateScanFlow,
@@ -7,21 +8,16 @@ import {
   type CreateScanFlow,
 } from '@/features/create-scan/model/create-scan-flow';
 
-type Choice = { value: CreateScanFlow; title: string; description: string };
-
-const CHOICES: readonly Choice[] = [
-  {
-    value: 'study',
-    title: 'One working surface',
-    description:
-      'Files, exam type, findings, note and groups on a single page, in any order, with a bar showing what is still missing. A separate screen shows what is about to be sent.',
-  },
-  {
-    value: 'classic',
-    title: 'Step by step',
-    description:
-      'The four-step wizard: files, then interpretation, then review and routing. One thing at a time, with Back and Next.',
-  },
+/**
+ * The two flows, as KEYS rather than as English.
+ *
+ * Module-level data never passes through JSX, so the literal-text scanner
+ * cannot see it — which is exactly why a sentence hiding in a `const` outlives
+ * every sweep that only reads components.
+ */
+const CHOICES: ReadonlyArray<{ value: CreateScanFlow; key: string }> = [
+  { value: 'study', key: 'study' },
+  { value: 'classic', key: 'classic' },
 ];
 
 /**
@@ -40,6 +36,7 @@ const CHOICES: readonly Choice[] = [
  * nothing to validate and nothing to send.
  */
 export function CreateScanFlowSetting() {
+  const { t } = useTranslation();
   const [flow, setFlow] = useState<CreateScanFlow>(() =>
     readCreateScanFlow(globalThis.localStorage),
   );
@@ -51,7 +48,7 @@ export function CreateScanFlowSetting() {
 
   return (
     <fieldset className="flex flex-col gap-2">
-      <legend className="sr-only">Create scan study layout</legend>
+      <legend className="sr-only">{t('account.createScanFlow.legend')}</legend>
 
       {CHOICES.map((choice) => {
         const active = flow === choice.value;
@@ -76,8 +73,12 @@ export function CreateScanFlowSetting() {
               className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent-ink)]"
             />
             <span className="min-w-0">
-              <span className="block text-body font-medium text-ink">{choice.title}</span>
-              <span className="mt-0.5 block text-[12px] text-ink-dim">{choice.description}</span>
+              <span className="block text-body font-medium text-ink">
+                {t(`account.createScanFlow.${choice.key}.title`)}
+              </span>
+              <span className="mt-0.5 block text-[12px] text-ink-dim">
+                {t(`account.createScanFlow.${choice.key}.description`)}
+              </span>
             </span>
           </label>
         );
@@ -86,10 +87,7 @@ export function CreateScanFlowSetting() {
       {/* Said plainly rather than discovered: the page reads this once when it
           opens, so a change while a study is already on screen does nothing
           until the next visit. */}
-      <p className="text-[12px] text-ink-dim">
-        Applies the next time you open Create scan study. Saved in this browser only — like your
-        theme and language, it will not follow you to another device.
-      </p>
+      <p className="text-[12px] text-ink-dim">{t('account.createScanFlow.note')}</p>
     </fieldset>
   );
 }

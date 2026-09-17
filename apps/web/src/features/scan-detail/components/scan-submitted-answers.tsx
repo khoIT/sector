@@ -2,6 +2,7 @@ import type { ScanFinding, ScanFormResponse, ScanTypeItems } from '@sector/api-c
 import { useScanTypeItems } from '@sector/api-client';
 import { Skeleton } from '@sector/ui';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type ScanSubmittedAnswersProps = {
   scanTypeId: string | undefined;
@@ -22,17 +23,17 @@ type Row = { id: string; group: string | null; label: string; value: string };
  * empty panel — a reviewer can still read `v5_echo_ejection_fraction`.
  */
 export function ScanSubmittedAnswers({ scanTypeId, findings, form }: ScanSubmittedAnswersProps) {
+  const { t } = useTranslation();
   const hasAnswers = findings.length > 0 || form.length > 0;
   const { data: definitions, isPending } = useScanTypeItems(scanTypeId, hasAnswers);
 
-  const rows = useMemo(() => buildRows(findings, form, definitions), [findings, form, definitions]);
+  const rows = useMemo(
+    () => buildRows(findings, form, definitions, t('scanDetail.submittedAnswers.findingsGroup')),
+    [findings, form, definitions, t],
+  );
 
   if (!hasAnswers) {
-    return (
-      <p className="text-body text-ink-dim">
-        Nothing was submitted with this scan — no findings and no form answers.
-      </p>
-    );
+    return <p className="text-body text-ink-dim">{t('scanDetail.submittedAnswers.none')}</p>;
   }
 
   if (isPending && !definitions) {
@@ -74,12 +75,14 @@ function buildRows(
   findings: ScanFinding[],
   form: ScanFormResponse[],
   definitions: ScanTypeItems | undefined,
+  /** Passed in rather than translated here: this is a pure shaping function. */
+  findingsGroupLabel: string,
 ): Row[] {
   const itemByKey = new Map((definitions?.items ?? []).map((item) => [item.key, item]));
 
   const findingRows: Row[] = findings.map((finding) => ({
     id: `finding-${finding.id}`,
-    group: 'Findings',
+    group: findingsGroupLabel,
     label: itemByKey.get(finding.key)?.name ?? finding.key,
     value: finding.value || '—',
   }));

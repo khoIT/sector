@@ -11,6 +11,7 @@ import { initialsFor, realPhotoUrl } from '@/shell/user-initials';
 
 import { ACCEPTED_PHOTO_TYPES, photoRejectionReason } from './account-form-model';
 import { FormNotice } from './account-form-parts';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Upload or clear the account photo.
@@ -22,6 +23,7 @@ import { FormNotice } from './account-form-parts';
  * it back to initials rather than back to the silhouette.
  */
 export function ProfilePhoto() {
+  const { t } = useTranslation();
   const auth = useAuth();
   const upload = useUploadAccountPhotoMutation();
   const remove = useRemoveAccountPhotoMutation();
@@ -99,7 +101,11 @@ export function ProfilePhoto() {
             disabled={busy}
             onClick={() => inputRef.current?.click()}
           >
-            {upload.isPending ? 'Uploading…' : photo ? 'Replace photo' : 'Upload photo'}
+            {upload.isPending
+              ? t('account.photo.uploading')
+              : photo
+                ? t('account.photo.replace')
+                : t('account.photo.upload')}
           </Button>
 
           {photo ? (
@@ -110,7 +116,7 @@ export function ProfilePhoto() {
               disabled={busy}
               onClick={() => void clear()}
             >
-              {remove.isPending ? 'Removing…' : 'Remove'}
+              {remove.isPending ? t('account.photo.removing') : t('account.photo.remove')}
             </Button>
           ) : null}
 
@@ -119,7 +125,7 @@ export function ProfilePhoto() {
             type="file"
             accept={ACCEPTED_PHOTO_TYPES}
             className="sr-only"
-            aria-label="Choose a profile photo"
+            aria-label={t('account.photo.choose')}
             onChange={(event) => void choose(event)}
           />
         </div>

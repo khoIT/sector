@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, StatusPill } from '@sector/ui
 import { formatDateTime } from '@/lib/format';
 
 import { ReviewMarkdownBody } from './review-markdown-body';
+import { useTranslation } from 'react-i18next';
 
 type ReviewSubject = {
   competencyMeasure?: CompetencyMeasure | null;
@@ -39,6 +40,7 @@ export function ScanReviewSummary({
   reviewedAt,
   title = 'Review',
 }: ScanReviewSummaryProps) {
+  const { t } = useTranslation();
   if (!review) {
     return (
       <Card>
@@ -46,7 +48,7 @@ export function ScanReviewSummary({
           <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-body text-ink-dim">This scan has not been reviewed yet.</p>
+          <p className="text-body text-ink-dim">{t('scanDetail.summary.notReviewed')}</p>
         </CardContent>
       </Card>
     );
@@ -62,13 +64,19 @@ export function ScanReviewSummary({
           {measure === 'achieved' || measure === 'not_achieved' ? (
             <StatusPill
               tone={measure === 'achieved' ? 'ok' : 'warn'}
-              label={measure === 'achieved' ? 'Achieved' : 'Not achieved'}
+              label={
+                measure === 'achieved'
+                  ? t('scanDetail.review.achieved')
+                  : t('scanDetail.review.notAchieved')
+              }
             />
           ) : null}
         </div>
         <p className="text-[12px] text-ink-dim">
-          {typeof review.user === 'string' ? 'Reviewer' : userDisplayName(review.user)} ·{' '}
-          {formatDateTime(reviewedAt ?? review.createdAt)}
+          {typeof review.user === 'string'
+            ? t('scanDetail.summary.reviewer')
+            : userDisplayName(review.user)}{' '}
+          · {formatDateTime(reviewedAt ?? review.createdAt)}
         </p>
       </CardHeader>
 
@@ -81,15 +89,15 @@ export function ScanReviewSummary({
           translatedLanguage={review.translatedLanguage}
         />
 
-        <Block label="Overall feedback" value={review.overAllFeed} required />
-        <Block label="Technical feedback" value={review.technicalFeed} />
-        <Block label="Teaching points" value={review.teachingPoints} />
-        <Block label="Teaching content" value={review.teachingContent} />
+        <Block label={t('scanDetail.summary.overall')} value={review.overAllFeed} required />
+        <Block label={t('scanDetail.summary.technical')} value={review.technicalFeed} />
+        <Block label={t('scanDetail.summary.teaching')} value={review.teachingPoints} />
+        <Block label={t('scanDetail.summary.teachingContent')} value={review.teachingContent} />
 
         {review.customReviews && review.customReviews.length > 0 ? (
           <section>
             <h3 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-ink-dim">
-              Custom questions
+              {t('scanDetail.summary.customQuestions')}
             </h3>
             <dl className="space-y-2">
               {review.customReviews.map((entry, index) => (

@@ -3,6 +3,7 @@ import { isPendingFilePlaceholder } from '@sector/api-client';
 import { StatusPill } from '@sector/ui';
 
 import { formatBytes } from '@/lib/format';
+import { useTranslation } from 'react-i18next';
 
 type ScanFileListProps = {
   files: MediaFile[];
@@ -34,6 +35,7 @@ type FileRow = {
  * are genuinely ambiguous here, as they are server-side.
  */
 export function ScanFileList({ files, fileDetails, expected }: ScanFileListProps) {
+  const { t } = useTranslation();
   const detailByName = new Map(fileDetails.map((detail) => [detail.filename, detail]));
   const seen = new Set<string>();
 
@@ -67,14 +69,14 @@ export function ScanFileList({ files, fileDetails, expected }: ScanFileListProps
   }
 
   if (rows.length === 0) {
-    return <p className="text-body text-ink-dim">No files recorded on this scan.</p>;
+    return <p className="text-body text-ink-dim">{t('scanDetail.files.none')}</p>;
   }
 
   return (
     <div className="space-y-1.5">
       {rows.length !== expected ? (
         <p className="text-[12px] text-warn">
-          {rows.length} of {expected} expected file{expected === 1 ? '' : 's'} recorded.
+          {t('scanDetail.files.recorded', { recorded: rows.length, count: expected })}
         </p>
       ) : null}
 

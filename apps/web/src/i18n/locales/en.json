@@ -114,7 +114,11 @@
     "scanCount_other": "{{formattedCount}} scans",
     "clearSearch": "Clear search",
     "searchSharedScans": "Search shared scans by title or identifier",
-    "filtersDescription": "Narrow this list. Filters run on the server."
+    "filtersDescription": "Narrow this list. Filters run on the server.",
+    "sortBy": "Sort by",
+    "sortNone": "Choose a column",
+    "sortAscending": "Sort ascending",
+    "sortDescending": "Sort descending"
   },
   "pagination": {
     "rows": "Rows",
@@ -146,6 +150,52 @@
       "scopeNote": "This covers assignment reminders only. Account, password and scan review email are not affected.",
       "loadError": "Your reminder setting could not be loaded.",
       "saveError": "That setting could not be saved."
+    },
+    "identity": {
+      "title": "Your account",
+      "description": "The name and picture other people see beside your scans.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "username": "Username",
+      "role": "Role",
+      "saveError": "Your name could not be saved.",
+      "saved": "Your name has been saved.",
+      "saving": "Saving…",
+      "save": "Save name"
+    },
+    "photo": {
+      "upload": "Upload photo",
+      "replace": "Replace photo",
+      "uploading": "Uploading…",
+      "remove": "Remove",
+      "removing": "Removing…",
+      "choose": "Choose a profile photo"
+    },
+    "password": {
+      "title": "Password",
+      "description": "You will need your current password to set a new one.",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password",
+      "error": "Your password could not be changed.",
+      "changed": "Your password has been changed. You are still signed in on this device.",
+      "changing": "Changing…",
+      "change": "Change password"
+    },
+    "createScanFlow": {
+      "cardTitle": "Create scan study",
+      "cardDescription": "How the create-scan page is laid out for you. Both layouts collect the same things and share the same draft.",
+      "legend": "Create scan study layout",
+      "note": "Applies the next time you open Create scan study. Saved in this browser only — like your theme and language, it will not follow you to another device.",
+      "study": {
+        "title": "One working surface",
+        "description": "Files, exam type, findings, note and groups on a single page, in any order, with a bar showing what is still missing. A separate screen shows what is about to be sent."
+      },
+      "classic": {
+        "title": "Step by step",
+        "description": "The four-step wizard: files, then interpretation, then review and routing. One thing at a time, with Back and Next."
+      }
     }
   },
   "logout": {
@@ -626,19 +676,18 @@
         "title_other": "{{count}} expired enrolments",
         "description": "Access to these has ended; renewing an assignment is handled by your group leader or administrator.",
         "badge": "Expired"
-      }
+      },
+      "layout": {
+        "grid": "Grid view",
+        "list": "List view"
+      },
+      "counts": "{{lessons}} modules · {{topics}} topics · {{quizzes}} quizzes",
+      "expiresOn": "Expires {{date}}",
+      "lastActive": "Last opened {{date}}"
     },
     "outline": {
       "title": "Course outline",
       "backToCourses": "My Courses",
-      "progress": "{{completed}}/{{total}} completed ({{percent}}%)",
-      "remaining": "{{duration}} left to watch",
-      "resume": {
-        "start": "Start: {{title}}",
-        "resume": "Resume: {{title}}",
-        "retry": "Retry: {{title}}",
-        "review": "Review: {{title}}"
-      },
       "completedBanner": "You have completed this course.",
       "empty": {
         "title": "This course has no content yet"
@@ -667,7 +716,6 @@
     },
     "landing": {
       "title": "About this course",
-      "viewOutline": "View course outline",
       "totalTime": "{{duration}} of video",
       "itemCount_one": "{{count}} item",
       "itemCount_other": "{{count}} items",
@@ -774,7 +822,8 @@
         "resumeError": "Your saved progress could not be loaded. Starting fresh."
       },
       "contents": {
-        "title": "Contents"
+        "title": "Contents",
+        "open": "Contents {{index}}/{{total}}"
       },
       "completionNote": "Topics complete automatically at {{percent}}% watched.",
       "questionCount_one": "{{count}} q",
@@ -841,7 +890,254 @@
     "creditCount_one": "{{count}} credit",
     "creditCount_other": "{{count}} credits",
     "creditWillBeSpent": "One credit from {{label}} will be spent on submit",
-    "creditSpentOnSubmit": "The credit is only spent once the study is submitted. If the request fails you will be told, and the study is saved either way."
+    "creditSpentOnSubmit": "The credit is only spent once the study is submitted. If the request fails you will be told, and the study is saved either way.",
+    "routingSummary": {
+      "title": "Where this goes",
+      "groupsDefault": "Your usual groups",
+      "groupsNone": "No groups — only you and any expert reviewer",
+      "groupsCount_one": "{{count}} group",
+      "groupsCount_other": "{{count}} groups",
+      "expertNone": "No expert review requested",
+      "expertRequested": "Expert review from {{pool}}"
+    },
+    "readiness": {
+      "files": "Files",
+      "findings": "Findings",
+      "exam": "Exam",
+      "note": "Note"
+    },
+    "clinicalNote": {
+      "title": "Clinical note",
+      "blurb": "Context a reviewer needs: presentation, the question the scan was answering, anything the findings list cannot hold.",
+      "noteLabel": "Note",
+      "notePlaceholder": "e.g. 62M with flank pain, ruling out AAA. Limited windows due to bowel gas.",
+      "patientIdLabel": "External patient ID",
+      "patientIdHint": "Optional. Your own record number, up to 100 characters.",
+      "scanIdLabel": "Scan identifier",
+      "scanIdHint": "Optional. Shown back on the study and included in your organization’s export."
+    },
+    "commit": {
+      "stillNeeded": "Still needed:",
+      "ready": "Ready to submit.",
+      "reviewSubmit": "Review & submit"
+    },
+    "discard": {
+      "title": "Discard this draft?",
+      "nothingLost": "Nothing has been entered yet, so nothing is lost.",
+      "holds": "This cannot be undone. The draft holds:",
+      "keep": "Keep the draft",
+      "confirm": "Discard it"
+    },
+    "draftIndicator": {
+      "saved": "Draft saved — {{stored}} of {{total}} files in storage",
+      "transferring": "{{count}} still transferring",
+      "detached": "{{count}} need re-selecting"
+    },
+    "drop": {
+      "title": "Drop images or clips here",
+      "blurb": "Each file is checked and starts uploading straight away, while you fill in the rest of the study. JPEG, PNG, GIF, WebP, BMP, SVG, MP4, MOV, WebM, AVI and MKV.",
+      "chooseLabel": "Choose scan files",
+      "browse": "Browse files"
+    },
+    "findingRow": {
+      "required": "required"
+    },
+    "findings": {
+      "title": "Findings",
+      "blurb": "What the study shows. Every option the scan type defines is offered — leave a row untouched if it was not assessed.",
+      "clearDefaults": "Clear defaults",
+      "noPathology": "No pathology",
+      "loadError": "This scan type’s findings form could not be loaded",
+      "retry": "Try again",
+      "requestFailed": "The request failed.",
+      "loadErrorDetail": "You can still submit the study with a note instead, or retry.",
+      "none": "This scan type has no structured findings. Record what you saw in the clinical note below."
+    },
+    "groups": {
+      "title": "Share with groups",
+      "blurb": "Reviewers in these groups will see the study. This is set when the study is created and cannot be changed later.",
+      "loadError": "Your groups could not be loaded",
+      "retry": "Try again",
+      "requestFailed": "The request failed.",
+      "loadErrorDetail": "You can submit without a group and request an expert review instead.",
+      "noneTitle": "You are not in any groups yet",
+      "noneDetail": "Nobody will be asked to review this study through a group. You can still request an expert review below.",
+      "in": "in",
+      "parentGroup": "A parent group — selecting it shares with everyone below it.",
+      "widerGroup": "wider group"
+    },
+    "files": {
+      "collapsedSummary_one": "{{count}} file in storage",
+      "collapsedSummary_other": "{{count}} files in storage",
+      "title": "Files",
+      "blurb": "Uploading starts as soon as a file passes its check. You can keep working, and closing this tab will not lose anything already in storage.",
+      "collapse": "Collapse",
+      "notAdded_one": "{{count}} file was not added",
+      "notAdded_other": "{{count}} files were not added",
+      "dismiss": "Dismiss",
+      "nudgeTitle": "Most complete studies have at least three files",
+      "nudgeBody": "This study has {{count}} so far. Add the remaining views now if you have them — files can also be added to the study later, but reviewers see it as soon as it is submitted.",
+      "detachedTitle": "Some files from your saved draft need choosing again",
+      "detachedBody": "{{count}} of the files in this draft had not finished uploading when the page was last closed, and the browser does not keep file contents. Pick each one again below, or remove it from the study.",
+      "failedTitle_one": "{{count}} file failed to upload",
+      "failedTitle_other": "{{count}} files failed to upload",
+      "retryAll": "Retry all",
+      "failedBody": "Each one says why below. Retrying re-uploads only that file; everything already in storage stays put.",
+      "storedOf": "{{stored}} of {{tracked}} in storage",
+      "cancelAll": "Cancel all transfers"
+    },
+    "fileRow": {
+      "structureOnlyTitle": "The file is a valid, complete container, but this browser cannot decode its codec. It uploads normally and the server can read it.",
+      "structureOnly": "structure only",
+      "cancelUpload": "Cancel upload of {{name}}",
+      "cancel": "Cancel",
+      "retry": "Retry",
+      "chooseAgain": "Choose again",
+      "remove": "Remove {{name}}",
+      "progress": "Upload progress for {{name}}",
+      "detachedBody": "This file was in the saved draft but its contents were not kept in the browser. Choose the same file again to finish uploading it, or remove it from the study."
+    },
+    "rail": {
+      "localPlayback": "Playing from this browser — nothing is fetched back from storage. Use",
+      "stepBetween": "to step between files.",
+      "and": "and",
+      "noPreviews": "Previews are played from this browser, so a study picked up after a reload has none. The list below shows where each file actually is."
+    },
+    "setup": {
+      "scanTypeLabel": "Scan type",
+      "scanTypePlaceholder": "Choose a scan type",
+      "scanTypeSearch": "AAA, Echo, Lung…",
+      "scanTypeEmpty": "No scan type matches.",
+      "shareLabel": "Share with",
+      "groupSearch": "Search your groups…",
+      "groupEmpty": "No group matches."
+    },
+    "typePicker": {
+      "loadError": "Scan types could not be loaded",
+      "retry": "Try again",
+      "requestFailed": "The request failed.",
+      "loadErrorDetail": "Your files are still uploading and nothing has been lost.",
+      "findLabel": "Find a scan type",
+      "findPlaceholder": "AAA, Echo, Lung…",
+      "noMatchTitle": "No scan type matches that",
+      "noMatchDetail": "Clear the search to see all scan types."
+    },
+    "switchType": {
+      "title": "Switch to {{type}}?",
+      "clearedOne": "One answer has no equivalent on the new scan type and will be cleared.",
+      "clearedMany": "{{count}} answers have no equivalent on the new scan type and will be cleared.",
+      "clearedFrom": "Cleared from {{type}}",
+      "cleared": "Cleared",
+      "carriedOver": "Carried over to {{type}}",
+      "keep": "Keep {{type}}",
+      "keepCurrent": "Keep the current type",
+      "confirm": "Switch to {{type}}"
+    },
+    "submitConfirm": {
+      "title": "Submit this study?",
+      "blurb": "Your files are already in storage. Submitting records these details against them — it does not start another upload.",
+      "error": "The study could not be created",
+      "keepEditing": "Keep editing",
+      "submitting": "Submitting…",
+      "submit": "Submit study"
+    },
+    "credits": {
+      "title": "Buy expert review credits",
+      "blurb": "One credit pays for one expert review. Credits can be held by you or by a group.",
+      "goTo": "Credits go to",
+      "ownBalance": "My own balance",
+      "bundle": "Bundle",
+      "error": "Checkout could not be started",
+      "noResponse": "The payment service did not respond.",
+      "errorDetail": "Nothing was charged. Your study is saved — try again, or submit it without an expert review.",
+      "cancel": "Cancel",
+      "opening": "Opening checkout…",
+      "continue": "Continue to payment"
+    },
+    "studySurface": {
+      "pickTypeTitle": "Pick a scan type to see its findings",
+      "pickTypeBody": "Findings differ per scan type, so the form appears once a type is chosen. Your files keep uploading in the background meanwhile.",
+      "missingRequired_one": "{{count}} required finding is still blank",
+      "missingRequired_other": "{{count}} required findings are still blank",
+      "missingRequiredBody": "{{names}}. You can submit without them, but a reviewer will not know whether they were normal or not assessed."
+    },
+    "summary": {
+      "title": "What will be sent",
+      "blurb": "Everything below is recorded against the files already in storage. Group routing cannot be changed afterwards.",
+      "edit": "Edit study",
+      "study": "The study",
+      "examType": "Exam type",
+      "files": "Files",
+      "filesValue": "{{stored}} of {{tracked}} in storage · {{size}}",
+      "scanIdentifier": "Scan identifier",
+      "patientId": "External patient ID",
+      "findings": "Findings",
+      "clinicalNote": "Clinical note",
+      "noNote": "No note. A reviewer will see the findings and the images only.",
+      "audience": "Who sees this study",
+      "noGroups": "No groups. No group reviewer will see this study, and a group cannot be added to it afterwards — the API has no route for that. You can still share it with named people from the study itself.",
+      "widerThanCohort": "wider than your cohort",
+      "expertReview": "Expert review",
+      "notRequested": "Not requested",
+      "noFindings": "No findings recorded."
+    },
+    "page": {
+      "title": "Create scan study",
+      "blurb": "Files upload while you work. Submitting records the details against them.",
+      "discardTitle": "Discard this draft and start again",
+      "discard": "Discard draft",
+      "myScans": "My scans",
+      "restoredTitle": "Picked up where you left off",
+      "startFresh": "Start fresh",
+      "restoredBody": "A saved draft was found in this browser. Files that finished uploading are already in storage, and anything that was still transferring picks up where it stopped. Only a file this browser no longer holds has to be chosen again — those are listed as such."
+    },
+    "classic": {
+      "addFile": "Add at least one file to continue.",
+      "interpretation": "Interpretation",
+      "files": "Files",
+      "chooseType": "Choose a scan type to continue.",
+      "reviewRouting": "Review routing"
+    },
+    "interpretation": {
+      "scanTypePrefix": "Scan type: ",
+      "change": "Change",
+      "scanTypeTitle": "Scan type",
+      "scanTypeBlurb": "Required, and fixed once the study is submitted — the API has no way to change a scan’s type afterwards."
+    },
+    "routing": {
+      "submitTitle": "Submit",
+      "submitBlurb": "Your files are already in storage. Submitting records the study’s details against them — it does not start another upload.",
+      "stillMoving_one": "{{count}} file has not finished uploading",
+      "stillMoving_other": "{{count}} files have not finished uploading",
+      "stillMovingBody": "Submitting now creates the study with the {{stored}} already in storage and leaves the rest out. Wait for them to finish, or go back and deal with the ones that failed.",
+      "nothingStored": "Nothing is in storage yet",
+      "nothingStoredBody": "A study cannot be created without at least one uploaded file — the API rejects a file total of zero.",
+      "noExamType": "No exam type chosen",
+      "chooseExamType": "Choose exam type",
+      "noExamTypeBody": "A study needs an exam type: it decides which findings a reviewer is asked, and it cannot be changed once the study exists.",
+      "notSubmitted": "The study was not submitted",
+      "tryAgain": "Try again",
+      "notSubmittedBody": "Your uploaded files are still in storage and this draft is saved, so nothing has to be re-done.",
+      "recording": "Recording the study…",
+      "submit": "Submit study"
+    },
+    "submitted": {
+      "title": "Study submitted",
+      "blurb": "The study is in your vault. Processing and de-identification finish on the server a few seconds from now; the list updates itself.",
+      "status": "Submitted",
+      "filesAttached": "Files attached",
+      "filesValue": "{{confirmed}} of {{total}}",
+      "expertReview": "Expert review",
+      "requested": "Requested",
+      "requestFailed": "Request failed",
+      "notRequested": "Not requested",
+      "openStudy": "Open the study",
+      "expertFailedTitle": "The expert review request did not go through",
+      "requestRejected": "The request was rejected.",
+      "expertFailedBody": "The study itself is saved and routed to your groups, and no credit was spent.",
+      "createAnother": "Create another study",
+      "goToMyScans": "Go to my scans"
+    }
   },
   "scanDetail": {
     "resetUploadDialogTitle": "Reset “{{title}}” for re-upload?",
@@ -859,7 +1155,181 @@
     "markIncomplete": "Mark incomplete",
     "close": "Close",
     "completionTagErrorTitle": "The mark did not save",
-    "completionTagError": "The scan's completeness could not be changed. Nothing was saved — try again."
+    "completionTagError": "The scan's completeness could not be changed. Nothing was saved — try again.",
+    "queueNav": {
+      "previous": "Previous",
+      "next": "Next",
+      "position": "{{position}} of {{total}}",
+      "hint": "Press j for next, k for previous"
+    },
+    "learnerQuestion": {
+      "title": "Learner asked"
+    },
+    "notes": {
+      "dialogTitle": "Comments on {{title}}",
+      "title": "Notes",
+      "none": "No notes on this scan.",
+      "noReadAccess": "Your role cannot read the notes on this scan.",
+      "loadError": "Could not load notes",
+      "empty": "No notes yet.",
+      "addLabel": "Add a note",
+      "addPlaceholder": "Reply to the learner, or record something about this study.",
+      "addError": "Could not add the note.",
+      "adding": "Adding…",
+      "add": "Add note"
+    },
+    "submittedAnswers": {
+      "none": "Nothing was submitted with this scan — no findings and no form answers.",
+      "findingsGroup": "Findings"
+    },
+    "activity": {
+      "title": "Activity log",
+      "show": "Show",
+      "hide": "Hide",
+      "none": "Nothing recorded yet."
+    },
+    "files": {
+      "none": "No files recorded on this scan.",
+      "recorded_one": "{{recorded}} of {{count}} expected file recorded.",
+      "recorded_other": "{{recorded}} of {{count}} expected files recorded."
+    },
+    "media": {
+      "unavailableTitle": "File not available",
+      "unavailableDetail": "This file never finished uploading, so there is nothing to display.",
+      "dicomTitle": "DICOM preview not supported",
+      "dicomDetail": "Sector has no DICOM renderer. Download the file and open it in a DICOM viewer.",
+      "openOriginal": "Open original file",
+      "previousFile": "Previous file",
+      "nextFile": "Next file",
+      "unknownType": "unknown type",
+      "thumbVideo": "VIDEO",
+      "thumbFile": "FILE",
+      "notPreviewable_one": "{{count}} more file cannot be previewed here. The list below names it and its status.",
+      "notPreviewable_other": "{{count}} more files cannot be previewed here. The list below names them and their status.",
+      "filesSection": "Files ({{count}}/{{total}})",
+      "showFile": "Show {{filename}}",
+      "cannotPlay": "This browser cannot play {{format}}",
+      "cannotPreview": "Cannot preview {{format}}",
+      "thisFile": "this file",
+      "thisFileType": "this file type",
+      "downloadableDetail": "The file is stored and can be downloaded, but the browser cannot display it inline.",
+      "noPreviewTitle": "No preview available",
+      "noMediaTitle": "No media on this scan",
+      "notPreviewableList_one": "{{count}} file cannot be previewed here. The file list below names it and its status.",
+      "notPreviewableList_other": "{{count}} files cannot be previewed here. The file list below names each one and its status.",
+      "noUpload": "The upload never produced a file. The file list below shows what was expected."
+    },
+    "context": {
+      "clinicalNote": "Clinical note",
+      "findings": "Findings and interpretation",
+      "identifiers": "Identifiers",
+      "scanIdentifier": "Scan identifier",
+      "externalPatientId": "External patient ID",
+      "scanId": "Scan ID",
+      "submittedBy": "Submitted by",
+      "submitted": "Submitted",
+      "lastUpdated": "Last updated",
+      "reviewed": "Reviewed",
+      "group_one": "Group",
+      "group_other": "Groups",
+      "noGroup": "Not attached to a group.",
+      "tags": "Tags"
+    },
+    "common": {
+      "retry": "Retry",
+      "somethingWentWrong": "Something went wrong."
+    },
+    "review": {
+      "titleExpert": "Expert review",
+      "title": "Review",
+      "competency": "Competency measure",
+      "achieved": "Achieved",
+      "notAchieved": "Not achieved",
+      "competencyMissing": "Choose achieved or not achieved.",
+      "overall": "Overall feedback",
+      "overallMissing": "Overall feedback is required.",
+      "technical": "Technical feedback",
+      "technicalHint": "Probe handling, gain, depth, orientation.",
+      "teaching": "Teaching points",
+      "noteLabel": "Note to the learner (optional)",
+      "noteHint": "Posted to the note thread as well as emailed with the review.",
+      "submitError": "Could not submit the review.",
+      "submitting": "Submitting…",
+      "submit": "Submit review",
+      "draftSaved": "Draft saved {{time}}",
+      "discard": "Discard"
+    },
+    "share": {
+      "title": "Sharing",
+      "recipients_one": "{{count}} recipient",
+      "recipients_other": "{{count}} recipients",
+      "loadError": "Could not load existing shares.",
+      "none": "You have not shared this scan with anyone.",
+      "sharedAt": "Shared {{date}}",
+      "opened": "Opened",
+      "unopened": "Unopened",
+      "revoke": "Revoke access for {{email}}",
+      "revokeError": "Could not revoke access.",
+      "withLabel": "Share with",
+      "withPlaceholder": "name@hospital.org, colleague@clinic.org",
+      "withHint": "Comma- or newline-separated. Recipients need an existing account.",
+      "shareError": "Could not share the scan.",
+      "messageLabel": "Message (optional)",
+      "sharing": "Sharing…",
+      "shareWithCount": "Share with {{count}}",
+      "outcomeShared_one": "Shared with {{count}} recipient.",
+      "outcomeShared_other": "Shared with {{count}} recipients.",
+      "outcomeDuplicate": "Already had access: {{emails}}",
+      "outcomeNotFound": "No Sector account, nothing sent: {{emails}}",
+      "dialogTitle": "Share {{title}}"
+    },
+    "summary": {
+      "notReviewed": "This scan has not been reviewed yet.",
+      "reviewer": "Reviewer",
+      "overall": "Overall feedback",
+      "technical": "Technical feedback",
+      "teaching": "Teaching points",
+      "teachingContent": "Teaching content",
+      "customQuestions": "Custom questions"
+    },
+    "custom": {
+      "title": "Custom questions (optional)",
+      "add": "Add",
+      "question": "Question {{number}}",
+      "remove": "Remove question {{number}}",
+      "questionLabel": "Question",
+      "questionPlaceholder": "e.g. Ejection Fraction",
+      "answerLabel": "Answer"
+    },
+    "markdown": {
+      "title": "AI-assisted review",
+      "languageGroup": "Review language",
+      "original": "Original"
+    },
+    "shared": {
+      "back": "Back to shared scans",
+      "readOnly": "Shared with you · read only",
+      "notShared": "This scan is not shared with you",
+      "loadError": "Could not load this shared scan",
+      "loadErrorDetail": "Something went wrong loading the shared scan.",
+      "goneTitle": "This study is no longer available",
+      "goneDetail": "The person who shared it has since deleted the scan. The share stays in your list so you know it existed, but there is nothing left to open.",
+      "sharedBy": "Shared by",
+      "unknownUser": "Unknown user"
+    },
+    "page": {
+      "back": "Back to {{list}}",
+      "notFound": "Scan not found",
+      "loadError": "Could not load this scan",
+      "loadErrorDetail": "Something went wrong loading the scan."
+    },
+    "viewLabel": {
+      "my": "my scans",
+      "pending": "unreviewed group scans",
+      "reviewed": "reviewed group scans",
+      "expert": "unreviewed expert scans",
+      "expert-reviewed": "reviewed expert scans"
+    }
   },
   "home": {
     "greeting": "Welcome back, {{name}}",
@@ -970,6 +1440,17 @@
     "signedOut": {
       "title": "Sign in to use Sage AI",
       "description": "Sage AI needs a signed-in account to open."
+    }
+  },
+  "command": {
+    "title": "Command menu",
+    "open": "Search",
+    "placeholder": "Search pages, scans and courses",
+    "empty": "Nothing matches",
+    "group": {
+      "nav": "Go to",
+      "scan": "Scans",
+      "course": "Courses"
     }
   }
 }

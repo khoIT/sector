@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 
 import { AccountField, FormNotice } from './account-form-parts';
 import { validatePassword, type FieldErrors, type PasswordField } from './account-form-model';
+import { useTranslation } from 'react-i18next';
 
 const EMPTY = { oldPassword: '', newPassword: '', confirmNewPassword: '' };
 
@@ -20,6 +21,7 @@ export function PasswordForm() {
   const [values, setValues] = useState(EMPTY);
   const [errors, setErrors] = useState<FieldErrors<PasswordField>>({});
   const [changed, setChanged] = useState(false);
+  const { t } = useTranslation();
 
   function set(field: PasswordField, value: string) {
     setValues((current) => ({ ...current, [field]: value }));
@@ -49,7 +51,7 @@ export function PasswordForm() {
   return (
     <form onSubmit={(event) => void submit(event)} className="flex flex-col gap-4">
       <AccountField
-        label="Current password"
+        label={t('account.password.current')}
         htmlFor="account-old-password"
         error={errors.oldPassword}
       >
@@ -64,7 +66,7 @@ export function PasswordForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <AccountField
-          label="New password"
+          label={t('account.password.new')}
           htmlFor="account-new-password"
           error={errors.newPassword}
         >
@@ -78,7 +80,7 @@ export function PasswordForm() {
         </AccountField>
 
         <AccountField
-          label="Confirm new password"
+          label={t('account.password.confirm')}
           htmlFor="account-confirm-password"
           error={errors.confirmNewPassword}
         >
@@ -94,19 +96,15 @@ export function PasswordForm() {
 
       {update.isError ? (
         <FormNotice tone="crit">
-          {isApiError(update.error) ? update.error.message : 'Your password could not be changed.'}
+          {isApiError(update.error) ? update.error.message : t('account.password.error')}
         </FormNotice>
       ) : null}
 
-      {changed ? (
-        <FormNotice tone="ok">
-          Your password has been changed. You are still signed in on this device.
-        </FormNotice>
-      ) : null}
+      {changed ? <FormNotice tone="ok">{t('account.password.changed')}</FormNotice> : null}
 
       <div className="flex justify-end">
         <Button type="submit" size="sm" disabled={update.isPending}>
-          {update.isPending ? 'Changing…' : 'Change password'}
+          {update.isPending ? t('account.password.changing') : t('account.password.change')}
         </Button>
       </div>
     </form>

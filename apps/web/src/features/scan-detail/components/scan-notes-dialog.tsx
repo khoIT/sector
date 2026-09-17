@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogTitle } from '@sector/ui';
 
 import { ScanNotesThread } from './scan-notes-thread';
+import { useTranslation } from 'react-i18next';
 
 export type ScanNotesDialogProps = {
   scanId: string;
@@ -27,10 +28,13 @@ export function ScanNotesDialog({
   open,
   onOpenChange,
 }: ScanNotesDialogProps) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[min(36rem,calc(100vw-2rem))]">
-        <DialogTitle className="sr-only">Comments on {scanTitle}</DialogTitle>
+        <DialogTitle className="sr-only">
+          {t('scanDetail.notes.dialogTitle', { title: scanTitle })}
+        </DialogTitle>
         <ScanNotesThread scanId={scanId} canRead={canRead} canAdd={canAdd} />
       </DialogContent>
     </Dialog>

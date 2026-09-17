@@ -46,7 +46,7 @@ export function QuestionBankDetailPage() {
 
   if (detail.isPending) {
     return (
-      <div className="flex max-w-[42rem] flex-col gap-3">
+      <div className="flex flex-col gap-3">
         <Skeleton className="h-6 w-2/3" />
         <Skeleton className="h-24 w-full" />
         <Skeleton className="h-9 w-32" />
@@ -171,7 +171,7 @@ function QuestionBankRunnerSection({ bank, slug }: { bank: QuestionBankDetail; s
           action={<Button onClick={() => void runner.finish()}>{t('quiz.retry')}</Button>}
         />
       ) : (
-        <div className="flex max-w-[42rem] flex-col gap-4">
+        <div className="flex flex-col gap-4">
           <h2 className="text-[16px] font-semibold text-ink">{bank.title}</h2>
           {bank.content ? <RichText html={bank.content} /> : null}
 

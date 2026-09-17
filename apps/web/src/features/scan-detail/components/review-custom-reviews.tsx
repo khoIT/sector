@@ -2,6 +2,7 @@ import { Button, Textarea } from '@sector/ui';
 import { Plus, X } from 'lucide-react';
 
 import { QuestionSuggestInput } from './question-suggest-input';
+import { useTranslation } from 'react-i18next';
 
 export type CustomReviewEntry = { question: string; answer: string };
 
@@ -26,6 +27,7 @@ export function ReviewCustomReviews({
   suggestions,
   disabled,
 }: ReviewCustomReviewsProps) {
+  const { t } = useTranslation();
   function update(index: number, field: keyof CustomReviewEntry, value: string) {
     onChange(entries.map((entry, i) => (i === index ? { ...entry, [field]: value } : entry)));
   }
@@ -33,7 +35,7 @@ export function ReviewCustomReviews({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[12px] font-medium text-ink-dim">Custom questions (optional)</p>
+        <p className="text-[12px] font-medium text-ink-dim">{t('scanDetail.custom.title')}</p>
         <Button
           variant="secondary"
           size="sm"
@@ -41,7 +43,7 @@ export function ReviewCustomReviews({
           onClick={() => onChange([...entries, { question: '', answer: '' }])}
         >
           <Plus className="h-4 w-4" aria-hidden />
-          Add
+          {t('scanDetail.custom.add')}
         </Button>
       </div>
 
@@ -56,12 +58,12 @@ export function ReviewCustomReviews({
             >
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-medium uppercase tracking-wide text-ink-dim">
-                  Question {index + 1}
+                  {t('scanDetail.custom.question', { number: index + 1 })}
                 </span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  aria-label={`Remove question ${index + 1}`}
+                  aria-label={t('scanDetail.custom.remove', { number: index + 1 })}
                   disabled={disabled}
                   onClick={() => onChange(entries.filter((_, i) => i !== index))}
                 >
@@ -70,15 +72,15 @@ export function ReviewCustomReviews({
               </div>
 
               <QuestionSuggestInput
-                label="Question"
-                placeholder="e.g. Ejection Fraction"
+                label={t('scanDetail.custom.questionLabel')}
+                placeholder={t('scanDetail.custom.questionPlaceholder')}
                 value={entry.question}
                 suggestions={suggestions}
                 onChange={(value) => update(index, 'question', value)}
               />
 
               <Textarea
-                label="Answer"
+                label={t('scanDetail.custom.answerLabel')}
                 rows={2}
                 value={entry.answer}
                 disabled={disabled}

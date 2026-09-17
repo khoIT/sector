@@ -37,7 +37,7 @@ export function QuizResults({
   const byId = new Map(questions.map((question) => [question.id, question] as const));
 
   return (
-    <div className="flex max-w-[42rem] flex-col gap-5">
+    <div className="mx-auto flex w-full max-w-[42rem] flex-col gap-5">
       <h3 className="text-[15px] font-semibold text-ink">{t('quiz.resultsTitle')}</h3>
 
       <Card>

@@ -1,6 +1,7 @@
 import { MessageCircleQuestion } from 'lucide-react';
 
 import { formatDateTime } from '@/lib/format';
+import { useTranslation } from 'react-i18next';
 
 type LearnerQuestionCalloutProps = {
   note: string;
@@ -18,11 +19,12 @@ type LearnerQuestionCalloutProps = {
  * directly beneath it.
  */
 export function LearnerQuestionCallout({ note, author, createdAt }: LearnerQuestionCalloutProps) {
+  const { t } = useTranslation();
   return (
     <div className="rounded-token border border-accent-ink/25 bg-accent-soft p-3">
       <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-accent-ink">
         <MessageCircleQuestion className="h-4 w-4" aria-hidden />
-        Learner asked
+        {t('scanDetail.learnerQuestion.title')}
       </p>
       <p className="mt-1.5 whitespace-pre-wrap break-words text-body text-ink">{note}</p>
       <p className="mt-1.5 text-[11px] text-ink-dim">

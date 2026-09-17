@@ -55,7 +55,7 @@ export function QuizRunner({
   const canFinish = answered > 0;
 
   return (
-    <div className="flex max-w-[42rem] flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-[42rem] flex-col gap-4">
       <div className="flex items-center justify-between gap-2 text-body text-ink-dim">
         <span>
           {t('quiz.questionOf', { current: state.currentIndex + 1, total: state.questions.length })}

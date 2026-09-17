@@ -20,6 +20,7 @@ import { Share2, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { formatDateTime } from '@/lib/format';
+import { useTranslation } from 'react-i18next';
 
 type ScanSharePanelProps = {
   scanId: string;
@@ -36,6 +37,7 @@ type ScanSharePanelProps = {
  * back to the sharer here instead of being swallowed.
  */
 export function ScanSharePanel({ scanId, currentUserId }: ScanSharePanelProps) {
+  const { t } = useTranslation();
   const [emailsText, setEmailsText] = useState('');
   const [remarks, setRemarks] = useState('');
   const [result, setResult] = useState<CreateScanShareResult | null>(null);
@@ -71,9 +73,11 @@ export function ScanSharePanel({ scanId, currentUserId }: ScanSharePanelProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sharing</CardTitle>
+        <CardTitle>{t('scanDetail.share.title')}</CardTitle>
         {shares.length > 0 ? (
-          <span className="text-[12px] text-ink-dim sv-num">{shares.length} recipient(s)</span>
+          <span className="text-[12px] text-ink-dim sv-num">
+            {t('scanDetail.share.recipients', { count: shares.length })}
+          </span>
         ) : null}
       </CardHeader>
 
@@ -84,10 +88,10 @@ export function ScanSharePanel({ scanId, currentUserId }: ScanSharePanelProps) {
           <p className="text-[12px] text-crit">
             {isApiError(sharesQuery.error)
               ? sharesQuery.error.message
-              : 'Could not load existing shares.'}
+              : t('scanDetail.share.loadError')}
           </p>
         ) : shares.length === 0 ? (
-          <p className="text-body text-ink-dim">You have not shared this scan with anyone.</p>
+          <p className="text-body text-ink-dim">{t('scanDetail.share.none')}</p>
         ) : (
           <ul className="divide-y divide-line">
             {shares.map((share) => (
@@ -97,7 +101,7 @@ export function ScanSharePanel({ scanId, currentUserId }: ScanSharePanelProps) {
                     {share.email}
                   </p>
                   <p className="text-[11px] text-ink-dim">
-                    Shared {formatDateTime(share.createdAt)}
+                    {t('scanDetail.share.sharedAt', { date: formatDateTime(share.createdAt) })}
                   </p>
                   {share.remarks ? (
                     <p className="mt-0.5 break-words text-[11px] text-ink-dim">“{share.remarks}”</p>
@@ -106,12 +110,16 @@ export function ScanSharePanel({ scanId, currentUserId }: ScanSharePanelProps) {
                 <div className="flex shrink-0 items-center gap-1.5">
                   <StatusPill
                     tone={share.status === 'opened' ? 'ok' : 'neutral'}
-                    label={share.status === 'opened' ? 'Opened' : 'Unopened'}
+                    label={
+                      share.status === 'opened'
+                        ? t('scanDetail.share.opened')
+                        : t('scanDetail.share.unopened')
+                    }
                   />
                   <Button
                     variant="ghost"
                     size="icon"
-                    aria-label={`Revoke access for ${share.email}`}
+                    aria-label={t('scanDetail.share.revoke', { email: share.email })}
                     disabled={deleteShare.isPending}
                     // The failure is rendered from deleteShare.error below;
                     // the catch only keeps the rejection from going unhandled.
@@ -129,15 +137,17 @@ export function ScanSharePanel({ scanId, currentUserId }: ScanSharePanelProps) {
 
         {deleteShare.isError ? (
           <p className="text-[12px] text-crit">
-            {isApiError(deleteShare.error) ? deleteShare.error.message : 'Could not revoke access.'}
+            {isApiError(deleteShare.error)
+              ? deleteShare.error.message
+              : t('scanDetail.share.revokeError')}
           </p>
         ) : null}
 
         <div className="space-y-2 border-t border-line pt-3">
           <Input
-            label="Share with"
-            placeholder="name@hospital.org, colleague@clinic.org"
-            hint="Comma- or newline-separated. Recipients need an existing account."
+            label={t('scanDetail.share.withLabel')}
+            placeholder={t('scanDetail.share.withPlaceholder')}
+            hint={t('scanDetail.share.withHint')}
             value={emailsText}
             disabled={createShare.isPending}
             onChange={(event) => setEmailsText(event.target.value)}
@@ -145,12 +155,12 @@ export function ScanSharePanel({ scanId, currentUserId }: ScanSharePanelProps) {
               createShare.isError
                 ? isApiError(createShare.error)
                   ? createShare.error.message
-                  : 'Could not share the scan.'
+                  : t('scanDetail.share.shareError')
                 : undefined
             }
           />
           <Textarea
-            label="Message (optional)"
+            label={t('scanDetail.share.messageLabel')}
             rows={2}
             value={remarks}
             disabled={createShare.isPending}
@@ -163,7 +173,9 @@ export function ScanSharePanel({ scanId, currentUserId }: ScanSharePanelProps) {
               onClick={() => void submit()}
             >
               <Share2 className="h-4 w-4" aria-hidden />
-              {createShare.isPending ? 'Sharing…' : `Share with ${emails.length || 0}`}
+              {createShare.isPending
+                ? t('scanDetail.share.sharing')
+                : t('scanDetail.share.shareWithCount', { count: emails.length || 0 })}
             </Button>
           </div>
 
@@ -175,17 +187,23 @@ export function ScanSharePanel({ scanId, currentUserId }: ScanSharePanelProps) {
 }
 
 function ShareOutcome({ result }: { result: CreateScanShareResult }) {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-1 rounded-token border border-line bg-surface-2 p-2 text-[12px]">
       {result.sharedScans.length > 0 ? (
-        <p className="text-ok">Shared with {result.sharedScans.length} recipient(s).</p>
+        <p className="text-ok">
+          {t('scanDetail.share.outcomeShared', { count: result.sharedScans.length })}
+        </p>
       ) : null}
       {result.duplicateEmails.length > 0 ? (
-        <p className="text-warn">Already had access: {result.duplicateEmails.join(', ')}</p>
+        <p className="text-warn">
+          {t('scanDetail.share.outcomeDuplicate', { emails: result.duplicateEmails.join(', ') })}
+        </p>
       ) : null}
       {result.notFoundEmails.length > 0 ? (
         <p className="text-warn">
-          No Sector account, nothing sent: {result.notFoundEmails.join(', ')}
+          {t('scanDetail.share.outcomeNotFound', { emails: result.notFoundEmails.join(', ') })}
         </p>
       ) : null}
     </div>

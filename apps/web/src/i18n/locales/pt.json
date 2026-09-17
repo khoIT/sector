@@ -62,7 +62,11 @@
   },
   "toolbar": {
     "filters": "Filtros",
-    "columns": "Colunas"
+    "columns": "Colunas",
+    "sortBy": "Ordenar por",
+    "sortNone": "Escolha uma coluna",
+    "sortAscending": "Ordenar de forma crescente",
+    "sortDescending": "Ordenar de forma decrescente"
   },
   "pagination": {
     "rows": "filas",
@@ -86,6 +90,52 @@
       "scopeNote": "Abrange apenas lembretes de tarefas. Os e-mails de conta, palavra-passe e revisão de exames não são afetados.",
       "loadError": "Não foi possível carregar a sua preferência de lembretes.",
       "saveError": "Não foi possível guardar essa definição."
+    },
+    "identity": {
+      "title": "A sua conta",
+      "description": "O nome e a foto que as outras pessoas veem junto aos seus exames.",
+      "firstName": "Nome",
+      "lastName": "Apelido",
+      "email": "E-mail",
+      "username": "Nome de utilizador",
+      "role": "Função",
+      "saveError": "Não foi possível guardar o seu nome.",
+      "saved": "O seu nome foi guardado.",
+      "saving": "A guardar…",
+      "save": "Guardar nome"
+    },
+    "photo": {
+      "upload": "Carregar foto",
+      "replace": "Substituir foto",
+      "uploading": "A carregar…",
+      "remove": "Remover",
+      "removing": "A remover…",
+      "choose": "Escolher uma foto de perfil"
+    },
+    "password": {
+      "title": "Palavra-passe",
+      "description": "Precisa da palavra-passe atual para definir uma nova.",
+      "current": "Palavra-passe atual",
+      "new": "Nova palavra-passe",
+      "confirm": "Confirmar a nova palavra-passe",
+      "error": "Não foi possível alterar a sua palavra-passe.",
+      "changed": "A sua palavra-passe foi alterada. Continua com sessão iniciada neste dispositivo.",
+      "changing": "A alterar…",
+      "change": "Alterar palavra-passe"
+    },
+    "createScanFlow": {
+      "cardTitle": "Criar exame",
+      "cardDescription": "Como a página de criação de exame está disposta para si. Ambos os esquemas recolhem o mesmo e partilham o mesmo rascunho.",
+      "legend": "Esquema da criação de exame",
+      "note": "Aplica-se da próxima vez que abrir «Criar exame». Guardado apenas neste navegador — tal como o tema e o idioma, não o acompanha para outro dispositivo.",
+      "study": {
+        "title": "Uma única superfície de trabalho",
+        "description": "Ficheiros, tipo de exame, achados, nota e grupos numa só página, pela ordem que quiser, com uma barra a mostrar o que falta. Um ecrã separado mostra o que vai ser enviado."
+      },
+      "classic": {
+        "title": "Passo a passo",
+        "description": "O assistente de quatro passos: ficheiros, depois interpretação, depois revisão e encaminhamento. Uma coisa de cada vez, com Anterior e Seguinte."
+      }
     }
   },
   "groupsDialog": {
@@ -550,19 +600,18 @@
         "title_other": "{{count}} matrículas expiradas",
         "description": "O acesso a estes terminou; renovar uma atribuição é feito pelo seu líder de grupo ou administrador.",
         "badge": "Expirado"
-      }
+      },
+      "layout": {
+        "grid": "Visualização em grade",
+        "list": "Visualização em lista"
+      },
+      "counts": "{{lessons}} módulos · {{topics}} tópicos · {{quizzes}} questionários",
+      "expiresOn": "Expira em {{date}}",
+      "lastActive": "Aberto pela última vez em {{date}}"
     },
     "outline": {
       "title": "Estrutura do curso",
       "backToCourses": "Meus cursos",
-      "progress": "{{completed}}/{{total}} concluídos ({{percent}}%)",
-      "remaining": "Faltam {{duration}} para assistir",
-      "resume": {
-        "start": "Começar: {{title}}",
-        "resume": "Continuar: {{title}}",
-        "retry": "Tentar novamente: {{title}}",
-        "review": "Revisar: {{title}}"
-      },
       "completedBanner": "Você concluiu este curso.",
       "empty": {
         "title": "Este curso ainda não tem conteúdo"
@@ -591,7 +640,6 @@
     },
     "landing": {
       "title": "Sobre este curso",
-      "viewOutline": "Ver o sumário do curso",
       "totalTime": "{{duration}} de vídeo",
       "itemCount_one": "{{count}} item",
       "itemCount_other": "{{count}} itens",
@@ -698,7 +746,8 @@
         "resumeError": "Seu progresso salvo não pôde ser carregado. Começando do zero."
       },
       "contents": {
-        "title": "Conteúdo"
+        "title": "Conteúdo",
+        "open": "Conteúdo {{index}}/{{total}}"
       },
       "completionNote": "Os tópicos são concluídos automaticamente com {{percent}}% assistido.",
       "questionCount_one": "{{count}} p",
@@ -765,7 +814,254 @@
     "creditCount_one": "{{count}} crédito",
     "creditCount_other": "{{count}} créditos",
     "creditWillBeSpent": "Será usado um crédito de {{label}} ao submeter",
-    "creditSpentOnSubmit": "O crédito só é usado quando o estudo é submetido. Se o pedido falhar será informado, e o estudo fica guardado de qualquer forma."
+    "creditSpentOnSubmit": "O crédito só é usado quando o estudo é submetido. Se o pedido falhar será informado, e o estudo fica guardado de qualquer forma.",
+    "routingSummary": {
+      "title": "Para onde vai",
+      "groupsDefault": "Os seus grupos habituais",
+      "groupsNone": "Sem grupos — apenas você e o revisor especialista",
+      "groupsCount_one": "{{count}} grupo",
+      "groupsCount_other": "{{count}} grupos",
+      "expertNone": "Nenhuma revisão especializada solicitada",
+      "expertRequested": "Revisão especializada de {{pool}}"
+    },
+    "readiness": {
+      "files": "Ficheiros",
+      "findings": "Achados",
+      "exam": "Exame",
+      "note": "Nota"
+    },
+    "clinicalNote": {
+      "title": "Nota clínica",
+      "blurb": "O contexto de que um revisor precisa: apresentação, a pergunta a que o exame respondia, tudo o que a lista de achados não consegue conter.",
+      "noteLabel": "Nota",
+      "notePlaceholder": "p. ex. Homem de 62 anos com dor no flanco, a excluir AAA. Janelas limitadas por gás intestinal.",
+      "patientIdLabel": "ID externo do doente",
+      "patientIdHint": "Opcional. O seu próprio número de registo, até 100 caracteres.",
+      "scanIdLabel": "Identificador do exame",
+      "scanIdHint": "Opcional. Mostrado no exame e incluído na exportação da sua organização."
+    },
+    "commit": {
+      "stillNeeded": "Ainda falta:",
+      "ready": "Pronto para submeter.",
+      "reviewSubmit": "Rever e submeter"
+    },
+    "discard": {
+      "title": "Descartar este rascunho?",
+      "nothingLost": "Ainda não foi introduzido nada, por isso nada se perde.",
+      "holds": "Isto não pode ser desfeito. O rascunho contém:",
+      "keep": "Manter o rascunho",
+      "confirm": "Descartar"
+    },
+    "draftIndicator": {
+      "saved": "Rascunho guardado — {{stored}} de {{total}} ficheiros em armazenamento",
+      "transferring": "{{count}} ainda em transferência",
+      "detached": "{{count}} a voltar a selecionar"
+    },
+    "drop": {
+      "title": "Largue aqui imagens ou clipes",
+      "blurb": "Cada ficheiro é verificado e começa a carregar de imediato, enquanto preenche o resto do exame. JPEG, PNG, GIF, WebP, BMP, SVG, MP4, MOV, WebM, AVI e MKV.",
+      "chooseLabel": "Escolher ficheiros do exame",
+      "browse": "Procurar ficheiros"
+    },
+    "findingRow": {
+      "required": "obrigatório"
+    },
+    "findings": {
+      "title": "Achados",
+      "blurb": "O que o exame mostra. É oferecida cada opção que o tipo de exame define — deixe uma linha intacta se não foi avaliada.",
+      "clearDefaults": "Limpar predefinições",
+      "noPathology": "Sem patologia",
+      "loadError": "Não foi possível carregar o formulário de achados deste tipo de exame",
+      "retry": "Tentar novamente",
+      "requestFailed": "O pedido falhou.",
+      "loadErrorDetail": "Pode submeter o exame com uma nota em vez disso, ou tentar novamente.",
+      "none": "Este tipo de exame não tem achados estruturados. Registe o que viu na nota clínica abaixo."
+    },
+    "groups": {
+      "title": "Partilhar com grupos",
+      "blurb": "Os revisores destes grupos verão o exame. Isto é definido na criação e não pode ser alterado depois.",
+      "loadError": "Não foi possível carregar os seus grupos",
+      "retry": "Tentar novamente",
+      "requestFailed": "O pedido falhou.",
+      "loadErrorDetail": "Pode submeter sem grupo e pedir uma revisão de especialista em vez disso.",
+      "noneTitle": "Ainda não pertence a nenhum grupo",
+      "noneDetail": "Ninguém será convidado a rever este exame através de um grupo. Pode ainda assim pedir uma revisão de especialista abaixo.",
+      "in": "em",
+      "parentGroup": "Um grupo superior — selecioná-lo partilha com todos os que estão abaixo.",
+      "widerGroup": "grupo superior"
+    },
+    "files": {
+      "collapsedSummary_one": "{{count}} ficheiro em armazenamento",
+      "collapsedSummary_other": "{{count}} ficheiros em armazenamento",
+      "title": "Ficheiros",
+      "blurb": "O carregamento começa assim que um ficheiro passa a verificação. Pode continuar a trabalhar, e fechar este separador não perde nada do que já está armazenado.",
+      "collapse": "Recolher",
+      "notAdded_one": "{{count}} ficheiro não foi adicionado",
+      "notAdded_other": "{{count}} ficheiros não foram adicionados",
+      "dismiss": "Dispensar",
+      "nudgeTitle": "Os exames completos têm pelo menos três ficheiros",
+      "nudgeBody": "Este exame tem {{count}} até agora. Adicione já as vistas restantes se as tiver — também pode adicionar ficheiros mais tarde, mas os revisores veem-no assim que for submetido.",
+      "detachedTitle": "Alguns ficheiros do seu rascunho precisam de ser escolhidos de novo",
+      "detachedBody": "{{count}} dos ficheiros deste rascunho não tinham terminado o carregamento quando a página foi fechada, e o navegador não guarda o conteúdo. Escolha cada um de novo abaixo, ou remova-o do exame.",
+      "failedTitle_one": "{{count}} ficheiro falhou o carregamento",
+      "failedTitle_other": "{{count}} ficheiros falharam o carregamento",
+      "retryAll": "Tentar tudo de novo",
+      "failedBody": "Cada um diz porquê abaixo. Tentar de novo volta a carregar apenas esse ficheiro; tudo o que já está armazenado fica.",
+      "storedOf": "{{stored}} de {{tracked}} em armazenamento",
+      "cancelAll": "Cancelar todas as transferências"
+    },
+    "fileRow": {
+      "structureOnlyTitle": "O ficheiro é um contentor válido e completo, mas este navegador não consegue descodificar o seu codec. Carrega normalmente e o servidor consegue lê-lo.",
+      "structureOnly": "apenas estrutura",
+      "cancelUpload": "Cancelar o carregamento de {{name}}",
+      "cancel": "Cancelar",
+      "retry": "Tentar novamente",
+      "chooseAgain": "Escolher de novo",
+      "remove": "Remover {{name}}",
+      "progress": "Progresso do carregamento de {{name}}",
+      "detachedBody": "Este ficheiro estava no rascunho guardado mas o seu conteúdo não foi mantido no navegador. Escolha o mesmo ficheiro de novo para terminar o carregamento, ou remova-o do exame."
+    },
+    "rail": {
+      "localPlayback": "A reproduzir a partir deste navegador — nada é obtido do armazenamento. Use",
+      "stepBetween": "para passar entre ficheiros.",
+      "and": "e",
+      "noPreviews": "As pré-visualizações são reproduzidas a partir deste navegador, por isso um exame retomado após recarregar não tem nenhuma. A lista abaixo mostra onde está realmente cada ficheiro."
+    },
+    "setup": {
+      "scanTypeLabel": "Tipo de exame",
+      "scanTypePlaceholder": "Escolha um tipo de exame",
+      "scanTypeSearch": "AAA, Eco, Pulmão…",
+      "scanTypeEmpty": "Nenhum tipo de exame corresponde.",
+      "shareLabel": "Partilhar com",
+      "groupSearch": "Procure os seus grupos…",
+      "groupEmpty": "Nenhum grupo corresponde."
+    },
+    "typePicker": {
+      "loadError": "Não foi possível carregar os tipos de exame",
+      "retry": "Tentar novamente",
+      "requestFailed": "O pedido falhou.",
+      "loadErrorDetail": "Os seus ficheiros continuam a carregar e nada se perdeu.",
+      "findLabel": "Encontrar um tipo de exame",
+      "findPlaceholder": "AAA, Eco, Pulmão…",
+      "noMatchTitle": "Nenhum tipo de exame corresponde",
+      "noMatchDetail": "Limpe a pesquisa para ver todos os tipos."
+    },
+    "switchType": {
+      "title": "Mudar para {{type}}?",
+      "clearedOne": "Uma resposta não tem equivalente no novo tipo de exame e será apagada.",
+      "clearedMany": "{{count}} respostas não têm equivalente no novo tipo de exame e serão apagadas.",
+      "clearedFrom": "Apagado de {{type}}",
+      "cleared": "Apagado",
+      "carriedOver": "Mantido em {{type}}",
+      "keep": "Manter {{type}}",
+      "keepCurrent": "Manter o tipo atual",
+      "confirm": "Mudar para {{type}}"
+    },
+    "submitConfirm": {
+      "title": "Submeter este exame?",
+      "blurb": "Os seus ficheiros já estão armazenados. Submeter regista estes dados com eles — não inicia outro carregamento.",
+      "error": "Não foi possível criar o exame",
+      "keepEditing": "Continuar a editar",
+      "submitting": "A submeter…",
+      "submit": "Submeter exame"
+    },
+    "credits": {
+      "title": "Comprar créditos de revisão de especialista",
+      "blurb": "Um crédito paga uma revisão de especialista. Os créditos podem ser seus ou de um grupo.",
+      "goTo": "Os créditos vão para",
+      "ownBalance": "O meu saldo",
+      "bundle": "Pacote",
+      "error": "Não foi possível iniciar o pagamento",
+      "noResponse": "O serviço de pagamento não respondeu.",
+      "errorDetail": "Nada foi cobrado. O seu exame está guardado — tente de novo, ou submeta-o sem revisão de especialista.",
+      "cancel": "Cancelar",
+      "opening": "A abrir o pagamento…",
+      "continue": "Continuar para o pagamento"
+    },
+    "studySurface": {
+      "pickTypeTitle": "Escolha um tipo de exame para ver os seus achados",
+      "pickTypeBody": "Os achados variam consoante o tipo de exame, por isso o formulário aparece depois de escolher um. Entretanto os seus ficheiros continuam a carregar.",
+      "missingRequired_one": "{{count}} achado obrigatório continua em branco",
+      "missingRequired_other": "{{count}} achados obrigatórios continuam em branco",
+      "missingRequiredBody": "{{names}}. Pode submeter sem eles, mas um revisor não saberá se eram normais ou não foram avaliados."
+    },
+    "summary": {
+      "title": "O que será enviado",
+      "blurb": "Tudo o que se segue é registado junto aos ficheiros já em armazenamento. O encaminhamento por grupo não pode ser alterado depois.",
+      "edit": "Editar exame",
+      "study": "O exame",
+      "examType": "Tipo de exame",
+      "files": "Ficheiros",
+      "filesValue": "{{stored}} de {{tracked}} em armazenamento · {{size}}",
+      "scanIdentifier": "Identificador do exame",
+      "patientId": "ID externo do doente",
+      "findings": "Achados",
+      "clinicalNote": "Nota clínica",
+      "noNote": "Sem nota. Um revisor verá apenas os achados e as imagens.",
+      "audience": "Quem vê este exame",
+      "noGroups": "Sem grupos. Nenhum revisor de grupo verá este exame, e não é possível adicionar um grupo depois — a API não tem rota para isso. Pode ainda assim partilhá-lo com pessoas específicas a partir do próprio exame.",
+      "widerThanCohort": "mais amplo do que a sua coorte",
+      "expertReview": "Revisão de especialista",
+      "notRequested": "Não solicitada",
+      "noFindings": "Nenhum achado registado."
+    },
+    "page": {
+      "title": "Criar exame",
+      "blurb": "Os ficheiros carregam enquanto trabalha. Submeter regista os dados junto a eles.",
+      "discardTitle": "Descartar este rascunho e recomeçar",
+      "discard": "Descartar rascunho",
+      "myScans": "Os meus exames",
+      "restoredTitle": "Retomado onde parou",
+      "startFresh": "Começar de novo",
+      "restoredBody": "Foi encontrado um rascunho guardado neste navegador. Os ficheiros que terminaram o carregamento já estão armazenados, e o que estava em transferência retoma onde parou. Só um ficheiro que este navegador já não guarda precisa de ser escolhido de novo — esses estão assinalados."
+    },
+    "classic": {
+      "addFile": "Adicione pelo menos um ficheiro para continuar.",
+      "interpretation": "Interpretação",
+      "files": "Ficheiros",
+      "chooseType": "Escolha um tipo de exame para continuar.",
+      "reviewRouting": "Rever e encaminhar"
+    },
+    "interpretation": {
+      "scanTypePrefix": "Tipo de exame: ",
+      "change": "Alterar",
+      "scanTypeTitle": "Tipo de exame",
+      "scanTypeBlurb": "Obrigatório, e fixo assim que o exame é submetido — a API não consegue alterar o tipo de um exame depois."
+    },
+    "routing": {
+      "submitTitle": "Submeter",
+      "submitBlurb": "Os seus ficheiros já estão armazenados. Submeter regista os dados do exame junto a eles — não inicia outro carregamento.",
+      "stillMoving_one": "{{count}} ficheiro não terminou o carregamento",
+      "stillMoving_other": "{{count}} ficheiros não terminaram o carregamento",
+      "stillMovingBody": "Submeter agora cria o exame com os {{stored}} já em armazenamento e deixa o resto de fora. Espere que terminem, ou volte atrás e resolva os que falharam.",
+      "nothingStored": "Ainda não há nada em armazenamento",
+      "nothingStoredBody": "Não é possível criar um exame sem pelo menos um ficheiro carregado — a API rejeita um total de zero ficheiros.",
+      "noExamType": "Nenhum tipo de exame escolhido",
+      "chooseExamType": "Escolher tipo de exame",
+      "noExamTypeBody": "Um exame precisa de um tipo: decide que achados são pedidos a um revisor, e não pode ser alterado depois de o exame existir.",
+      "notSubmitted": "O exame não foi submetido",
+      "tryAgain": "Tentar novamente",
+      "notSubmittedBody": "Os seus ficheiros carregados continuam em armazenamento e este rascunho está guardado, por isso não há nada a refazer.",
+      "recording": "A registar o exame…",
+      "submit": "Submeter exame"
+    },
+    "submitted": {
+      "title": "Exame submetido",
+      "blurb": "O exame está no seu cofre. O processamento e a anonimização terminam no servidor dentro de segundos; a lista atualiza-se sozinha.",
+      "status": "Submetido",
+      "filesAttached": "Ficheiros anexados",
+      "filesValue": "{{confirmed}} de {{total}}",
+      "expertReview": "Revisão de especialista",
+      "requested": "Solicitada",
+      "requestFailed": "Pedido falhou",
+      "notRequested": "Não solicitada",
+      "openStudy": "Abrir o exame",
+      "expertFailedTitle": "O pedido de revisão de especialista não foi concluído",
+      "requestRejected": "O pedido foi rejeitado.",
+      "expertFailedBody": "O exame em si está guardado e encaminhado para os seus grupos, e nenhum crédito foi gasto.",
+      "createAnother": "Criar outro exame",
+      "goToMyScans": "Ir para os meus exames"
+    }
   },
   "scanDetail": {
     "resetUploadDialogTitle": "Redefinir “{{title}}” para novo envio?",
@@ -783,7 +1079,181 @@
     "markIncomplete": "Marcar como incompleto",
     "close": "Fechar",
     "completionTagErrorTitle": "A marcação não foi guardada",
-    "completionTagError": "Não foi possível alterar a completude do exame. Nada foi guardado — tente novamente."
+    "completionTagError": "Não foi possível alterar a completude do exame. Nada foi guardado — tente novamente.",
+    "queueNav": {
+      "previous": "Anterior",
+      "next": "Próximo",
+      "position": "{{position}} de {{total}}",
+      "hint": "Pressione j para o próximo, k para o anterior"
+    },
+    "learnerQuestion": {
+      "title": "O aluno perguntou"
+    },
+    "notes": {
+      "dialogTitle": "Comentários sobre {{title}}",
+      "title": "Notas",
+      "none": "Sem notas neste exame.",
+      "noReadAccess": "A sua função não pode ler as notas deste exame.",
+      "loadError": "Não foi possível carregar as notas",
+      "empty": "Ainda sem notas.",
+      "addLabel": "Adicionar uma nota",
+      "addPlaceholder": "Responda ao aluno ou registe algo sobre este exame.",
+      "addError": "Não foi possível adicionar a nota.",
+      "adding": "A adicionar…",
+      "add": "Adicionar nota"
+    },
+    "submittedAnswers": {
+      "none": "Nada foi submetido com este exame — sem achados e sem respostas do formulário.",
+      "findingsGroup": "Achados"
+    },
+    "activity": {
+      "title": "Registo de atividade",
+      "show": "Mostrar",
+      "hide": "Ocultar",
+      "none": "Ainda nada registado."
+    },
+    "files": {
+      "none": "Nenhum ficheiro registado neste exame.",
+      "recorded_one": "{{recorded}} de {{count}} ficheiro esperado registado.",
+      "recorded_other": "{{recorded}} de {{count}} ficheiros esperados registados."
+    },
+    "media": {
+      "unavailableTitle": "Ficheiro indisponível",
+      "unavailableDetail": "Este ficheiro nunca terminou o carregamento, por isso não há nada para mostrar.",
+      "dicomTitle": "Pré-visualização DICOM não suportada",
+      "dicomDetail": "O Sector não tem renderizador DICOM. Transfira o ficheiro e abra-o num visualizador DICOM.",
+      "openOriginal": "Abrir o ficheiro original",
+      "previousFile": "Ficheiro anterior",
+      "nextFile": "Ficheiro seguinte",
+      "unknownType": "tipo desconhecido",
+      "thumbVideo": "VÍDEO",
+      "thumbFile": "FICHEIRO",
+      "notPreviewable_one": "Mais {{count}} ficheiro não pode ser pré-visualizado aqui. A lista abaixo indica-o e o seu estado.",
+      "notPreviewable_other": "Mais {{count}} ficheiros não podem ser pré-visualizados aqui. A lista abaixo indica-os e o seu estado.",
+      "filesSection": "Ficheiros ({{count}}/{{total}})",
+      "showFile": "Mostrar {{filename}}",
+      "cannotPlay": "Este navegador não consegue reproduzir {{format}}",
+      "cannotPreview": "Não é possível pré-visualizar {{format}}",
+      "thisFile": "este ficheiro",
+      "thisFileType": "este tipo de ficheiro",
+      "downloadableDetail": "O ficheiro está guardado e pode ser transferido, mas o navegador não o consegue mostrar aqui.",
+      "noPreviewTitle": "Sem pré-visualização disponível",
+      "noMediaTitle": "Sem ficheiros neste exame",
+      "notPreviewableList_one": "{{count}} ficheiro não pode ser pré-visualizado aqui. A lista abaixo indica-o e o seu estado.",
+      "notPreviewableList_other": "{{count}} ficheiros não podem ser pré-visualizados aqui. A lista abaixo indica cada um e o seu estado.",
+      "noUpload": "O carregamento nunca produziu um ficheiro. A lista abaixo mostra o que era esperado."
+    },
+    "context": {
+      "clinicalNote": "Nota clínica",
+      "findings": "Achados e interpretação",
+      "identifiers": "Identificadores",
+      "scanIdentifier": "Identificador do exame",
+      "externalPatientId": "ID externo do doente",
+      "scanId": "ID do exame",
+      "submittedBy": "Submetido por",
+      "submitted": "Submetido",
+      "lastUpdated": "Última atualização",
+      "reviewed": "Revisto",
+      "group_one": "Grupo",
+      "group_other": "Grupos",
+      "noGroup": "Não está associado a nenhum grupo.",
+      "tags": "Etiquetas"
+    },
+    "common": {
+      "retry": "Tentar novamente",
+      "somethingWentWrong": "Algo correu mal."
+    },
+    "review": {
+      "titleExpert": "Revisão de especialista",
+      "title": "Revisão",
+      "competency": "Medida de competência",
+      "achieved": "Atingida",
+      "notAchieved": "Não atingida",
+      "competencyMissing": "Escolha atingida ou não atingida.",
+      "overall": "Apreciação geral",
+      "overallMissing": "A apreciação geral é obrigatória.",
+      "technical": "Apreciação técnica",
+      "technicalHint": "Manuseamento da sonda, ganho, profundidade, orientação.",
+      "teaching": "Pontos de ensino",
+      "noteLabel": "Nota para o aluno (opcional)",
+      "noteHint": "Publicada no fio de notas e enviada por e-mail com a revisão.",
+      "submitError": "Não foi possível enviar a revisão.",
+      "submitting": "A enviar…",
+      "submit": "Enviar revisão",
+      "draftSaved": "Rascunho guardado {{time}}",
+      "discard": "Descartar"
+    },
+    "share": {
+      "title": "Partilha",
+      "recipients_one": "{{count}} destinatário",
+      "recipients_other": "{{count}} destinatários",
+      "loadError": "Não foi possível carregar as partilhas existentes.",
+      "none": "Ainda não partilhou este exame com ninguém.",
+      "sharedAt": "Partilhado {{date}}",
+      "opened": "Aberto",
+      "unopened": "Por abrir",
+      "revoke": "Revogar o acesso de {{email}}",
+      "revokeError": "Não foi possível revogar o acesso.",
+      "withLabel": "Partilhar com",
+      "withPlaceholder": "nome@hospital.org, colega@clinica.org",
+      "withHint": "Separados por vírgula ou nova linha. Os destinatários precisam de uma conta.",
+      "shareError": "Não foi possível partilhar o exame.",
+      "messageLabel": "Mensagem (opcional)",
+      "sharing": "A partilhar…",
+      "shareWithCount": "Partilhar com {{count}}",
+      "outcomeShared_one": "Partilhado com {{count}} destinatário.",
+      "outcomeShared_other": "Partilhado com {{count}} destinatários.",
+      "outcomeDuplicate": "Já tinham acesso: {{emails}}",
+      "outcomeNotFound": "Sem conta Sector, nada enviado: {{emails}}",
+      "dialogTitle": "Partilhar {{title}}"
+    },
+    "summary": {
+      "notReviewed": "Este exame ainda não foi revisto.",
+      "reviewer": "Revisor",
+      "overall": "Apreciação geral",
+      "technical": "Apreciação técnica",
+      "teaching": "Pontos de ensino",
+      "teachingContent": "Conteúdo de ensino",
+      "customQuestions": "Perguntas personalizadas"
+    },
+    "custom": {
+      "title": "Perguntas personalizadas (opcional)",
+      "add": "Adicionar",
+      "question": "Pergunta {{number}}",
+      "remove": "Remover a pergunta {{number}}",
+      "questionLabel": "Pergunta",
+      "questionPlaceholder": "p. ex. Fração de ejeção",
+      "answerLabel": "Resposta"
+    },
+    "markdown": {
+      "title": "Revisão assistida por IA",
+      "languageGroup": "Idioma da revisão",
+      "original": "Original"
+    },
+    "shared": {
+      "back": "Voltar aos exames partilhados",
+      "readOnly": "Partilhado consigo · apenas leitura",
+      "notShared": "Este exame não está partilhado consigo",
+      "loadError": "Não foi possível carregar este exame partilhado",
+      "loadErrorDetail": "Algo correu mal ao carregar o exame partilhado.",
+      "goneTitle": "Este exame já não está disponível",
+      "goneDetail": "Quem o partilhou eliminou entretanto o exame. A partilha permanece na sua lista para saber que existiu, mas já não há nada para abrir.",
+      "sharedBy": "Partilhado por",
+      "unknownUser": "Utilizador desconhecido"
+    },
+    "page": {
+      "back": "Voltar a {{list}}",
+      "notFound": "Exame não encontrado",
+      "loadError": "Não foi possível carregar este exame",
+      "loadErrorDetail": "Algo correu mal ao carregar o exame."
+    },
+    "viewLabel": {
+      "my": "os meus exames",
+      "pending": "exames de grupo por rever",
+      "reviewed": "exames de grupo revistos",
+      "expert": "exames de especialista por rever",
+      "expert-reviewed": "exames de especialista revistos"
+    }
   },
   "home": {
     "greeting": "Bem-vindo(a) de volta, {{name}}",
@@ -894,6 +1364,17 @@
     "signedOut": {
       "title": "Entre para usar o Sage AI",
       "description": "O Sage AI precisa de uma conta conectada para abrir."
+    }
+  },
+  "command": {
+    "title": "Menu de comandos",
+    "open": "Pesquisar",
+    "placeholder": "Pesquisar páginas, exames e cursos",
+    "empty": "Nenhum resultado",
+    "group": {
+      "nav": "Ir para",
+      "scan": "Exames",
+      "course": "Cursos"
     }
   }
 }

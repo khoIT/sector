@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogTitle } from '@sector/ui';
 
 import { ScanSharePanel } from './scan-share-panel';
+import { useTranslation } from 'react-i18next';
 
 export type ScanShareDialogProps = {
   scanId: string;
@@ -28,10 +29,13 @@ export function ScanShareDialog({
   open,
   onOpenChange,
 }: ScanShareDialogProps) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[min(36rem,calc(100vw-2rem))]">
-        <DialogTitle className="sr-only">Share {scanTitle}</DialogTitle>
+        <DialogTitle className="sr-only">
+          {t('scanDetail.share.dialogTitle', { title: scanTitle })}
+        </DialogTitle>
         <ScanSharePanel scanId={scanId} currentUserId={currentUserId} />
       </DialogContent>
     </Dialog>

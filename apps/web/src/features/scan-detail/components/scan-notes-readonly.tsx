@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@sector/ui';
 import { formatDateTime } from '@/lib/format';
 
 import { noteAuthorName } from '../scan-detail-format';
+import { useTranslation } from 'react-i18next';
 
 type ReadonlyNote = {
   id: string;
@@ -21,17 +22,18 @@ type ReadonlyNote = {
  * `read:scan:note`, so requesting it would 403 on a page that otherwise works.
  */
 export function ScanNotesReadonly({ notes }: { notes: readonly ReadonlyNote[] }) {
+  const { t } = useTranslation();
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Notes</CardTitle>
+        <CardTitle>{t('scanDetail.notes.title')}</CardTitle>
         {notes.length > 0 ? (
           <span className="text-[12px] text-ink-dim sv-num">{notes.length}</span>
         ) : null}
       </CardHeader>
       <CardContent>
         {notes.length === 0 ? (
-          <p className="text-body text-ink-dim">No notes on this scan.</p>
+          <p className="text-body text-ink-dim">{t('scanDetail.notes.none')}</p>
         ) : (
           <ol className="space-y-2">
             {notes.map((note) => (

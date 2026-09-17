@@ -62,7 +62,11 @@
   },
   "toolbar": {
     "filters": "Filter",
-    "columns": "Kolumnen"
+    "columns": "Kolumnen",
+    "sortBy": "Sortieren nach",
+    "sortNone": "Spalte wählen",
+    "sortAscending": "Aufsteigend sortieren",
+    "sortDescending": "Absteigend sortieren"
   },
   "pagination": {
     "rows": "Zeilen",
@@ -86,6 +90,52 @@
       "scopeNote": "Dies betrifft nur Aufgabenerinnerungen. E-Mails zu Konto, Passwort und Scan-Begutachtung bleiben unberührt.",
       "loadError": "Ihre Erinnerungseinstellung konnte nicht geladen werden.",
       "saveError": "Diese Einstellung konnte nicht gespeichert werden."
+    },
+    "identity": {
+      "title": "Dein Konto",
+      "description": "Der Name und das Bild, die andere neben deinen Scans sehen.",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "username": "Benutzername",
+      "role": "Rolle",
+      "saveError": "Dein Name konnte nicht gespeichert werden.",
+      "saved": "Dein Name wurde gespeichert.",
+      "saving": "Wird gespeichert…",
+      "save": "Namen speichern"
+    },
+    "photo": {
+      "upload": "Foto hochladen",
+      "replace": "Foto ersetzen",
+      "uploading": "Wird hochgeladen…",
+      "remove": "Entfernen",
+      "removing": "Wird entfernt…",
+      "choose": "Profilfoto auswählen"
+    },
+    "password": {
+      "title": "Passwort",
+      "description": "Du brauchst dein aktuelles Passwort, um ein neues zu setzen.",
+      "current": "Aktuelles Passwort",
+      "new": "Neues Passwort",
+      "confirm": "Neues Passwort bestätigen",
+      "error": "Dein Passwort konnte nicht geändert werden.",
+      "changed": "Dein Passwort wurde geändert. Du bist auf diesem Gerät weiterhin angemeldet.",
+      "changing": "Wird geändert…",
+      "change": "Passwort ändern"
+    },
+    "createScanFlow": {
+      "cardTitle": "Scan-Studie erstellen",
+      "cardDescription": "Wie die Seite „Scan-Studie erstellen“ für dich aufgebaut ist. Beide Layouts erfassen dasselbe und teilen denselben Entwurf.",
+      "legend": "Layout für „Scan-Studie erstellen“",
+      "note": "Gilt beim nächsten Öffnen von „Scan-Studie erstellen“. Nur in diesem Browser gespeichert — wie Design und Sprache folgt es dir nicht auf ein anderes Gerät.",
+      "study": {
+        "title": "Eine Arbeitsfläche",
+        "description": "Dateien, Untersuchungsart, Befunde, Notiz und Gruppen auf einer Seite, in beliebiger Reihenfolge, mit einer Leiste, die zeigt, was noch fehlt. Ein separater Schritt zeigt, was gesendet wird."
+      },
+      "classic": {
+        "title": "Schritt für Schritt",
+        "description": "Der vierstufige Assistent: Dateien, dann Interpretation, dann Prüfung und Weiterleitung. Eins nach dem anderen, mit Zurück und Weiter."
+      }
     }
   },
   "groupsDialog": {
@@ -550,19 +600,18 @@
         "title_other": "{{count}} abgelaufene Einschreibungen",
         "description": "Der Zugriff darauf ist beendet; die Verlängerung einer Zuweisung übernimmt Ihre Gruppenleitung oder Ihr Administrator.",
         "badge": "Abgelaufen"
-      }
+      },
+      "layout": {
+        "grid": "Rasteransicht",
+        "list": "Listenansicht"
+      },
+      "counts": "{{lessons}} Module · {{topics}} Themen · {{quizzes}} Quizze",
+      "expiresOn": "Läuft ab am {{date}}",
+      "lastActive": "Zuletzt geöffnet {{date}}"
     },
     "outline": {
       "title": "Kursübersicht",
       "backToCourses": "Meine Kurse",
-      "progress": "{{completed}}/{{total}} abgeschlossen ({{percent}}%)",
-      "remaining": "Noch {{duration}} anzusehen",
-      "resume": {
-        "start": "Starten: {{title}}",
-        "resume": "Fortsetzen: {{title}}",
-        "retry": "Erneut versuchen: {{title}}",
-        "review": "Ansehen: {{title}}"
-      },
       "completedBanner": "Sie haben diesen Kurs abgeschlossen.",
       "empty": {
         "title": "Dieser Kurs hat noch keinen Inhalt"
@@ -591,7 +640,6 @@
     },
     "landing": {
       "title": "Über diesen Kurs",
-      "viewOutline": "Kursübersicht ansehen",
       "totalTime": "{{duration}} Video",
       "itemCount_one": "{{count}} Element",
       "itemCount_other": "{{count}} Elemente",
@@ -698,7 +746,8 @@
         "resumeError": "Dein gespeicherter Fortschritt konnte nicht geladen werden. Neustart."
       },
       "contents": {
-        "title": "Inhalte"
+        "title": "Inhalte",
+        "open": "Inhalte {{index}}/{{total}}"
       },
       "completionNote": "Themen gelten ab {{percent}}% Wiedergabe automatisch als abgeschlossen.",
       "questionCount_one": "{{count}} F",
@@ -765,7 +814,254 @@
     "creditCount_one": "{{count}} Guthaben",
     "creditCount_other": "{{count}} Guthaben",
     "creditWillBeSpent": "Beim Einreichen wird ein Guthaben von {{label}} verbraucht",
-    "creditSpentOnSubmit": "Das Guthaben wird erst beim Einreichen der Studie verbraucht. Schlägt die Anfrage fehl, werden Sie informiert – die Studie wird in jedem Fall gespeichert."
+    "creditSpentOnSubmit": "Das Guthaben wird erst beim Einreichen der Studie verbraucht. Schlägt die Anfrage fehl, werden Sie informiert – die Studie wird in jedem Fall gespeichert.",
+    "routingSummary": {
+      "title": "Wohin das geht",
+      "groupsDefault": "Deine üblichen Gruppen",
+      "groupsNone": "Keine Gruppen — nur du und ein etwaiger Experte",
+      "groupsCount_one": "{{count}} Gruppe",
+      "groupsCount_other": "{{count}} Gruppen",
+      "expertNone": "Keine Expertenprüfung angefordert",
+      "expertRequested": "Expertenprüfung aus {{pool}}"
+    },
+    "readiness": {
+      "files": "Dateien",
+      "findings": "Befunde",
+      "exam": "Untersuchung",
+      "note": "Notiz"
+    },
+    "clinicalNote": {
+      "title": "Klinische Notiz",
+      "blurb": "Kontext, den ein Prüfer braucht: Vorstellung, die Frage, die der Scan beantworten sollte, alles, was die Befundliste nicht fassen kann.",
+      "noteLabel": "Notiz",
+      "notePlaceholder": "z. B. 62-jähriger Mann mit Flankenschmerz, AAA-Ausschluss. Eingeschränkte Schallfenster durch Darmgas.",
+      "patientIdLabel": "Externe Patienten-ID",
+      "patientIdHint": "Optional. Deine eigene Fallnummer, bis zu 100 Zeichen.",
+      "scanIdLabel": "Scan-Kennung",
+      "scanIdHint": "Optional. Wird an der Studie angezeigt und im Export deiner Organisation mitgeführt."
+    },
+    "commit": {
+      "stillNeeded": "Noch nötig:",
+      "ready": "Bereit zum Absenden.",
+      "reviewSubmit": "Prüfen & absenden"
+    },
+    "discard": {
+      "title": "Diesen Entwurf verwerfen?",
+      "nothingLost": "Es wurde noch nichts eingegeben, es geht also nichts verloren.",
+      "holds": "Das kann nicht rückgängig gemacht werden. Der Entwurf enthält:",
+      "keep": "Entwurf behalten",
+      "confirm": "Verwerfen"
+    },
+    "draftIndicator": {
+      "saved": "Entwurf gespeichert — {{stored}} von {{total}} Dateien im Speicher",
+      "transferring": "{{count}} werden noch übertragen",
+      "detached": "{{count}} müssen neu ausgewählt werden"
+    },
+    "drop": {
+      "title": "Bilder oder Clips hier ablegen",
+      "blurb": "Jede Datei wird geprüft und sofort hochgeladen, während du den Rest der Studie ausfüllst. JPEG, PNG, GIF, WebP, BMP, SVG, MP4, MOV, WebM, AVI und MKV.",
+      "chooseLabel": "Scan-Dateien auswählen",
+      "browse": "Dateien durchsuchen"
+    },
+    "findingRow": {
+      "required": "erforderlich"
+    },
+    "findings": {
+      "title": "Befunde",
+      "blurb": "Was die Studie zeigt. Jede Option, die die Untersuchungsart vorsieht, wird angeboten — lass eine Zeile unberührt, wenn sie nicht beurteilt wurde.",
+      "clearDefaults": "Vorgaben löschen",
+      "noPathology": "Keine Pathologie",
+      "loadError": "Das Befundformular dieser Untersuchungsart konnte nicht geladen werden",
+      "retry": "Erneut versuchen",
+      "requestFailed": "Die Anfrage ist fehlgeschlagen.",
+      "loadErrorDetail": "Du kannst die Studie stattdessen mit einer Notiz absenden oder es erneut versuchen.",
+      "none": "Diese Untersuchungsart hat keine strukturierten Befunde. Halte in der klinischen Notiz unten fest, was du gesehen hast."
+    },
+    "groups": {
+      "title": "Mit Gruppen teilen",
+      "blurb": "Prüfer in diesen Gruppen sehen die Studie. Das wird bei der Erstellung festgelegt und kann später nicht geändert werden.",
+      "loadError": "Deine Gruppen konnten nicht geladen werden",
+      "retry": "Erneut versuchen",
+      "requestFailed": "Die Anfrage ist fehlgeschlagen.",
+      "loadErrorDetail": "Du kannst ohne Gruppe absenden und stattdessen eine Expertenprüfung anfordern.",
+      "noneTitle": "Du bist noch in keiner Gruppe",
+      "noneDetail": "Niemand wird über eine Gruppe um eine Prüfung gebeten. Du kannst unten trotzdem eine Expertenprüfung anfordern.",
+      "in": "in",
+      "parentGroup": "Eine übergeordnete Gruppe — sie auszuwählen teilt mit allen darunter.",
+      "widerGroup": "übergeordnete Gruppe"
+    },
+    "files": {
+      "collapsedSummary_one": "{{count}} Datei im Speicher",
+      "collapsedSummary_other": "{{count}} Dateien im Speicher",
+      "title": "Dateien",
+      "blurb": "Der Upload beginnt, sobald eine Datei ihre Prüfung besteht. Du kannst weiterarbeiten, und das Schließen dieses Tabs verliert nichts, was schon im Speicher liegt.",
+      "collapse": "Einklappen",
+      "notAdded_one": "{{count}} Datei wurde nicht hinzugefügt",
+      "notAdded_other": "{{count}} Dateien wurden nicht hinzugefügt",
+      "dismiss": "Schließen",
+      "nudgeTitle": "Die meisten vollständigen Studien haben mindestens drei Dateien",
+      "nudgeBody": "Diese Studie hat bisher {{count}}. Füge die restlichen Ansichten jetzt hinzu, wenn du sie hast — Dateien lassen sich auch später ergänzen, aber Prüfer sehen die Studie, sobald sie abgesendet ist.",
+      "detachedTitle": "Einige Dateien aus deinem Entwurf müssen neu ausgewählt werden",
+      "detachedBody": "{{count}} der Dateien in diesem Entwurf waren beim letzten Schließen der Seite noch nicht fertig hochgeladen, und der Browser bewahrt Dateiinhalte nicht auf. Wähle sie unten erneut aus oder entferne sie aus der Studie.",
+      "failedTitle_one": "{{count}} Datei konnte nicht hochgeladen werden",
+      "failedTitle_other": "{{count}} Dateien konnten nicht hochgeladen werden",
+      "retryAll": "Alle erneut versuchen",
+      "failedBody": "Bei jeder steht unten, warum. Ein erneuter Versuch lädt nur diese Datei hoch; alles, was bereits im Speicher liegt, bleibt.",
+      "storedOf": "{{stored}} von {{tracked}} im Speicher",
+      "cancelAll": "Alle Übertragungen abbrechen"
+    },
+    "fileRow": {
+      "structureOnlyTitle": "Die Datei ist ein gültiger, vollständiger Container, aber dieser Browser kann den Codec nicht dekodieren. Sie wird normal hochgeladen und der Server kann sie lesen.",
+      "structureOnly": "nur Struktur",
+      "cancelUpload": "Upload von {{name}} abbrechen",
+      "cancel": "Abbrechen",
+      "retry": "Erneut versuchen",
+      "chooseAgain": "Erneut auswählen",
+      "remove": "{{name}} entfernen",
+      "progress": "Upload-Fortschritt für {{name}}",
+      "detachedBody": "Diese Datei war im gespeicherten Entwurf, aber ihr Inhalt wurde im Browser nicht aufbewahrt. Wähle dieselbe Datei erneut, um den Upload abzuschließen, oder entferne sie aus der Studie."
+    },
+    "rail": {
+      "localPlayback": "Wiedergabe aus diesem Browser — es wird nichts aus dem Speicher geholt. Verwende",
+      "stepBetween": "um zwischen Dateien zu wechseln.",
+      "and": "und",
+      "noPreviews": "Vorschauen werden aus diesem Browser abgespielt, eine nach einem Neuladen fortgesetzte Studie hat also keine. Die Liste unten zeigt, wo jede Datei tatsächlich liegt."
+    },
+    "setup": {
+      "scanTypeLabel": "Untersuchungsart",
+      "scanTypePlaceholder": "Untersuchungsart wählen",
+      "scanTypeSearch": "AAA, Echo, Lunge…",
+      "scanTypeEmpty": "Keine Untersuchungsart passt.",
+      "shareLabel": "Teilen mit",
+      "groupSearch": "Deine Gruppen durchsuchen…",
+      "groupEmpty": "Keine Gruppe passt."
+    },
+    "typePicker": {
+      "loadError": "Untersuchungsarten konnten nicht geladen werden",
+      "retry": "Erneut versuchen",
+      "requestFailed": "Die Anfrage ist fehlgeschlagen.",
+      "loadErrorDetail": "Deine Dateien werden weiter hochgeladen, es ist nichts verloren gegangen.",
+      "findLabel": "Untersuchungsart finden",
+      "findPlaceholder": "AAA, Echo, Lunge…",
+      "noMatchTitle": "Keine Untersuchungsart passt dazu",
+      "noMatchDetail": "Lösche die Suche, um alle Untersuchungsarten zu sehen."
+    },
+    "switchType": {
+      "title": "Zu {{type}} wechseln?",
+      "clearedOne": "Eine Antwort hat auf der neuen Untersuchungsart keine Entsprechung und wird gelöscht.",
+      "clearedMany": "{{count}} Antworten haben auf der neuen Untersuchungsart keine Entsprechung und werden gelöscht.",
+      "clearedFrom": "Gelöscht aus {{type}}",
+      "cleared": "Gelöscht",
+      "carriedOver": "Übernommen nach {{type}}",
+      "keep": "{{type}} behalten",
+      "keepCurrent": "Aktuelle Art behalten",
+      "confirm": "Zu {{type}} wechseln"
+    },
+    "submitConfirm": {
+      "title": "Diese Studie absenden?",
+      "blurb": "Deine Dateien liegen bereits im Speicher. Das Absenden hält diese Angaben dazu fest — es startet keinen weiteren Upload.",
+      "error": "Die Studie konnte nicht erstellt werden",
+      "keepEditing": "Weiter bearbeiten",
+      "submitting": "Wird abgesendet…",
+      "submit": "Studie absenden"
+    },
+    "credits": {
+      "title": "Guthaben für Expertenprüfungen kaufen",
+      "blurb": "Ein Guthaben bezahlt eine Expertenprüfung. Guthaben kann bei dir oder bei einer Gruppe liegen.",
+      "goTo": "Guthaben geht an",
+      "ownBalance": "Mein eigenes Guthaben",
+      "bundle": "Paket",
+      "error": "Der Bezahlvorgang konnte nicht gestartet werden",
+      "noResponse": "Der Zahlungsdienst hat nicht geantwortet.",
+      "errorDetail": "Es wurde nichts abgebucht. Deine Studie ist gespeichert — versuche es erneut oder sende sie ohne Expertenprüfung ab.",
+      "cancel": "Abbrechen",
+      "opening": "Bezahlvorgang wird geöffnet…",
+      "continue": "Weiter zur Zahlung"
+    },
+    "studySurface": {
+      "pickTypeTitle": "Wähle eine Untersuchungsart, um ihre Befunde zu sehen",
+      "pickTypeBody": "Befunde unterscheiden sich je Untersuchungsart, das Formular erscheint also nach der Wahl. Deine Dateien werden währenddessen weiter hochgeladen.",
+      "missingRequired_one": "{{count}} erforderlicher Befund ist noch leer",
+      "missingRequired_other": "{{count}} erforderliche Befunde sind noch leer",
+      "missingRequiredBody": "{{names}}. Du kannst ohne sie absenden, aber ein Prüfer weiß dann nicht, ob sie normal oder nicht beurteilt waren."
+    },
+    "summary": {
+      "title": "Was gesendet wird",
+      "blurb": "Alles unten wird zu den bereits gespeicherten Dateien erfasst. Die Gruppen-Weiterleitung kann danach nicht geändert werden.",
+      "edit": "Studie bearbeiten",
+      "study": "Die Studie",
+      "examType": "Untersuchungsart",
+      "files": "Dateien",
+      "filesValue": "{{stored}} von {{tracked}} im Speicher · {{size}}",
+      "scanIdentifier": "Scan-Kennung",
+      "patientId": "Externe Patienten-ID",
+      "findings": "Befunde",
+      "clinicalNote": "Klinische Notiz",
+      "noNote": "Keine Notiz. Ein Prüfer sieht nur die Befunde und die Bilder.",
+      "audience": "Wer diese Studie sieht",
+      "noGroups": "Keine Gruppen. Kein Gruppenprüfer sieht diese Studie, und eine Gruppe kann danach nicht ergänzt werden — die API hat dafür keine Route. Du kannst sie weiterhin aus der Studie heraus mit einzelnen Personen teilen.",
+      "widerThanCohort": "breiter als deine Kohorte",
+      "expertReview": "Expertenprüfung",
+      "notRequested": "Nicht angefordert",
+      "noFindings": "Keine Befunde erfasst."
+    },
+    "page": {
+      "title": "Scan-Studie erstellen",
+      "blurb": "Dateien werden während der Arbeit hochgeladen. Das Absenden hält die Angaben dazu fest.",
+      "discardTitle": "Entwurf verwerfen und neu beginnen",
+      "discard": "Entwurf verwerfen",
+      "myScans": "Meine Scans",
+      "restoredTitle": "Dort weitergemacht, wo du aufgehört hast",
+      "startFresh": "Neu beginnen",
+      "restoredBody": "In diesem Browser wurde ein gespeicherter Entwurf gefunden. Fertig hochgeladene Dateien liegen bereits im Speicher, und noch laufende Übertragungen setzen dort fort, wo sie standen. Nur eine Datei, die dieser Browser nicht mehr hat, muss neu ausgewählt werden — diese sind entsprechend aufgeführt."
+    },
+    "classic": {
+      "addFile": "Füge mindestens eine Datei hinzu, um fortzufahren.",
+      "interpretation": "Interpretation",
+      "files": "Dateien",
+      "chooseType": "Wähle eine Untersuchungsart, um fortzufahren.",
+      "reviewRouting": "Prüfung & Weiterleitung"
+    },
+    "interpretation": {
+      "scanTypePrefix": "Untersuchungsart: ",
+      "change": "Ändern",
+      "scanTypeTitle": "Untersuchungsart",
+      "scanTypeBlurb": "Erforderlich und nach dem Absenden fest — die API kann die Art eines Scans danach nicht mehr ändern."
+    },
+    "routing": {
+      "submitTitle": "Absenden",
+      "submitBlurb": "Deine Dateien liegen bereits im Speicher. Das Absenden hält die Angaben der Studie dazu fest — es startet keinen weiteren Upload.",
+      "stillMoving_one": "{{count}} Datei ist noch nicht fertig hochgeladen",
+      "stillMoving_other": "{{count}} Dateien sind noch nicht fertig hochgeladen",
+      "stillMovingBody": "Ein Absenden jetzt erstellt die Studie mit den {{stored}} bereits im Speicher und lässt den Rest weg. Warte, bis sie fertig sind, oder geh zurück und kümmere dich um die fehlgeschlagenen.",
+      "nothingStored": "Noch nichts im Speicher",
+      "nothingStoredBody": "Eine Studie kann ohne mindestens eine hochgeladene Datei nicht erstellt werden — die API lehnt eine Dateizahl von null ab.",
+      "noExamType": "Keine Untersuchungsart gewählt",
+      "chooseExamType": "Untersuchungsart wählen",
+      "noExamTypeBody": "Eine Studie braucht eine Untersuchungsart: sie entscheidet, welche Befunde ein Prüfer abgefragt bekommt, und sie kann nach dem Erstellen nicht geändert werden.",
+      "notSubmitted": "Die Studie wurde nicht abgesendet",
+      "tryAgain": "Erneut versuchen",
+      "notSubmittedBody": "Deine hochgeladenen Dateien liegen weiterhin im Speicher und dieser Entwurf ist gespeichert, es muss also nichts wiederholt werden.",
+      "recording": "Studie wird erfasst…",
+      "submit": "Studie absenden"
+    },
+    "submitted": {
+      "title": "Studie abgesendet",
+      "blurb": "Die Studie liegt in deinem Vault. Verarbeitung und Anonymisierung sind in wenigen Sekunden auf dem Server fertig; die Liste aktualisiert sich selbst.",
+      "status": "Abgesendet",
+      "filesAttached": "Dateien angehängt",
+      "filesValue": "{{confirmed}} von {{total}}",
+      "expertReview": "Expertenprüfung",
+      "requested": "Angefordert",
+      "requestFailed": "Anforderung fehlgeschlagen",
+      "notRequested": "Nicht angefordert",
+      "openStudy": "Studie öffnen",
+      "expertFailedTitle": "Die Anforderung der Expertenprüfung ist nicht durchgegangen",
+      "requestRejected": "Die Anfrage wurde abgelehnt.",
+      "expertFailedBody": "Die Studie selbst ist gespeichert und an deine Gruppen weitergeleitet, und es wurde kein Guthaben verbraucht.",
+      "createAnother": "Weitere Studie erstellen",
+      "goToMyScans": "Zu meinen Scans"
+    }
   },
   "scanDetail": {
     "resetUploadDialogTitle": "„{{title}}“ für erneuten Upload zurücksetzen?",
@@ -783,7 +1079,181 @@
     "markIncomplete": "Als unvollständig markieren",
     "close": "Schließen",
     "completionTagErrorTitle": "Die Markierung wurde nicht gespeichert",
-    "completionTagError": "Die Vollständigkeit des Scans konnte nicht geändert werden. Es wurde nichts gespeichert – bitte erneut versuchen."
+    "completionTagError": "Die Vollständigkeit des Scans konnte nicht geändert werden. Es wurde nichts gespeichert – bitte erneut versuchen.",
+    "queueNav": {
+      "previous": "Zurück",
+      "next": "Weiter",
+      "position": "{{position}} von {{total}}",
+      "hint": "j für weiter, k für zurück"
+    },
+    "learnerQuestion": {
+      "title": "Lernende(r) fragte"
+    },
+    "notes": {
+      "dialogTitle": "Kommentare zu {{title}}",
+      "title": "Notizen",
+      "none": "Keine Notizen zu diesem Scan.",
+      "noReadAccess": "Deine Rolle darf die Notizen zu diesem Scan nicht lesen.",
+      "loadError": "Notizen konnten nicht geladen werden",
+      "empty": "Noch keine Notizen.",
+      "addLabel": "Notiz hinzufügen",
+      "addPlaceholder": "Antworte dem Lernenden oder halte etwas zu dieser Studie fest.",
+      "addError": "Die Notiz konnte nicht hinzugefügt werden.",
+      "adding": "Wird hinzugefügt…",
+      "add": "Notiz hinzufügen"
+    },
+    "submittedAnswers": {
+      "none": "Mit diesem Scan wurde nichts übermittelt — keine Befunde und keine Formularantworten.",
+      "findingsGroup": "Befunde"
+    },
+    "activity": {
+      "title": "Aktivitätsprotokoll",
+      "show": "Anzeigen",
+      "hide": "Ausblenden",
+      "none": "Noch nichts aufgezeichnet."
+    },
+    "files": {
+      "none": "Für diesen Scan sind keine Dateien erfasst.",
+      "recorded_one": "{{recorded}} von {{count}} erwarteten Datei erfasst.",
+      "recorded_other": "{{recorded}} von {{count}} erwarteten Dateien erfasst."
+    },
+    "media": {
+      "unavailableTitle": "Datei nicht verfügbar",
+      "unavailableDetail": "Diese Datei wurde nie fertig hochgeladen, es gibt also nichts anzuzeigen.",
+      "dicomTitle": "DICOM-Vorschau nicht unterstützt",
+      "dicomDetail": "Sector hat keinen DICOM-Renderer. Lade die Datei herunter und öffne sie in einem DICOM-Viewer.",
+      "openOriginal": "Originaldatei öffnen",
+      "previousFile": "Vorherige Datei",
+      "nextFile": "Nächste Datei",
+      "unknownType": "unbekannter Typ",
+      "thumbVideo": "VIDEO",
+      "thumbFile": "DATEI",
+      "notPreviewable_one": "{{count}} weitere Datei kann hier nicht angezeigt werden. Die Liste unten nennt sie und ihren Status.",
+      "notPreviewable_other": "{{count}} weitere Dateien können hier nicht angezeigt werden. Die Liste unten nennt sie und ihren Status.",
+      "filesSection": "Dateien ({{count}}/{{total}})",
+      "showFile": "{{filename}} anzeigen",
+      "cannotPlay": "Dieser Browser kann {{format}} nicht abspielen",
+      "cannotPreview": "{{format}} kann nicht angezeigt werden",
+      "thisFile": "diese Datei",
+      "thisFileType": "diesen Dateityp",
+      "downloadableDetail": "Die Datei ist gespeichert und kann heruntergeladen werden, der Browser kann sie aber nicht inline anzeigen.",
+      "noPreviewTitle": "Keine Vorschau verfügbar",
+      "noMediaTitle": "Keine Medien zu diesem Scan",
+      "notPreviewableList_one": "{{count}} Datei kann hier nicht angezeigt werden. Die Dateiliste unten nennt sie und ihren Status.",
+      "notPreviewableList_other": "{{count}} Dateien können hier nicht angezeigt werden. Die Dateiliste unten nennt jede einzelne und ihren Status.",
+      "noUpload": "Der Upload hat nie eine Datei erzeugt. Die Dateiliste unten zeigt, was erwartet wurde."
+    },
+    "context": {
+      "clinicalNote": "Klinische Notiz",
+      "findings": "Befunde und Interpretation",
+      "identifiers": "Kennungen",
+      "scanIdentifier": "Scan-Kennung",
+      "externalPatientId": "Externe Patienten-ID",
+      "scanId": "Scan-ID",
+      "submittedBy": "Eingereicht von",
+      "submitted": "Eingereicht",
+      "lastUpdated": "Zuletzt aktualisiert",
+      "reviewed": "Geprüft",
+      "group_one": "Gruppe",
+      "group_other": "Gruppen",
+      "noGroup": "Keiner Gruppe zugeordnet.",
+      "tags": "Tags"
+    },
+    "common": {
+      "retry": "Erneut versuchen",
+      "somethingWentWrong": "Etwas ist schiefgelaufen."
+    },
+    "review": {
+      "titleExpert": "Expertenprüfung",
+      "title": "Prüfung",
+      "competency": "Kompetenzbewertung",
+      "achieved": "Erreicht",
+      "notAchieved": "Nicht erreicht",
+      "competencyMissing": "Wähle „Erreicht“ oder „Nicht erreicht“.",
+      "overall": "Gesamtrückmeldung",
+      "overallMissing": "Eine Gesamtrückmeldung ist erforderlich.",
+      "technical": "Technische Rückmeldung",
+      "technicalHint": "Schallkopfführung, Gain, Tiefe, Ausrichtung.",
+      "teaching": "Lehrpunkte",
+      "noteLabel": "Notiz an den Lernenden (optional)",
+      "noteHint": "Wird im Notizverlauf veröffentlicht und mit der Prüfung per E-Mail versendet.",
+      "submitError": "Die Prüfung konnte nicht übermittelt werden.",
+      "submitting": "Wird übermittelt…",
+      "submit": "Prüfung absenden",
+      "draftSaved": "Entwurf gespeichert {{time}}",
+      "discard": "Verwerfen"
+    },
+    "share": {
+      "title": "Freigabe",
+      "recipients_one": "{{count}} Empfänger",
+      "recipients_other": "{{count}} Empfänger",
+      "loadError": "Vorhandene Freigaben konnten nicht geladen werden.",
+      "none": "Du hast diesen Scan mit niemandem geteilt.",
+      "sharedAt": "Geteilt {{date}}",
+      "opened": "Geöffnet",
+      "unopened": "Ungeöffnet",
+      "revoke": "Zugriff für {{email}} entziehen",
+      "revokeError": "Der Zugriff konnte nicht entzogen werden.",
+      "withLabel": "Teilen mit",
+      "withPlaceholder": "name@klinik.de, kollege@praxis.de",
+      "withHint": "Durch Komma oder Zeilenumbruch getrennt. Empfänger brauchen ein bestehendes Konto.",
+      "shareError": "Der Scan konnte nicht geteilt werden.",
+      "messageLabel": "Nachricht (optional)",
+      "sharing": "Wird geteilt…",
+      "shareWithCount": "Mit {{count}} teilen",
+      "outcomeShared_one": "Mit {{count}} Empfänger geteilt.",
+      "outcomeShared_other": "Mit {{count}} Empfängern geteilt.",
+      "outcomeDuplicate": "Hatte bereits Zugriff: {{emails}}",
+      "outcomeNotFound": "Kein Sector-Konto, nichts gesendet: {{emails}}",
+      "dialogTitle": "{{title}} teilen"
+    },
+    "summary": {
+      "notReviewed": "Dieser Scan wurde noch nicht geprüft.",
+      "reviewer": "Prüfer(in)",
+      "overall": "Gesamtrückmeldung",
+      "technical": "Technische Rückmeldung",
+      "teaching": "Lehrpunkte",
+      "teachingContent": "Lehrinhalt",
+      "customQuestions": "Eigene Fragen"
+    },
+    "custom": {
+      "title": "Eigene Fragen (optional)",
+      "add": "Hinzufügen",
+      "question": "Frage {{number}}",
+      "remove": "Frage {{number}} entfernen",
+      "questionLabel": "Frage",
+      "questionPlaceholder": "z. B. Ejektionsfraktion",
+      "answerLabel": "Antwort"
+    },
+    "markdown": {
+      "title": "KI-gestützte Prüfung",
+      "languageGroup": "Sprache der Prüfung",
+      "original": "Original"
+    },
+    "shared": {
+      "back": "Zurück zu geteilten Scans",
+      "readOnly": "Mit dir geteilt · schreibgeschützt",
+      "notShared": "Dieser Scan ist nicht mit dir geteilt",
+      "loadError": "Dieser geteilte Scan konnte nicht geladen werden",
+      "loadErrorDetail": "Beim Laden des geteilten Scans ist etwas schiefgelaufen.",
+      "goneTitle": "Diese Studie ist nicht mehr verfügbar",
+      "goneDetail": "Die Person, die sie geteilt hat, hat den Scan inzwischen gelöscht. Die Freigabe bleibt in deiner Liste, es gibt aber nichts mehr zu öffnen.",
+      "sharedBy": "Geteilt von",
+      "unknownUser": "Unbekannte(r) Nutzer(in)"
+    },
+    "page": {
+      "back": "Zurück zu {{list}}",
+      "notFound": "Scan nicht gefunden",
+      "loadError": "Dieser Scan konnte nicht geladen werden",
+      "loadErrorDetail": "Beim Laden des Scans ist etwas schiefgelaufen."
+    },
+    "viewLabel": {
+      "my": "meine Scans",
+      "pending": "ungeprüfte Gruppenscans",
+      "reviewed": "geprüfte Gruppenscans",
+      "expert": "ungeprüfte Expertenscans",
+      "expert-reviewed": "geprüfte Expertenscans"
+    }
   },
   "home": {
     "greeting": "Willkommen zurück, {{name}}",
@@ -894,6 +1364,17 @@
     "signedOut": {
       "title": "Melde dich an, um Sage AI zu nutzen",
       "description": "Sage AI benötigt ein angemeldetes Konto, um geöffnet zu werden."
+    }
+  },
+  "command": {
+    "title": "Befehlsmenü",
+    "open": "Suchen",
+    "placeholder": "Seiten, Scans und Kurse durchsuchen",
+    "empty": "Keine Treffer",
+    "group": {
+      "nav": "Gehe zu",
+      "scan": "Scans",
+      "course": "Kurse"
     }
   }
 }

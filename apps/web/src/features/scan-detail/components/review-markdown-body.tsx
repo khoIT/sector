@@ -2,6 +2,7 @@ import { cn } from '@sector/ui';
 import { Fragment, useState } from 'react';
 
 import { parseReviewMarkdown, type InlineSpan } from './review-markdown';
+import { useTranslation } from 'react-i18next';
 
 export type ReviewMarkdownBodyProps = {
   reviewMD?: string | null;
@@ -28,6 +29,7 @@ export function ReviewMarkdownBody({
   translatedLanguage,
   className,
 }: ReviewMarkdownBodyProps) {
+  const { t } = useTranslation();
   const [showTranslated, setShowTranslated] = useState(false);
 
   if (!reviewMD && !translatedReviewMD) return null;
@@ -40,15 +42,19 @@ export function ReviewMarkdownBody({
     <section className={cn('flex flex-col gap-2', className)}>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-[11px] font-semibold uppercase tracking-wide text-ink-dim">
-          AI-assisted review
+          {t('scanDetail.markdown.title')}
         </h3>
 
         {hasTranslation ? (
-          <div className="flex gap-1" role="group" aria-label="Review language">
+          <div
+            className="flex gap-1"
+            role="group"
+            aria-label={t('scanDetail.markdown.languageGroup')}
+          >
             <LanguageTab
               active={!showTranslated}
               onClick={() => setShowTranslated(false)}
-              label="Original"
+              label={t('scanDetail.markdown.original')}
             />
             <LanguageTab
               active={showTranslated}

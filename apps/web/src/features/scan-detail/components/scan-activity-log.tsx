@@ -2,6 +2,7 @@ import type { ScanLog, UserBasic } from '@sector/api-client';
 import { userDisplayName } from '@sector/api-client';
 
 import { formatDateTime } from '@/lib/format';
+import { useTranslation } from 'react-i18next';
 
 type ScanActivityLogProps = {
   /** The audit trail. `scanLogs` is the live one; `logs` is deprecated server-side. */
@@ -18,6 +19,7 @@ type ScanActivityLogProps = {
  * screen-reader-operable without a disclosure library.
  */
 export function ScanActivityLog({ scanLogs, logs }: ScanActivityLogProps) {
+  const { t } = useTranslation();
   // Both arrays hold the same shape. `logs` is marked TO BE DEPRECATED in the
   // server code but still carries entries on older scans, so both are shown.
   const entries = [...scanLogs, ...logs].sort(sortNewestFirst);
@@ -25,15 +27,19 @@ export function ScanActivityLog({ scanLogs, logs }: ScanActivityLogProps) {
   return (
     <details className="group rounded-token border border-line bg-surface-2">
       <summary className="cursor-pointer list-none px-3 py-2 text-[12px] font-medium text-ink-dim marker:content-none">
-        Activity log
+        {t('scanDetail.activity.title')}
         <span className="ml-1 sv-num">({entries.length})</span>
-        <span className="float-right text-ink-dim group-open:hidden">Show</span>
-        <span className="float-right hidden text-ink-dim group-open:inline">Hide</span>
+        <span className="float-right text-ink-dim group-open:hidden">
+          {t('scanDetail.activity.show')}
+        </span>
+        <span className="float-right hidden text-ink-dim group-open:inline">
+          {t('scanDetail.activity.hide')}
+        </span>
       </summary>
 
       <div className="border-t border-line px-3 py-2">
         {entries.length === 0 ? (
-          <p className="text-[12px] text-ink-dim">Nothing recorded yet.</p>
+          <p className="text-[12px] text-ink-dim">{t('scanDetail.activity.none')}</p>
         ) : (
           <ol className="space-y-2">
             {entries.map((entry, index) => (

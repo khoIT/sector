@@ -62,7 +62,11 @@
   },
   "toolbar": {
     "filters": "Mga Filter",
-    "columns": "Mga Haligi"
+    "columns": "Mga Haligi",
+    "sortBy": "Ayusin ayon sa",
+    "sortNone": "Pumili ng column",
+    "sortAscending": "Ayusin nang pataas",
+    "sortDescending": "Ayusin nang pababa"
   },
   "pagination": {
     "rows": "hilera",
@@ -86,6 +90,52 @@
       "scopeNote": "Mga paalala lamang sa takdang-aralin ang saklaw nito. Hindi apektado ang email tungkol sa account, password at pagsusuri ng scan.",
       "loadError": "Hindi ma-load ang iyong setting para sa mga paalala.",
       "saveError": "Hindi na-save ang setting na iyon."
+    },
+    "identity": {
+      "title": "Ang iyong account",
+      "description": "Ang pangalan at larawang nakikita ng iba katabi ng iyong mga scan.",
+      "firstName": "Pangalan",
+      "lastName": "Apelyido",
+      "email": "Email",
+      "username": "Username",
+      "role": "Tungkulin",
+      "saveError": "Hindi na-save ang iyong pangalan.",
+      "saved": "Na-save ang iyong pangalan.",
+      "saving": "Sine-save…",
+      "save": "I-save ang pangalan"
+    },
+    "photo": {
+      "upload": "Mag-upload ng larawan",
+      "replace": "Palitan ang larawan",
+      "uploading": "Ina-upload…",
+      "remove": "Alisin",
+      "removing": "Inaalis…",
+      "choose": "Pumili ng larawan sa profile"
+    },
+    "password": {
+      "title": "Password",
+      "description": "Kailangan mo ang kasalukuyang password para magtakda ng bago.",
+      "current": "Kasalukuyang password",
+      "new": "Bagong password",
+      "confirm": "Kumpirmahin ang bagong password",
+      "error": "Hindi napalitan ang iyong password.",
+      "changed": "Napalitan na ang iyong password. Naka-sign in ka pa rin sa device na ito.",
+      "changing": "Pinapalitan…",
+      "change": "Palitan ang password"
+    },
+    "createScanFlow": {
+      "cardTitle": "Gumawa ng scan study",
+      "cardDescription": "Kung paano nakaayos para sa iyo ang pahina ng paggawa ng scan study. Pareho ang kinokolekta ng dalawang layout at iisa ang draft.",
+      "legend": "Layout ng paggawa ng scan study",
+      "note": "Mag-a-apply sa susunod na pagbukas ng “Gumawa ng scan study”. Naka-save lang sa browser na ito — tulad ng tema at wika, hindi ito susunod sa ibang device.",
+      "study": {
+        "title": "Isang working surface",
+        "description": "Mga file, uri ng exam, findings, tala at grupo sa iisang pahina, kahit anong pagkakasunod, may bar na nagpapakita ng kulang. Hiwalay na screen ang nagpapakita ng ipapadala."
+      },
+      "classic": {
+        "title": "Hakbang-hakbang",
+        "description": "Ang apat na hakbang na wizard: mga file, tapos interpretasyon, tapos review at routing. Isa-isa, may Bumalik at Susunod."
+      }
     }
   },
   "groupsDialog": {
@@ -550,19 +600,18 @@
         "title_other": "{{count}} mga pagpapatalang nag-expire",
         "description": "Tapos na ang access dito; ang pagpapanibago ng isang atas ay hawak ng iyong lider ng grupo o administrador.",
         "badge": "Nag-expire"
-      }
+      },
+      "layout": {
+        "grid": "Tanawing grid",
+        "list": "Tanawing listahan"
+      },
+      "counts": "{{lessons}} module · {{topics}} paksa · {{quizzes}} pagsusulit",
+      "expiresOn": "Mag-e-expire sa {{date}}",
+      "lastActive": "Huling binuksan noong {{date}}"
     },
     "outline": {
       "title": "Balangkas ng Kurso",
       "backToCourses": "Aking Mga Kurso",
-      "progress": "{{completed}}/{{total}} nakumpleto ({{percent}}%)",
-      "remaining": "{{duration}} pa ang panonoorin",
-      "resume": {
-        "start": "Simulan: {{title}}",
-        "resume": "Magpatuloy: {{title}}",
-        "retry": "Subukan muli: {{title}}",
-        "review": "Suriin: {{title}}"
-      },
       "completedBanner": "Nakumpleto mo na ang kursong ito.",
       "empty": {
         "title": "Wala pang laman ang kursong ito"
@@ -591,7 +640,6 @@
     },
     "landing": {
       "title": "Tungkol sa kursong ito",
-      "viewOutline": "Tingnan ang balangkas ng kurso",
       "totalTime": "{{duration}} na video",
       "itemCount_one": "{{count}} item",
       "itemCount_other": "{{count}} na item",
@@ -698,7 +746,8 @@
         "resumeError": "Hindi ma-load ang iyong na-save na progreso. Magsisimula mula sa umpisa."
       },
       "contents": {
-        "title": "Nilalaman"
+        "title": "Nilalaman",
+        "open": "Nilalaman {{index}}/{{total}}"
       },
       "completionNote": "Awtomatikong nakukumpleto ang mga paksa sa {{percent}}% na napanood.",
       "questionCount_one": "{{count}} t",
@@ -765,7 +814,254 @@
     "creditCount_one": "{{count}} credit",
     "creditCount_other": "{{count}} na credits",
     "creditWillBeSpent": "Isang credit mula sa {{label}} ang gagamitin sa pagsusumite",
-    "creditSpentOnSubmit": "Ginagamit lang ang credit kapag naisumite na ang pag-aaral. Kung mabigo ang kahilingan, sasabihin sa iyo, at naka-save pa rin ang pag-aaral."
+    "creditSpentOnSubmit": "Ginagamit lang ang credit kapag naisumite na ang pag-aaral. Kung mabigo ang kahilingan, sasabihin sa iyo, at naka-save pa rin ang pag-aaral.",
+    "routingSummary": {
+      "title": "Saan ito mapupunta",
+      "groupsDefault": "Ang iyong karaniwang mga grupo",
+      "groupsNone": "Walang grupo — ikaw lang at ang eksperto",
+      "groupsCount_one": "{{count}} grupo",
+      "groupsCount_other": "{{count}} grupo",
+      "expertNone": "Walang hiniling na pagsusuri ng eksperto",
+      "expertRequested": "Pagsusuri ng eksperto mula sa {{pool}}"
+    },
+    "readiness": {
+      "files": "Mga file",
+      "findings": "Mga finding",
+      "exam": "Exam",
+      "note": "Tala"
+    },
+    "clinicalNote": {
+      "title": "Klinikal na tala",
+      "blurb": "Konteksto na kailangan ng tagasuri: presentasyon, ang tanong na sinasagot ng scan, at anumang hindi kayang ilaman ng listahan ng findings.",
+      "noteLabel": "Tala",
+      "notePlaceholder": "hal. 62M na may flank pain, inaalis ang AAA. Limitadong windows dahil sa bowel gas.",
+      "patientIdLabel": "External patient ID",
+      "patientIdHint": "Opsyonal. Ang sarili mong record number, hanggang 100 karakter.",
+      "scanIdLabel": "Scan identifier",
+      "scanIdHint": "Opsyonal. Ipapakita sa pag-aaral at kasama sa export ng iyong organisasyon."
+    },
+    "commit": {
+      "stillNeeded": "Kailangan pa:",
+      "ready": "Handa nang isumite.",
+      "reviewSubmit": "Suriin at isumite"
+    },
+    "discard": {
+      "title": "Itapon ang draft na ito?",
+      "nothingLost": "Wala pang nailalagay, kaya walang mawawala.",
+      "holds": "Hindi ito maibabalik. Nasa draft ang:",
+      "keep": "Panatilihin ang draft",
+      "confirm": "Itapon ito"
+    },
+    "draftIndicator": {
+      "saved": "Na-save ang draft — {{stored}} sa {{total}} file ang nasa storage",
+      "transferring": "{{count}} ang inililipat pa",
+      "detached": "{{count}} ang kailangang piliing muli"
+    },
+    "drop": {
+      "title": "I-drop dito ang mga larawan o clip",
+      "blurb": "Sinusuri ang bawat file at agad na nag-a-upload habang pinupunan mo ang iba pang bahagi. JPEG, PNG, GIF, WebP, BMP, SVG, MP4, MOV, WebM, AVI at MKV.",
+      "chooseLabel": "Pumili ng mga scan file",
+      "browse": "Mag-browse ng file"
+    },
+    "findingRow": {
+      "required": "kinakailangan"
+    },
+    "findings": {
+      "title": "Mga finding",
+      "blurb": "Ang ipinapakita ng pag-aaral. Inaalok ang bawat opsyong tinukoy ng uri ng scan — huwag galawin ang isang row kung hindi ito nasuri.",
+      "clearDefaults": "I-clear ang mga default",
+      "noPathology": "Walang patolohiya",
+      "loadError": "Hindi ma-load ang findings form ng uri ng scan na ito",
+      "retry": "Subukan muli",
+      "requestFailed": "Nabigo ang kahilingan.",
+      "loadErrorDetail": "Maaari mo pa ring isumite ang pag-aaral na may tala, o subukan muli.",
+      "none": "Walang structured findings ang uri ng scan na ito. Itala sa klinikal na tala sa ibaba ang iyong nakita."
+    },
+    "groups": {
+      "title": "Ibahagi sa mga grupo",
+      "blurb": "Makikita ng mga tagasuri sa mga grupong ito ang pag-aaral. Itinatakda ito kapag ginawa ang pag-aaral at hindi na mababago.",
+      "loadError": "Hindi ma-load ang iyong mga grupo",
+      "retry": "Subukan muli",
+      "requestFailed": "Nabigo ang kahilingan.",
+      "loadErrorDetail": "Maaari kang magsumite nang walang grupo at humiling na lang ng pagsusuri ng eksperto.",
+      "noneTitle": "Wala ka pang grupo",
+      "noneDetail": "Walang hihilingang magsuri ng pag-aaral na ito sa pamamagitan ng grupo. Maaari ka pa ring humiling ng pagsusuri ng eksperto sa ibaba.",
+      "in": "sa",
+      "parentGroup": "Isang parent group — kapag pinili ito, ibabahagi sa lahat ng nasa ilalim nito.",
+      "widerGroup": "mas malawak na grupo"
+    },
+    "files": {
+      "collapsedSummary_one": "{{count}} file sa storage",
+      "collapsedSummary_other": "{{count}} file sa storage",
+      "title": "Mga file",
+      "blurb": "Nagsisimula ang pag-upload sa sandaling pumasa ang file sa pagsusuri. Maaari kang magpatuloy, at hindi mawawala ang nasa storage kapag isinara mo ang tab.",
+      "collapse": "Itiklop",
+      "notAdded_one": "{{count}} file ang hindi naidagdag",
+      "notAdded_other": "{{count}} file ang hindi naidagdag",
+      "dismiss": "I-dismiss",
+      "nudgeTitle": "Karamihan sa kumpletong pag-aaral ay may tatlong file",
+      "nudgeBody": "May {{count}} pa lang ang pag-aaral na ito. Idagdag na ang natitirang views kung mayroon ka — puwede ring magdagdag mamaya, ngunit makikita ito ng mga tagasuri kapag naisumite na.",
+      "detachedTitle": "May mga file sa draft na kailangang piliing muli",
+      "detachedBody": "{{count}} sa mga file sa draft na ito ang hindi natapos i-upload noong huling isinara ang pahina, at hindi iniingatan ng browser ang laman ng file. Piliin muli ang bawat isa sa ibaba, o alisin ito.",
+      "failedTitle_one": "{{count}} file ang hindi na-upload",
+      "failedTitle_other": "{{count}} file ang hindi na-upload",
+      "retryAll": "Subukan lahat muli",
+      "failedBody": "Nakasaad sa ibaba kung bakit. Ang muling pagsubok ay nag-a-upload lang ng file na iyon; mananatili ang nasa storage.",
+      "storedOf": "{{stored}} sa {{tracked}} ang nasa storage",
+      "cancelAll": "Kanselahin lahat ng paglilipat"
+    },
+    "fileRow": {
+      "structureOnlyTitle": "Wasto at kumpleto ang container ng file, ngunit hindi ma-decode ng browser na ito ang codec nito. Normal itong nag-a-upload at nababasa ito ng server.",
+      "structureOnly": "istruktura lamang",
+      "cancelUpload": "Kanselahin ang pag-upload ng {{name}}",
+      "cancel": "Kanselahin",
+      "retry": "Subukan muli",
+      "chooseAgain": "Pumili muli",
+      "remove": "Alisin ang {{name}}",
+      "progress": "Progreso ng pag-upload ng {{name}}",
+      "detachedBody": "Nasa naka-save na draft ang file na ito ngunit hindi iningatan sa browser ang laman nito. Piliin muli ang parehong file para matapos ang pag-upload, o alisin ito sa pag-aaral."
+    },
+    "rail": {
+      "localPlayback": "Pinapatugtog mula sa browser na ito — walang kinukuha mula sa storage. Gamitin ang",
+      "stepBetween": "para lumipat sa pagitan ng mga file.",
+      "and": "at",
+      "noPreviews": "Mula sa browser na ito pinapatugtog ang mga preview, kaya walang preview ang pag-aaral na ipinagpatuloy pagkatapos mag-reload. Ipinapakita sa listahan sa ibaba kung nasaan talaga ang bawat file."
+    },
+    "setup": {
+      "scanTypeLabel": "Uri ng scan",
+      "scanTypePlaceholder": "Pumili ng uri ng scan",
+      "scanTypeSearch": "AAA, Echo, Lung…",
+      "scanTypeEmpty": "Walang tugmang uri ng scan.",
+      "shareLabel": "Ibahagi sa",
+      "groupSearch": "Hanapin ang iyong mga grupo…",
+      "groupEmpty": "Walang tugmang grupo."
+    },
+    "typePicker": {
+      "loadError": "Hindi ma-load ang mga uri ng scan",
+      "retry": "Subukan muli",
+      "requestFailed": "Nabigo ang kahilingan.",
+      "loadErrorDetail": "Nag-a-upload pa rin ang iyong mga file at walang nawala.",
+      "findLabel": "Maghanap ng uri ng scan",
+      "findPlaceholder": "AAA, Echo, Lung…",
+      "noMatchTitle": "Walang tugmang uri ng scan",
+      "noMatchDetail": "Burahin ang hinahanap para makita lahat ng uri ng scan."
+    },
+    "switchType": {
+      "title": "Lumipat sa {{type}}?",
+      "clearedOne": "May isang sagot na walang katumbas sa bagong uri ng scan at buburahin.",
+      "clearedMany": "{{count}} sagot ang walang katumbas sa bagong uri ng scan at buburahin.",
+      "clearedFrom": "Binura mula sa {{type}}",
+      "cleared": "Binura",
+      "carriedOver": "Dinala sa {{type}}",
+      "keep": "Panatilihin ang {{type}}",
+      "keepCurrent": "Panatilihin ang kasalukuyang uri",
+      "confirm": "Lumipat sa {{type}}"
+    },
+    "submitConfirm": {
+      "title": "Isumite ang pag-aaral na ito?",
+      "blurb": "Nasa storage na ang iyong mga file. Ang pagsusumite ay nagtatala ng mga detalyeng ito — hindi ito nagsisimula ng panibagong upload.",
+      "error": "Hindi nagawa ang pag-aaral",
+      "keepEditing": "Magpatuloy sa pag-edit",
+      "submitting": "Isinusumite…",
+      "submit": "Isumite ang pag-aaral"
+    },
+    "credits": {
+      "title": "Bumili ng credit para sa pagsusuri ng eksperto",
+      "blurb": "Isang credit ang bayad sa isang pagsusuri ng eksperto. Maaaring hawak mo o ng isang grupo ang credit.",
+      "goTo": "Mapupunta ang credit sa",
+      "ownBalance": "Sarili kong balanse",
+      "bundle": "Bundle",
+      "error": "Hindi nasimulan ang checkout",
+      "noResponse": "Hindi tumugon ang serbisyo ng pagbabayad.",
+      "errorDetail": "Walang siningil. Naka-save ang iyong pag-aaral — subukan muli, o isumite nang walang pagsusuri ng eksperto.",
+      "cancel": "Kanselahin",
+      "opening": "Binubuksan ang checkout…",
+      "continue": "Magpatuloy sa pagbabayad"
+    },
+    "studySurface": {
+      "pickTypeTitle": "Pumili ng uri ng scan para makita ang findings nito",
+      "pickTypeBody": "Iba-iba ang findings sa bawat uri ng scan, kaya lalabas ang form kapag may napili. Patuloy na nag-a-upload ang iyong mga file samantala.",
+      "missingRequired_one": "{{count}} kinakailangang finding ang blangko pa",
+      "missingRequired_other": "{{count}} kinakailangang finding ang blangko pa",
+      "missingRequiredBody": "{{names}}. Maaari kang magsumite nang wala ang mga ito, ngunit hindi malalaman ng tagasuri kung normal o hindi nasuri ang mga ito."
+    },
+    "summary": {
+      "title": "Ang ipapadala",
+      "blurb": "Lahat ng nasa ibaba ay itatala kasama ng mga file na nasa storage na. Hindi na mababago ang group routing pagkatapos.",
+      "edit": "I-edit ang pag-aaral",
+      "study": "Ang pag-aaral",
+      "examType": "Uri ng exam",
+      "files": "Mga file",
+      "filesValue": "{{stored}} sa {{tracked}} sa storage · {{size}}",
+      "scanIdentifier": "Scan identifier",
+      "patientId": "External patient ID",
+      "findings": "Mga finding",
+      "clinicalNote": "Klinikal na tala",
+      "noNote": "Walang tala. Ang findings at mga larawan lang ang makikita ng tagasuri.",
+      "audience": "Sino ang makakakita nito",
+      "noGroups": "Walang grupo. Walang tagasuri ng grupo ang makakakita nito, at hindi na makakadagdag ng grupo pagkatapos — walang ruta ang API para doon. Maaari mo pa ring ibahagi ito sa mga tiyak na tao mula sa pag-aaral mismo.",
+      "widerThanCohort": "mas malawak kaysa sa iyong cohort",
+      "expertReview": "Pagsusuri ng eksperto",
+      "notRequested": "Hindi hiniling",
+      "noFindings": "Walang naitalang finding."
+    },
+    "page": {
+      "title": "Gumawa ng scan study",
+      "blurb": "Nag-a-upload ang mga file habang ka nagtatrabaho. Ang pagsusumite ay nagtatala ng mga detalye kasama ng mga ito.",
+      "discardTitle": "Itapon ang draft at magsimulang muli",
+      "discard": "Itapon ang draft",
+      "myScans": "Aking mga scan",
+      "restoredTitle": "Ipinagpatuloy kung saan ka huminto",
+      "startFresh": "Magsimulang bago",
+      "restoredBody": "May nakitang naka-save na draft sa browser na ito. Nasa storage na ang mga file na natapos mag-upload, at ipagpapatuloy ang mga inililipat pa. Ang file lang na wala na sa browser na ito ang kailangang piliing muli — nakalista ang mga iyon."
+    },
+    "classic": {
+      "addFile": "Magdagdag ng kahit isang file para magpatuloy.",
+      "interpretation": "Interpretasyon",
+      "files": "Mga file",
+      "chooseType": "Pumili ng uri ng scan para magpatuloy.",
+      "reviewRouting": "Suriin ang routing"
+    },
+    "interpretation": {
+      "scanTypePrefix": "Uri ng scan: ",
+      "change": "Palitan",
+      "scanTypeTitle": "Uri ng scan",
+      "scanTypeBlurb": "Kinakailangan, at hindi na mababago kapag naisumite — walang paraan ang API para baguhin ang uri ng scan pagkatapos."
+    },
+    "routing": {
+      "submitTitle": "Isumite",
+      "submitBlurb": "Nasa storage na ang iyong mga file. Ang pagsusumite ay nagtatala ng mga detalye ng pag-aaral kasama ng mga ito — hindi ito nagsisimula ng panibagong upload.",
+      "stillMoving_one": "{{count}} file ang hindi pa tapos mag-upload",
+      "stillMoving_other": "{{count}} file ang hindi pa tapos mag-upload",
+      "stillMovingBody": "Kapag isinumite ngayon, gagawin ang pag-aaral gamit ang {{stored}} na nasa storage at iiwan ang iba. Hintayin munang matapos, o bumalik at ayusin ang mga nabigo.",
+      "nothingStored": "Wala pang nasa storage",
+      "nothingStoredBody": "Hindi makakagawa ng pag-aaral nang walang kahit isang na-upload na file — tinatanggihan ng API ang zero na file.",
+      "noExamType": "Walang napiling uri ng exam",
+      "chooseExamType": "Pumili ng uri ng exam",
+      "noExamTypeBody": "Kailangan ng uri ng exam ang pag-aaral: ito ang nagpapasya kung anong findings ang itatanong sa tagasuri, at hindi na ito mababago kapag nagawa na.",
+      "notSubmitted": "Hindi naisumite ang pag-aaral",
+      "tryAgain": "Subukan muli",
+      "notSubmittedBody": "Nasa storage pa rin ang iyong mga na-upload na file at naka-save ang draft, kaya walang kailangang ulitin.",
+      "recording": "Itinatala ang pag-aaral…",
+      "submit": "Isumite ang pag-aaral"
+    },
+    "submitted": {
+      "title": "Naisumite ang pag-aaral",
+      "blurb": "Nasa iyong vault ang pag-aaral. Matatapos sa server ang processing at de-identification sa loob ng ilang segundo; awtomatikong mag-a-update ang listahan.",
+      "status": "Naisumite",
+      "filesAttached": "Mga naka-attach na file",
+      "filesValue": "{{confirmed}} sa {{total}}",
+      "expertReview": "Pagsusuri ng eksperto",
+      "requested": "Hiniling",
+      "requestFailed": "Nabigo ang paghiling",
+      "notRequested": "Hindi hiniling",
+      "openStudy": "Buksan ang pag-aaral",
+      "expertFailedTitle": "Hindi natuloy ang paghiling ng pagsusuri ng eksperto",
+      "requestRejected": "Tinanggihan ang kahilingan.",
+      "expertFailedBody": "Naka-save at naipadala sa iyong mga grupo ang pag-aaral mismo, at walang nagastos na credit.",
+      "createAnother": "Gumawa ng panibagong pag-aaral",
+      "goToMyScans": "Pumunta sa aking mga scan"
+    }
   },
   "scanDetail": {
     "resetUploadDialogTitle": "I-reset ang “{{title}}” para muling mag-upload?",
@@ -783,7 +1079,181 @@
     "markIncomplete": "Markahang hindi kumpleto",
     "close": "Isara",
     "completionTagErrorTitle": "Hindi na-save ang marka",
-    "completionTagError": "Hindi nabago ang pagkakumpleto ng scan. Walang na-save — subukan muli."
+    "completionTagError": "Hindi nabago ang pagkakumpleto ng scan. Walang na-save — subukan muli.",
+    "queueNav": {
+      "previous": "Nakaraan",
+      "next": "Susunod",
+      "position": "{{position}} ng {{total}}",
+      "hint": "Pindutin ang j para sa susunod, k para sa nakaraan"
+    },
+    "learnerQuestion": {
+      "title": "Tanong ng mag-aaral"
+    },
+    "notes": {
+      "dialogTitle": "Mga komento sa {{title}}",
+      "title": "Mga tala",
+      "none": "Walang tala sa scan na ito.",
+      "noReadAccess": "Hindi mababasa ng iyong tungkulin ang mga tala sa scan na ito.",
+      "loadError": "Hindi ma-load ang mga tala",
+      "empty": "Wala pang tala.",
+      "addLabel": "Magdagdag ng tala",
+      "addPlaceholder": "Sumagot sa mag-aaral, o magtala tungkol sa pag-aaral na ito.",
+      "addError": "Hindi naidagdag ang tala.",
+      "adding": "Idinadagdag…",
+      "add": "Idagdag ang tala"
+    },
+    "submittedAnswers": {
+      "none": "Walang naisumite kasama ang scan na ito — walang findings at walang sagot sa form.",
+      "findingsGroup": "Mga finding"
+    },
+    "activity": {
+      "title": "Activity log",
+      "show": "Ipakita",
+      "hide": "Itago",
+      "none": "Wala pang naitala."
+    },
+    "files": {
+      "none": "Walang file na naitala sa scan na ito.",
+      "recorded_one": "{{recorded}} sa {{count}} inaasahang file ang naitala.",
+      "recorded_other": "{{recorded}} sa {{count}} inaasahang file ang naitala."
+    },
+    "media": {
+      "unavailableTitle": "Hindi available ang file",
+      "unavailableDetail": "Hindi natapos ang pag-upload ng file na ito, kaya walang maipapakita.",
+      "dicomTitle": "Hindi suportado ang DICOM preview",
+      "dicomDetail": "Walang DICOM renderer ang Sector. I-download ang file at buksan sa DICOM viewer.",
+      "openOriginal": "Buksan ang orihinal na file",
+      "previousFile": "Nakaraang file",
+      "nextFile": "Susunod na file",
+      "unknownType": "hindi kilalang uri",
+      "thumbVideo": "VIDEO",
+      "thumbFile": "FILE",
+      "notPreviewable_one": "{{count}} pang file ang hindi mapa-preview dito. Nakalista sa ibaba ang pangalan at katayuan nito.",
+      "notPreviewable_other": "{{count}} pang file ang hindi mapa-preview dito. Nakalista sa ibaba ang pangalan at katayuan ng mga ito.",
+      "filesSection": "Mga file ({{count}}/{{total}})",
+      "showFile": "Ipakita ang {{filename}}",
+      "cannotPlay": "Hindi mapatugtog ng browser na ito ang {{format}}",
+      "cannotPreview": "Hindi mapa-preview ang {{format}}",
+      "thisFile": "ang file na ito",
+      "thisFileType": "ang uri ng file na ito",
+      "downloadableDetail": "Nakaimbak ang file at maaaring i-download, ngunit hindi ito maipapakita ng browser dito.",
+      "noPreviewTitle": "Walang available na preview",
+      "noMediaTitle": "Walang media sa scan na ito",
+      "notPreviewableList_one": "{{count}} file ang hindi mapa-preview dito. Nakalista sa ibaba ang pangalan at katayuan nito.",
+      "notPreviewableList_other": "{{count}} file ang hindi mapa-preview dito. Nakalista sa ibaba ang bawat isa at ang katayuan nito.",
+      "noUpload": "Walang naidulot na file ang pag-upload. Ipinapakita sa listahan sa ibaba ang inaasahan."
+    },
+    "context": {
+      "clinicalNote": "Klinikal na tala",
+      "findings": "Mga finding at interpretasyon",
+      "identifiers": "Mga identifier",
+      "scanIdentifier": "Scan identifier",
+      "externalPatientId": "External patient ID",
+      "scanId": "Scan ID",
+      "submittedBy": "Isinumite ni",
+      "submitted": "Isinumite",
+      "lastUpdated": "Huling na-update",
+      "reviewed": "Nasuri",
+      "group_one": "Grupo",
+      "group_other": "Mga grupo",
+      "noGroup": "Hindi nakakabit sa anumang grupo.",
+      "tags": "Mga tag"
+    },
+    "common": {
+      "retry": "Subukan muli",
+      "somethingWentWrong": "May naganap na mali."
+    },
+    "review": {
+      "titleExpert": "Pagsusuri ng eksperto",
+      "title": "Pagsusuri",
+      "competency": "Sukat ng kakayahan",
+      "achieved": "Naabot",
+      "notAchieved": "Hindi naabot",
+      "competencyMissing": "Pumili ng naabot o hindi naabot.",
+      "overall": "Pangkalahatang feedback",
+      "overallMissing": "Kailangan ang pangkalahatang feedback.",
+      "technical": "Teknikal na feedback",
+      "technicalHint": "Paghawak ng probe, gain, lalim, oryentasyon.",
+      "teaching": "Mga turo",
+      "noteLabel": "Tala para sa mag-aaral (opsyonal)",
+      "noteHint": "Ipo-post sa note thread at ie-email kasama ang pagsusuri.",
+      "submitError": "Hindi naisumite ang pagsusuri.",
+      "submitting": "Isinusumite…",
+      "submit": "Isumite ang pagsusuri",
+      "draftSaved": "Na-save ang draft {{time}}",
+      "discard": "Itapon"
+    },
+    "share": {
+      "title": "Pagbabahagi",
+      "recipients_one": "{{count}} tatanggap",
+      "recipients_other": "{{count}} tatanggap",
+      "loadError": "Hindi ma-load ang mga kasalukuyang share.",
+      "none": "Hindi mo pa naibabahagi ang scan na ito.",
+      "sharedAt": "Naibahagi {{date}}",
+      "opened": "Binuksan",
+      "unopened": "Hindi pa binubuksan",
+      "revoke": "Bawiin ang access ni {{email}}",
+      "revokeError": "Hindi nabawi ang access.",
+      "withLabel": "Ibahagi kay",
+      "withPlaceholder": "pangalan@ospital.org, kasama@klinika.org",
+      "withHint": "Paghiwalayin ng kuwit o bagong linya. Kailangan ng tatanggap ng account.",
+      "shareError": "Hindi naibahagi ang scan.",
+      "messageLabel": "Mensahe (opsyonal)",
+      "sharing": "Ibinabahagi…",
+      "shareWithCount": "Ibahagi sa {{count}}",
+      "outcomeShared_one": "Naibahagi sa {{count}} tatanggap.",
+      "outcomeShared_other": "Naibahagi sa {{count}} tatanggap.",
+      "outcomeDuplicate": "May access na: {{emails}}",
+      "outcomeNotFound": "Walang Sector account, walang naipadala: {{emails}}",
+      "dialogTitle": "Ibahagi ang {{title}}"
+    },
+    "summary": {
+      "notReviewed": "Hindi pa nasusuri ang scan na ito.",
+      "reviewer": "Tagasuri",
+      "overall": "Pangkalahatang feedback",
+      "technical": "Teknikal na feedback",
+      "teaching": "Mga turo",
+      "teachingContent": "Nilalamang pang-turo",
+      "customQuestions": "Mga custom na tanong"
+    },
+    "custom": {
+      "title": "Mga custom na tanong (opsyonal)",
+      "add": "Idagdag",
+      "question": "Tanong {{number}}",
+      "remove": "Alisin ang tanong {{number}}",
+      "questionLabel": "Tanong",
+      "questionPlaceholder": "hal. Ejection Fraction",
+      "answerLabel": "Sagot"
+    },
+    "markdown": {
+      "title": "Pagsusuring tinulungan ng AI",
+      "languageGroup": "Wika ng pagsusuri",
+      "original": "Orihinal"
+    },
+    "shared": {
+      "back": "Bumalik sa mga shared scan",
+      "readOnly": "Ibinahagi sa iyo · basahin lamang",
+      "notShared": "Hindi ibinahagi sa iyo ang scan na ito",
+      "loadError": "Hindi ma-load ang shared scan na ito",
+      "loadErrorDetail": "May naganap na mali sa pag-load ng shared scan.",
+      "goneTitle": "Hindi na available ang pag-aaral na ito",
+      "goneDetail": "Binura na ng nagbahagi ang scan. Nananatili ang share sa iyong listahan para malaman mong umiral ito, ngunit wala nang mabubuksan.",
+      "sharedBy": "Ibinahagi ni",
+      "unknownUser": "Hindi kilalang user"
+    },
+    "page": {
+      "back": "Bumalik sa {{list}}",
+      "notFound": "Hindi nahanap ang scan",
+      "loadError": "Hindi ma-load ang scan na ito",
+      "loadErrorDetail": "May naganap na mali sa pag-load ng scan."
+    },
+    "viewLabel": {
+      "my": "aking mga scan",
+      "pending": "hindi pa nasusuring group scan",
+      "reviewed": "nasuring group scan",
+      "expert": "hindi pa nasusuring expert scan",
+      "expert-reviewed": "nasuring expert scan"
+    }
   },
   "home": {
     "greeting": "Maligayang pagbabalik, {{name}}",
@@ -894,6 +1364,17 @@
     "signedOut": {
       "title": "Mag-sign in upang magamit ang Sage AI",
       "description": "Kailangan ng naka-sign-in na account ang Sage AI bago ito mabuksan."
+    }
+  },
+  "command": {
+    "title": "Command menu",
+    "open": "Maghanap",
+    "placeholder": "Maghanap ng pahina, scan at kurso",
+    "empty": "Walang tugma",
+    "group": {
+      "nav": "Pumunta sa",
+      "scan": "Mga scan",
+      "course": "Mga kurso"
     }
   }
 }

@@ -62,7 +62,11 @@
   },
   "toolbar": {
     "filters": "Filtros",
-    "columns": "Columnas"
+    "columns": "Columnas",
+    "sortBy": "Ordenar por",
+    "sortNone": "Elige una columna",
+    "sortAscending": "Ordenar de forma ascendente",
+    "sortDescending": "Ordenar de forma descendente"
   },
   "pagination": {
     "rows": "rema",
@@ -86,6 +90,52 @@
       "scopeNote": "Esto se aplica solo a los recordatorios de tareas. No afecta a los correos de cuenta, contraseña ni revisión de ecografías.",
       "loadError": "No se pudo cargar su preferencia de recordatorios.",
       "saveError": "No se pudo guardar esa preferencia."
+    },
+    "identity": {
+      "title": "Tu cuenta",
+      "description": "El nombre y la foto que otras personas ven junto a tus estudios.",
+      "firstName": "Nombre",
+      "lastName": "Apellidos",
+      "email": "Correo electrónico",
+      "username": "Nombre de usuario",
+      "role": "Rol",
+      "saveError": "No se pudo guardar tu nombre.",
+      "saved": "Tu nombre se ha guardado.",
+      "saving": "Guardando…",
+      "save": "Guardar nombre"
+    },
+    "photo": {
+      "upload": "Subir foto",
+      "replace": "Cambiar foto",
+      "uploading": "Subiendo…",
+      "remove": "Quitar",
+      "removing": "Quitando…",
+      "choose": "Elegir una foto de perfil"
+    },
+    "password": {
+      "title": "Contraseña",
+      "description": "Necesitarás tu contraseña actual para establecer una nueva.",
+      "current": "Contraseña actual",
+      "new": "Nueva contraseña",
+      "confirm": "Confirmar nueva contraseña",
+      "error": "No se pudo cambiar tu contraseña.",
+      "changed": "Tu contraseña se ha cambiado. Sigues con la sesión iniciada en este dispositivo.",
+      "changing": "Cambiando…",
+      "change": "Cambiar contraseña"
+    },
+    "createScanFlow": {
+      "cardTitle": "Crear estudio",
+      "cardDescription": "Cómo se organiza para ti la página de creación de estudios. Ambos diseños recogen lo mismo y comparten el mismo borrador.",
+      "legend": "Diseño de la página de creación de estudios",
+      "note": "Se aplica la próxima vez que abras «Crear estudio». Se guarda solo en este navegador: como el tema y el idioma, no te seguirá a otro dispositivo.",
+      "study": {
+        "title": "Una sola superficie de trabajo",
+        "description": "Archivos, tipo de examen, hallazgos, nota y grupos en una sola página, en el orden que quieras, con una barra que muestra lo que falta. Una pantalla aparte muestra lo que se va a enviar."
+      },
+      "classic": {
+        "title": "Paso a paso",
+        "description": "El asistente de cuatro pasos: archivos, luego interpretación, luego revisión y destino. Una cosa a la vez, con Atrás y Siguiente."
+      }
     }
   },
   "groupsDialog": {
@@ -550,19 +600,18 @@
         "title_other": "{{count}} inscripciones caducadas",
         "description": "El acceso a estos ha terminado; renovar una asignación lo gestiona tu líder de grupo o administrador.",
         "badge": "Caducado"
-      }
+      },
+      "layout": {
+        "grid": "Vista de cuadrícula",
+        "list": "Vista de lista"
+      },
+      "counts": "{{lessons}} módulos · {{topics}} temas · {{quizzes}} cuestionarios",
+      "expiresOn": "Caduca el {{date}}",
+      "lastActive": "Abierto por última vez el {{date}}"
     },
     "outline": {
       "title": "Esquema del curso",
       "backToCourses": "Mis cursos",
-      "progress": "{{completed}}/{{total}} completado ({{percent}}%)",
-      "remaining": "Quedan {{duration}} por ver",
-      "resume": {
-        "start": "Comenzar: {{title}}",
-        "resume": "Continuar: {{title}}",
-        "retry": "Reintentar: {{title}}",
-        "review": "Revisar: {{title}}"
-      },
       "completedBanner": "Has completado este curso.",
       "empty": {
         "title": "Este curso aún no tiene contenido"
@@ -591,7 +640,6 @@
     },
     "landing": {
       "title": "Sobre este curso",
-      "viewOutline": "Ver el índice del curso",
       "totalTime": "{{duration}} de vídeo",
       "itemCount_one": "{{count}} elemento",
       "itemCount_other": "{{count}} elementos",
@@ -698,7 +746,8 @@
         "resumeError": "No se pudo cargar tu progreso guardado. Empezando de nuevo."
       },
       "contents": {
-        "title": "Contenido"
+        "title": "Contenido",
+        "open": "Contenido {{index}}/{{total}}"
       },
       "completionNote": "Los temas se completan automáticamente al {{percent}}% visto.",
       "questionCount_one": "{{count}} p",
@@ -765,7 +814,254 @@
     "creditCount_one": "{{count}} crédito",
     "creditCount_other": "{{count}} créditos",
     "creditWillBeSpent": "Se gastará un crédito de {{label}} al enviar",
-    "creditSpentOnSubmit": "El crédito solo se gasta al enviar el estudio. Si la solicitud falla se le avisará, y el estudio se guarda igualmente."
+    "creditSpentOnSubmit": "El crédito solo se gasta al enviar el estudio. Si la solicitud falla se le avisará, y el estudio se guarda igualmente.",
+    "routingSummary": {
+      "title": "Adónde va",
+      "groupsDefault": "Tus grupos habituales",
+      "groupsNone": "Sin grupos: solo tú y el revisor experto",
+      "groupsCount_one": "{{count}} grupo",
+      "groupsCount_other": "{{count}} grupos",
+      "expertNone": "No se solicitó revisión experta",
+      "expertRequested": "Revisión experta de {{pool}}"
+    },
+    "readiness": {
+      "files": "Archivos",
+      "findings": "Hallazgos",
+      "exam": "Examen",
+      "note": "Nota"
+    },
+    "clinicalNote": {
+      "title": "Nota clínica",
+      "blurb": "El contexto que necesita un revisor: presentación, la pregunta que respondía el estudio y todo lo que la lista de hallazgos no recoge.",
+      "noteLabel": "Nota",
+      "notePlaceholder": "p. ej. Varón de 62 años con dolor en flanco, descartando AAA. Ventanas limitadas por gas intestinal.",
+      "patientIdLabel": "ID externo del paciente",
+      "patientIdHint": "Opcional. Tu propio número de registro, hasta 100 caracteres.",
+      "scanIdLabel": "Identificador del estudio",
+      "scanIdHint": "Opcional. Se muestra en el estudio y se incluye en la exportación de tu organización."
+    },
+    "commit": {
+      "stillNeeded": "Aún falta:",
+      "ready": "Listo para enviar.",
+      "reviewSubmit": "Revisar y enviar"
+    },
+    "discard": {
+      "title": "¿Descartar este borrador?",
+      "nothingLost": "Todavía no se ha introducido nada, así que no se pierde nada.",
+      "holds": "Esto no se puede deshacer. El borrador contiene:",
+      "keep": "Conservar el borrador",
+      "confirm": "Descartarlo"
+    },
+    "draftIndicator": {
+      "saved": "Borrador guardado — {{stored}} de {{total}} archivos almacenados",
+      "transferring": "{{count}} aún se están transfiriendo",
+      "detached": "{{count}} hay que volver a elegir"
+    },
+    "drop": {
+      "title": "Suelta aquí imágenes o clips",
+      "blurb": "Cada archivo se comprueba y empieza a subirse de inmediato, mientras completas el resto del estudio. JPEG, PNG, GIF, WebP, BMP, SVG, MP4, MOV, WebM, AVI y MKV.",
+      "chooseLabel": "Elegir archivos del estudio",
+      "browse": "Examinar archivos"
+    },
+    "findingRow": {
+      "required": "obligatorio"
+    },
+    "findings": {
+      "title": "Hallazgos",
+      "blurb": "Lo que muestra el estudio. Se ofrece cada opción que define el tipo de examen; deja una fila sin tocar si no se evaluó.",
+      "clearDefaults": "Borrar valores por defecto",
+      "noPathology": "Sin patología",
+      "loadError": "No se pudo cargar el formulario de hallazgos de este tipo de examen",
+      "retry": "Reintentar",
+      "requestFailed": "La solicitud falló.",
+      "loadErrorDetail": "Puedes enviar el estudio con una nota en su lugar, o reintentar.",
+      "none": "Este tipo de examen no tiene hallazgos estructurados. Registra lo que viste en la nota clínica de abajo."
+    },
+    "groups": {
+      "title": "Compartir con grupos",
+      "blurb": "Los revisores de estos grupos verán el estudio. Esto se fija al crear el estudio y no se puede cambiar después.",
+      "loadError": "No se pudieron cargar tus grupos",
+      "retry": "Reintentar",
+      "requestFailed": "La solicitud falló.",
+      "loadErrorDetail": "Puedes enviar sin grupo y solicitar una revisión experta en su lugar.",
+      "noneTitle": "Aún no perteneces a ningún grupo",
+      "noneDetail": "Nadie será avisado para revisar este estudio a través de un grupo. Aun así puedes solicitar una revisión experta abajo.",
+      "in": "en",
+      "parentGroup": "Un grupo superior: seleccionarlo comparte con todos los que están por debajo.",
+      "widerGroup": "grupo superior"
+    },
+    "files": {
+      "collapsedSummary_one": "{{count}} archivo almacenado",
+      "collapsedSummary_other": "{{count}} archivos almacenados",
+      "title": "Archivos",
+      "blurb": "La subida empieza en cuanto un archivo pasa su comprobación. Puedes seguir trabajando, y cerrar esta pestaña no pierde nada de lo que ya está almacenado.",
+      "collapse": "Contraer",
+      "notAdded_one": "No se añadió {{count}} archivo",
+      "notAdded_other": "No se añadieron {{count}} archivos",
+      "dismiss": "Descartar",
+      "nudgeTitle": "Los estudios completos suelen tener al menos tres archivos",
+      "nudgeBody": "Este estudio tiene {{count}} hasta ahora. Añade las vistas restantes si las tienes; también se pueden añadir archivos más tarde, pero los revisores lo ven en cuanto se envía.",
+      "detachedTitle": "Algunos archivos de tu borrador hay que volver a elegirlos",
+      "detachedBody": "{{count}} de los archivos de este borrador no habían terminado de subirse cuando se cerró la página, y el navegador no conserva el contenido. Vuelve a elegirlos abajo o quítalos del estudio.",
+      "failedTitle_one": "{{count}} archivo no se pudo subir",
+      "failedTitle_other": "{{count}} archivos no se pudieron subir",
+      "retryAll": "Reintentar todo",
+      "failedBody": "Cada uno explica abajo por qué. Reintentar vuelve a subir solo ese archivo; todo lo que ya está almacenado se queda.",
+      "storedOf": "{{stored}} de {{tracked}} almacenados",
+      "cancelAll": "Cancelar todas las transferencias"
+    },
+    "fileRow": {
+      "structureOnlyTitle": "El archivo es un contenedor válido y completo, pero este navegador no puede decodificar su códec. Se sube con normalidad y el servidor puede leerlo.",
+      "structureOnly": "solo estructura",
+      "cancelUpload": "Cancelar la subida de {{name}}",
+      "cancel": "Cancelar",
+      "retry": "Reintentar",
+      "chooseAgain": "Elegir de nuevo",
+      "remove": "Quitar {{name}}",
+      "progress": "Progreso de subida de {{name}}",
+      "detachedBody": "Este archivo estaba en el borrador guardado, pero su contenido no se conservó en el navegador. Elige el mismo archivo otra vez para terminar de subirlo, o quítalo del estudio."
+    },
+    "rail": {
+      "localPlayback": "Se reproduce desde este navegador; no se recupera nada del almacenamiento. Usa",
+      "stepBetween": "para pasar de un archivo a otro.",
+      "and": "y",
+      "noPreviews": "Las vistas previas se reproducen desde este navegador, así que un estudio retomado tras recargar no tiene ninguna. La lista de abajo muestra dónde está cada archivo."
+    },
+    "setup": {
+      "scanTypeLabel": "Tipo de examen",
+      "scanTypePlaceholder": "Elige un tipo de examen",
+      "scanTypeSearch": "AAA, Eco, Pulmón…",
+      "scanTypeEmpty": "Ningún tipo de examen coincide.",
+      "shareLabel": "Compartir con",
+      "groupSearch": "Busca tus grupos…",
+      "groupEmpty": "Ningún grupo coincide."
+    },
+    "typePicker": {
+      "loadError": "No se pudieron cargar los tipos de examen",
+      "retry": "Reintentar",
+      "requestFailed": "La solicitud falló.",
+      "loadErrorDetail": "Tus archivos siguen subiéndose y no se ha perdido nada.",
+      "findLabel": "Buscar un tipo de examen",
+      "findPlaceholder": "AAA, Eco, Pulmón…",
+      "noMatchTitle": "Ningún tipo de examen coincide",
+      "noMatchDetail": "Borra la búsqueda para ver todos los tipos."
+    },
+    "switchType": {
+      "title": "¿Cambiar a {{type}}?",
+      "clearedOne": "Una respuesta no tiene equivalente en el nuevo tipo de examen y se borrará.",
+      "clearedMany": "{{count}} respuestas no tienen equivalente en el nuevo tipo de examen y se borrarán.",
+      "clearedFrom": "Borrado de {{type}}",
+      "cleared": "Borrado",
+      "carriedOver": "Se mantiene en {{type}}",
+      "keep": "Mantener {{type}}",
+      "keepCurrent": "Mantener el tipo actual",
+      "confirm": "Cambiar a {{type}}"
+    },
+    "submitConfirm": {
+      "title": "¿Enviar este estudio?",
+      "blurb": "Tus archivos ya están almacenados. Enviar registra estos datos junto a ellos; no inicia otra subida.",
+      "error": "No se pudo crear el estudio",
+      "keepEditing": "Seguir editando",
+      "submitting": "Enviando…",
+      "submit": "Enviar estudio"
+    },
+    "credits": {
+      "title": "Comprar créditos de revisión experta",
+      "blurb": "Un crédito paga una revisión experta. Los créditos pueden ser tuyos o de un grupo.",
+      "goTo": "Los créditos van a",
+      "ownBalance": "Mi propio saldo",
+      "bundle": "Paquete",
+      "error": "No se pudo iniciar el pago",
+      "noResponse": "El servicio de pago no respondió.",
+      "errorDetail": "No se cobró nada. Tu estudio está guardado: inténtalo de nuevo o envíalo sin revisión experta.",
+      "cancel": "Cancelar",
+      "opening": "Abriendo el pago…",
+      "continue": "Continuar al pago"
+    },
+    "studySurface": {
+      "pickTypeTitle": "Elige un tipo de examen para ver sus hallazgos",
+      "pickTypeBody": "Los hallazgos cambian según el tipo de examen, así que el formulario aparece al elegir uno. Mientras tanto, tus archivos siguen subiéndose.",
+      "missingRequired_one": "{{count}} hallazgo obligatorio sigue en blanco",
+      "missingRequired_other": "{{count}} hallazgos obligatorios siguen en blanco",
+      "missingRequiredBody": "{{names}}. Puedes enviar sin ellos, pero un revisor no sabrá si eran normales o no se evaluaron."
+    },
+    "summary": {
+      "title": "Lo que se enviará",
+      "blurb": "Todo lo de abajo se registra junto a los archivos ya almacenados. El destino de grupo no se puede cambiar después.",
+      "edit": "Editar estudio",
+      "study": "El estudio",
+      "examType": "Tipo de examen",
+      "files": "Archivos",
+      "filesValue": "{{stored}} de {{tracked}} almacenados · {{size}}",
+      "scanIdentifier": "Identificador del estudio",
+      "patientId": "ID externo del paciente",
+      "findings": "Hallazgos",
+      "clinicalNote": "Nota clínica",
+      "noNote": "Sin nota. Un revisor verá solo los hallazgos y las imágenes.",
+      "audience": "Quién ve este estudio",
+      "noGroups": "Sin grupos. Ningún revisor de grupo verá este estudio, y después no se le puede añadir un grupo: la API no tiene ruta para eso. Aun así puedes compartirlo con personas concretas desde el propio estudio.",
+      "widerThanCohort": "más amplio que tu cohorte",
+      "expertReview": "Revisión experta",
+      "notRequested": "No solicitada",
+      "noFindings": "No se registraron hallazgos."
+    },
+    "page": {
+      "title": "Crear estudio",
+      "blurb": "Los archivos se suben mientras trabajas. Enviar registra los datos junto a ellos.",
+      "discardTitle": "Descartar este borrador y empezar de nuevo",
+      "discard": "Descartar borrador",
+      "myScans": "Mis estudios",
+      "restoredTitle": "Retomado donde lo dejaste",
+      "startFresh": "Empezar de cero",
+      "restoredBody": "Se encontró un borrador guardado en este navegador. Los archivos que terminaron de subirse ya están almacenados, y lo que seguía transfiriéndose continúa donde se quedó. Solo hay que volver a elegir los archivos que este navegador ya no conserva: aparecen indicados como tales."
+    },
+    "classic": {
+      "addFile": "Añade al menos un archivo para continuar.",
+      "interpretation": "Interpretación",
+      "files": "Archivos",
+      "chooseType": "Elige un tipo de examen para continuar.",
+      "reviewRouting": "Revisión y destino"
+    },
+    "interpretation": {
+      "scanTypePrefix": "Tipo de examen: ",
+      "change": "Cambiar",
+      "scanTypeTitle": "Tipo de examen",
+      "scanTypeBlurb": "Obligatorio, y fijo una vez enviado el estudio: la API no puede cambiar el tipo de un estudio después."
+    },
+    "routing": {
+      "submitTitle": "Enviar",
+      "submitBlurb": "Tus archivos ya están almacenados. Enviar registra los datos del estudio junto a ellos; no inicia otra subida.",
+      "stillMoving_one": "{{count}} archivo no ha terminado de subirse",
+      "stillMoving_other": "{{count}} archivos no han terminado de subirse",
+      "stillMovingBody": "Enviar ahora crea el estudio con los {{stored}} ya almacenados y deja fuera el resto. Espera a que terminen, o vuelve atrás y resuelve los que fallaron.",
+      "nothingStored": "Todavía no hay nada almacenado",
+      "nothingStoredBody": "No se puede crear un estudio sin al menos un archivo subido: la API rechaza un total de cero archivos.",
+      "noExamType": "No se ha elegido tipo de examen",
+      "chooseExamType": "Elegir tipo de examen",
+      "noExamTypeBody": "Un estudio necesita un tipo de examen: decide qué hallazgos se le piden a un revisor, y no se puede cambiar una vez creado el estudio.",
+      "notSubmitted": "El estudio no se envió",
+      "tryAgain": "Reintentar",
+      "notSubmittedBody": "Tus archivos subidos siguen almacenados y este borrador está guardado, así que no hay que rehacer nada.",
+      "recording": "Registrando el estudio…",
+      "submit": "Enviar estudio"
+    },
+    "submitted": {
+      "title": "Estudio enviado",
+      "blurb": "El estudio está en tu vault. El procesado y la anonimización terminan en el servidor en unos segundos; la lista se actualiza sola.",
+      "status": "Enviado",
+      "filesAttached": "Archivos adjuntos",
+      "filesValue": "{{confirmed}} de {{total}}",
+      "expertReview": "Revisión experta",
+      "requested": "Solicitada",
+      "requestFailed": "Solicitud fallida",
+      "notRequested": "No solicitada",
+      "openStudy": "Abrir el estudio",
+      "expertFailedTitle": "La solicitud de revisión experta no se cursó",
+      "requestRejected": "La solicitud fue rechazada.",
+      "expertFailedBody": "El estudio en sí está guardado y enviado a tus grupos, y no se gastó ningún crédito.",
+      "createAnother": "Crear otro estudio",
+      "goToMyScans": "Ir a mis estudios"
+    }
   },
   "scanDetail": {
     "resetUploadDialogTitle": "¿Restablecer “{{title}}” para volver a subir?",
@@ -783,7 +1079,181 @@
     "markIncomplete": "Marcar como incompleto",
     "close": "Cerrar",
     "completionTagErrorTitle": "La marca no se ha guardado",
-    "completionTagError": "No se ha podido cambiar el estado de completitud del escaneo. No se ha guardado nada: inténtelo de nuevo."
+    "completionTagError": "No se ha podido cambiar el estado de completitud del escaneo. No se ha guardado nada: inténtelo de nuevo.",
+    "queueNav": {
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "position": "{{position}} de {{total}}",
+      "hint": "Pulsa j para siguiente, k para anterior"
+    },
+    "learnerQuestion": {
+      "title": "El alumno preguntó"
+    },
+    "notes": {
+      "dialogTitle": "Comentarios sobre {{title}}",
+      "title": "Notas",
+      "none": "No hay notas en este estudio.",
+      "noReadAccess": "Tu rol no puede leer las notas de este estudio.",
+      "loadError": "No se pudieron cargar las notas",
+      "empty": "Aún no hay notas.",
+      "addLabel": "Añadir una nota",
+      "addPlaceholder": "Responde al alumno o registra algo sobre este estudio.",
+      "addError": "No se pudo añadir la nota.",
+      "adding": "Añadiendo…",
+      "add": "Añadir nota"
+    },
+    "submittedAnswers": {
+      "none": "No se envió nada con este estudio: ni hallazgos ni respuestas del formulario.",
+      "findingsGroup": "Hallazgos"
+    },
+    "activity": {
+      "title": "Registro de actividad",
+      "show": "Mostrar",
+      "hide": "Ocultar",
+      "none": "Aún no se ha registrado nada."
+    },
+    "files": {
+      "none": "No hay archivos registrados en este estudio.",
+      "recorded_one": "{{recorded}} de {{count}} archivo esperado registrado.",
+      "recorded_other": "{{recorded}} de {{count}} archivos esperados registrados."
+    },
+    "media": {
+      "unavailableTitle": "Archivo no disponible",
+      "unavailableDetail": "Este archivo nunca terminó de subirse, así que no hay nada que mostrar.",
+      "dicomTitle": "Vista previa DICOM no compatible",
+      "dicomDetail": "Sector no tiene visor DICOM. Descarga el archivo y ábrelo en un visor DICOM.",
+      "openOriginal": "Abrir archivo original",
+      "previousFile": "Archivo anterior",
+      "nextFile": "Archivo siguiente",
+      "unknownType": "tipo desconocido",
+      "thumbVideo": "VÍDEO",
+      "thumbFile": "ARCHIVO",
+      "notPreviewable_one": "{{count}} archivo más no se puede previsualizar aquí. La lista de abajo lo nombra y muestra su estado.",
+      "notPreviewable_other": "{{count}} archivos más no se pueden previsualizar aquí. La lista de abajo los nombra y muestra su estado.",
+      "filesSection": "Archivos ({{count}}/{{total}})",
+      "showFile": "Mostrar {{filename}}",
+      "cannotPlay": "Este navegador no puede reproducir {{format}}",
+      "cannotPreview": "No se puede previsualizar {{format}}",
+      "thisFile": "este archivo",
+      "thisFileType": "este tipo de archivo",
+      "downloadableDetail": "El archivo está guardado y se puede descargar, pero el navegador no puede mostrarlo aquí.",
+      "noPreviewTitle": "Sin vista previa disponible",
+      "noMediaTitle": "Este estudio no tiene archivos",
+      "notPreviewableList_one": "{{count}} archivo no se puede previsualizar aquí. La lista de archivos de abajo lo nombra y muestra su estado.",
+      "notPreviewableList_other": "{{count}} archivos no se pueden previsualizar aquí. La lista de archivos de abajo nombra cada uno y muestra su estado.",
+      "noUpload": "La subida nunca produjo un archivo. La lista de abajo muestra lo que se esperaba."
+    },
+    "context": {
+      "clinicalNote": "Nota clínica",
+      "findings": "Hallazgos e interpretación",
+      "identifiers": "Identificadores",
+      "scanIdentifier": "Identificador del estudio",
+      "externalPatientId": "ID externo del paciente",
+      "scanId": "ID del estudio",
+      "submittedBy": "Enviado por",
+      "submitted": "Enviado",
+      "lastUpdated": "Última actualización",
+      "reviewed": "Revisado",
+      "group_one": "Grupo",
+      "group_other": "Grupos",
+      "noGroup": "No está asociado a ningún grupo.",
+      "tags": "Etiquetas"
+    },
+    "common": {
+      "retry": "Reintentar",
+      "somethingWentWrong": "Algo salió mal."
+    },
+    "review": {
+      "titleExpert": "Revisión experta",
+      "title": "Revisión",
+      "competency": "Medida de competencia",
+      "achieved": "Alcanzada",
+      "notAchieved": "No alcanzada",
+      "competencyMissing": "Elige alcanzada o no alcanzada.",
+      "overall": "Valoración general",
+      "overallMissing": "La valoración general es obligatoria.",
+      "technical": "Valoración técnica",
+      "technicalHint": "Manejo de la sonda, ganancia, profundidad, orientación.",
+      "teaching": "Puntos docentes",
+      "noteLabel": "Nota para el alumno (opcional)",
+      "noteHint": "Se publica en el hilo de notas y se envía por correo con la revisión.",
+      "submitError": "No se pudo enviar la revisión.",
+      "submitting": "Enviando…",
+      "submit": "Enviar revisión",
+      "draftSaved": "Borrador guardado {{time}}",
+      "discard": "Descartar"
+    },
+    "share": {
+      "title": "Compartir",
+      "recipients_one": "{{count}} destinatario",
+      "recipients_other": "{{count}} destinatarios",
+      "loadError": "No se pudieron cargar los envíos existentes.",
+      "none": "No has compartido este estudio con nadie.",
+      "sharedAt": "Compartido {{date}}",
+      "opened": "Abierto",
+      "unopened": "Sin abrir",
+      "revoke": "Revocar el acceso de {{email}}",
+      "revokeError": "No se pudo revocar el acceso.",
+      "withLabel": "Compartir con",
+      "withPlaceholder": "nombre@hospital.org, colega@clinica.org",
+      "withHint": "Separados por coma o salto de línea. Los destinatarios necesitan una cuenta.",
+      "shareError": "No se pudo compartir el estudio.",
+      "messageLabel": "Mensaje (opcional)",
+      "sharing": "Compartiendo…",
+      "shareWithCount": "Compartir con {{count}}",
+      "outcomeShared_one": "Compartido con {{count}} destinatario.",
+      "outcomeShared_other": "Compartido con {{count}} destinatarios.",
+      "outcomeDuplicate": "Ya tenían acceso: {{emails}}",
+      "outcomeNotFound": "Sin cuenta de Sector, no se envió nada: {{emails}}",
+      "dialogTitle": "Compartir {{title}}"
+    },
+    "summary": {
+      "notReviewed": "Este estudio aún no ha sido revisado.",
+      "reviewer": "Revisor",
+      "overall": "Valoración general",
+      "technical": "Valoración técnica",
+      "teaching": "Puntos docentes",
+      "teachingContent": "Contenido docente",
+      "customQuestions": "Preguntas personalizadas"
+    },
+    "custom": {
+      "title": "Preguntas personalizadas (opcional)",
+      "add": "Añadir",
+      "question": "Pregunta {{number}}",
+      "remove": "Quitar la pregunta {{number}}",
+      "questionLabel": "Pregunta",
+      "questionPlaceholder": "p. ej. Fracción de eyección",
+      "answerLabel": "Respuesta"
+    },
+    "markdown": {
+      "title": "Revisión asistida por IA",
+      "languageGroup": "Idioma de la revisión",
+      "original": "Original"
+    },
+    "shared": {
+      "back": "Volver a estudios compartidos",
+      "readOnly": "Compartido contigo · solo lectura",
+      "notShared": "Este estudio no está compartido contigo",
+      "loadError": "No se pudo cargar este estudio compartido",
+      "loadErrorDetail": "Algo salió mal al cargar el estudio compartido.",
+      "goneTitle": "Este estudio ya no está disponible",
+      "goneDetail": "Quien lo compartió ha eliminado el estudio desde entonces. El envío sigue en tu lista para que sepas que existió, pero ya no hay nada que abrir.",
+      "sharedBy": "Compartido por",
+      "unknownUser": "Usuario desconocido"
+    },
+    "page": {
+      "back": "Volver a {{list}}",
+      "notFound": "Estudio no encontrado",
+      "loadError": "No se pudo cargar este estudio",
+      "loadErrorDetail": "Algo salió mal al cargar el estudio."
+    },
+    "viewLabel": {
+      "my": "mis estudios",
+      "pending": "estudios de grupo sin revisar",
+      "reviewed": "estudios de grupo revisados",
+      "expert": "estudios de experto sin revisar",
+      "expert-reviewed": "estudios de experto revisados"
+    }
   },
   "home": {
     "greeting": "Bienvenido de nuevo, {{name}}",
@@ -894,6 +1364,17 @@
     "signedOut": {
       "title": "Inicia sesión para usar Sage AI",
       "description": "Sage AI necesita una cuenta con sesión iniciada para abrirse."
+    }
+  },
+  "command": {
+    "title": "Menú de comandos",
+    "open": "Buscar",
+    "placeholder": "Buscar páginas, estudios y cursos",
+    "empty": "Sin coincidencias",
+    "group": {
+      "nav": "Ir a",
+      "scan": "Estudios",
+      "course": "Cursos"
     }
   }
 }

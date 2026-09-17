@@ -12,6 +12,7 @@ import {
 import { findLearnerQuestion, noteAuthorName } from '../scan-detail-format';
 import { LearnerQuestionCallout } from './learner-question-callout';
 import { ReviewCustomReviews, type CustomReviewEntry } from './review-custom-reviews';
+import { useTranslation } from 'react-i18next';
 
 /** How long the reviewer must pause before the draft is written to storage. */
 const DRAFT_SAVE_DEBOUNCE_MS = 600;
@@ -47,6 +48,7 @@ function emptyForm(scan: Scan): FormState {
 
 /** The reviewer's form. */
 export function ScanReviewPanel({ scan, isExpertScan, onSubmitted }: ScanReviewPanelProps) {
+  const { t } = useTranslation();
   const [form, setForm] = useState<FormState>(() => {
     const draft = readReviewDraft(scan.id);
     if (!draft) return emptyForm(scan);
@@ -123,7 +125,9 @@ export function ScanReviewPanel({ scan, isExpertScan, onSubmitted }: ScanReviewP
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{isExpertScan ? 'Expert review' : 'Review'}</CardTitle>
+        <CardTitle>
+          {isExpertScan ? t('scanDetail.review.titleExpert') : t('scanDetail.review.title')}
+        </CardTitle>
         <DraftStatus
           savedAt={savedAt}
           onDiscard={() => {
@@ -146,15 +150,16 @@ export function ScanReviewPanel({ scan, isExpertScan, onSubmitted }: ScanReviewP
 
         <fieldset className="space-y-1.5">
           <legend className="text-[12px] font-medium text-ink-dim">
-            Competency measure <span className="text-crit">*</span>
+            {t('scanDetail.review.competency')} <span className="text-crit">*</span>
           </legend>
           <div className="flex flex-wrap gap-4">
+            {/* i18n-exempt: stored values on the left, translation keys on the right. */}
             {(
               [
-                ['achieved', 'Achieved'],
-                ['not_achieved', 'Not achieved'],
+                ['achieved', 'scanDetail.review.achieved'],
+                ['not_achieved', 'scanDetail.review.notAchieved'],
               ] as const
-            ).map(([value, label]) => (
+            ).map(([value, labelKey]) => (
               <label key={value} className="flex items-center gap-1.5 text-body text-ink">
                 <input
                   type="radio"
@@ -164,37 +169,37 @@ export function ScanReviewPanel({ scan, isExpertScan, onSubmitted }: ScanReviewP
                   onChange={() => setForm((prev) => ({ ...prev, competencyMeasure: value }))}
                   className="accent-[var(--accent)]"
                 />
-                {label}
+                {t(labelKey)}
               </label>
             ))}
           </div>
           {competencyMissing ? (
-            <p className="text-[12px] text-crit">Choose achieved or not achieved.</p>
+            <p className="text-[12px] text-crit">{t('scanDetail.review.competencyMissing')}</p>
           ) : null}
         </fieldset>
 
         <Textarea
           label={
             <>
-              Overall feedback <span className="text-crit">*</span>
+              {t('scanDetail.review.overall')} <span className="text-crit">*</span>
             </>
           }
           rows={5}
           value={form.overAllFeed}
           onChange={(event) => setForm((prev) => ({ ...prev, overAllFeed: event.target.value }))}
-          error={overallMissing ? 'Overall feedback is required.' : undefined}
+          error={overallMissing ? t('scanDetail.review.overallMissing') : undefined}
         />
 
         <Textarea
-          label="Technical feedback"
-          hint="Probe handling, gain, depth, orientation."
+          label={t('scanDetail.review.technical')}
+          hint={t('scanDetail.review.technicalHint')}
           rows={3}
           value={form.technicalFeed}
           onChange={(event) => setForm((prev) => ({ ...prev, technicalFeed: event.target.value }))}
         />
 
         <Textarea
-          label="Teaching points"
+          label={t('scanDetail.review.teaching')}
           rows={3}
           value={form.teachingPoints}
           onChange={(event) => setForm((prev) => ({ ...prev, teachingPoints: event.target.value }))}
@@ -208,8 +213,8 @@ export function ScanReviewPanel({ scan, isExpertScan, onSubmitted }: ScanReviewP
         />
 
         <Textarea
-          label="Note to the learner (optional)"
-          hint="Posted to the note thread as well as emailed with the review."
+          label={t('scanDetail.review.noteLabel')}
+          hint={t('scanDetail.review.noteHint')}
           rows={2}
           value={form.note}
           onChange={(event) => setForm((prev) => ({ ...prev, note: event.target.value }))}
@@ -217,12 +222,14 @@ export function ScanReviewPanel({ scan, isExpertScan, onSubmitted }: ScanReviewP
 
         {addReview.isError ? (
           <p className="rounded-token border border-crit/30 bg-crit-soft p-2 text-[12px] text-crit">
-            {isApiError(addReview.error) ? addReview.error.message : 'Could not submit the review.'}
+            {isApiError(addReview.error)
+              ? addReview.error.message
+              : t('scanDetail.review.submitError')}
           </p>
         ) : null}
 
         <Button className="w-full" disabled={addReview.isPending} onClick={() => void submit()}>
-          {addReview.isPending ? 'Submitting…' : 'Submit review'}
+          {addReview.isPending ? t('scanDetail.review.submitting') : t('scanDetail.review.submit')}
         </Button>
       </CardContent>
     </Card>
@@ -230,17 +237,20 @@ export function ScanReviewPanel({ scan, isExpertScan, onSubmitted }: ScanReviewP
 }
 
 function DraftStatus({ savedAt, onDiscard }: { savedAt: number | null; onDiscard: () => void }) {
+  const { t } = useTranslation();
+
   if (!savedAt) return null;
 
   return (
     <span className="flex items-center gap-2 text-[11px] text-ink-dim">
-      Draft saved{' '}
-      {new Date(savedAt).toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit',
+      {t('scanDetail.review.draftSaved', {
+        time: new Date(savedAt).toLocaleTimeString(undefined, {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
       })}
       <Button variant="link" size="sm" className="h-auto text-[11px]" onClick={onDiscard}>
-        Discard
+        {t('scanDetail.review.discard')}
       </Button>
     </span>
   );
